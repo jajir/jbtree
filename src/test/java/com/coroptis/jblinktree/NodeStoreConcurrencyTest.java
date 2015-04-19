@@ -48,7 +48,7 @@ public class NodeStoreConcurrencyTest extends TestCase {
 	protected void setUp() throws Exception {
 		super.setUp();
 		nodeStore = new NodeStoreImpl();
-		Node node = new NodeImpl(2,true);
+		Node node = new Node(2,true);
 		nodeStore.writeNode(node);
 	}
 

@@ -6,8 +6,12 @@ public interface NodeStore {
 	
 	void unlockNode(Integer nodeId);
 	
-	Node readNode(Integer nodeId);
+	Node get(Integer nodeId);
 	
 	void writeNode(Node node);
+	
+	void put(Integer idNode, Node node);
+	
+	int size();
 	
 }
