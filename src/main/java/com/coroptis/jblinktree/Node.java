@@ -220,7 +220,11 @@ public class Node {
 		return field[i - 1];
 	    }
 	}
-	return null;
+	if (key > getMaxKey()) {
+	    return getLink();
+	} else {
+	    return null;
+	}
     }
 
     public Integer getValue(final Integer key) {

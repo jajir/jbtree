@@ -17,7 +17,7 @@ public class Tree {
 	this.nodeStore.put(rootNodeId, node);
     }
 
-    public void insert(final Integer key, final Integer value) {
+    public void insertOld(final Integer key, final Integer value) {
 	final Stack<Integer> stack = new Stack<Integer>();
 	Node node = nodeStore.get(rootNodeId);
 	if (node.isLeafNode()) {
@@ -37,7 +37,7 @@ public class Tree {
 		    newRoot.setMaxKeyValue(node2.getMaxKey());
 		    nodeStore.put(newRoot.getId(), newRoot);
 		    rootNodeId = newRoot.getId();
-		    insert(key, value);
+		    insertOld(key, value);
 		    return;
 		} else {
 		    Integer previousNodeId = stack.pop();
@@ -47,7 +47,7 @@ public class Tree {
 	    }
 	} else {
 	    // inserting into non-leaf node
-	    final Integer nextNodeId  = node.getCorrespondingNodeId(key);
+	    final Integer nextNodeId = node.getCorrespondingNodeId(key);
 	    stack.push(nextNodeId);
 	}
     }
@@ -66,6 +66,105 @@ public class Tree {
 	} else {
 
 	}
+    }
+
+    /**
+     * Insert method according to Lehman & Yao
+     * 
+     * @param key
+     * @return
+     */
+    public void insert(final Integer key, final Integer value) {
+	final Stack<Integer> stack = new Stack<Integer>();
+	Node currentNode = nodeStore.get(rootNodeId);
+	while (!currentNode.isLeafNode()) {
+	    final Node previousNode = currentNode;
+	    currentNode = findCorrespondingNode(currentNode, key);
+	    if (!currentNode.getId().equals(previousNode.getLink())) {
+		/**
+		 * I don't want to store nodes when cursor is moved right.
+		 */
+		stack.push(previousNode.getId());
+	    }
+	}
+
+	/**
+	 * In node is leaf where should be new kye & value inserted.
+	 */
+	currentNode.getLock().lock();
+	currentNode = moveRight(currentNode, key);
+	if (currentNode.getValue(key) == null) {
+	    /**
+	     * Key and value have to be inserted
+	     */
+	    while (true) {
+		if(currentNode.getKeysCount()>=Node.L){
+		    /**
+		     * There is no free space for key and value
+		     */
+		}else{
+		    /**
+		     * There is free space for key and value
+		     */
+		}
+	    }
+	} else {
+	    /**
+	     * Key already exists. Rewrite value.
+	     */
+	    currentNode.insert(key, value);
+	    currentNode.getLock().unlock();
+	}
+    }
+
+    /**
+     * Move right method according to Lehman & Yao.
+     * <p>
+     * When there is move right than current node is unlocked and new one is
+     * locked.
+     * </p>
+     * 
+     * @param current
+     *            required current node, this node should be locked
+     * @param key
+     *            required key
+     * @return moved right node
+     */
+    private Node moveRight(Node current, final Integer key) {
+	Node n;
+	while ((n = findCorrespondingNode(current, key)).getId().equals(current.getLink())) {
+	    n.getLock().lock();
+	    current.getLock().unlock();
+	    current = n;
+	}
+	return current;
+    }
+
+    private Node findCorrespondingNode(final Node node, final Integer key) {
+	Integer nextNodeId = node.getCorrespondingNodeId(key);
+	return nodeStore.get(nextNodeId);
+    }
+
+    /**
+     * Search method according to Lehman & Yao
+     * 
+     * @param key
+     * @return
+     */
+    public Integer search(final Integer key) {
+	Integer idNode = rootNodeId;
+	Node node = nodeStore.get(rootNodeId);
+	while (!node.isLeafNode()) {
+	    idNode = node.getCorrespondingNodeId(key);
+	    node = nodeStore.get(idNode);
+	}
+
+	while (node.getLink().equals(node.getCorrespondingNodeId(key))) {
+	    idNode = node.getLink();
+	    node = nodeStore.get(idNode);
+	}
+
+	return node.getValue(key);
     }
 
     public int countValues() {
