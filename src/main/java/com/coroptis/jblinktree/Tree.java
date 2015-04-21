@@ -97,15 +97,32 @@ public class Tree {
 	    /**
 	     * Key and value have to be inserted
 	     */
+	    Integer tmpValue = value;
 	    while (true) {
-		if(currentNode.getKeysCount()>=Node.L){
+		if (currentNode.getKeysCount() >= Node.L) {
 		    /**
 		     * There is no free space for key and value
 		     */
-		}else{
+		    Node newNode = split(currentNode, key, tmpValue);
+		    Integer currentNodeMaxKey = currentNode.getMaxKey();
+		    nodeStore.writeNode(newNode);
+		    nodeStore.writeNode(currentNode);
+		    tmpValue = newNode.getId();
+		    Node oldNode = currentNode;
+
+		    currentNode = nodeStore.get(stack.pop());
+		    currentNode.getLock().lock();
+		    moveRight(currentNode, currentNodeMaxKey);
+
+		    oldNode.getLock().unlock();
+		} else {
 		    /**
 		     * There is free space for key and value
 		     */
+		    currentNode.insert(key, tmpValue);
+		    nodeStore.writeNode(currentNode);
+		    currentNode.getLock().unlock();
+		    return;
 		}
 	    }
 	} else {
@@ -113,8 +130,21 @@ public class Tree {
 	     * Key already exists. Rewrite value.
 	     */
 	    currentNode.insert(key, value);
+	    nodeStore.writeNode(currentNode);
 	    currentNode.getLock().unlock();
 	}
+    }
+
+    private Node split(final Node currentNode, final Integer key,
+	    final Integer tmpValue) {
+	Node newNode = new Node(nodeStore.size(), true);
+	currentNode.moveTopHalfOfDataTo(newNode);
+	if (currentNode.getMaxKey() < key) {
+	    newNode.insert(key, tmpValue);
+	} else {
+	    currentNode.insert(key, tmpValue);
+	}
+	return newNode;
     }
 
     /**
@@ -132,12 +162,23 @@ public class Tree {
      */
     private Node moveRight(Node current, final Integer key) {
 	Node n;
-	while ((n = findCorrespondingNode(current, key)).getId().equals(current.getLink())) {
-	    n.getLock().lock();
-	    current.getLock().unlock();
-	    current = n;
+	if (current.isLeafNode()) {
+	    while (current.getLink() != null && key > current.getLink()) {
+		n = nodeStore.get(current.getLink());
+		n.getLock().lock();
+		current.getLock().unlock();
+		current = n;
+	    }
+	    return current;
+	} else {
+	    while ((n = findCorrespondingNode(current, key)).getId().equals(
+		    current.getLink())) {
+		n.getLock().lock();
+		current.getLock().unlock();
+		current = n;
+	    }
+	    return current;
 	}
-	return current;
     }
 
     private Node findCorrespondingNode(final Node node, final Integer key) {
