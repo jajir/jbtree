@@ -2,6 +2,9 @@ package com.coroptis.jblinktree;
 
 import java.util.Stack;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.google.common.base.Preconditions;
 
 public class Tree {
@@ -10,62 +13,13 @@ public class Tree {
 
     private final NodeStore nodeStore;
 
+    private final Logger logger = LoggerFactory.getLogger(Tree.class);
+
     public Tree(final NodeStore nodeStore) {
 	this.nodeStore = Preconditions.checkNotNull(nodeStore);
 	Node node = new Node(0, true);
 	rootNodeId = node.getId();
 	this.nodeStore.put(rootNodeId, node);
-    }
-
-    public void insertOld(final Integer key, final Integer value) {
-	final Stack<Integer> stack = new Stack<Integer>();
-	Node node = nodeStore.get(rootNodeId);
-	if (node.isLeafNode()) {
-	    // leaf node inserting
-	    if (node.getKeysCount() == Node.L) {
-		// leaf node have to be split
-		Node node2 = new Node(nodeStore.size(), true);
-		nodeStore.put(node2.getId(), node2);
-		node.moveTopHalfOfDataTo(node2);
-		if (stack.isEmpty()) {
-		    /**
-		     * It's root node and it's also leaf node.
-		     */
-		    Node newRoot = new Node(nodeStore.size(), false);
-		    newRoot.insert(node.getMaxKey(), node2.getId());
-		    newRoot.setP0(node.getId());
-		    newRoot.setMaxKeyValue(node2.getMaxKey());
-		    nodeStore.put(newRoot.getId(), newRoot);
-		    rootNodeId = newRoot.getId();
-		    insertOld(key, value);
-		    return;
-		} else {
-		    Integer previousNodeId = stack.pop();
-		}
-	    } else {
-		node.insert(key, value);
-	    }
-	} else {
-	    // inserting into non-leaf node
-	    final Integer nextNodeId = node.getCorrespondingNodeId(key);
-	    stack.push(nextNodeId);
-	}
-    }
-
-    private void insert(final Integer key, final Integer value, final Node node) {
-	final Stack<Integer> stack = new Stack<Integer>();
-	stack.push(rootNodeId);
-	if (node.isLeafNode()) {
-	    if (node.getKeysCount() == Node.L) {
-		// leaf node have to be split
-		Node node2 = new Node(nodeStore.size(), true);
-		node.moveTopHalfOfDataTo(node2);
-	    } else {
-		node.insert(key, value);
-	    }
-	} else {
-
-	}
     }
 
     /**
@@ -98,28 +52,43 @@ public class Tree {
 	     * Key and value have to be inserted
 	     */
 	    Integer tmpValue = value;
+	    Integer tmpKey = key;
 	    while (true) {
 		if (currentNode.getKeysCount() >= Node.L) {
 		    /**
 		     * There is no free space for key and value
 		     */
-		    Node newNode = split(currentNode, key, tmpValue);
+		    Node newNode = split(currentNode, tmpKey, tmpValue);
 		    Integer currentNodeMaxKey = currentNode.getMaxKey();
 		    nodeStore.writeNode(newNode);
 		    nodeStore.writeNode(currentNode);
 		    tmpValue = newNode.getId();
+		    tmpKey = currentNode.getMaxKeyValue();
 		    Node oldNode = currentNode;
-
-		    currentNode = nodeStore.get(stack.pop());
-		    currentNode.getLock().lock();
-		    moveRight(currentNode, currentNodeMaxKey);
-
-		    oldNode.getLock().unlock();
+		    if (stack.empty()) {
+			/**
+			 * It's root node.
+			 * 
+			 */
+			oldNode.getLock().unlock();
+			Node newRoot = new Node(nodeStore.size(), false);
+			newRoot.insert(currentNode.getMaxKey(), newNode.getId());
+			newRoot.setP0(currentNode.getId());
+			newRoot.setMaxKeyValue(newNode.getMaxKey());
+			nodeStore.put(newRoot.getId(), newRoot);
+			rootNodeId = newRoot.getId();
+			return;
+		    } else {
+			currentNode = nodeStore.get(stack.pop());
+			currentNode.getLock().lock();
+			moveRight(currentNode, currentNodeMaxKey);
+			oldNode.getLock().unlock();
+		    }
 		} else {
 		    /**
 		     * There is free space for key and value
 		     */
-		    currentNode.insert(key, tmpValue);
+		    currentNode.insert(tmpKey, tmpValue);
 		    nodeStore.writeNode(currentNode);
 		    currentNode.getLock().unlock();
 		    return;
@@ -135,8 +104,7 @@ public class Tree {
 	}
     }
 
-    private Node split(final Node currentNode, final Integer key,
-	    final Integer tmpValue) {
+    private Node split(final Node currentNode, final Integer key, final Integer tmpValue) {
 	Node newNode = new Node(nodeStore.size(), true);
 	currentNode.moveTopHalfOfDataTo(newNode);
 	if (currentNode.getMaxKey() < key) {
@@ -171,8 +139,7 @@ public class Tree {
 	    }
 	    return current;
 	} else {
-	    while ((n = findCorrespondingNode(current, key)).getId().equals(
-		    current.getLink())) {
+	    while ((n = findCorrespondingNode(current, key)).getId().equals(current.getLink())) {
 		n.getLock().lock();
 		current.getLock().unlock();
 		current = n;
@@ -244,6 +211,26 @@ public class Tree {
 	}
 
 	return buff.toString();
+    }
+
+    public void verify() {
+	final Stack<Integer> stack = new Stack<Integer>();
+	stack.push(rootNodeId);
+	while (!stack.isEmpty()) {
+	    final Integer nodeId = stack.pop();
+	    if (nodeId == null) {
+		logger.error("some node id was null");
+	    } else {
+		final Node node = nodeStore.get(nodeId);
+		logger.debug(node.toString());
+		if (!node.isLeafNode()) {
+		    for (final Integer i : node.getNodeIds()) {
+			stack.push(i);
+		    }
+		}
+	    }
+	}
+
     }
 
 }

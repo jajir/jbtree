@@ -80,6 +80,25 @@ public class NodeTest extends TestCase {
     }
 
     @Test
+    public void test_insert_nonLeafNode() throws Exception {
+	Node n = Node.makeNode(0, new Integer[]{0, 1, 1, 3, null});
+	n.insert(4, -40);
+
+	logger.debug(n.toString());
+
+	assertEquals(2, n.getKeysCount());
+	assertFalse("it's non LEF NODE",n.isLeafNode());
+	List<Integer> keys = n.getKeys();
+	assertTrue(keys.contains(1));
+	assertTrue(keys.contains(4));
+	assertNull(n.getLink());
+	assertEquals(Integer.valueOf(4), n.getMaxKey());
+	assertEquals(Integer.valueOf(0), n.getCorrespondingNodeId(1));
+	assertEquals(Integer.valueOf(1), n.getCorrespondingNodeId(4));
+	assertEquals(Integer.valueOf(-40), n.getCorrespondingNodeId(5));
+    }
+    
+    @Test
     public void test_link() throws Exception {
 	node.setLink(-10);
 	node.insert(2, 20);
@@ -158,6 +177,30 @@ public class NodeTest extends TestCase {
 
 	logger.debug(node.toString());
 	assertEquals(Integer.valueOf(2), node.getMaxKey());
+    }
+
+    @Test
+    public void test_getCorrespondingNodeId_bigger_key() throws Exception {
+	Node n = Node.makeNode(2, new Integer[] { 0, 1, 2, 3, null });
+
+	logger.debug(n.toString());
+
+	Integer nodeId = n.getCorrespondingNodeId(4);
+
+	assertNotNull("node id can't be null", nodeId);
+	assertEquals("node id should be different", Integer.valueOf(2), nodeId);
+    }
+
+    @Test
+    public void test_getCorrespondingNodeId_simple() throws Exception {
+	Node n = Node.makeNode(2, new Integer[] { 0, 2, 1, 3, null });
+
+	logger.debug(n.toString());
+
+	Integer nodeId = n.getCorrespondingNodeId(3);
+
+	assertNotNull("node id can't be null", nodeId);
+	assertEquals("node id should be different", Integer.valueOf(1), nodeId);
     }
 
     @Override

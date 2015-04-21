@@ -52,7 +52,7 @@ public class NodeStoreImpl implements NodeStore {
 
     @Override
     public void writeNode(final Node node) {
-	nodes.put(1, node);
+	put(node.getId(), node);
     }
 
     @Override
