@@ -68,7 +68,6 @@ public class Tree {
 		    if (stack.empty()) {
 			/**
 			 * It's root node.
-			 * 
 			 */
 			oldNode.getLock().unlock();
 			Node newRoot = new Node(nodeStore.size(), false);
@@ -79,9 +78,16 @@ public class Tree {
 			rootNodeId = newRoot.getId();
 			return;
 		    } else {
+			/**
+			 * There is a previous node, so move there.
+			 */
 			currentNode = nodeStore.get(stack.pop());
 			currentNode.getLock().lock();
 			moveRight(currentNode, currentNodeMaxKey);
+			if (newNode.getMaxKeyValue() > currentNode.getMaxKeyValue()) {
+			    currentNode.setMaxKeyValue(newNode.getMaxKeyValue());
+			    nodeStore.writeNode(currentNode);
+			}
 			oldNode.getLock().unlock();
 		    }
 		} else {
@@ -195,17 +201,26 @@ public class Tree {
     @Override
     public String toString() {
 	StringBuilder buff = new StringBuilder();
-	buff.append("Detail tree description continues: \n");
+	buff.append("Detail tree description continues: root node id: ");
+	buff.append(rootNodeId);
+	buff.append("\n");
 
 	final Stack<Integer> stack = new Stack<Integer>();
 	stack.push(rootNodeId);
 	while (!stack.isEmpty()) {
-	    final Node node = nodeStore.get(stack.pop());
-	    buff.append(node.toString());
-	    buff.append("\n");
-	    if (!node.isLeafNode()) {
-		for (final Integer i : node.getNodeIds()) {
-		    stack.push(i);
+	    final Integer nodeId = stack.pop();
+	    if (nodeId == null) {
+		buff.append("\nprevious node id is null");
+		return buff.toString();
+	    } else {
+		final Node node = nodeStore.get(nodeId);
+		node.verify();
+		buff.append(node.toString());
+		buff.append("\n");
+		if (!node.isLeafNode()) {
+		    for (final Integer i : node.getNodeIds()) {
+			stack.push(i);
+		    }
 		}
 	    }
 	}
@@ -222,6 +237,7 @@ public class Tree {
 		logger.error("some node id was null");
 	    } else {
 		final Node node = nodeStore.get(nodeId);
+		node.verify();
 		logger.debug(node.toString());
 		if (!node.isLeafNode()) {
 		    for (final Integer i : node.getNodeIds()) {

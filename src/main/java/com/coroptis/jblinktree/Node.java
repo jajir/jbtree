@@ -5,6 +5,9 @@ import java.util.List;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.google.common.base.MoreObjects;
 import com.google.common.base.Preconditions;
 
@@ -78,6 +81,8 @@ public class Node {
 
     private final Lock lock;
 
+    private final Logger logger = LoggerFactory.getLogger(Node.class);
+
     public Node(final Integer id, final boolean isLeafNode) {
 	this.id = id;
 	this.lock = new ReentrantLock();
@@ -139,7 +144,9 @@ public class Node {
 	 * New key is bigger than all others so should be at the end.
 	 */
 	insertToPosition(key, value, field.length - 2);
-	setMaxKeyValue(key);
+	if (isLeafNode()) {
+	    setMaxKeyValue(key);
+	}
     }
 
     private void insertToPosition(final Integer key, final Integer value, final int targetIndex) {
@@ -164,21 +171,37 @@ public class Node {
      */
     public void moveTopHalfOfDataTo(final Node node) {
 	Preconditions.checkArgument(node.isEmpty());
-	// copy top half to empty node
-	final int startKeyNo = getKeysCount() / 2;
-	final int startIndex = startKeyNo * 2 + 1;
-	final int length = field.length - startIndex;
-	node.field = new Integer[length + 1];
-	System.arraycopy(field, startIndex, node.field, 1, length);
-
-	// remove copied data from this node
-	Integer[] field2 = new Integer[startIndex + 2];
-	System.arraycopy(field, 0, field2, 0, startIndex);
-	field = field2;
-	setLink(node.getId());
-	setMaxKeyValue(field[field.length - 4]);
+	if (getKeysCount() < 1) {
+	    throw new JblinktreeException("In node " + id + " are no values to move.");
+	}
 	if (isLeafNode()) {
+	    // copy top half to empty node
+	    final int startKeyNo = getKeysCount() / 2;
+	    final int startIndex = startKeyNo * 2 + 1;
+	    final int length = field.length - startIndex;
+	    node.field = new Integer[length + 1];
+	    System.arraycopy(field, startIndex, node.field, 1, length);
+
+	    // remove copied data from this node
+	    Integer[] field2 = new Integer[startIndex + 2];
+	    System.arraycopy(field, 0, field2, 0, startIndex);
+	    field = field2;
+	    setLink(node.getId());
+	    setMaxKeyValue(field[field.length - 4]);
 	    node.field[0] = M;
+	} else {
+	    // copy top half to empty node
+	    final int startKeyNo = (getKeysCount() + 1) / 2 - 1;
+	    final int startIndex = startKeyNo * 2 + 2;
+	    final int length = field.length - startIndex;
+	    node.field = new Integer[length ];
+	    System.arraycopy(field, startIndex, node.field, 0, length);
+
+	    // remove copied data from this node
+	    Integer[] field2 = new Integer[startIndex + 1];
+	    System.arraycopy(field, 0, field2, 0, startIndex);
+	    field = field2;
+	    setLink(node.getId());
 	}
     }
 
@@ -273,7 +296,7 @@ public class Node {
 	}
 	return out;
     }
-    
+
     public void setMaxKeyValue(final Integer maxKey) {
 	field[field.length - 2] = maxKey;
     }
@@ -287,6 +310,21 @@ public class Node {
      */
     public Lock getLock() {
 	return lock;
+    }
+
+    public boolean verify() {
+	if ((field.length) % 2 == 0) {
+	    logger.error("node {} have inforrect number of items in field: {}", id, field);
+	    return false;
+	}
+	if (field[0] == null) {
+	    logger.error("node {} have null P0", id);
+	    return false;
+	}
+	if(isLeafNode()){
+	    
+	}
+	return true;
     }
 
 }

@@ -39,29 +39,53 @@ public class TreeBasicTest extends TestCase {
     }
 
     @Test
+    public void test_4_values() throws Exception {
+	tree.insert(1, -10);
+	tree.insert(2, -20);
+	tree.insert(3, -30);
+	tree.insert(4, -40);
+	tree.verify();
+	logger.debug(tree.toString());
+    }
+
+    @Test
     public void test_10_values() throws Exception {
 	tree.insert(1, -10);
 	tree.insert(2, -20);
 	tree.insert(3, -30);
-	logger.debug(tree.toString());
 	tree.insert(4, -40);
-	tree.verify();
-	logger.debug(tree.toString());
 	tree.insert(5, -50);
 	tree.insert(6, -60);
+	tree.insert(7, -70);
+	tree.insert(8, -80);
+	tree.insert(9, -90);
+	tree.insert(10, -100);
+	tree.verify();
 
 	logger.debug(tree.toString());
-	assertEquals(3, tree.countValues());
+	assertEquals(10, tree.countValues());
     }
 
+    @Test
+    public void test_100_values() throws Exception {
+	for (int i = 1; i < 101; i++) {
+	    logger.debug("inserting " + i);
+	    tree.insert(i, -i + 10);
+	    logger.debug(tree.toString());
+	}
+
+	assertEquals(100, tree.countValues());
+    }
+    
     @Test
     public void test_1000_values() throws Exception {
 	for (int i = 1; i < 1001; i++) {
 	    logger.debug("inserting " + i);
+	    tree.insert(i, -i + 10);
 	}
-	
-	logger.debug(tree.toString());
-	assertEquals(3, tree.countValues());
+
+	tree.verify();
+	assertEquals(1000, tree.countValues());
     }
 
     @Override

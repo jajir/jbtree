@@ -1,7 +1,5 @@
 package com.coroptis.jblinktree;
 
-import static org.junit.Assert.*;
-
 import java.util.List;
 
 import junit.framework.TestCase;
@@ -81,23 +79,24 @@ public class NodeTest extends TestCase {
 
     @Test
     public void test_insert_nonLeafNode() throws Exception {
-	Node n = Node.makeNode(0, new Integer[]{0, 1, 1, 3, null});
+	Node n = Node.makeNode(0, new Integer[] { 0, 1, 1, 3, null });
 	n.insert(4, -40);
 
 	logger.debug(n.toString());
 
 	assertEquals(2, n.getKeysCount());
-	assertFalse("it's non LEF NODE",n.isLeafNode());
+	assertFalse("it's non leaf node", n.isLeafNode());
 	List<Integer> keys = n.getKeys();
 	assertTrue(keys.contains(1));
 	assertTrue(keys.contains(4));
 	assertNull(n.getLink());
-	assertEquals(Integer.valueOf(4), n.getMaxKey());
+	assertEquals("non-leaf nodes should preserver it's max key", Integer.valueOf(3),
+		n.getMaxKey());
 	assertEquals(Integer.valueOf(0), n.getCorrespondingNodeId(1));
 	assertEquals(Integer.valueOf(1), n.getCorrespondingNodeId(4));
 	assertEquals(Integer.valueOf(-40), n.getCorrespondingNodeId(5));
     }
-    
+
     @Test
     public void test_link() throws Exception {
 	node.setLink(-10);
@@ -109,7 +108,7 @@ public class NodeTest extends TestCase {
     }
 
     @Test
-    public void test_moveTopHalfOfDataTo() throws Exception {
+    public void test_moveTopHalfOfDataTo_leaf() throws Exception {
 	node.insert(2, 20);
 	node.insert(1, 10);
 	node.setLink(100);
@@ -136,9 +135,52 @@ public class NodeTest extends TestCase {
 	assertEquals(1, node2.getKeysCount());
 	keys = node2.getKeys();
 	assertTrue(keys.contains(2));
-	assertTrue(node2.isLeafNode());
+	assertTrue("target node should be leaf", node2.isLeafNode());
 	assertEquals(Integer.valueOf(100), node2.getLink());
 	assertEquals("Invalid getMaxKey", Integer.valueOf(2), node2.getMaxKey());
+    }
+
+    @Test
+    public void test_moveTopHalfOfDataTo_nothingToMove() throws Exception {
+	Node node2 = new Node(11, true);
+	try {
+	    node.moveTopHalfOfDataTo(node2);
+	    fail();
+	} catch (JblinktreeException e) {
+	    assertTrue(true);
+	}
+    }
+
+    @Test
+    public void test_moveTopHalfOfDataTo_node() throws Exception {
+	Node n = Node.makeNode(10, new Integer[] { 0, 1, 1, 2, 5, 9, null });
+	logger.debug("node  " + n.toString());
+	assertEquals("key count is not correct", 2, n.getKeysCount());
+
+	Node node2 = new Node(11, true);
+	n.moveTopHalfOfDataTo(node2);
+
+	logger.debug("node  " + n.toString());
+	logger.debug("node2 " + node2.toString());
+	/**
+	 * First node
+	 */
+	assertEquals("key count is not correct", 0, n.getKeysCount());
+	assertFalse(n.isLeafNode());
+	List<Integer> keys = n.getKeys();
+	assertTrue(keys.contains(1));
+	assertEquals("next link node", Integer.valueOf(11), n.getLink());
+	assertEquals("Invalid getMaxKey", Integer.valueOf(1), n.getMaxKey());
+
+	/**
+	 * Second node
+	 */
+	assertEquals(1, node2.getKeysCount());
+	keys = node2.getKeys();
+	assertTrue(keys.contains(2));
+	assertFalse(node2.isLeafNode());
+	assertNull("ln in new node should be null", node2.getLink());
+	assertEquals("Invalid getMaxKey", Integer.valueOf(9), node2.getMaxKey());
     }
 
     @Test
