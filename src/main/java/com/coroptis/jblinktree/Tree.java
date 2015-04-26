@@ -32,9 +32,10 @@ public class Tree {
      * Insert method according to Lehman & Yao
      * 
      * @param key
-     * @return
+     *            required parameter key
+     * @return previously associated value with given key.
      */
-    public void insert(final Integer key, final Integer value) {
+    public Integer insert(final Integer key, final Integer value) {
 	final Stack<Integer> stack = new Stack<Integer>();
 	Node currentNode = nodeStore.get(rootNodeId);
 	while (!currentNode.isLeafNode()) {
@@ -82,7 +83,7 @@ public class Tree {
 			newRoot.setMaxKeyValue(newNode.getMaxKey());
 			nodeStore.put(newRoot.getId(), newRoot);
 			rootNodeId = newRoot.getId();
-			return;
+			return null;
 		    } else {
 			/**
 			 * There is a previous node, so move there.
@@ -103,16 +104,18 @@ public class Tree {
 		    currentNode.insert(tmpKey, tmpValue);
 		    nodeStore.writeNode(currentNode);
 		    currentNode.getLock().unlock();
-		    return;
+		    return null;
 		}
 	    }
 	} else {
 	    /**
 	     * Key already exists. Rewrite value.
 	     */
+	    Integer oldValue = currentNode.getValue(key);
 	    currentNode.insert(key, value);
 	    nodeStore.writeNode(currentNode);
 	    currentNode.getLock().unlock();
+	    return oldValue;
 	}
     }
 

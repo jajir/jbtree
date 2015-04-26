@@ -1,6 +1,7 @@
 package com.coroptis.jblinktree;
 
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 
 import junit.framework.TestCase;
 
@@ -44,7 +45,8 @@ public class NodeStoreConcurrencyTest extends TestCase {
 	}
 
 	startLatch.countDown();
-	doneLatch.await();
+	doneLatch.await(10,TimeUnit.SECONDS);
+	assertEquals("Some thread didn't finished",0, doneLatch.getCount());
 	logger.debug("I'm done!");
     }
 

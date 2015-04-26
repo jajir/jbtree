@@ -49,6 +49,17 @@ public class TreeBasicTest extends TestCase {
     }
 
     @Test
+    public void test_overwriting_values() throws Exception {
+	assertNull(tree.insert(1, -10));
+	assertNull(tree.insert(2, -20));
+	assertNull(tree.insert(3, -30));
+	assertNull(tree.insert(4, -40));
+	assertEquals(Integer.valueOf(-10), tree.insert(1, -100));
+	tree.verify();
+	logger.debug(tree.toString());
+    }
+
+    @Test
     public void test_10_values() throws Exception {
 	tree.insert(1, -10);
 	tree.insert(2, -20);
@@ -80,7 +91,7 @@ public class TreeBasicTest extends TestCase {
     @Test
     public void test_1000_values() throws Exception {
 	for (int i = 1; i < 1001; i++) {
-//	    logger.debug("inserting " + i);
+	    // logger.debug("inserting " + i);
 	    tree.insert(i, -i + 10);
 	}
 

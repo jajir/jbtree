@@ -133,6 +133,7 @@ public class Node {
 	Preconditions.checkNotNull(key);
 	Preconditions.checkNotNull(value);
 	if (field.length >= l * 2 + 2) {
+	    logger.error("Leaf is full another value can't be inserted. Leaf: " + this.toString());
 	    throw new JblinktreeException("Leaf is full another value can't be inserted.");
 	}
 	for (int i = 1; i < field.length - 2; i = i + 2) {

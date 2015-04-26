@@ -2,6 +2,7 @@ package com.coroptis.jblinktree;
 
 import java.util.Random;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 
 import junit.framework.TestCase;
 
@@ -42,7 +43,9 @@ public class TreeConcurrencyTest extends TestCase {
 	}
 
 	startLatch.countDown();
-	doneLatch.await();
+	doneLatch.await(10, TimeUnit.SECONDS);
+	assertEquals("Some thread didn't finished work", 0, doneLatch.getCount());
+	tree.verify();
 	logger.debug("I'm done!");
     }
 
@@ -62,6 +65,7 @@ public class TreeConcurrencyTest extends TestCase {
 
     void doWorkNow() {
 	Integer integer = random.nextInt(100) + 1;
+	logger.debug("inserting :" + integer);
 	tree.insert(integer, integer);
     }
 
