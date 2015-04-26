@@ -79,7 +79,7 @@ public class NodeTest extends TestCase {
 
     @Test
     public void test_insert_nonLeafNode() throws Exception {
-	Node n = Node.makeNode(0, new Integer[] { 0, 1, 1, 3, null });
+	Node n = Node.makeNode(2, 0, new Integer[] { 0, 1, 1, 3, null });
 	n.insert(4, -40);
 
 	logger.debug(n.toString());
@@ -114,7 +114,7 @@ public class NodeTest extends TestCase {
 	node.setLink(100);
 	logger.debug("node  " + node.toString());
 
-	Node node2 = new Node(1, true);
+	Node node2 = new Node(2, 1, true);
 	node.moveTopHalfOfDataTo(node2);
 
 	logger.debug("node  " + node.toString());
@@ -142,7 +142,7 @@ public class NodeTest extends TestCase {
 
     @Test
     public void test_moveTopHalfOfDataTo_nothingToMove() throws Exception {
-	Node node2 = new Node(11, true);
+	Node node2 = new Node(2, 11, true);
 	try {
 	    node.moveTopHalfOfDataTo(node2);
 	    fail();
@@ -153,11 +153,11 @@ public class NodeTest extends TestCase {
 
     @Test
     public void test_moveTopHalfOfDataTo_node() throws Exception {
-	Node n = Node.makeNode(10, new Integer[] { 0, 1, 1, 2, 5, 9, null });
+	Node n = Node.makeNode(2, 10, new Integer[] { 0, 1, 1, 2, 5, 9, null });
 	logger.debug("node  " + n.toString());
 	assertEquals("key count is not correct", 2, n.getKeysCount());
 
-	Node node2 = new Node(11, true);
+	Node node2 = new Node(2, 11, true);
 	n.moveTopHalfOfDataTo(node2);
 
 	logger.debug("node  " + n.toString());
@@ -223,7 +223,7 @@ public class NodeTest extends TestCase {
 
     @Test
     public void test_getCorrespondingNodeId_bigger_key() throws Exception {
-	Node n = Node.makeNode(2, new Integer[] { 0, 1, 2, 3, null });
+	Node n = Node.makeNode(2, 2, new Integer[] { 0, 1, 2, 3, null });
 
 	logger.debug(n.toString());
 
@@ -235,7 +235,7 @@ public class NodeTest extends TestCase {
 
     @Test
     public void test_getCorrespondingNodeId_simple() throws Exception {
-	Node n = Node.makeNode(2, new Integer[] { 0, 2, 1, 3, null });
+	Node n = Node.makeNode(2, 2, new Integer[] { 0, 2, 1, 3, null });
 
 	logger.debug(n.toString());
 
@@ -248,7 +248,7 @@ public class NodeTest extends TestCase {
     @Override
     protected void setUp() throws Exception {
 	super.setUp();
-	node = new Node(0, true);
+	node = new Node(2, 0, true);
     }
 
     @Override

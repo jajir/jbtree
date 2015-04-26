@@ -9,15 +9,21 @@ import com.google.common.base.Preconditions;
 
 public class Tree {
 
+    /**
+     * Main node parameter, it's number of nodes.
+     */
+    private final int l;
+
     private Integer rootNodeId;
 
     private final NodeStore nodeStore;
 
     private final Logger logger = LoggerFactory.getLogger(Tree.class);
 
-    public Tree(final NodeStore nodeStore) {
+    public Tree(final int l, final NodeStore nodeStore) {
+	this.l = l;
 	this.nodeStore = Preconditions.checkNotNull(nodeStore);
-	Node node = new Node(0, true);
+	Node node = new Node(l, 0, true);
 	rootNodeId = node.getId();
 	this.nodeStore.put(rootNodeId, node);
     }
@@ -54,7 +60,7 @@ public class Tree {
 	    Integer tmpValue = value;
 	    Integer tmpKey = key;
 	    while (true) {
-		if (currentNode.getKeysCount() >= Node.L) {
+		if (currentNode.getKeysCount() >= l) {
 		    /**
 		     * There is no free space for key and value
 		     */
@@ -70,7 +76,7 @@ public class Tree {
 			 * It's root node.
 			 */
 			oldNode.getLock().unlock();
-			Node newRoot = new Node(nodeStore.size(), false);
+			Node newRoot = new Node(l, nodeStore.size(), false);
 			newRoot.insert(currentNode.getMaxKey(), newNode.getId());
 			newRoot.setP0(currentNode.getId());
 			newRoot.setMaxKeyValue(newNode.getMaxKey());
@@ -111,7 +117,7 @@ public class Tree {
     }
 
     private Node split(final Node currentNode, final Integer key, final Integer tmpValue) {
-	Node newNode = new Node(nodeStore.size(), true);
+	Node newNode = new Node(l, nodeStore.size(), true);
 	currentNode.moveTopHalfOfDataTo(newNode);
 	if (currentNode.getMaxKey() < key) {
 	    newNode.insert(key, tmpValue);
@@ -238,7 +244,6 @@ public class Tree {
 	    } else {
 		final Node node = nodeStore.get(nodeId);
 		node.verify();
-		logger.debug(node.toString());
 		if (!node.isLeafNode()) {
 		    for (final Integer i : node.getNodeIds()) {
 			stack.push(i);

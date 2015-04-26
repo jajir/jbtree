@@ -76,11 +76,11 @@ public class TreeBasicTest extends TestCase {
 
 	assertEquals(100, tree.countValues());
     }
-    
+
     @Test
     public void test_1000_values() throws Exception {
 	for (int i = 1; i < 1001; i++) {
-	    logger.debug("inserting " + i);
+//	    logger.debug("inserting " + i);
 	    tree.insert(i, -i + 10);
 	}
 
@@ -92,7 +92,7 @@ public class TreeBasicTest extends TestCase {
     protected void setUp() throws Exception {
 	super.setUp();
 	nodeStore = new NodeStoreImpl();
-	tree = new Tree(nodeStore);
+	tree = new Tree(2, nodeStore);
     }
 
     @Override

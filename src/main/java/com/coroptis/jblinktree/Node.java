@@ -68,22 +68,26 @@ import com.google.common.base.Preconditions;
  */
 public class Node {
 
-    public static final int L = 2;
+    /**
+     * Main node parameter, it's number of nodes.
+     */
+    private final int l;
 
     /**
      * When this value in at P(0) position than it's leaf node.
      */
-    public final static Integer M = -1;
+    private final static Integer M = -1;
 
     private final Integer id;
 
-    public Integer field[];
+    private Integer field[];
 
     private final Lock lock;
 
     private final Logger logger = LoggerFactory.getLogger(Node.class);
 
-    public Node(final Integer id, final boolean isLeafNode) {
+    public Node(final int l, final Integer id, final boolean isLeafNode) {
+	this.l = l;
 	this.id = id;
 	this.lock = new ReentrantLock();
 	/**
@@ -95,8 +99,8 @@ public class Node {
 	}
     }
 
-    public static Node makeNode(final Integer idNode, final Integer field[]) {
-	Node n = new Node(idNode, true);
+    public static Node makeNode(final int l, final Integer idNode, final Integer field[]) {
+	Node n = new Node(l, idNode, true);
 	n.field = field;
 	return n;
     }
@@ -128,7 +132,7 @@ public class Node {
     public void insert(final Integer key, final Integer value) {
 	Preconditions.checkNotNull(key);
 	Preconditions.checkNotNull(value);
-	if (field.length >= L * 2 + 2) {
+	if (field.length >= l * 2 + 2) {
 	    throw new JblinktreeException("Leaf is full another value can't be inserted.");
 	}
 	for (int i = 1; i < field.length - 2; i = i + 2) {
@@ -194,7 +198,7 @@ public class Node {
 	    final int startKeyNo = (getKeysCount() + 1) / 2 - 1;
 	    final int startIndex = startKeyNo * 2 + 2;
 	    final int length = field.length - startIndex;
-	    node.field = new Integer[length ];
+	    node.field = new Integer[length];
 	    System.arraycopy(field, startIndex, node.field, 0, length);
 
 	    // remove copied data from this node
@@ -321,8 +325,8 @@ public class Node {
 	    logger.error("node {} have null P0", id);
 	    return false;
 	}
-	if(isLeafNode()){
-	    
+	if (isLeafNode()) {
+
 	}
 	return true;
     }
