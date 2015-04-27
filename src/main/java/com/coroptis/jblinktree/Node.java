@@ -86,10 +86,10 @@ public class Node {
 
     private final Logger logger = LoggerFactory.getLogger(Node.class);
 
-    public Node(final int l, final Integer id, final boolean isLeafNode) {
+    public Node(final int l, final Integer nodeId, final boolean isLeafNode) {
 	this.l = l;
-	this.id = id;
-	this.lock = new ReentrantLock();
+	this.id = nodeId;
+	this.lock = new MyLoggingLock(nodeId);
 	/**
 	 * There is three position even in empty node: P0, max key and link.
 	 */
@@ -99,7 +99,8 @@ public class Node {
 	}
     }
 
-    public static Node makeNode(final int l, final Integer idNode, final Integer field[]) {
+    public static Node makeNode(final int l, final Integer idNode,
+	    final Integer field[]) {
 	Node n = new Node(l, idNode, true);
 	n.field = field;
 	return n;
@@ -133,8 +134,11 @@ public class Node {
 	Preconditions.checkNotNull(key);
 	Preconditions.checkNotNull(value);
 	if (field.length >= l * 2 + 2) {
-	    logger.error("Leaf is full another value can't be inserted. Leaf: " + this.toString());
-	    throw new JblinktreeException("Leaf is full another value can't be inserted.");
+	    logger.error("Leaf (" + id
+		    + ") is full another value can't be inserted. Leaf: "
+		    + this.toString());
+	    throw new JblinktreeException("Leaf (" + id
+		    + ") is full another value can't be inserted.");
 	}
 	for (int i = 1; i < field.length - 2; i = i + 2) {
 	    if (field[i] > key) {
@@ -154,14 +158,16 @@ public class Node {
 	}
     }
 
-    private void insertToPosition(final Integer key, final Integer value, final int targetIndex) {
+    private void insertToPosition(final Integer key, final Integer value,
+	    final int targetIndex) {
 	Integer[] field2 = new Integer[field.length + 2];
 	if (targetIndex > 0) {
 	    System.arraycopy(field, 0, field2, 0, targetIndex);
 	}
 	field2[targetIndex] = key;
 	field2[targetIndex + 1] = value;
-	System.arraycopy(field, targetIndex, field2, targetIndex + 2, field.length - targetIndex);
+	System.arraycopy(field, targetIndex, field2, targetIndex + 2,
+		field.length - targetIndex);
 	field = field2;
     }
 
@@ -177,7 +183,8 @@ public class Node {
     public void moveTopHalfOfDataTo(final Node node) {
 	Preconditions.checkArgument(node.isEmpty());
 	if (getKeysCount() < 1) {
-	    throw new JblinktreeException("In node " + id + " are no values to move.");
+	    throw new JblinktreeException("In node " + id
+		    + " are no values to move.");
 	}
 	if (isLeafNode()) {
 	    // copy top half to empty node
@@ -231,7 +238,8 @@ public class Node {
 	}
 	buff.append("]");
 	return MoreObjects.toStringHelper(Node.class).add("id", getId())
-		.add("isLeafNode", isLeafNode()).add("field", buff.toString()).toString();
+		.add("isLeafNode", isLeafNode()).add("field", buff.toString())
+		.toString();
     }
 
     /**
@@ -263,7 +271,8 @@ public class Node {
      */
     public Integer getCorrespondingNodeId(final Integer key) {
 	if (isLeafNode()) {
-	    throw new JblinktreeException("Leaf node doesn't have any child nodes.");
+	    throw new JblinktreeException(
+		    "Leaf node doesn't have any child nodes.");
 	}
 	for (int i = 1; i < field.length - 2; i = i + 2) {
 	    if (key <= field[i]) {
@@ -276,7 +285,8 @@ public class Node {
     public Integer getValue(final Integer key) {
 	Preconditions.checkNotNull(key);
 	if (!isLeafNode()) {
-	    throw new JblinktreeException("Non-leaf node doesn't have leaf value.");
+	    throw new JblinktreeException(
+		    "Non-leaf node doesn't have leaf value.");
 	}
 	for (int i = 1; i < field.length - 2; i = i + 2) {
 	    if (key.equals(field[i])) {
@@ -319,7 +329,8 @@ public class Node {
 
     public boolean verify() {
 	if ((field.length) % 2 == 0) {
-	    logger.error("node {} have inforrect number of items in field: {}", id, field);
+	    logger.error("node {} have inforrect number of items in field: {}",
+		    id, field);
 	    return false;
 	}
 	if (field[0] == null) {
