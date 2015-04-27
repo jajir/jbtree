@@ -50,9 +50,11 @@ public class Tree {
 	}
 
 	/**
-	 * In node is leaf where should be new kye & value inserted.
+	 * In node is leaf where should be new key & value inserted.
 	 */
-	currentNode.getLock().lock();
+	// just node id should be passed here, because node object could be
+	// completly different in store
+	nodeStore.lockNode(currentNode.getId());
 	currentNode = moveRight(currentNode, key);
 	if (currentNode.getValue(key) == null) {
 	    /**
@@ -76,7 +78,7 @@ public class Tree {
 			/**
 			 * It's root node.
 			 */
-			oldNode.getLock().unlock();
+			nodeStore.unlockNode(oldNode.getId());
 			Node newRoot = new Node(l, nodeStore.size(), false);
 			newRoot.insert(currentNode.getMaxKey(), newNode.getId());
 			newRoot.setP0(currentNode.getId());
@@ -89,13 +91,13 @@ public class Tree {
 			 * There is a previous node, so move there.
 			 */
 			currentNode = nodeStore.get(stack.pop());
-			currentNode.getLock().lock();
+			nodeStore.lockNode(currentNode.getId());
 			moveRight(currentNode, currentNodeMaxKey);
 			if (newNode.getMaxKeyValue() > currentNode.getMaxKeyValue()) {
 			    currentNode.setMaxKeyValue(newNode.getMaxKeyValue());
 			    nodeStore.writeNode(currentNode);
 			}
-			oldNode.getLock().unlock();
+			nodeStore.unlockNode(oldNode.getId());
 		    }
 		} else {
 		    /**
@@ -103,7 +105,7 @@ public class Tree {
 		     */
 		    currentNode.insert(tmpKey, tmpValue);
 		    nodeStore.writeNode(currentNode);
-		    currentNode.getLock().unlock();
+		    nodeStore.unlockNode(currentNode.getId());
 		    return null;
 		}
 	    }
@@ -114,7 +116,7 @@ public class Tree {
 	    Integer oldValue = currentNode.getValue(key);
 	    currentNode.insert(key, value);
 	    nodeStore.writeNode(currentNode);
-	    currentNode.getLock().unlock();
+	    nodeStore.unlockNode(currentNode.getId());
 	    return oldValue;
 	}
     }
@@ -148,15 +150,15 @@ public class Tree {
 	if (current.isLeafNode()) {
 	    while (current.getLink() != null && key > current.getLink()) {
 		n = nodeStore.get(current.getLink());
-		n.getLock().lock();
-		current.getLock().unlock();
+		nodeStore.lockNode(n.getId());
+		nodeStore.unlockNode(current.getId());
 		current = n;
 	    }
 	    return current;
 	} else {
 	    while ((n = findCorrespondingNode(current, key)).getId().equals(current.getLink())) {
-		n.getLock().lock();
-		current.getLock().unlock();
+		nodeStore.lockNode(n.getId());
+		nodeStore.unlockNode(current.getId());
 		current = n;
 	    }
 	    return current;

@@ -11,27 +11,27 @@ import com.google.inject.Inject;
 
 public class NodeStoreImpl implements NodeStore {
 
+    private final Logger logger = LoggerFactory.getLogger(NodeStoreImpl.class);
+
     private final Map<Integer, Node> nodes;
 
-    private final Logger logger = LoggerFactory.getLogger(NodeStoreImpl.class);
+    private final NodeLocks nodeLocks;
 
     @Inject
     NodeStoreImpl() {
 	nodes = new HashMap<Integer, Node>();
+	nodeLocks = new NodeLocks();
+	logger.debug("staring in memory node store");
     }
 
     @Override
     public void lockNode(final Integer nodeId) {
-	Node node = get(nodeId);
-	node.getLock().lock();
-	logger.debug("Node with id '{}' is locked", nodeId);
+	nodeLocks.lockNode(nodeId);
     }
 
     @Override
     public void unlockNode(final Integer nodeId) {
-	Node node = get(nodeId);
-	node.getLock().unlock();
-	logger.debug("Node with id '{}' unlocked", nodeId);
+	nodeLocks.unlockNode(nodeId);
     }
 
     @Override
@@ -44,6 +44,7 @@ public class NodeStoreImpl implements NodeStore {
     }
 
     @Override
+    @Deprecated
     public void put(final Integer idNode, final Node node) {
 	Preconditions.checkNotNull(idNode);
 	Preconditions.checkNotNull(node);

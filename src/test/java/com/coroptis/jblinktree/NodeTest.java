@@ -38,7 +38,6 @@ public class NodeTest extends TestCase {
 	assertNull(node.getLink());
 	assertEquals(Integer.valueOf(2), node.getMaxKey());
 	assertEquals("Unable to find inserted key", Integer.valueOf(20), node.getValue(2));
-	assertNotNull("lock should be null", node.getLock());
     }
 
     @Test
