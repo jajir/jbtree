@@ -37,24 +37,13 @@ public class Tree {
      */
     public Integer insert(final Integer key, final Integer value) {
 	final Stack<Integer> stack = new Stack<Integer>();
-	Node currentNode = nodeStore.get(rootNodeId);
-	while (!currentNode.isLeafNode()) {
-	    final Node previousNode = currentNode;
-	    currentNode = findCorrespondingNode(currentNode, key);
-	    if (!currentNode.getId().equals(previousNode.getLink())) {
-		/**
-		 * I don't want to store nodes when cursor is moved right.
-		 */
-		stack.push(previousNode.getId());
-	    }
-	}
+	Integer currentNodeId = findLeafNodeId(key, stack);
 
 	/**
 	 * In node is leaf where should be new key & value inserted.
 	 */
-	// just node id should be passed here, because node object could be
-	// completly different in store
-	nodeStore.lockNode(currentNode.getId());
+	nodeStore.lockNode(currentNodeId);
+	Node currentNode = nodeStore.get(currentNodeId);
 	currentNode = moveRight(currentNode, key);
 	if (currentNode.getValue(key) == null) {
 	    /**
@@ -149,20 +138,38 @@ public class Tree {
 	Node n;
 	if (current.isLeafNode()) {
 	    while (current.getLink() != null && key > current.getLink()) {
-		n = nodeStore.get(current.getLink());
-		nodeStore.lockNode(n.getId());
+		n = nodeStore.getAndLock(current.getLink());
 		nodeStore.unlockNode(current.getId());
 		current = n;
 	    }
 	    return current;
 	} else {
-	    while ((n = findCorrespondingNode(current, key)).getId().equals(current.getLink())) {
-		nodeStore.lockNode(n.getId());
+	    Integer nextNodeId = current.getCorrespondingNodeId(key);
+	    n = nodeStore.getAndLock(nextNodeId);
+	    while (n.getId().equals(current.getLink())) {
 		nodeStore.unlockNode(current.getId());
 		current = n;
+
+		nextNodeId = current.getCorrespondingNodeId(key);
+		n = nodeStore.getAndLock(nextNodeId);
 	    }
 	    return current;
 	}
+    }
+
+    private Integer findLeafNodeId(final Integer key, final Stack<Integer> stack) {
+	Node currentNode = nodeStore.get(rootNodeId);
+	while (!currentNode.isLeafNode()) {
+	    final Node previousNode = currentNode;
+	    currentNode = findCorrespondingNode(currentNode, key);
+	    if (!currentNode.getId().equals(previousNode.getLink())) {
+		/**
+		 * I don't want to store nodes when cursor is moved right.
+		 */
+		stack.push(previousNode.getId());
+	    }
+	}
+	return currentNode.getId();
     }
 
     private Node findCorrespondingNode(final Node node, final Integer key) {

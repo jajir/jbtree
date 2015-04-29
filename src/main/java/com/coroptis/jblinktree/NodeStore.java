@@ -8,6 +8,8 @@ public interface NodeStore {
 	
 	Node get(Integer nodeId);
 	
+	Node getAndLock(Integer nodeId);
+	
 	void writeNode(Node node);
 	
 	void put(Integer idNode, Node node);

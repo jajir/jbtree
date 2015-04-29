@@ -26,12 +26,12 @@ public class NodeStoreImpl implements NodeStore {
 
     @Override
     public void lockNode(final Integer nodeId) {
-	nodeLocks.lockNode(nodeId);
+	nodeLocks.lockNode(Preconditions.checkNotNull(nodeId));
     }
 
     @Override
     public void unlockNode(final Integer nodeId) {
-	nodeLocks.unlockNode(nodeId);
+	nodeLocks.unlockNode(Preconditions.checkNotNull(nodeId));
     }
 
     @Override
@@ -41,6 +41,12 @@ public class NodeStoreImpl implements NodeStore {
 	    throw new JblinktreeException("There is no node with id '" + nodeId + "'");
 	}
 	return node;
+    }
+
+    @Override
+    public Node getAndLock(final Integer nodeId) {
+	lockNode(nodeId);
+	return get(nodeId);
     }
 
     @Override

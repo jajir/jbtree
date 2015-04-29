@@ -35,8 +35,17 @@ public class NodeLocks {
 	Preconditions.checkNotNull(nodeId);
 	Lock lock = locks.get(nodeId);
 	if (lock == null) {
-	    lock = new MyLoggingLock(nodeId);
-	    locks.put(nodeId, lock);
+	    /**
+	     * Following construction prevent store from creating more lock
+	     * instances for same nodeId.
+	     */
+	    synchronized (this) {
+		lock = locks.get(nodeId);
+		if (lock == null) {
+		    lock = new MyLoggingLock(nodeId);
+		    locks.put(nodeId, lock);
+		}
+	    }
 	}
 	lock.lock();
     }
