@@ -45,17 +45,7 @@ public class NodeTest extends TestCase {
 	node.insert(2, 20);
 	node.insert(1, 10);
 
-	logger.debug(node.toString());
-
-	assertEquals(2, node.getKeysCount());
-	assertTrue(node.isLeafNode());
-	List<Integer> keys = node.getKeys();
-	assertTrue(keys.contains(1));
-	assertTrue(keys.contains(2));
-	assertNull(node.getLink());
-	assertEquals(Integer.valueOf(2), node.getMaxKey());
-	assertEquals(Integer.valueOf(20), node.getValue(2));
-	assertEquals(Integer.valueOf(10), node.getValue(1));
+	verifyNode(new Integer[][] { { 1, 10 }, { 2, 20 } }, true, null);
     }
 
     @Test
@@ -114,13 +104,51 @@ public class NodeTest extends TestCase {
     }
 
     @Test
+    public void test_remove_first() throws Exception {
+	node.insert(2, 20);
+	node.insert(1, 10);
+	Boolean ret = node.remove(1);
+
+	assertTrue(ret);
+	verifyNode(new Integer[][] { { 2, 20 } }, true, null);
+    }
+
+    @Test
+    public void test_remove_last() throws Exception {
+	node.insert(2, 20);
+	Boolean ret = node.remove(2);
+
+	assertTrue(ret);
+	assertTrue(node.isEmpty());
+	assertNull(node.getMaxKeyValue());
+    }
+
+    @Test
+    public void test_remove_second() throws Exception {
+	node.insert(2, 20);
+	node.insert(1, 10);
+	Boolean ret = node.remove(2);
+
+	assertTrue(ret);
+	verifyNode(new Integer[][] { { 1, 10 } }, true, null);
+    }
+    @Test
+    public void test_remove_notExisting() throws Exception {
+	node.insert(2, 20);
+	node.insert(1, 10);
+	Boolean ret = node.remove(12);
+
+	assertFalse(ret);
+	verifyNode(new Integer[][] { { 1, 10 }, { 2, 20 } }, true, null);
+    }
+
+    @Test
     public void test_link() throws Exception {
 	node.setLink(-10);
 	node.insert(2, 20);
 	node.insert(1, 10);
 
-	logger.debug(node.toString());
-	assertEquals(Integer.valueOf(-10), node.getLink());
+	verifyNode(new Integer[][] { { 1, 10 }, { 2, 20 } }, true, -10);
     }
 
     @Test
@@ -259,6 +287,24 @@ public class NodeTest extends TestCase {
 
 	assertNotNull("node id can't be null", nodeId);
 	assertEquals("node id should be different", Integer.valueOf(1), nodeId);
+    }
+
+    private void verifyNode(final Integer[][] pairs, final boolean isLefNode,
+	    final Integer expectedNodeLink) {
+	logger.debug(node.toString());
+
+	assertEquals("Expected number of key is invalid", pairs.length, node.getKeysCount());
+	assertEquals("isLeafNode value is invalid", isLefNode, node.isLeafNode());
+	List<Integer> keys = node.getKeys();
+	for (Integer[] pair : pairs) {
+	    final Integer key = pair[0];
+	    final Integer value = pair[1];
+	    assertTrue("keys should contains key " + pair[0], keys.contains(pair[0]));
+	    assertEquals(value, node.getValue(key));
+	}
+	assertEquals("Node link is invalid", expectedNodeLink, node.getLink());
+	final Integer expectedMaxKey = pairs[pairs.length - 1][0];
+	assertEquals("Max key value is invalid", expectedMaxKey, node.getMaxKey());
     }
 
     @Override

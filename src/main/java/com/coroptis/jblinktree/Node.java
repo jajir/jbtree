@@ -174,6 +174,36 @@ public class Node {
 	field = field2;
     }
 
+    public boolean remove(final Integer key) {
+	Preconditions.checkNotNull(key);
+	for (int i = 1; i < field.length - 2; i = i + 2) {
+	    if (field[i] == key) {
+		/**
+		 * Remove key and value.
+		 */
+		Integer tmp[] = new Integer[field.length - 2];
+		System.arraycopy(field, 0, tmp, 0, i);
+		System.arraycopy(field, i + 2, tmp, i, field.length - i - 2);
+		field = tmp;
+		if (isLeafNode()) {
+		    if (field.length > 3) {
+			setMaxKeyValue(field[field.length - 4]);
+		    } else {
+			setMaxKeyValue(null);
+		    }
+		}
+		return true;
+	    } else if (field[i] > key) {
+		/**
+		 * if key in node is bigger than key than node doesn't contains
+		 * key to delete.
+		 */
+		return false;
+	    }
+	}
+	return false;
+    }
+
     /**
      * About half of keys will be copied to <code>node</code>.
      * <p>

@@ -173,6 +173,11 @@ public class Tree {
 	Integer nextNodeId = node.getCorrespondingNodeId(key);
 	return nodeStore.get(nextNodeId);
     }
+    
+    public boolean remove(final Integer key){
+	//FIXME not yet implemented
+	return false;
+    }
 
     /**
      * Search method according to Lehman & Yao
