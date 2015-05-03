@@ -42,8 +42,7 @@ public class Tree {
 	/**
 	 * In node is leaf where should be new key & value inserted.
 	 */
-	nodeStore.lockNode(currentNodeId);
-	Node currentNode = nodeStore.get(currentNodeId);
+	Node currentNode = nodeStore.getAndLock(currentNodeId);
 	currentNode = moveRight(currentNode, key);
 	if (currentNode.getValue(key) == null) {
 	    /**
@@ -79,11 +78,12 @@ public class Tree {
 			/**
 			 * There is a previous node, so move there.
 			 */
-			currentNode = nodeStore.get(stack.pop());
-			nodeStore.lockNode(currentNode.getId());
+			currentNode = nodeStore.getAndLock(stack.pop());
 			moveRight(currentNode, currentNodeMaxKey);
-			if (newNode.getMaxKeyValue() > currentNode.getMaxKeyValue()) {
-			    currentNode.setMaxKeyValue(newNode.getMaxKeyValue());
+			if (newNode.getMaxKeyValue() > currentNode
+				.getMaxKeyValue()) {
+			    currentNode
+				    .setMaxKeyValue(newNode.getMaxKeyValue());
 			    nodeStore.writeNode(currentNode);
 			}
 			nodeStore.unlockNode(oldNode.getId());
@@ -110,7 +110,8 @@ public class Tree {
 	}
     }
 
-    private Node split(final Node currentNode, final Integer key, final Integer tmpValue) {
+    private Node split(final Node currentNode, final Integer key,
+	    final Integer tmpValue) {
 	Node newNode = new Node(l, nodeStore.size(), true);
 	currentNode.moveTopHalfOfDataTo(newNode);
 	if (currentNode.getMaxKey() < key) {
@@ -137,7 +138,7 @@ public class Tree {
     private Node moveRight(Node current, final Integer key) {
 	Node n;
 	if (current.isLeafNode()) {
-	    while (current.getLink() != null && key > current.getLink()) {
+	    while (current.getLink() != null && key > current.getMaxKeyValue()) {
 		n = nodeStore.getAndLock(current.getLink());
 		nodeStore.unlockNode(current.getId());
 		current = n;
@@ -145,13 +146,12 @@ public class Tree {
 	    return current;
 	} else {
 	    Integer nextNodeId = current.getCorrespondingNodeId(key);
-	    n = nodeStore.getAndLock(nextNodeId);
-	    while (n.getId().equals(current.getLink())) {
+	    while (nextNodeId.equals(current.getLink())) {
+		n = nodeStore.getAndLock(nextNodeId);
 		nodeStore.unlockNode(current.getId());
 		current = n;
 
 		nextNodeId = current.getCorrespondingNodeId(key);
-		n = nodeStore.getAndLock(nextNodeId);
 	    }
 	    return current;
 	}

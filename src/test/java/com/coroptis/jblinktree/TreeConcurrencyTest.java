@@ -34,8 +34,8 @@ public class TreeConcurrencyTest extends TestCase {
 	for (int i = 0; i < threadCount; ++i) {
 	    Runnable runner = new Executer(new Worker() {
 
-		@Override
-		public void doWork() {
+    		@Override
+    		public void doWork() {
 		    doWorkNow();
 		}
 	    }, startLatch, doneLatch, cycleCount);
@@ -43,7 +43,8 @@ public class TreeConcurrencyTest extends TestCase {
 	}
 
 	startLatch.countDown();
-	doneLatch.await(10, TimeUnit.SECONDS);
+//	doneLatch.await(10, TimeUnit.SECONDS);
+	doneLatch.await();
 	assertEquals("Some thread didn't finished work", 0, doneLatch.getCount());
 	tree.verify();
 	logger.debug("I'm done!");
