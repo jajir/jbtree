@@ -88,17 +88,6 @@ public class TreeBasicTest extends TestCase {
 	assertEquals(100, tree.countValues());
     }
 
-    @Test
-    public void test_1000_values() throws Exception {
-	for (int i = 1; i < 1001; i++) {
-	    // logger.debug("inserting " + i);
-	    tree.insert(i, -i + 10);
-	}
-
-	tree.verify();
-	assertEquals(1000, tree.countValues());
-    }
-
     @Override
     protected void setUp() throws Exception {
 	super.setUp();

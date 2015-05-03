@@ -49,9 +49,7 @@ public class NodeStoreImpl implements NodeStore {
 	return get(nodeId);
     }
 
-    @Override
-    @Deprecated
-    public void put(final Integer idNode, final Node node) {
+    private void put(final Integer idNode, final Node node) {
 	Preconditions.checkNotNull(idNode);
 	Preconditions.checkNotNull(node);
 	nodes.put(idNode, node);

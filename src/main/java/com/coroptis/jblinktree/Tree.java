@@ -25,7 +25,7 @@ public class Tree {
 	this.nodeStore = Preconditions.checkNotNull(nodeStore);
 	Node node = new Node(l, 0, true);
 	rootNodeId = node.getId();
-	this.nodeStore.put(rootNodeId, node);
+	this.nodeStore.writeNode(node);
     }
 
     /**
@@ -71,7 +71,7 @@ public class Tree {
 			newRoot.insert(currentNode.getMaxKey(), newNode.getId());
 			newRoot.setP0(currentNode.getId());
 			newRoot.setMaxKeyValue(newNode.getMaxKey());
-			nodeStore.put(newRoot.getId(), newRoot);
+			nodeStore.writeNode(newRoot);
 			rootNodeId = newRoot.getId();
 			return null;
 		    } else {
@@ -80,10 +80,8 @@ public class Tree {
 			 */
 			currentNode = nodeStore.getAndLock(stack.pop());
 			moveRight(currentNode, currentNodeMaxKey);
-			if (newNode.getMaxKeyValue() > currentNode
-				.getMaxKeyValue()) {
-			    currentNode
-				    .setMaxKeyValue(newNode.getMaxKeyValue());
+			if (newNode.getMaxKeyValue() > currentNode.getMaxKeyValue()) {
+			    currentNode.setMaxKeyValue(newNode.getMaxKeyValue());
 			    nodeStore.writeNode(currentNode);
 			}
 			nodeStore.unlockNode(oldNode.getId());
@@ -110,8 +108,7 @@ public class Tree {
 	}
     }
 
-    private Node split(final Node currentNode, final Integer key,
-	    final Integer tmpValue) {
+    private Node split(final Node currentNode, final Integer key, final Integer tmpValue) {
 	Node newNode = new Node(l, nodeStore.size(), true);
 	currentNode.moveTopHalfOfDataTo(newNode);
 	if (currentNode.getMaxKey() < key) {

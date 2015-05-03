@@ -127,14 +127,16 @@ public class Node {
     public void insert(final Integer key, final Integer value) {
 	Preconditions.checkNotNull(key);
 	Preconditions.checkNotNull(value);
-	if (field.length >= l * 2 + 2) {
-	    logger.error("Leaf (" + id + ") is full another value can't be inserted. Leaf: "
-		    + this.toString());
-	    throw new JblinktreeException("Leaf (" + id
-		    + ") is full another value can't be inserted.");
-	}
+
 	for (int i = 1; i < field.length - 2; i = i + 2) {
-	    if (field[i] > key) {
+	    if (field[i] == key) {
+		/**
+		 * Rewrite value.
+		 */
+		field[i + 1] = value;
+		return;
+	    } else if (field[i] > key) {
+		couldInsertedKey();
 		/**
 		 * given value should be inserted 1 before current index
 		 */
@@ -142,12 +144,22 @@ public class Node {
 		return;
 	    }
 	}
+	couldInsertedKey();
 	/**
 	 * New key is bigger than all others so should be at the end.
 	 */
 	insertToPosition(key, value, field.length - 2);
 	if (isLeafNode()) {
 	    setMaxKeyValue(key);
+	}
+    }
+
+    private void couldInsertedKey() {
+	if (field.length >= l * 2 + 2) {
+	    logger.error("Leaf (" + id + ") is full another value can't be inserted. Leaf: "
+		    + this.toString());
+	    throw new JblinktreeException("Leaf (" + id
+		    + ") is full another value can't be inserted.");
 	}
     }
 

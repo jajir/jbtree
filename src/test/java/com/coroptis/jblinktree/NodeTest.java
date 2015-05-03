@@ -60,9 +60,26 @@ public class NodeTest extends TestCase {
 
     @Test
     public void test_insert_overwriteValue() throws Exception {
+	node.insert(2, 10);
+	node.insert(2, 20);
+
+	logger.debug(node.toString());
+
+	assertEquals(1, node.getKeysCount());
+	assertTrue(node.isLeafNode());
+	List<Integer> keys = node.getKeys();
+	assertTrue(keys.contains(2));
+	assertNull(node.getLink());
+	assertEquals(Integer.valueOf(2), node.getMaxKey());
+	assertEquals(Integer.valueOf(20), node.getValue(2));
+    }
+
+    @Test
+    public void test_insert_overwriteValue_fullNode() throws Exception {
 	node.insert(2, 20);
 	node.insert(1, 80);
 
+	node.insert(2, 30);
 	logger.debug(node.toString());
 
 	assertEquals(2, node.getKeysCount());
@@ -72,7 +89,7 @@ public class NodeTest extends TestCase {
 	assertTrue(keys.contains(2));
 	assertNull(node.getLink());
 	assertEquals(Integer.valueOf(2), node.getMaxKey());
-	assertEquals(Integer.valueOf(20), node.getValue(2));
+	assertEquals(Integer.valueOf(30), node.getValue(2));
 	assertEquals(Integer.valueOf(80), node.getValue(1));
     }
 

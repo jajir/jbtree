@@ -12,8 +12,6 @@ public interface NodeStore {
 	
 	void writeNode(Node node);
 	
-	void put(Integer idNode, Node node);
-	
 	int size();
 	
 }

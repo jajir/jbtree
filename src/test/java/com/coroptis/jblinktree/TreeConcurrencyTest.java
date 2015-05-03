@@ -43,8 +43,7 @@ public class TreeConcurrencyTest extends TestCase {
 	}
 
 	startLatch.countDown();
-//	doneLatch.await(10, TimeUnit.SECONDS);
-	doneLatch.await();
+	doneLatch.await(10, TimeUnit.SECONDS);
 	assertEquals("Some thread didn't finished work", 0, doneLatch.getCount());
 	tree.verify();
 	logger.debug("I'm done!");
