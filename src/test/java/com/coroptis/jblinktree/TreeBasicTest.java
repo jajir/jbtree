@@ -10,7 +10,7 @@ public class TreeBasicTest extends TestCase {
 
     private Logger logger = LoggerFactory.getLogger(TreeBasicTest.class);
 
-    private NodeStore nodeStore;
+    private NodeStoreImpl nodeStore;
 
     private Tree tree;
 
@@ -97,6 +97,7 @@ public class TreeBasicTest extends TestCase {
 
     @Override
     protected void tearDown() throws Exception {
+	assertEquals("All locks should be unlocked ",0, nodeStore.countLockedNodes());
 	tree = null;
 	nodeStore = null;
 	super.tearDown();

@@ -54,4 +54,8 @@ public class MyLoggingLock implements Lock {
 	lock.unlock();
     }
 
+    public ReentrantLock getLock() {
+        return (ReentrantLock)lock;
+    }
+
 }

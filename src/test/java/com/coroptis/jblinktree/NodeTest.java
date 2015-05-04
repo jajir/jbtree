@@ -17,11 +17,8 @@ public class NodeTest extends TestCase {
     @Test
     public void test_emptyNode() throws Exception {
 	logger.debug(node.toString());
-	assertEquals(0, node.getKeysCount());
-	assertTrue(node.isLeafNode());
-	List<Integer> keys = node.getKeys();
-	assertFalse(keys.contains(2));
-	assertNull(node.getLink());
+	
+	verifyNode(new Integer[][] { }, true, null);
 	assertEquals(null, node.getMaxKey());
 	assertEquals(null, node.getValue(2));
     }
@@ -31,13 +28,7 @@ public class NodeTest extends TestCase {
 	node.insert(2, 20);
 	logger.debug(node.toString());
 
-	assertEquals(1, node.getKeysCount());
-	assertTrue(node.isLeafNode());
-	List<Integer> keys = node.getKeys();
-	assertTrue(keys.contains(2));
-	assertNull(node.getLink());
-	assertEquals(Integer.valueOf(2), node.getMaxKey());
-	assertEquals("Unable to find inserted key", Integer.valueOf(20), node.getValue(2));
+	verifyNode(new Integer[][] {{2,20} }, true, null);
     }
 
     @Test
@@ -55,13 +46,7 @@ public class NodeTest extends TestCase {
 
 	logger.debug(node.toString());
 
-	assertEquals(1, node.getKeysCount());
-	assertTrue(node.isLeafNode());
-	List<Integer> keys = node.getKeys();
-	assertTrue(keys.contains(2));
-	assertNull(node.getLink());
-	assertEquals(Integer.valueOf(2), node.getMaxKey());
-	assertEquals(Integer.valueOf(20), node.getValue(2));
+	verifyNode(new Integer[][] { { 2, 20 }}, true, null);
     }
 
     @Test
@@ -72,15 +57,7 @@ public class NodeTest extends TestCase {
 	node.insert(2, 30);
 	logger.debug(node.toString());
 
-	assertEquals(2, node.getKeysCount());
-	assertTrue(node.isLeafNode());
-	List<Integer> keys = node.getKeys();
-	assertTrue(keys.contains(1));
-	assertTrue(keys.contains(2));
-	assertNull(node.getLink());
-	assertEquals(Integer.valueOf(2), node.getMaxKey());
-	assertEquals(Integer.valueOf(30), node.getValue(2));
-	assertEquals(Integer.valueOf(80), node.getValue(1));
+	verifyNode(new Integer[][] { {1,80},{ 2, 30 }}, true, null);
     }
 
     @Test
@@ -303,8 +280,10 @@ public class NodeTest extends TestCase {
 	    assertEquals(value, node.getValue(key));
 	}
 	assertEquals("Node link is invalid", expectedNodeLink, node.getLink());
-	final Integer expectedMaxKey = pairs[pairs.length - 1][0];
-	assertEquals("Max key value is invalid", expectedMaxKey, node.getMaxKey());
+	if(pairs.length>0){
+        	final Integer expectedMaxKey = pairs[pairs.length - 1][0];
+        	assertEquals("Max key value is invalid", expectedMaxKey, node.getMaxKey());
+	}
     }
 
     @Override

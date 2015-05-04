@@ -64,4 +64,8 @@ public class NodeStoreImpl implements NodeStore {
     public int size() {
 	return nodes.size();
     }
+    
+    public int countLockedNodes(){
+	return nodeLocks.countLockedThreads();
+    }
 }

@@ -56,7 +56,16 @@ public class NodeLocks {
 	if (lock != null) {
 	    lock.unlock();
 	}
-
     }
 
+    public int countLockedThreads() {
+	int out = 0;
+	for (final Lock lock : locks.values()) {
+	    final MyLoggingLock l = (MyLoggingLock) lock;
+	    if (l.getLock().isLocked()) {
+		out++;
+	    }
+	}
+	return out;
+    }
 }
