@@ -56,9 +56,17 @@
 					<licenseName>apache_v2</licenseName>
 					<verbose>true</verbose>
 				</configuration>
-				<goals>
-				</goals>
-				<executions></executions>
+				<executions>
+					<execution>
+						<goals>
+							<goal>check-file-header</goal>
+						</goals>
+						<phase>generate-sources</phase>
+						<configuration>
+							<failOnMissingHeader>true</failOnMissingHeader>
+						</configuration>
+					</execution>
+				</executions>
 			</plugin>
 		</plugins>
 	</build>
