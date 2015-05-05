@@ -20,7 +20,6 @@ package com.coroptis.jblinktree.integration;
  * #L%
  */
 
-
 import junit.framework.TestCase;
 
 import org.junit.Test;
@@ -112,6 +111,29 @@ public class TreeBasicTest extends TestCase {
 	assertEquals(100, tree.countValues());
     }
 
+    @Test
+    public void test_remove_simple() throws Exception {
+	tree.insert(1, -10);
+	tree.insert(2, -20);
+	tree.insert(3, -30);
+
+	tree.remove(1);
+	tree.verify();
+	logger.debug(tree.toString());
+	assertEquals(2, tree.countValues());
+
+	tree.remove(3);
+	tree.verify();
+	logger.debug(tree.toString());
+	assertEquals(1, tree.countValues());
+
+	tree.remove(2);
+	tree.verify();
+	logger.debug(tree.toString());
+	assertEquals(0, tree.countValues());
+
+    }
+
     @Override
     protected void setUp() throws Exception {
 	super.setUp();
@@ -121,7 +143,7 @@ public class TreeBasicTest extends TestCase {
 
     @Override
     protected void tearDown() throws Exception {
-	assertEquals("All locks should be unlocked ",0, nodeStore.countLockedNodes());
+	assertEquals("All locks should be unlocked ", 0, nodeStore.countLockedNodes());
 	tree = null;
 	nodeStore = null;
 	super.tearDown();

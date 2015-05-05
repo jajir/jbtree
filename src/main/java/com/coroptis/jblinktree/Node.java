@@ -107,7 +107,7 @@ public class Node {
 	this.l = l;
 	this.id = nodeId;
 	/**
-	 * There is three position even in empty node: P0, max key and link.
+ 	 * There is three position even in empty node: P0, max key and link.
 	 */
 	field = new Integer[3];
 	if (isLeafNode) {
