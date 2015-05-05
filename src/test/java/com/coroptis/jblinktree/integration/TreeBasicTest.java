@@ -1,4 +1,4 @@
-package com.coroptis.jblinktree;
+package com.coroptis.jblinktree.integration;
 
 /*
  * #%L
@@ -26,6 +26,9 @@ import junit.framework.TestCase;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.coroptis.jblinktree.NodeStoreImpl;
+import com.coroptis.jblinktree.Tree;
 
 public class TreeBasicTest extends TestCase {
 

@@ -30,7 +30,7 @@ import java.util.concurrent.CountDownLatch;
  * @author jajir
  * 
  */
-final class Executer implements Runnable {
+final public class Executer implements Runnable {
 
     /**
      * 
@@ -40,7 +40,7 @@ final class Executer implements Runnable {
     private final CountDownLatch doneSignal;
     private final int cycleCount;
 
-    Executer(final Worker worker, final CountDownLatch startSignal,
+   public Executer(final Worker worker, final CountDownLatch startSignal,
 	    final CountDownLatch doneSignal, final int cycleCount) {
 	this.worker = worker;
 	this.startSignal = startSignal;

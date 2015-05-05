@@ -1,4 +1,4 @@
-package com.coroptis.jblinktree;
+package com.coroptis.jblinktree.integration;
 
 /*
  * #%L
@@ -30,6 +30,12 @@ import junit.framework.TestCase;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.coroptis.jblinktree.Executer;
+import com.coroptis.jblinktree.NodeStore;
+import com.coroptis.jblinktree.NodeStoreImpl;
+import com.coroptis.jblinktree.Tree;
+import com.coroptis.jblinktree.Worker;
 
 /**
  * Test that tree could work in multiple threads environment.

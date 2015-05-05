@@ -39,7 +39,7 @@ public class NodeStoreImpl implements NodeStore {
     private final NodeLocks nodeLocks;
 
     @Inject
-    NodeStoreImpl() {
+    public NodeStoreImpl() {
 	nodes = new HashMap<Integer, Node>();
 	nodeLocks = new NodeLocks();
 	logger.debug("staring in memory node store");
