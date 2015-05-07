@@ -20,7 +20,6 @@ package com.coroptis.jblinktree;
  * #L%
  */
 
-
 import java.util.Stack;
 
 import org.slf4j.Logger;
@@ -57,6 +56,8 @@ public class Tree {
      * @return previously associated value with given key.
      */
     public Integer insert(final Integer key, final Integer value) {
+	Preconditions.checkNotNull(key);
+	Preconditions.checkNotNull(value);
 	final Stack<Integer> stack = new Stack<Integer>();
 	Integer currentNodeId = findLeafNodeId(key, stack);
 
@@ -194,10 +195,73 @@ public class Tree {
 	Integer nextNodeId = node.getCorrespondingNodeId(key);
 	return nodeStore.get(nextNodeId);
     }
-    
-    public boolean remove(final Integer key){
-	//FIXME not yet implemented
-	return false;
+
+    public boolean remove(final Integer key) {
+	final Stack<Integer> stack = new Stack<Integer>();
+	Integer currentNodeId = findLeafNodeId(key, stack);
+
+	/**
+	 * Current node is leaf where should be new key deleted.
+	 */
+	Node currentNode = nodeStore.getAndLock(currentNodeId);
+	currentNode = moveRight(currentNode, key);
+	if (currentNode.getValue(key) == null) {
+	    /**
+	     * Node doesn't contains key, there is nothing to delete 
+	     */
+	    return false;
+	} else {
+	    /**
+	     * Leaf node contains key so remove it.
+	     */
+	    Integer tmpKey = key;
+	    while (true) {
+		if (currentNode.getKeysCount() <= 1) {
+		    /**
+		     * There is no free space for key and value
+		     */
+		    Node newNode = split(currentNode, tmpKey, tmpValue);
+		    Integer currentNodeMaxKey = currentNode.getMaxKey();
+		    nodeStore.writeNode(newNode);
+		    nodeStore.writeNode(currentNode);
+		    tmpValue = newNode.getId();
+		    tmpKey = currentNode.getMaxKeyValue();
+		    Node oldNode = currentNode;
+		    if (stack.empty()) {
+			/**
+			 * It's root node.
+			 */
+			nodeStore.unlockNode(oldNode.getId());
+			Node newRoot = new Node(l, nodeStore.size(), false);
+			newRoot.insert(currentNode.getMaxKey(), newNode.getId());
+			newRoot.setP0(currentNode.getId());
+			newRoot.setMaxKeyValue(newNode.getMaxKey());
+			nodeStore.writeNode(newRoot);
+			rootNodeId = newRoot.getId();
+			return null;
+		    } else {
+			/**
+			 * There is a previous node, so move there.
+			 */
+			currentNode = nodeStore.getAndLock(stack.pop());
+			moveRight(currentNode, currentNodeMaxKey);
+			if (newNode.getMaxKeyValue() > currentNode.getMaxKeyValue()) {
+			    currentNode.setMaxKeyValue(newNode.getMaxKeyValue());
+			    nodeStore.writeNode(currentNode);
+			}
+			nodeStore.unlockNode(oldNode.getId());
+		    }
+		} else {
+		    /**
+		     * There is free space for key and value
+		     */
+		    currentNode.insert(tmpKey, tmpValue);
+		    nodeStore.writeNode(currentNode);
+		    nodeStore.unlockNode(currentNode.getId());
+		    return null;
+		}
+	    }
+	}
     }
 
     /**
