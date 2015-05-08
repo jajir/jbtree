@@ -29,6 +29,12 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Preconditions;
 
+/**
+ * Provide basic operations with tree.
+ * 
+ * @author jan
+ * 
+ */
 public class Tree {
 
     /**
@@ -42,6 +48,14 @@ public class Tree {
 
     private final Logger logger = LoggerFactory.getLogger(Tree.class);
 
+    /**
+     * Create and initialize tree.
+     * 
+     * @param l
+     *            requited tree L parameter.
+     * @param nodeStore
+     *            required node store object
+     */
     public Tree(final int l, final NodeStore nodeStore) {
 	this.l = l;
 	this.nodeStore = Preconditions.checkNotNull(nodeStore);
@@ -51,7 +65,7 @@ public class Tree {
     }
 
     /**
-     * Insert method according to Lehman & Yao
+     * Insert value and key into tree.
      * 
      * @param key
      *            required parameter key
@@ -132,6 +146,18 @@ public class Tree {
 	}
     }
 
+    /**
+     * Split node into two nodes. It moved path of currentNode data int new one
+     * which will be returned.
+     * 
+     * @param currentNode
+     *            required node which will be split
+     * @param key
+     *            required key
+     * @param tmpValue
+     *            required value
+     * @return
+     */
     private Node split(final Node currentNode, final Integer key, final Integer tmpValue) {
 	Node newNode = new Node(l, nodeStore.size(), true);
 	currentNode.moveTopHalfOfDataTo(newNode);
@@ -198,6 +224,14 @@ public class Tree {
 	return nodeStore.get(nextNodeId);
     }
 
+    /**
+     * Remove key from tree. Associated value will be also removed.
+     * 
+     * @param key
+     *            required key
+     * @return return <code>true</code> when key was found and removed otherwise
+     *         return <code>false</code>.
+     */
     public boolean remove(final Integer key) {
 	final Stack<Integer> stack = new Stack<Integer>();
 	Integer currentNodeId = findLeafNodeId(key, stack);
@@ -254,11 +288,12 @@ public class Tree {
 			Integer nodeMaxValue = currentNode.getMaxKeyValue();
 			while (true) {
 			    Node nextNode = nodeStore.getAndLock(stack.pop());
-			    oldMaxValue= nextNode.getMaxKeyValue();
-			    //FIXME add moving right, by nodeId
+			    oldMaxValue = nextNode.getMaxKeyValue();
+			    // FIXME add moving right, by nodeId
 			    nextNode.updateNodeValue(nodeIdToUpdate, nodeMaxValue);
 			    nodeStore.writeNode(nextNode);
-			    //FIXME add recursion, check if max value was changed.
+			    // FIXME add recursion, check if max value was
+			    // changed.
 			    return true;
 			}
 		    }
@@ -307,6 +342,11 @@ public class Tree {
 	return node.getValue(key);
     }
 
+    /**
+     * Count all keys stored in tree.
+     * 
+     * @return number of all keys in tree.
+     */
     public int countValues() {
 	int out = 0;
 	final Stack<Integer> stack = new Stack<Integer>();
@@ -324,6 +364,9 @@ public class Tree {
 	return out;
     }
 
+    /**
+     * Override {@link System#toString()} method.
+     */
     @Override
     public String toString() {
 	StringBuilder buff = new StringBuilder();
@@ -354,6 +397,9 @@ public class Tree {
 	return buff.toString();
     }
 
+    /**
+     * Verify that tree is consistent.
+     */
     public void verify() {
 	final Stack<Integer> stack = new Stack<Integer>();
 	stack.push(rootNodeId);

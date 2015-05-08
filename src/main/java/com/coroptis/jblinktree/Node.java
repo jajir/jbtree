@@ -73,7 +73,7 @@ import com.google.common.base.Preconditions;
  * <li>K - Key inserted into tree, this value represents some user's data. Key
  * could be ordered and compared.</li>
  * <li>V - value inserted into tree</li>
- * <li>L - main parameter of tree, in tree could be maximally L*2+1 nodes.</li>
+ * <li>L - main parameter of tree, in tree could be maximally L nodes.</li>
  * <li>link - pointer to next sibling node</li>
  * <li>K(L*2+1) - highest key value from node in case of leaf node or highest
  * key value from all referenced nodes.</li>
@@ -105,6 +105,17 @@ public class Node {
 
     private final Logger logger = LoggerFactory.getLogger(Node.class);
 
+    /**
+     * Create and initialize node.
+     * 
+     * @param l
+     *            required node parameter L
+     * @param nodeId
+     *            required node id, node will be referred with this id.
+     * @param isLeafNode
+     *            required value, when it's <code>true</code> than it's leaf
+     *            node otherwise it's non-leaf node.
+     */
     public Node(final int l, final Integer nodeId, final boolean isLeafNode) {
 	this.l = l;
 	this.id = nodeId;
@@ -117,36 +128,89 @@ public class Node {
 	}
     }
 
+    /**
+     * Construct node and fill byte field.
+     * 
+     * @param l
+     *            required node parameter L
+     * @param nodeId
+     *            required node id, node will be referred with this id.
+     * @param field
+     *            required Integer array representing node content.
+     * @return created {@link Node}
+     */
     public static Node makeNode(final int l, final Integer idNode, final Integer field[]) {
 	Node n = new Node(l, idNode, true);
 	n.field = field;
 	return n;
     }
 
+    /**
+     * Get link value.
+     * 
+     * @return link value,could be <code>null</code>
+     */
     public Integer getLink() {
 	return field[field.length - 1];
     }
 
+    /**
+     * Allows to set link value
+     * 
+     * @param link
+     *            link value, could be <code>null</code>
+     */
     public void setLink(final Integer link) {
 	field[field.length - 1] = link;
     }
 
+    /**
+     * Return P0 value
+     * 
+     * @return link value,could be <code>null</code>
+     */
     public Integer getP0() {
 	return field[0];
     }
 
+    /**
+     * Allows to set P0 value.
+     * 
+     * @param p0
+     *            P0 value, could be <code>null</code>
+     */
     public void setP0(final Integer p0) {
 	field[0] = p0;
     }
 
+    /**
+     * Return true when node is empty. Empty means there are no keys in node. In
+     * case of non-leaf node there still can be P0 link and max value.
+     * 
+     * @return return <code>true</code> when node is empty otherwise return
+     *         <code>false</code>
+     */
     public boolean isEmpty() {
 	return getKeysCount() == 0;
     }
 
+    /**
+     * return number of keys stored in node.
+     * 
+     * @return number of stored keys.
+     */
     public int getKeysCount() {
 	return (field.length - 3) / 2;
     }
 
+    /**
+     * Insert or override some value in node.
+     * 
+     * @param key
+     *            required key
+     * @param value
+     *            required value
+     */
     public void insert(final Integer key, final Integer value) {
 	Preconditions.checkNotNull(key);
 	Preconditions.checkNotNull(value);
@@ -177,6 +241,10 @@ public class Node {
 	}
     }
 
+    /**
+     * When new value can't be inserted into this node it throws
+     * {@link JblinktreeException}.
+     */
     private void couldInsertedKey() {
 	if (field.length >= l * 2 + 2) {
 	    logger.error("Leaf (" + id + ") is full another value can't be inserted. Leaf: "
@@ -186,6 +254,16 @@ public class Node {
 	}
     }
 
+    /**
+     * Insert key and value to some specific index position in field.
+     * 
+     * @param key
+     *            required key
+     * @param value
+     *            required value
+     * @param targetIndex
+     *            required target index in field
+     */
     private void insertToPosition(final Integer key, final Integer value, final int targetIndex) {
 	Integer[] field2 = new Integer[field.length + 2];
 	if (targetIndex > 0) {
@@ -197,6 +275,14 @@ public class Node {
 	field = field2;
     }
 
+    /**
+     * Remove key and associated value from node.
+     * 
+     * @param key
+     *            required key to remove
+     * @return when key was found and removed it return <code>true</code>
+     *         otherwise it return <code>false</code>
+     */
     public boolean remove(final Integer key) {
 	Preconditions.checkNotNull(key);
 	if (!isLeafNode() && field.length == 3) {
@@ -233,6 +319,14 @@ public class Node {
 	return false;
     }
 
+    /**
+     * For non-leaf tree it update value of some tree.
+     * 
+     * @param nodeIdToUpdate
+     *            required node is to update
+     * @param nodeMaxValuer
+     *            required value, this value will be set for previous node id
+     */
     public void updateNodeValue(final Integer nodeIdToUpdate, final Integer nodeMaxValue) {
 	if (isLeafNode()) {
 	    throw new JblinktreeException("methos could by used just on non-leaf nodes");
@@ -314,6 +408,9 @@ public class Node {
 	return field[field.length - 2];
     }
 
+    /**
+     * Override {@link System#toString()} method.
+     */
     @Override
     public String toString() {
 	StringBuilder buff = new StringBuilder();
@@ -330,6 +427,8 @@ public class Node {
     }
 
     /**
+     * Return node id.
+     * 
      * @return the id
      */
     public Integer getId() {
@@ -337,7 +436,10 @@ public class Node {
     }
 
     /**
-     * @return the isLeafNode
+     * Inform id it's leaf node or non-leaf node.
+     * 
+     * @return return <code>true</code> when it's leaf node otherwise return
+     *         <code>false</code>
      */
     public boolean isLeafNode() {
 	return M.equals(field[0]);
@@ -368,6 +470,14 @@ public class Node {
 	return field[field.length - 3];
     }
 
+    /**
+     * Find value for given key.
+     * 
+     * @param key
+     *            required key
+     * @return found value if there is any, when value is <code>null</code> or
+     *         there is no such key <code>null</code> is returned.
+     */
     public Integer getValue(final Integer key) {
 	Preconditions.checkNotNull(key);
 	if (!isLeafNode()) {
@@ -381,6 +491,11 @@ public class Node {
 	return null;
     }
 
+    /**
+     * Get list of all node id stored in this node.
+     * 
+     * @return list of id
+     */
     public List<Integer> getNodeIds() {
 	final List<Integer> out = new ArrayList<Integer>();
 	for (int i = 0; i < field.length - 2; i = i + 2) {
@@ -389,6 +504,11 @@ public class Node {
 	return out;
     }
 
+    /**
+     * Get list of keys stored in node.
+     * 
+     * @return list of keys.
+     */
     public List<Integer> getKeys() {
 	final List<Integer> out = new ArrayList<Integer>();
 	for (int i = 1; i < field.length; i = i + 2) {
@@ -397,14 +517,31 @@ public class Node {
 	return out;
     }
 
+    /**
+     * Allows to set max key value.
+     * 
+     * @param maxKey
+     *            max key value, could be <code>null</code>
+     */
     public void setMaxKeyValue(final Integer maxKey) {
 	field[field.length - 2] = maxKey;
     }
 
+    /**
+     * Get max key value
+     * 
+     * @return max key value, could be <code>null</code>
+     */
     public Integer getMaxKeyValue() {
 	return field[field.length - 2];
     }
 
+    /**
+     * Verify that node is consistent.
+     * 
+     * @return <code>true</code> when node is consistent otherwise return
+     *         <code>false</code>
+     */
     public boolean verify() {
 	if ((field.length) % 2 == 0) {
 	    logger.error("node {} have inforrect number of items in field: {}", id, field);
