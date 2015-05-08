@@ -20,7 +20,6 @@ package com.coroptis.jblinktree;
  * #L%
  */
 
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -39,7 +38,7 @@ import com.google.common.base.Preconditions;
  * <li>non-leaf node - contains keys and pointers to another nodes</li>
  * </ul>
  * </p>
- * In node are stored following data:
+ * Node contains data stored in a following field:
  * <table border="1" style="border-collapse: collapse">
  * <tr>
  * <td>value</td>
@@ -81,6 +80,9 @@ import com.google.common.base.Preconditions;
  * </ul>
  * First value P0 at index 0 have special meaning, when it's {@link Node#M} than
  * this node is leaf node. In all other cases is non-leaf node.
+ * <p>
+ * Node is not thread save.
+ * </p>
  * 
  * @author jajir
  * 
@@ -107,7 +109,7 @@ public class Node {
 	this.l = l;
 	this.id = nodeId;
 	/**
- 	 * There is three position even in empty node: P0, max key and link.
+	 * There is three position even in empty node: P0, max key and link.
 	 */
 	field = new Integer[3];
 	if (isLeafNode) {
@@ -197,21 +199,27 @@ public class Node {
 
     public boolean remove(final Integer key) {
 	Preconditions.checkNotNull(key);
+	if (!isLeafNode() && field.length == 3) {
+	    if (field[1] == key) {
+		field[0] = M;
+		field[1] = null;
+		return true;
+	    }
+	}
 	for (int i = 1; i < field.length - 2; i = i + 2) {
 	    if (field[i] == key) {
 		/**
 		 * Remove key and value.
 		 */
-		Integer tmp[] = new Integer[field.length - 2];
-		System.arraycopy(field, 0, tmp, 0, i);
-		System.arraycopy(field, i + 2, tmp, i, field.length - i - 2);
-		field = tmp;
 		if (isLeafNode()) {
+		    removeFromPosition(i);
 		    if (field.length > 3) {
 			setMaxKeyValue(field[field.length - 4]);
 		    } else {
 			setMaxKeyValue(null);
 		    }
+		} else {
+		    removeFromPosition(i - 1);
 		}
 		return true;
 	    } else if (field[i] > key) {
@@ -223,6 +231,33 @@ public class Node {
 	    }
 	}
 	return false;
+    }
+
+    public void updateNodeValue(final Integer nodeIdToUpdate, final Integer nodeMaxValue) {
+	if (isLeafNode()) {
+	    throw new JblinktreeException("methos could by used just on non-leaf nodes");
+	}
+	for (int i = 0; i < field.length - 2; i = i + 2) {
+	    if (field[i].equals(nodeIdToUpdate)) {
+		field[i + 1] = nodeMaxValue;
+	    }
+	}
+    }
+
+    /**
+     * Remove two bytes from node field at given position. Method doesn't care
+     * about meaning of bites.
+     * 
+     * @param position
+     *            required position
+     */
+    private void removeFromPosition(final int position) {
+	Integer tmp[] = new Integer[field.length - 2];
+	if (position > 0) {
+	    System.arraycopy(field, 0, tmp, 0, position);
+	}
+	System.arraycopy(field, position + 2, tmp, position, field.length - position - 2);
+	field = tmp;
     }
 
     /**

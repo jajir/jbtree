@@ -20,19 +20,20 @@ package com.coroptis.jblinktree;
  * #L%
  */
 
-
 public interface NodeStore {
 
-	void lockNode(Integer nodeId);
-	
-	void unlockNode(Integer nodeId);
-	
-	Node get(Integer nodeId);
-	
-	Node getAndLock(Integer nodeId);
-	
-	void writeNode(Node node);
-	
-	int size();
-	
+    void lockNode(Integer nodeId);
+
+    void unlockNode(Integer nodeId);
+
+    Node get(Integer nodeId);
+
+    Node getAndLock(Integer nodeId);
+
+    void writeNode(Node node);
+
+    void deleteNode(Integer idNode);
+
+    int size();
+
 }

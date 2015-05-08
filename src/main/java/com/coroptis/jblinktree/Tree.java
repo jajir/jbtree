@@ -20,6 +20,8 @@ package com.coroptis.jblinktree;
  * #L%
  */
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Stack;
 
 import org.slf4j.Logger;
@@ -207,60 +209,79 @@ public class Tree {
 	currentNode = moveRight(currentNode, key);
 	if (currentNode.getValue(key) == null) {
 	    /**
-	     * Node doesn't contains key, there is nothing to delete 
+	     * Node doesn't contains key, there is nothing to delete
 	     */
 	    return false;
 	} else {
+	    List<Integer> nodesToRemove = new ArrayList<Integer>();
 	    /**
 	     * Leaf node contains key so remove it.
 	     */
 	    Integer tmpKey = key;
 	    while (true) {
-		if (currentNode.getKeysCount() <= 1) {
+		Integer oldMaxKey = currentNode.getMaxKey();
+		Integer oldMaxValue = currentNode.getMaxKeyValue();
+		currentNode.remove(tmpKey);
+		if (currentNode.getKeysCount() == 0) {
 		    /**
-		     * There is no free space for key and value
+		     * It's empty node, so remove it.
 		     */
-		    Node newNode = split(currentNode, tmpKey, tmpValue);
-		    Integer currentNodeMaxKey = currentNode.getMaxKey();
-		    nodeStore.writeNode(newNode);
-		    nodeStore.writeNode(currentNode);
-		    tmpValue = newNode.getId();
-		    tmpKey = currentNode.getMaxKeyValue();
-		    Node oldNode = currentNode;
-		    if (stack.empty()) {
-			/**
-			 * It's root node.
-			 */
-			nodeStore.unlockNode(oldNode.getId());
-			Node newRoot = new Node(l, nodeStore.size(), false);
-			newRoot.insert(currentNode.getMaxKey(), newNode.getId());
-			newRoot.setP0(currentNode.getId());
-			newRoot.setMaxKeyValue(newNode.getMaxKey());
-			nodeStore.writeNode(newRoot);
-			rootNodeId = newRoot.getId();
-			return null;
-		    } else {
-			/**
-			 * There is a previous node, so move there.
-			 */
-			currentNode = nodeStore.getAndLock(stack.pop());
-			moveRight(currentNode, currentNodeMaxKey);
-			if (newNode.getMaxKeyValue() > currentNode.getMaxKeyValue()) {
-			    currentNode.setMaxKeyValue(newNode.getMaxKeyValue());
-			    nodeStore.writeNode(currentNode);
-			}
-			nodeStore.unlockNode(oldNode.getId());
+		    if (rootNodeId.equals(currentNode.getId())) {
+			removeNodes(nodesToRemove);
+			return true;
 		    }
+		    /**
+		     * Node to remove should be locked, if it's not than another
+		     * insert process could insert some value into it.
+		     */
+		    nodesToRemove.add(currentNode.getId());
+		    // move to previous node
+		    Node nextNode = nodeStore.getAndLock(stack.pop());
+		    moveRight(nextNode, oldMaxKey);
+		    currentNode = nextNode;
+		    tmpKey = oldMaxKey;
 		} else {
 		    /**
-		     * There is free space for key and value
+		     * There are more than 1 key in node, so it's safe to remove
+		     * key.
 		     */
-		    currentNode.insert(tmpKey, tmpValue);
-		    nodeStore.writeNode(currentNode);
+		    if (!currentNode.getMaxKeyValue().equals(oldMaxValue)) {
+			/**
+			 * Max value was changed in current node. So max value
+			 * have to be updated in upper nodes.
+			 */
+			Integer nodeIdToUpdate = currentNode.getId();
+			Integer nodeMaxValue = currentNode.getMaxKeyValue();
+			while (true) {
+			    Node nextNode = nodeStore.getAndLock(stack.pop());
+			    oldMaxValue= nextNode.getMaxKeyValue();
+			    //FIXME add moving right, by nodeId
+			    nextNode.updateNodeValue(nodeIdToUpdate, nodeMaxValue);
+			    nodeStore.writeNode(nextNode);
+			    //FIXME add recursion, check if max value was changed.
+			    return true;
+			}
+		    }
 		    nodeStore.unlockNode(currentNode.getId());
-		    return null;
+		    removeNodes(nodesToRemove);
+		    return true;
 		}
-	    }
+	    }// end of while
+	}
+	// nodeStore.deleteNode(currentNode.getId());
+    }
+
+    /**
+     * 
+     */
+    private void updateMaxInUpperNodes(final Stack<Integer> stack, Node currentNode) {
+
+    }
+
+    private void removeNodes(final List<Integer> nodesToRemove) {
+	for (final Integer i : nodesToRemove) {
+	    nodeStore.unlockNode(i);
+	    nodeStore.deleteNode(i);
 	}
     }
 

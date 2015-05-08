@@ -20,7 +20,6 @@ package com.coroptis.jblinktree;
  * #L%
  */
 
-
 import java.util.HashMap;
 import java.util.Map;
 
@@ -85,8 +84,13 @@ public class NodeStoreImpl implements NodeStore {
     public int size() {
 	return nodes.size();
     }
-    
-    public int countLockedNodes(){
+
+    @Override
+    public void deleteNode(final Integer idNode) {
+	nodes.remove(Preconditions.checkNotNull(idNode));
+    }
+
+    public int countLockedNodes() {
 	return nodeLocks.countLockedThreads();
     }
 }

@@ -117,6 +117,7 @@ public class TreeBasicTest extends TestCase {
 	tree.insert(2, -20);
 	tree.insert(3, -30);
 
+	logger.debug(tree.toString());
 	tree.remove(1);
 	tree.verify();
 	logger.debug(tree.toString());
@@ -131,7 +132,6 @@ public class TreeBasicTest extends TestCase {
 	tree.verify();
 	logger.debug(tree.toString());
 	assertEquals(0, tree.countValues());
-
     }
 
     @Override

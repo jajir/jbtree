@@ -20,7 +20,6 @@ package com.coroptis.jblinktree.junit;
  * #L%
  */
 
-
 import java.util.List;
 
 import junit.framework.TestCase;
@@ -41,8 +40,8 @@ public class NodeTest extends TestCase {
     @Test
     public void test_emptyNode() throws Exception {
 	logger.debug(node.toString());
-	
-	verifyNode(new Integer[][] { }, true, null);
+
+	verifyNode(new Integer[][] {}, true, null);
 	assertEquals(null, node.getMaxKey());
 	assertEquals(null, node.getValue(2));
     }
@@ -52,7 +51,7 @@ public class NodeTest extends TestCase {
 	node.insert(2, 20);
 	logger.debug(node.toString());
 
-	verifyNode(new Integer[][] {{2,20} }, true, null);
+	verifyNode(new Integer[][] { { 2, 20 } }, true, null);
     }
 
     @Test
@@ -70,7 +69,7 @@ public class NodeTest extends TestCase {
 
 	logger.debug(node.toString());
 
-	verifyNode(new Integer[][] { { 2, 20 }}, true, null);
+	verifyNode(new Integer[][] { { 2, 20 } }, true, null);
     }
 
     @Test
@@ -81,7 +80,7 @@ public class NodeTest extends TestCase {
 	node.insert(2, 30);
 	logger.debug(node.toString());
 
-	verifyNode(new Integer[][] { {1,80},{ 2, 30 }}, true, null);
+	verifyNode(new Integer[][] { { 1, 80 }, { 2, 30 } }, true, null);
     }
 
     @Test
@@ -133,6 +132,7 @@ public class NodeTest extends TestCase {
 	assertTrue(ret);
 	verifyNode(new Integer[][] { { 1, 10 } }, true, null);
     }
+
     @Test
     public void test_remove_notExisting() throws Exception {
 	node.insert(2, 20);
@@ -143,6 +143,35 @@ public class NodeTest extends TestCase {
 	verifyNode(new Integer[][] { { 1, 10 }, { 2, 20 } }, true, null);
     }
 
+    @Test
+    public void test_remove_P0_one_node() throws Exception {
+	node = Node.makeNode(3, 2, new Integer[] { 0, 1, 1, 3, null });
+	logger.debug(node.toString());
+	Boolean ret = node.remove(1);
+
+	assertTrue(ret);
+	verifyNode(new Integer[][] {}, false, null);
+	assertEquals(Integer.valueOf(1), node.getP0());
+	assertEquals(Integer.valueOf(3), node.getMaxKeyValue());
+    }
+
+
+    @Test
+    public void test_remove_P0_zero_node() throws Exception {
+	node = Node.makeNode(3, 2, new Integer[] { 1, 2, null });
+	logger.debug(node.toString());
+	Boolean ret = node.remove(2);
+
+	assertTrue(ret);
+	verifyNode(new Integer[][] {}, false, null);
+	assertEquals(null, node.getP0());
+	assertEquals(null, node.getMaxKeyValue());
+    }
+
+    
+    
+
+    
     @Test
     public void test_link() throws Exception {
 	node.setLink(-10);
@@ -290,12 +319,29 @@ public class NodeTest extends TestCase {
 	assertEquals("node id should be different", Integer.valueOf(1), nodeId);
     }
 
-    private void verifyNode(final Integer[][] pairs, final boolean isLefNode,
+    /**
+     * Verify that node have following basic attributes:
+     * <ul>
+     * <li>number of keys is correct</li>
+     * <li>values of keys are correct</li>
+     * <li>values stored in node are correct</li>
+     * <li>next key is correct</li>
+     * <li>distinguish between leaf and non-leaf node is correct</li>
+     * </ul>
+     * 
+     * @param pairs
+     *            required key value pairs stored in node
+     * @param isLeafNode
+     *            required info if it's leaf node
+     * @param expectedNodeLink
+     *            required value of expectect link
+     */
+    private void verifyNode(final Integer[][] pairs, final boolean isLeafNode,
 	    final Integer expectedNodeLink) {
 	logger.debug(node.toString());
 
 	assertEquals("Expected number of key is invalid", pairs.length, node.getKeysCount());
-	assertEquals("isLeafNode value is invalid", isLefNode, node.isLeafNode());
+	assertEquals("isLeafNode value is invalid", isLeafNode, node.isLeafNode());
 	List<Integer> keys = node.getKeys();
 	for (Integer[] pair : pairs) {
 	    final Integer key = pair[0];
@@ -304,9 +350,9 @@ public class NodeTest extends TestCase {
 	    assertEquals(value, node.getValue(key));
 	}
 	assertEquals("Node link is invalid", expectedNodeLink, node.getLink());
-	if(pairs.length>0){
-        	final Integer expectedMaxKey = pairs[pairs.length - 1][0];
-        	assertEquals("Max key value is invalid", expectedMaxKey, node.getMaxKey());
+	if (pairs.length > 0) {
+	    final Integer expectedMaxKey = pairs[pairs.length - 1][0];
+	    assertEquals("Max key value is invalid", expectedMaxKey, node.getMaxKey());
 	}
     }
 
