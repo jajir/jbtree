@@ -23,9 +23,23 @@ package com.coroptis.jblinktree;
 /**
  * Provide simple operations with tree.
  * 
- * @author jan
+ * @author jajir
  * 
  */
 public interface JbTreeTool {
 
+    /**
+     * For given key find corresponding node in which key should belongs.
+     * <p>
+     * Method doesn't lock any node.
+     * </p>
+     * 
+     * @param node
+     *            required node object
+     * @param key
+     *            required key
+     * @return found node if there is such, when there is no corresponding key
+     *         <code>null</code> is returned.
+     */
+    Node findCorrespondingNode(final Node node, final Integer key);
 }

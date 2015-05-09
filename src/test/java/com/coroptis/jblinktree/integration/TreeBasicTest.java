@@ -140,7 +140,7 @@ public class TreeBasicTest extends TestCase {
     protected void setUp() throws Exception {
 	super.setUp();
 	nodeStore = new NodeStoreImpl();
-	tree = new JbTreeImpl(2, nodeStore, new JbTreeToolImpl());
+	tree = new JbTreeImpl(2, nodeStore, new JbTreeToolImpl(nodeStore));
     }
 
     @Override

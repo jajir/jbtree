@@ -1,5 +1,7 @@
 package com.coroptis.jblinktree;
 
+import com.google.common.base.Preconditions;
+
 /*
  * #%L
  * jblinktree
@@ -23,9 +25,26 @@ package com.coroptis.jblinktree;
 /**
  * Implementation of {@link JbTreeTool}.
  * 
- * @author jan
+ * @author jajir
  * 
  */
 public class JbTreeToolImpl implements JbTreeTool {
 
+    private final NodeStore nodeStore;
+
+    /**
+     * Default constructor.
+     * 
+     * @param nodeStore
+     *            required node store service
+     */
+    public JbTreeToolImpl(final NodeStore nodeStore) {
+	this.nodeStore = Preconditions.checkNotNull(nodeStore);
+    }
+
+    @Override
+    public Node findCorrespondingNode(final Node node, final Integer key) {
+	Integer nextNodeId = node.getCorrespondingNodeId(key);
+	return nodeStore.get(nextNodeId);
+    }
 }

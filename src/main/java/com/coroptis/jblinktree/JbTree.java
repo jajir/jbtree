@@ -23,7 +23,7 @@ package com.coroptis.jblinktree;
 /**
  * Provide operations with tree.
  * 
- * @author jan
+ * @author jajir
  * 
  */
 public interface JbTree {
@@ -48,10 +48,11 @@ public interface JbTree {
     boolean remove(Integer key);
 
     /**
-     * Search method according to Lehman & Yao
+     * Find and return specific value for given key.
      * 
      * @param key
-     * @return
+     *            required key
+     * @return find value if there is any otherwise return <code>null</code>
      */
     Integer search(Integer key);
 

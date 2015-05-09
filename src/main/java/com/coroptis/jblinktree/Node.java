@@ -27,6 +27,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.MoreObjects;
+import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
 
 /**
@@ -555,6 +556,33 @@ public class Node {
 
 	}
 	return true;
+    }
+
+    @Override
+    public int hashCode() {
+	return Objects.hashCode(l, id, field);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+	if (obj == null) {
+	    return false;
+	}
+	if (!(obj instanceof Node)) {
+	    return false;
+	}
+	Node n = (Node) obj;
+	if (Objects.equal(l, n.l) && Objects.equal(id, n.id)
+		&& Objects.equal(field.length, n.field.length)) {
+	    for (int i = 0; i < field.length; i++) {
+		if (!Objects.equal(field[i], n.field[i])) {
+		    return false;
+		}
+	    }
+	    return true;
+	} else {
+	    return false;
+	}
     }
 
 }

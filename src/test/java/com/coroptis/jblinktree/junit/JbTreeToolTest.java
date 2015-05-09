@@ -21,14 +21,80 @@ package com.coroptis.jblinktree.junit;
  */
 import junit.framework.TestCase;
 
+import org.easymock.EasyMock;
+import org.junit.Test;
+
 import com.coroptis.jblinktree.JbTreeTool;
+import com.coroptis.jblinktree.JbTreeToolImpl;
+import com.coroptis.jblinktree.JblinktreeException;
+import com.coroptis.jblinktree.Node;
+import com.coroptis.jblinktree.NodeStore;
 
 /**
  * Tests for {@link JbTreeTool}
  * 
- * @author jan
+ * @author jajir
  * 
  */
 public class JbTreeToolTest extends TestCase {
+
+    private JbTreeTool jbTreeTool;
+
+    private NodeStore nodeStore;
+
+    private Node n1;
+
+    private Node n2;
+
+    @Test
+    public void test_findCorrespondingNode() throws Exception {
+	EasyMock.expect(n1.getCorrespondingNodeId(6)).andReturn(18);
+	EasyMock.expect(nodeStore.get(18)).andReturn(n2);
+	EasyMock.replay(nodeStore, n1, n2);
+
+	Node ret = jbTreeTool.findCorrespondingNode(n1, 6);
+
+	assertEquals(n2, ret);
+	EasyMock.verify(nodeStore, n1, n2);
+    }
+
+    /**
+     * Verify that method doesn't sink exception.
+     * 
+     * @throws Exception
+     */
+    @Test
+    public void test_findCorrespondingNode_exceptionSinking() throws Exception {
+	EasyMock.expect(n1.getCorrespondingNodeId(6)).andReturn(18);
+	EasyMock.expect(nodeStore.get(18)).andThrow(new JblinktreeException("error"));
+	EasyMock.replay(nodeStore, n1, n2);
+
+	try {
+	    jbTreeTool.findCorrespondingNode(n1, 6);
+	    fail();
+	} catch (JblinktreeException e) {
+	    assertEquals("error", e.getMessage());
+	}
+
+	EasyMock.verify(nodeStore, n1, n2);
+    }
+
+    @Override
+    protected void setUp() throws Exception {
+	super.setUp();
+	nodeStore = EasyMock.createMock(NodeStore.class);
+	jbTreeTool = new JbTreeToolImpl(nodeStore);
+	n1 = EasyMock.createMock(Node.class);
+	n2 = EasyMock.createMock(Node.class);
+    }
+
+    @Override
+    protected void tearDown() throws Exception {
+	n1 = null;
+	n2 = null;
+	jbTreeTool = null;
+	nodeStore = null;
+	super.tearDown();
+    }
 
 }

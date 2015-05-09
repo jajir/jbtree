@@ -34,7 +34,7 @@ import com.coroptis.jblinktree.Node;
 /**
  * Junit test for {@link Node}.
  * 
- * @author jan
+ * @author jajir
  * 
  */
 public class NodeTest extends TestCase {

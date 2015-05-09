@@ -32,7 +32,7 @@ import com.google.common.base.Preconditions;
 /**
  * Implementation of {@link JbTree}.
  * 
- * @author jan
+ * @author jajir
  * 
  */
 public class JbTreeImpl implements JbTree {
@@ -211,7 +211,7 @@ public class JbTreeImpl implements JbTree {
 	Node currentNode = nodeStore.get(rootNodeId);
 	while (!currentNode.isLeafNode()) {
 	    final Node previousNode = currentNode;
-	    currentNode = findCorrespondingNode(currentNode, key);
+	    currentNode = tool.findCorrespondingNode(currentNode, key);
 	    if (!currentNode.getId().equals(previousNode.getLink())) {
 		/**
 		 * I don't want to store nodes when cursor is moved right.
@@ -220,11 +220,6 @@ public class JbTreeImpl implements JbTree {
 	    }
 	}
 	return currentNode.getId();
-    }
-
-    private Node findCorrespondingNode(final Node node, final Integer key) {
-	Integer nextNodeId = node.getCorrespondingNodeId(key);
-	return nodeStore.get(nextNodeId);
     }
 
     /*

@@ -44,7 +44,7 @@ public final class TreeBuilder {
 
     public JbTree build() {
 	NodeStoreImpl nodeStore = new NodeStoreImpl();
-	JbTree tree = new JbTreeImpl(l, nodeStore, new JbTreeToolImpl());
+	JbTree tree = new JbTreeImpl(l, nodeStore, new JbTreeToolImpl(nodeStore));
 	return tree;
     }
 
