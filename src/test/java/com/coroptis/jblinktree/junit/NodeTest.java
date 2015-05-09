@@ -155,7 +155,6 @@ public class NodeTest extends TestCase {
 	assertEquals(Integer.valueOf(3), node.getMaxKeyValue());
     }
 
-
     @Test
     public void test_remove_P0_zero_node() throws Exception {
 	node = Node.makeNode(3, 2, new Integer[] { 1, 2, null });
@@ -163,15 +162,10 @@ public class NodeTest extends TestCase {
 	Boolean ret = node.remove(2);
 
 	assertTrue(ret);
-	verifyNode(new Integer[][] {}, false, null);
-	assertEquals(null, node.getP0());
+	verifyNode(new Integer[][] {}, true, null);
 	assertEquals(null, node.getMaxKeyValue());
     }
 
-    
-    
-
-    
     @Test
     public void test_link() throws Exception {
 	node.setLink(-10);

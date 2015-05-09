@@ -30,7 +30,7 @@ import org.slf4j.LoggerFactory;
 import com.google.common.base.Preconditions;
 
 /**
- * Provide basic operations with tree.
+ * Provide operations with tree.
  * 
  * @author jan
  * 
@@ -362,6 +362,29 @@ public class Tree {
 	    }
 	}
 	return out;
+    }
+
+    /**
+     * Inform about presence of key in tree.
+     * 
+     * @return if key is in tree return <code>true</code> otherwise return
+     *         <code>false</code>.
+     */
+    public boolean containsKey(final Integer key) {
+	Preconditions.checkNotNull(key);
+	Integer idNode = rootNodeId;
+	Node node = nodeStore.get(rootNodeId);
+	while (!node.isLeafNode()) {
+	    idNode = node.getCorrespondingNodeId(key);
+	    node = nodeStore.get(idNode);
+	}
+
+	while (node.getLink().equals(node.getCorrespondingNodeId(key))) {
+	    idNode = node.getLink();
+	    node = nodeStore.get(idNode);
+	}
+
+	return node.getValue(key) != null;
     }
 
     /**
