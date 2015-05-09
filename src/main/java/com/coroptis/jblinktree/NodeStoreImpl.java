@@ -90,6 +90,7 @@ public class NodeStoreImpl implements NodeStore {
 	nodes.remove(Preconditions.checkNotNull(idNode));
     }
 
+    @Override
     public int countLockedNodes() {
 	return nodeLocks.countLockedThreads();
     }

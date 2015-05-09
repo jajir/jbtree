@@ -38,13 +38,16 @@ public final class TreeBuilder {
 	this.l = default_l;
     }
 
-    public void setL(final Integer l) {
+    public TreeBuilder setL(final Integer l) {
 	this.l = l;
+	return this;
     }
 
     public JbTree build() {
-	NodeStoreImpl nodeStore = new NodeStoreImpl();
-	JbTree tree = new JbTreeImpl(l, nodeStore, new JbTreeToolImpl(nodeStore));
+	final NodeStoreImpl nodeStore = new NodeStoreImpl();
+	final JbTreeTool jbTreeTool = new JbTreeToolImpl(nodeStore);
+	final JbTreeService treeService = new JbTreeServiceImpl(nodeStore, jbTreeTool);
+	final JbTree tree = new JbTreeImpl(l, nodeStore, jbTreeTool, treeService);
 	return tree;
     }
 

@@ -48,6 +48,8 @@ public class JbTreeImpl implements JbTree {
 
     private final JbTreeTool tool;
 
+    private final JbTreeService treeService;
+
     private final Logger logger = LoggerFactory.getLogger(JbTreeImpl.class);
 
     /**
@@ -58,10 +60,12 @@ public class JbTreeImpl implements JbTree {
      * @param nodeStore
      *            required node store object
      */
-    public JbTreeImpl(final int l, final NodeStore nodeStore, final JbTreeTool tool) {
+    public JbTreeImpl(final int l, final NodeStore nodeStore, final JbTreeTool tool,
+	    final JbTreeService jbTreeService) {
 	this.l = l;
 	this.nodeStore = Preconditions.checkNotNull(nodeStore);
 	this.tool = Preconditions.checkNotNull(tool);
+	this.treeService = Preconditions.checkNotNull(jbTreeService);
 	Node node = new Node(l, 0, true);
 	rootNodeId = node.getId();
 	this.nodeStore.writeNode(node);
@@ -78,7 +82,7 @@ public class JbTreeImpl implements JbTree {
 	Preconditions.checkNotNull(key);
 	Preconditions.checkNotNull(value);
 	final Stack<Integer> stack = new Stack<Integer>();
-	Integer currentNodeId = findLeafNodeId(key, stack);
+	Integer currentNodeId = treeService.findLeafNodeId(key, stack, rootNodeId);
 
 	/**
 	 * In node is leaf where should be new key & value inserted.
@@ -196,7 +200,7 @@ public class JbTreeImpl implements JbTree {
 	    return current;
 	} else {
 	    Integer nextNodeId = current.getCorrespondingNodeId(key);
-	    while (nextNodeId.equals(current.getLink())) {
+	    while (nextNodeId != null && nextNodeId.equals(current.getLink())) {
 		n = nodeStore.getAndLock(nextNodeId);
 		nodeStore.unlockNode(current.getId());
 		current = n;
@@ -207,21 +211,6 @@ public class JbTreeImpl implements JbTree {
 	}
     }
 
-    private Integer findLeafNodeId(final Integer key, final Stack<Integer> stack) {
-	Node currentNode = nodeStore.get(rootNodeId);
-	while (!currentNode.isLeafNode()) {
-	    final Node previousNode = currentNode;
-	    currentNode = tool.findCorrespondingNode(currentNode, key);
-	    if (!currentNode.getId().equals(previousNode.getLink())) {
-		/**
-		 * I don't want to store nodes when cursor is moved right.
-		 */
-		stack.push(previousNode.getId());
-	    }
-	}
-	return currentNode.getId();
-    }
-
     /*
      * (non-Javadoc)
      * 
@@ -230,7 +219,7 @@ public class JbTreeImpl implements JbTree {
     @Override
     public boolean remove(final Integer key) {
 	final Stack<Integer> stack = new Stack<Integer>();
-	Integer currentNodeId = findLeafNodeId(key, stack);
+	Integer currentNodeId = treeService.findLeafNodeId(key, stack, rootNodeId);
 
 	/**
 	 * Current node is leaf where should be new key deleted.
@@ -445,4 +434,8 @@ public class JbTreeImpl implements JbTree {
 
     }
 
+    @Override
+    public int countLockedNodes() {
+	return nodeStore.countLockedNodes();
+    }
 }

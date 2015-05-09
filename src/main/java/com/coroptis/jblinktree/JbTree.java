@@ -81,4 +81,14 @@ public interface JbTree {
      */
     void verify();
 
+    /**
+     * return number of nodes that are currently locked.
+     * <p>
+     * Method is thread safe.
+     * </p>
+     * 
+     * @return number of locked nodes.
+     */
+    int countLockedNodes();
+
 }

@@ -447,8 +447,15 @@ public class Node {
     }
 
     /**
-     * When it's non-leaf node it return sub node pointer where should be given
-     * key stored.
+     * When it's non-leaf node it return pointer to next node where should be
+     * given key stored.
+     * <p>
+     * When key is bigger that all keys in node than link is returned. In case
+     * of rightmost node next link is <code>null</code>
+     * </p>
+     * <p>
+     * Correct working of method depends on correct setting of max keys.
+     * </p>
      * <p>
      * There is possible performance improvement, when search not insert
      * procedure called this method than when key is bigger than max key than
@@ -457,18 +464,18 @@ public class Node {
      * 
      * @param key
      *            required key
-     * @return
+     * @return node id
      */
     public Integer getCorrespondingNodeId(final Integer key) {
 	if (isLeafNode()) {
 	    throw new JblinktreeException("Leaf node doesn't have any child nodes.");
 	}
-	for (int i = 1; i < field.length - 2; i = i + 2) {
+	for (int i = 1; i < field.length - 1; i = i + 2) {
 	    if (key <= field[i]) {
 		return field[i - 1];
 	    }
 	}
-	return field[field.length - 3];
+	return field[field.length - 1];
     }
 
     /**

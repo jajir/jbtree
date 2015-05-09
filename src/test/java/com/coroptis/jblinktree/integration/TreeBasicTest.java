@@ -27,15 +27,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.coroptis.jblinktree.JbTree;
-import com.coroptis.jblinktree.JbTreeToolImpl;
-import com.coroptis.jblinktree.NodeStoreImpl;
-import com.coroptis.jblinktree.JbTreeImpl;
+import com.coroptis.jblinktree.TreeBuilder;
 
 public class TreeBasicTest extends TestCase {
 
     private Logger logger = LoggerFactory.getLogger(TreeBasicTest.class);
-
-    private NodeStoreImpl nodeStore;
 
     private JbTree tree;
 
@@ -55,10 +51,6 @@ public class TreeBasicTest extends TestCase {
 	tree.insert(1, -10);
 	tree.insert(5, -50);
 
-	logger.debug("node 2: " + nodeStore.get(2).toString());
-	logger.debug("node 1: " + nodeStore.get(1).toString());
-	logger.debug("node 0: " + nodeStore.get(0).toString());
-
 	logger.debug(tree.toString());
 	assertEquals(3, tree.countValues());
     }
@@ -68,6 +60,7 @@ public class TreeBasicTest extends TestCase {
 	tree.insert(1, -10);
 	tree.insert(2, -20);
 	tree.insert(3, -30);
+	logger.debug(tree.toString());
 	tree.insert(4, -40);
 	tree.verify();
 	logger.debug(tree.toString());
@@ -139,15 +132,13 @@ public class TreeBasicTest extends TestCase {
     @Override
     protected void setUp() throws Exception {
 	super.setUp();
-	nodeStore = new NodeStoreImpl();
-	tree = new JbTreeImpl(2, nodeStore, new JbTreeToolImpl(nodeStore));
+	tree = TreeBuilder.builder().setL(2).build();
     }
 
     @Override
     protected void tearDown() throws Exception {
-	assertEquals("All locks should be unlocked ", 0, nodeStore.countLockedNodes());
+	assertEquals("All locks should be unlocked ", 0, tree.countLockedNodes());
 	tree = null;
-	nodeStore = null;
 	super.tearDown();
     }
 

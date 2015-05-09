@@ -26,6 +26,7 @@ import org.easymock.EasyMock;
 import org.junit.Test;
 
 import com.coroptis.jblinktree.JbTreeImpl;
+import com.coroptis.jblinktree.JbTreeService;
 import com.coroptis.jblinktree.JbTreeTool;
 import com.coroptis.jblinktree.Node;
 import com.coroptis.jblinktree.NodeStore;
@@ -44,6 +45,8 @@ public class JbTreeTest extends TestCase {
     private NodeStore nodeStore;
 
     private JbTreeTool jbTreeTool;
+
+    private JbTreeService jbTreeService;
 
     private Node rootNode;
 
@@ -91,9 +94,10 @@ public class JbTreeTest extends TestCase {
 	nodeStore = EasyMock.createMock(NodeStore.class);
 	rootNode = EasyMock.createMock(Node.class);
 	jbTreeTool = EasyMock.createMock(JbTreeTool.class);
+	jbTreeService = EasyMock.createMock(JbTreeService.class);
 	nodeStore.writeNode(new Node(3, 0, true));
 	EasyMock.replay(nodeStore);
-	jbTree = new JbTreeImpl(3, nodeStore, jbTreeTool);
+	jbTree = new JbTreeImpl(3, nodeStore, jbTreeTool, jbTreeService);
 	EasyMock.verify(nodeStore);
 	EasyMock.reset(nodeStore);
 
@@ -105,6 +109,7 @@ public class JbTreeTest extends TestCase {
 	jbTreeTool = null;
 	jbTree = null;
 	nodeStore = null;
+	jbTreeService = null;
 	super.tearDown();
     }
 

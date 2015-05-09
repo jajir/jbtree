@@ -32,10 +32,7 @@ import org.slf4j.LoggerFactory;
 
 import com.coroptis.jblinktree.Executer;
 import com.coroptis.jblinktree.JbTree;
-import com.coroptis.jblinktree.JbTreeToolImpl;
-import com.coroptis.jblinktree.NodeStore;
-import com.coroptis.jblinktree.NodeStoreImpl;
-import com.coroptis.jblinktree.JbTreeImpl;
+import com.coroptis.jblinktree.TreeBuilder;
 import com.coroptis.jblinktree.Worker;
 
 /**
@@ -80,8 +77,7 @@ public class TreeConcurrencyTest extends TestCase {
     @Override
     protected void setUp() throws Exception {
 	super.setUp();
-	NodeStore nodeStore = new NodeStoreImpl();
-	tree = new JbTreeImpl(2, nodeStore, new JbTreeToolImpl(nodeStore));
+	tree = TreeBuilder.builder().setL(2).build();
 	random = new Random();
     }
 

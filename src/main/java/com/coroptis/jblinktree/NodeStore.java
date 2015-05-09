@@ -36,4 +36,5 @@ public interface NodeStore {
 
     int size();
 
+    int countLockedNodes();
 }
