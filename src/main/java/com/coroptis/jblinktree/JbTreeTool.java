@@ -41,5 +41,50 @@ public interface JbTreeTool {
      * @return found node if there is such, when there is no corresponding key
      *         <code>null</code> is returned.
      */
-    Node findCorrespondingNode(final Node node, final Integer key);
+    Node findCorrespondingNode(Node node, Integer key);
+
+    /**
+     * Move right in tree until suitable non-leaf node is found.
+     * <p>
+     * When there is move right than current node is unlocked and new one is
+     * locked.
+     * </p>
+     * 
+     * @param current
+     *            required current node, this node should be locked
+     * @param key
+     *            required key
+     * @return moved right node
+     */
+    Node moveRightLeafNode(Node current, Integer key);
+
+    /**
+     * Move right in tree until suitable leaf node is found.
+     * <p>
+     * When there is move right than current node is unlocked and new one is
+     * locked.
+     * </p>
+     * 
+     * @param current
+     *            required current node, this node should be locked
+     * @param key
+     *            required key
+     * @return moved right node
+     */
+    Node moveRightNonLeafNode(Node current, Integer key);
+
+    /**
+     * Split node into two nodes. It moved path of currentNode data int new one
+     * which will be returned.
+     * 
+     * @param currentNode
+     *            required node which will be split
+     * @param key
+     *            required key
+     * @param tmpValue
+     *            required value
+     * @return
+     */
+    Node split(Node currentNode, Integer key, Integer tmpValue);
+
 }

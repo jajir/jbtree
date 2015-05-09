@@ -35,7 +35,11 @@ public interface JbTreeService {
      * placed. In Stock are stored passed nodes. Right moved in tree are not
      * stored.
      * <p>
-     * In stack is stored just rightmost node id.
+     * When it's necessary to move right in stack are stored just rightmost
+     * nodes id.
+     * </p>
+     * <p>
+     * Method doesn't lock any nodes.
      * </p>
      * 
      * @param key

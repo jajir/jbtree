@@ -83,12 +83,8 @@ public class JbTreeImpl implements JbTree {
 	Preconditions.checkNotNull(value);
 	final Stack<Integer> stack = new Stack<Integer>();
 	Integer currentNodeId = treeService.findLeafNodeId(key, stack, rootNodeId);
-
-	/**
-	 * In node is leaf where should be new key & value inserted.
-	 */
 	Node currentNode = nodeStore.getAndLock(currentNodeId);
-	currentNode = moveRight(currentNode, key);
+	currentNode = tool.moveRightLeafNode(currentNode, key);
 	if (currentNode.getValue(key) == null) {
 	    /**
 	     * Key and value have to be inserted
@@ -100,7 +96,7 @@ public class JbTreeImpl implements JbTree {
 		    /**
 		     * There is no free space for key and value
 		     */
-		    Node newNode = split(currentNode, tmpKey, tmpValue);
+		    Node newNode = tool.split(currentNode, tmpKey, tmpValue);
 		    Integer currentNodeMaxKey = currentNode.getMaxKey();
 		    nodeStore.writeNode(newNode);
 		    nodeStore.writeNode(currentNode);
@@ -124,7 +120,7 @@ public class JbTreeImpl implements JbTree {
 			 * There is a previous node, so move there.
 			 */
 			currentNode = nodeStore.getAndLock(stack.pop());
-			moveRight(currentNode, currentNodeMaxKey);
+			tool.moveRightNonLeafNode(currentNode, currentNodeMaxKey);
 			if (newNode.getMaxKeyValue() > currentNode.getMaxKeyValue()) {
 			    currentNode.setMaxKeyValue(newNode.getMaxKeyValue());
 			    nodeStore.writeNode(currentNode);
@@ -153,64 +149,6 @@ public class JbTreeImpl implements JbTree {
 	}
     }
 
-    /**
-     * Split node into two nodes. It moved path of currentNode data int new one
-     * which will be returned.
-     * 
-     * @param currentNode
-     *            required node which will be split
-     * @param key
-     *            required key
-     * @param tmpValue
-     *            required value
-     * @return
-     */
-    private Node split(final Node currentNode, final Integer key, final Integer tmpValue) {
-	Node newNode = new Node(l, nodeStore.size(), true);
-	currentNode.moveTopHalfOfDataTo(newNode);
-	if (currentNode.getMaxKey() < key) {
-	    newNode.insert(key, tmpValue);
-	} else {
-	    currentNode.insert(key, tmpValue);
-	}
-	return newNode;
-    }
-
-    /**
-     * Move right method according to Lehman & Yao.
-     * <p>
-     * When there is move right than current node is unlocked and new one is
-     * locked.
-     * </p>
-     * 
-     * @param current
-     *            required current node, this node should be locked
-     * @param key
-     *            required key
-     * @return moved right node
-     */
-    private Node moveRight(Node current, final Integer key) {
-	Node n;
-	if (current.isLeafNode()) {
-	    while (current.getLink() != null && key > current.getMaxKeyValue()) {
-		n = nodeStore.getAndLock(current.getLink());
-		nodeStore.unlockNode(current.getId());
-		current = n;
-	    }
-	    return current;
-	} else {
-	    Integer nextNodeId = current.getCorrespondingNodeId(key);
-	    while (nextNodeId != null && nextNodeId.equals(current.getLink())) {
-		n = nodeStore.getAndLock(nextNodeId);
-		nodeStore.unlockNode(current.getId());
-		current = n;
-
-		nextNodeId = current.getCorrespondingNodeId(key);
-	    }
-	    return current;
-	}
-    }
-
     /*
      * (non-Javadoc)
      * 
@@ -225,7 +163,7 @@ public class JbTreeImpl implements JbTree {
 	 * Current node is leaf where should be new key deleted.
 	 */
 	Node currentNode = nodeStore.getAndLock(currentNodeId);
-	currentNode = moveRight(currentNode, key);
+	currentNode = tool.moveRightLeafNode(currentNode, key);
 	if (currentNode.getValue(key) == null) {
 	    /**
 	     * Node doesn't contains key, there is nothing to delete
@@ -256,7 +194,7 @@ public class JbTreeImpl implements JbTree {
 		    nodesToRemove.add(currentNode.getId());
 		    // move to previous node
 		    Node nextNode = nodeStore.getAndLock(stack.pop());
-		    moveRight(nextNode, oldMaxKey);
+		    tool.moveRightNonLeafNode(nextNode, oldMaxKey);
 		    currentNode = nextNode;
 		    tmpKey = oldMaxKey;
 		} else {

@@ -47,4 +47,74 @@ public class JbTreeToolImpl implements JbTreeTool {
 	Integer nextNodeId = node.getCorrespondingNodeId(key);
 	return nodeStore.get(nextNodeId);
     }
+
+    /**
+     * Move right in tree until suitable leaf node is found.
+     * <p>
+     * When there is move right than current node is unlocked and new one is
+     * locked.
+     * </p>
+     * 
+     * @param current
+     *            required current node, this node should be locked
+     * @param key
+     *            required key
+     * @return moved right node
+     */
+    @Override
+    public Node moveRightNonLeafNode(Node current, final Integer key) {
+	Node n;
+	if (current.isLeafNode()) {
+	    throw new JblinktreeException("method is for non-leaf nodes, but given node is leaf");
+	} else {
+	    Integer nextNodeId = current.getCorrespondingNodeId(key);
+	    while (nextNodeId != null && nextNodeId.equals(current.getLink())) {
+		n = nodeStore.getAndLock(nextNodeId);
+		nodeStore.unlockNode(current.getId());
+		current = n;
+
+		nextNodeId = current.getCorrespondingNodeId(key);
+	    }
+	    return current;
+	}
+    }
+
+    @Override
+    public Node moveRightLeafNode(Node current, final Integer key) {
+	Node n;
+	if (current.isLeafNode()) {
+	    while (current.getLink() != null && key > current.getMaxKeyValue()) {
+		n = nodeStore.getAndLock(current.getLink());
+		nodeStore.unlockNode(current.getId());
+		current = n;
+	    }
+	    return current;
+	} else {
+	    throw new JblinktreeException("method is for leaf nodes, but given node is non-leaf");
+	}
+    }
+
+    /**
+     * Split node into two nodes. It moved path of currentNode data int new one
+     * which will be returned.
+     * 
+     * @param currentNode
+     *            required node which will be split
+     * @param key
+     *            required key
+     * @param tmpValue
+     *            required value
+     * @return
+     */
+    @Override
+    public Node split(final Node currentNode, final Integer key, final Integer tmpValue) {
+	Node newNode = new Node(currentNode.getL(), nodeStore.size(), true);
+	currentNode.moveTopHalfOfDataTo(newNode);
+	if (currentNode.getMaxKey() < key) {
+	    newNode.insert(key, tmpValue);
+	} else {
+	    currentNode.insert(key, tmpValue);
+	}
+	return newNode;
+    }
 }

@@ -592,4 +592,11 @@ public class Node {
 	}
     }
 
+    /**
+     * @return the l
+     */
+    public int getL() {
+        return l;
+    }
+
 }
