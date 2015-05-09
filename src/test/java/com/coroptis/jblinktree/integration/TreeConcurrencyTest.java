@@ -20,7 +20,6 @@ package com.coroptis.jblinktree.integration;
  * #L%
  */
 
-
 import java.util.Random;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
@@ -32,9 +31,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.coroptis.jblinktree.Executer;
+import com.coroptis.jblinktree.JbTree;
+import com.coroptis.jblinktree.JbTreeToolImpl;
 import com.coroptis.jblinktree.NodeStore;
 import com.coroptis.jblinktree.NodeStoreImpl;
-import com.coroptis.jblinktree.Tree;
+import com.coroptis.jblinktree.JbTreeImpl;
 import com.coroptis.jblinktree.Worker;
 
 /**
@@ -47,7 +48,7 @@ public class TreeConcurrencyTest extends TestCase {
 
     private final Logger logger = LoggerFactory.getLogger(TreeConcurrencyTest.class);
 
-    private Tree tree;
+    private JbTree tree;
 
     private Random random;
 
@@ -61,8 +62,8 @@ public class TreeConcurrencyTest extends TestCase {
 	for (int i = 0; i < threadCount; ++i) {
 	    Runnable runner = new Executer(new Worker() {
 
-    		@Override
-    		public void doWork() {
+		@Override
+		public void doWork() {
 		    doWorkNow();
 		}
 	    }, startLatch, doneLatch, cycleCount);
@@ -80,7 +81,7 @@ public class TreeConcurrencyTest extends TestCase {
     protected void setUp() throws Exception {
 	super.setUp();
 	NodeStore nodeStore = new NodeStoreImpl();
-	tree = new Tree(2, nodeStore);
+	tree = new JbTreeImpl(2, nodeStore, new JbTreeToolImpl());
 	random = new Random();
     }
 

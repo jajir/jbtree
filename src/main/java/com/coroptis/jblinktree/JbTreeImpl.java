@@ -30,12 +30,12 @@ import org.slf4j.LoggerFactory;
 import com.google.common.base.Preconditions;
 
 /**
- * Provide operations with tree.
+ * Implementation of {@link JbTree}.
  * 
  * @author jan
  * 
  */
-public class Tree {
+public class JbTreeImpl implements JbTree {
 
     /**
      * Main node parameter, it's number of nodes.
@@ -46,7 +46,9 @@ public class Tree {
 
     private final NodeStore nodeStore;
 
-    private final Logger logger = LoggerFactory.getLogger(Tree.class);
+    private final JbTreeTool tool;
+
+    private final Logger logger = LoggerFactory.getLogger(JbTreeImpl.class);
 
     /**
      * Create and initialize tree.
@@ -56,21 +58,22 @@ public class Tree {
      * @param nodeStore
      *            required node store object
      */
-    public Tree(final int l, final NodeStore nodeStore) {
+    public JbTreeImpl(final int l, final NodeStore nodeStore, final JbTreeTool tool) {
 	this.l = l;
 	this.nodeStore = Preconditions.checkNotNull(nodeStore);
+	this.tool = Preconditions.checkNotNull(tool);
 	Node node = new Node(l, 0, true);
 	rootNodeId = node.getId();
 	this.nodeStore.writeNode(node);
     }
 
-    /**
-     * Insert value and key into tree.
+    /*
+     * (non-Javadoc)
      * 
-     * @param key
-     *            required parameter key
-     * @return previously associated value with given key.
+     * @see com.coroptis.jblinktree.JbTree#insert(java.lang.Integer,
+     * java.lang.Integer)
      */
+    @Override
     public Integer insert(final Integer key, final Integer value) {
 	Preconditions.checkNotNull(key);
 	Preconditions.checkNotNull(value);
@@ -224,14 +227,12 @@ public class Tree {
 	return nodeStore.get(nextNodeId);
     }
 
-    /**
-     * Remove key from tree. Associated value will be also removed.
+    /*
+     * (non-Javadoc)
      * 
-     * @param key
-     *            required key
-     * @return return <code>true</code> when key was found and removed otherwise
-     *         return <code>false</code>.
+     * @see com.coroptis.jblinktree.JbTree#remove(java.lang.Integer)
      */
+    @Override
     public boolean remove(final Integer key) {
 	final Stack<Integer> stack = new Stack<Integer>();
 	Integer currentNodeId = findLeafNodeId(key, stack);
@@ -320,12 +321,12 @@ public class Tree {
 	}
     }
 
-    /**
-     * Search method according to Lehman & Yao
+    /*
+     * (non-Javadoc)
      * 
-     * @param key
-     * @return
+     * @see com.coroptis.jblinktree.JbTree#search(java.lang.Integer)
      */
+    @Override
     public Integer search(final Integer key) {
 	Integer idNode = rootNodeId;
 	Node node = nodeStore.get(rootNodeId);
@@ -342,11 +343,12 @@ public class Tree {
 	return node.getValue(key);
     }
 
-    /**
-     * Count all keys stored in tree.
+    /*
+     * (non-Javadoc)
      * 
-     * @return number of all keys in tree.
+     * @see com.coroptis.jblinktree.JbTree#countValues()
      */
+    @Override
     public int countValues() {
 	int out = 0;
 	final Stack<Integer> stack = new Stack<Integer>();
@@ -364,12 +366,12 @@ public class Tree {
 	return out;
     }
 
-    /**
-     * Inform about presence of key in tree.
+    /*
+     * (non-Javadoc)
      * 
-     * @return if key is in tree return <code>true</code> otherwise return
-     *         <code>false</code>.
+     * @see com.coroptis.jblinktree.JbTree#containsKey(java.lang.Integer)
      */
+    @Override
     public boolean containsKey(final Integer key) {
 	Preconditions.checkNotNull(key);
 	Integer idNode = rootNodeId;
@@ -387,8 +389,10 @@ public class Tree {
 	return node.getValue(key) != null;
     }
 
-    /**
-     * Override {@link System#toString()} method.
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.coroptis.jblinktree.JbTree#toString()
      */
     @Override
     public String toString() {
@@ -420,9 +424,12 @@ public class Tree {
 	return buff.toString();
     }
 
-    /**
-     * Verify that tree is consistent.
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.coroptis.jblinktree.JbTree#verify()
      */
+    @Override
     public void verify() {
 	final Stack<Integer> stack = new Stack<Integer>();
 	stack.push(rootNodeId);

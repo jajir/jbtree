@@ -26,8 +26,10 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.coroptis.jblinktree.JbTree;
+import com.coroptis.jblinktree.JbTreeToolImpl;
 import com.coroptis.jblinktree.NodeStoreImpl;
-import com.coroptis.jblinktree.Tree;
+import com.coroptis.jblinktree.JbTreeImpl;
 
 public class TreeBasicTest extends TestCase {
 
@@ -35,7 +37,7 @@ public class TreeBasicTest extends TestCase {
 
     private NodeStoreImpl nodeStore;
 
-    private Tree tree;
+    private JbTree tree;
 
     @Test
     public void testJustOneNode() throws Exception {
@@ -138,7 +140,7 @@ public class TreeBasicTest extends TestCase {
     protected void setUp() throws Exception {
 	super.setUp();
 	nodeStore = new NodeStoreImpl();
-	tree = new Tree(2, nodeStore);
+	tree = new JbTreeImpl(2, nodeStore, new JbTreeToolImpl());
     }
 
     @Override

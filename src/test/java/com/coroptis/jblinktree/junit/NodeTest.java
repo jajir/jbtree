@@ -31,6 +31,12 @@ import org.slf4j.LoggerFactory;
 import com.coroptis.jblinktree.JblinktreeException;
 import com.coroptis.jblinktree.Node;
 
+/**
+ * Junit test for {@link Node}.
+ * 
+ * @author jan
+ * 
+ */
 public class NodeTest extends TestCase {
 
     private Logger logger = LoggerFactory.getLogger(NodeTest.class);

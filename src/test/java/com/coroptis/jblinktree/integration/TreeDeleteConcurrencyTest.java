@@ -20,7 +20,6 @@ package com.coroptis.jblinktree.integration;
  * #L%
  */
 
-
 import java.util.Random;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
@@ -32,9 +31,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.coroptis.jblinktree.Executer;
+import com.coroptis.jblinktree.JbTree;
+import com.coroptis.jblinktree.JbTreeToolImpl;
 import com.coroptis.jblinktree.NodeStore;
 import com.coroptis.jblinktree.NodeStoreImpl;
-import com.coroptis.jblinktree.Tree;
+import com.coroptis.jblinktree.JbTreeImpl;
 import com.coroptis.jblinktree.Worker;
 
 /**
@@ -45,10 +46,9 @@ import com.coroptis.jblinktree.Worker;
  */
 public class TreeDeleteConcurrencyTest extends TestCase {
 
-    private final Logger logger = LoggerFactory
-	    .getLogger(TreeDeleteConcurrencyTest.class);
+    private final Logger logger = LoggerFactory.getLogger(TreeDeleteConcurrencyTest.class);
 
-    private Tree tree;
+    private JbTree tree;
 
     private Random random;
 
@@ -56,8 +56,7 @@ public class TreeDeleteConcurrencyTest extends TestCase {
     public void testForThreadClash() throws Exception {
 	final int cycleCount = 10;
 	final int threadCount = 10;
-	final CountDownLatch doneLatch = new CountDownLatch(cycleCount
-		* threadCount);
+	final CountDownLatch doneLatch = new CountDownLatch(cycleCount * threadCount);
 	final CountDownLatch startLatch = new CountDownLatch(1);
 
 	for (int i = 0; i < threadCount; ++i) {
@@ -73,8 +72,7 @@ public class TreeDeleteConcurrencyTest extends TestCase {
 
 	startLatch.countDown();
 	doneLatch.await(10, TimeUnit.SECONDS);
-	assertEquals("Some thread didn't finished work", 0,
-		doneLatch.getCount());
+	assertEquals("Some thread didn't finished work", 0, doneLatch.getCount());
 	tree.verify();
 	logger.debug("I'm done!");
     }
@@ -83,7 +81,7 @@ public class TreeDeleteConcurrencyTest extends TestCase {
     protected void setUp() throws Exception {
 	super.setUp();
 	NodeStore nodeStore = new NodeStoreImpl();
-	tree = new Tree(2, nodeStore);
+	tree = new JbTreeImpl(2, nodeStore, new JbTreeToolImpl());
 	random = new Random();
     }
 

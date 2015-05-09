@@ -1,4 +1,4 @@
-package com.coroptis.jblinktree;
+package com.coroptis.jblinktree.junit;
 
 /*
  * #%L
@@ -19,33 +19,16 @@ package com.coroptis.jblinktree;
  * limitations under the License.
  * #L%
  */
+import junit.framework.TestCase;
+
+import com.coroptis.jblinktree.JbTreeTool;
 
 /**
- * Provide fluent API for creating tree.
+ * Tests for {@link JbTreeTool}
  * 
- * @author jajir
+ * @author jan
  * 
  */
-public final class TreeBuilder {
-
-    private Integer l;
-
-    public static TreeBuilder builder() {
-	return new TreeBuilder(5);
-    }
-
-    private TreeBuilder(final Integer default_l) {
-	this.l = default_l;
-    }
-
-    public void setL(final Integer l) {
-	this.l = l;
-    }
-
-    public JbTree build() {
-	NodeStoreImpl nodeStore = new NodeStoreImpl();
-	JbTree tree = new JbTreeImpl(l, nodeStore, new JbTreeToolImpl());
-	return tree;
-    }
+public class JbTreeToolTest extends TestCase {
 
 }
