@@ -79,6 +79,117 @@ public class JbTreeToolTest extends TestCase {
 	EasyMock.verify(nodeStore, n1, n2);
     }
 
+    @Test
+    public void test_moveRightNonLeafNode_isLeafNode() throws Exception {
+	EasyMock.expect(n1.isLeafNode()).andReturn(true);
+	EasyMock.replay(nodeStore, n1, n2);
+
+	try {
+	    jbTreeTool.moveRightNonLeafNode(n1, 10);
+	    fail();
+	} catch (JblinktreeException e) {
+	    assertTrue(e.getMessage().contains("method is for non-leaf"));
+	}
+	EasyMock.verify(nodeStore, n1, n2);
+    }
+
+    @Test
+    public void test_moveRightNonLeafNode_noMove() throws Exception {
+	EasyMock.expect(n1.isLeafNode()).andReturn(false);
+	EasyMock.expect(n1.getCorrespondingNodeId(10)).andReturn(4);
+	EasyMock.expect(n1.getLink()).andReturn(12);
+	EasyMock.replay(nodeStore, n1, n2);
+	Node ret = jbTreeTool.moveRightNonLeafNode(n1, 10);
+
+	assertEquals(n1, ret);
+	EasyMock.verify(nodeStore, n1, n2);
+    }
+    @Test
+    public void test_moveRightNonLeafNode_nextNodeId_isNull() throws Exception {
+	EasyMock.expect(n1.isLeafNode()).andReturn(false);
+	EasyMock.expect(n1.getCorrespondingNodeId(10)).andReturn(null);
+	EasyMock.replay(nodeStore, n1, n2);
+	Node ret = jbTreeTool.moveRightNonLeafNode(n1, 10);
+
+	assertEquals(n1, ret);
+	EasyMock.verify(nodeStore, n1, n2);
+    }
+
+    @Test
+    public void test_moveRightNonLeafNode_move() throws Exception {
+	EasyMock.expect(n1.isLeafNode()).andReturn(false);
+	EasyMock.expect(n1.getCorrespondingNodeId(10)).andReturn(4);
+	EasyMock.expect(n1.getLink()).andReturn(4);
+	EasyMock.expect(nodeStore.getAndLock(4)).andReturn(n2);
+	EasyMock.expect(n1.getId()).andReturn(5);
+	nodeStore.unlockNode(5);
+	EasyMock.expect(n2.getCorrespondingNodeId(10)).andReturn(6);
+	EasyMock.expect(n2.getLink()).andReturn(60);
+	EasyMock.replay(nodeStore, n1, n2);
+	Node ret = jbTreeTool.moveRightNonLeafNode(n1, 10);
+
+	assertEquals(n2, ret);
+	EasyMock.verify(nodeStore, n1, n2);
+    }
+
+    @Test
+    public void test_moveRightLeafNode_isNonLeafNode() throws Exception {
+	EasyMock.expect(n1.isLeafNode()).andReturn(false);
+	EasyMock.replay(nodeStore, n1, n2);
+
+	try {
+	    jbTreeTool.moveRightLeafNode(n1, 10);
+	    fail();
+	} catch (JblinktreeException e) {
+	    assertTrue(e.getMessage().contains("method is for leaf nodes"));
+	}
+	EasyMock.verify(nodeStore, n1, n2);
+    }
+
+    @Test
+    public void test_moveRightLeafNode_noMove() throws Exception {
+	EasyMock.expect(n1.isLeafNode()).andReturn(true);
+	EasyMock.expect(n1.getLink()).andReturn(32);
+	EasyMock.expect(n1.getMaxKeyValue()).andReturn(18);
+	EasyMock.replay(nodeStore, n1, n2);
+	Node ret = jbTreeTool.moveRightLeafNode(n1, 10);
+
+	assertEquals(n1, ret);
+	EasyMock.verify(nodeStore, n1, n2);
+    }
+
+    @Test
+    public void test_moveRightLeafNode_linkIsNull() throws Exception {
+	EasyMock.expect(n1.isLeafNode()).andReturn(true);
+	EasyMock.expect(n1.getLink()).andReturn(null);
+	EasyMock.replay(nodeStore, n1, n2);
+	Node ret = jbTreeTool.moveRightLeafNode(n1, 10);
+
+	assertEquals(n1, ret);
+	EasyMock.verify(nodeStore, n1, n2);
+    }
+
+    @Test
+    public void test_moveRightLeafNode_move() throws Exception {
+	EasyMock.expect(n1.isLeafNode()).andReturn(true);
+	EasyMock.expect(n1.getLink()).andReturn(32);
+	EasyMock.expect(n1.getMaxKeyValue()).andReturn(5);
+
+	EasyMock.expect(n1.getLink()).andReturn(32);
+	EasyMock.expect(nodeStore.getAndLock(32)).andReturn(n2);
+	EasyMock.expect(n1.getId()).andReturn(5);
+
+	EasyMock.expect(n2.getLink()).andReturn(45);
+	EasyMock.expect(n2.getMaxKeyValue()).andReturn(15);
+	nodeStore.unlockNode(5);
+
+	EasyMock.replay(nodeStore, n1, n2);
+	Node ret = jbTreeTool.moveRightLeafNode(n1, 10);
+
+	assertEquals(n2, ret);
+	EasyMock.verify(nodeStore, n1, n2);
+    }
+
     @Override
     protected void setUp() throws Exception {
 	super.setUp();

@@ -48,30 +48,14 @@ public class JbTreeToolImpl implements JbTreeTool {
 	return nodeStore.get(nextNodeId);
     }
 
-    /**
-     * Move right in tree until suitable leaf node is found.
-     * <p>
-     * When there is move right than current node is unlocked and new one is
-     * locked.
-     * </p>
-     * 
-     * @param current
-     *            required current node, this node should be locked
-     * @param key
-     *            required key
-     * @return moved right node
-     */
     @Override
     public Node moveRightNonLeafNode(Node current, final Integer key) {
-	Node n;
 	if (current.isLeafNode()) {
 	    throw new JblinktreeException("method is for non-leaf nodes, but given node is leaf");
 	} else {
 	    Integer nextNodeId = current.getCorrespondingNodeId(key);
 	    while (nextNodeId != null && nextNodeId.equals(current.getLink())) {
-		n = nodeStore.getAndLock(nextNodeId);
-		nodeStore.unlockNode(current.getId());
-		current = n;
+		current = moveToNextNede(current, nextNodeId);
 
 		nextNodeId = current.getCorrespondingNodeId(key);
 	    }
@@ -81,12 +65,9 @@ public class JbTreeToolImpl implements JbTreeTool {
 
     @Override
     public Node moveRightLeafNode(Node current, final Integer key) {
-	Node n;
 	if (current.isLeafNode()) {
 	    while (current.getLink() != null && key > current.getMaxKeyValue()) {
-		n = nodeStore.getAndLock(current.getLink());
-		nodeStore.unlockNode(current.getId());
-		current = n;
+		current = moveToNextNede(current, current.getLink());
 	    }
 	    return current;
 	} else {
@@ -94,18 +75,12 @@ public class JbTreeToolImpl implements JbTreeTool {
 	}
     }
 
-    /**
-     * Split node into two nodes. It moved path of currentNode data int new one
-     * which will be returned.
-     * 
-     * @param currentNode
-     *            required node which will be split
-     * @param key
-     *            required key
-     * @param tmpValue
-     *            required value
-     * @return
-     */
+    private Node moveToNextNede(final Node currentNode, final Integer nextNodeId) {
+	final Node n = nodeStore.getAndLock(nextNodeId);
+	nodeStore.unlockNode(currentNode.getId());
+	return n;
+    }
+
     @Override
     public Node split(final Node currentNode, final Integer key, final Integer tmpValue) {
 	Node newNode = new Node(currentNode.getL(), nodeStore.size(), true);
