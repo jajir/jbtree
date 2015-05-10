@@ -319,6 +319,33 @@ public class NodeTest extends TestCase {
 	assertEquals("node id should be different", Integer.valueOf(1), nodeId);
     }
 
+    @Test
+    public void test_updateNodeValue_value_was_updated() throws Exception {
+	Node n = Node.makeNode(2, 2, new Integer[] { 0, 2, 1, 3, 23 });
+
+	boolean ret = n.updateNodeValue(0, 3);
+
+	assertTrue(ret);
+    }
+
+    @Test
+    public void test_updateNodeValue_value_was_not_updated() throws Exception {
+	Node n = Node.makeNode(2, 2, new Integer[] { 0, 2, 1, 3, 23 });
+
+	boolean ret = n.updateNodeValue(0, 2);
+
+	assertFalse(ret);
+    }
+
+    @Test
+    public void test_updateNodeValue_missing_node_id() throws Exception {
+	Node n = Node.makeNode(2, 2, new Integer[] { 0, 2, 1, 3, 23 });
+
+	boolean ret = n.updateNodeValue(10, 2);
+
+	assertFalse(ret);
+    }
+
     /**
      * Verify that node have following basic attributes:
      * <ul>

@@ -327,16 +327,24 @@ public class Node {
      *            required node is to update
      * @param nodeMaxValuer
      *            required value, this value will be set for previous node id
+     * @return return <code>true</code> when node max value was really updated
+     *         otherwise return <code>false</code>
      */
-    public void updateNodeValue(final Integer nodeIdToUpdate, final Integer nodeMaxValue) {
+    public boolean updateNodeValue(final Integer nodeIdToUpdate, final Integer nodeMaxValue) {
 	if (isLeafNode()) {
 	    throw new JblinktreeException("methos could by used just on non-leaf nodes");
 	}
 	for (int i = 0; i < field.length - 2; i = i + 2) {
 	    if (field[i].equals(nodeIdToUpdate)) {
-		field[i + 1] = nodeMaxValue;
+		if(field[i + 1] == nodeMaxValue){
+		    return false;
+		}else{
+		    field[i + 1] = nodeMaxValue;
+		    return true;
+		}
 	    }
 	}
+	return false;
     }
 
     /**

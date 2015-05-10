@@ -113,8 +113,9 @@ public class JbTreeImpl implements JbTree {
 			final Integer previousCurrentNodeId = currentNode.getId();
 			Node parentNode = nodeStore.getAndLock(stack.pop());
 			parentNode = tool.moveRightNonLeafNode(parentNode, tmpKey);
-			parentNode.updateNodeValue(currentNode.getId(), currentNode.getMaxValue());
-			nodeStore.writeNode(parentNode);
+			if(parentNode.updateNodeValue(currentNode.getId(), currentNode.getMaxValue())){
+			    nodeStore.writeNode(parentNode);
+			}
 			currentNode = parentNode;
 			tmpValue = newNode.getId();
 			tmpKey = newNode.getMaxKey();
@@ -224,13 +225,6 @@ public class JbTreeImpl implements JbTree {
 	    }// end of while
 	}
 	// nodeStore.deleteNode(currentNode.getId());
-    }
-
-    /**
-     * 
-     */
-    private void updateMaxInUpperNodes(final Stack<Integer> stack, Node currentNode) {
-
     }
 
     private void removeNodes(final List<Integer> nodesToRemove) {
