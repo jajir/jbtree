@@ -54,7 +54,7 @@ public class JbTreeServiceImpl implements JbTreeService {
 		 * use node id associated with bigger key.
 		 */
 		stack.push(currentNode.getId());
-		nextNodeId = currentNode.getCorrespondingNodeId(currentNode.getMaxKeyValue());
+		nextNodeId = currentNode.getCorrespondingNodeId(currentNode.getMaxValue());
 	    } else if (!nextNodeId.equals(currentNode.getLink())) {
 		/**
 		 * I don't want to store nodes when cursor is moved right.

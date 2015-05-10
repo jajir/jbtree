@@ -536,11 +536,11 @@ public class Node {
     }
 
     /**
-     * Get max key value
+     * Get max value.
      * 
-     * @return max key value, could be <code>null</code>
+     * @return max value stored in node, could be <code>null</code>
      */
-    public Integer getMaxKeyValue() {
+    public Integer getMaxValue() {
 	return field[field.length - 2];
     }
 
@@ -596,7 +596,7 @@ public class Node {
      * @return the l
      */
     public int getL() {
-        return l;
+	return l;
     }
 
 }

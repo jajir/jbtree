@@ -126,7 +126,7 @@ public class NodeTest extends TestCase {
 
 	assertTrue(ret);
 	assertTrue(node.isEmpty());
-	assertNull(node.getMaxKeyValue());
+	assertNull(node.getMaxValue());
     }
 
     @Test
@@ -158,7 +158,7 @@ public class NodeTest extends TestCase {
 	assertTrue(ret);
 	verifyNode(new Integer[][] {}, false, null);
 	assertEquals(Integer.valueOf(1), node.getP0());
-	assertEquals(Integer.valueOf(3), node.getMaxKeyValue());
+	assertEquals(Integer.valueOf(3), node.getMaxValue());
     }
 
     @Test
@@ -169,7 +169,7 @@ public class NodeTest extends TestCase {
 
 	assertTrue(ret);
 	verifyNode(new Integer[][] {}, true, null);
-	assertEquals(null, node.getMaxKeyValue());
+	assertEquals(null, node.getMaxValue());
     }
 
     @Test

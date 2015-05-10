@@ -57,7 +57,7 @@ public class JbTreeToolImpl implements JbTreeTool {
 	} else {
 	    Integer nextNodeId = current.getCorrespondingNodeId(key);
 	    while (nextNodeId != null && nextNodeId.equals(current.getLink())) {
-		current = moveToNextNede(current, nextNodeId);
+		current = moveToNextNode(current, nextNodeId);
 
 		nextNodeId = current.getCorrespondingNodeId(key);
 	    }
@@ -68,8 +68,8 @@ public class JbTreeToolImpl implements JbTreeTool {
     @Override
     public Node moveRightLeafNode(Node current, final Integer key) {
 	if (current.isLeafNode()) {
-	    while (current.getLink() != null && key > current.getMaxKeyValue()) {
-		current = moveToNextNede(current, current.getLink());
+	    while (current.getLink() != null && key > current.getMaxValue()) {
+		current = moveToNextNode(current, current.getLink());
 	    }
 	    return current;
 	} else {
@@ -77,7 +77,7 @@ public class JbTreeToolImpl implements JbTreeTool {
 	}
     }
 
-    private Node moveToNextNede(final Node currentNode, final Integer nextNodeId) {
+    private Node moveToNextNode(final Node currentNode, final Integer nextNodeId) {
 	final Node n = nodeStore.getAndLock(nextNodeId);
 	nodeStore.unlockNode(currentNode.getId());
 	return n;

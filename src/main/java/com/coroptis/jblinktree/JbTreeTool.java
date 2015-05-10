@@ -76,7 +76,7 @@ public interface JbTreeTool {
     Node moveRightNonLeafNode(Node current, Integer key);
 
     /**
-     * Split node into two nodes. It moved path of currentNode data int new one
+     * Split node into two nodes. It moved part of currentNode data into new one
      * which will be returned.
      * <p>
      * Method doesn't work with locks.
@@ -88,7 +88,7 @@ public interface JbTreeTool {
      *            required inserted key
      * @param value
      *            required inserted value
-     * @return
+     * @return newly created node, this node contains higher part of keys.
      */
     Node split(Node currentNode, Integer key, Integer value);
 

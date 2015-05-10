@@ -96,31 +96,30 @@ public class JbTreeImpl implements JbTree {
 		    /**
 		     * There is no free space for key and value
 		     */
-		    Node newNode = tool.split(currentNode, tmpKey, tmpValue);
-		    Integer currentNodeMaxKey = currentNode.getMaxKey();
+		    final Node newNode = tool.split(currentNode, tmpKey, tmpValue);
 		    nodeStore.writeNode(newNode);
 		    nodeStore.writeNode(currentNode);
-		    tmpValue = newNode.getId();
-		    tmpKey = currentNode.getMaxKeyValue();
-		    Node oldNode = currentNode;
 		    if (stack.empty()) {
 			/**
-			 * It's root node.
+			 * There is no previous node, it's root node.
 			 */
-			nodeStore.unlockNode(oldNode.getId());
 			rootNodeId = tool.splitRootNode(currentNode, newNode);
+			nodeStore.unlockNode(currentNode.getId());
 			return null;
 		    } else {
 			/**
 			 * There is a previous node, so move there.
 			 */
+			tmpValue = newNode.getId();
+			tmpKey = newNode.getMaxKey();
+			final Integer previousCurrentNodeId = currentNode.getId();
 			currentNode = nodeStore.getAndLock(stack.pop());
-			tool.moveRightNonLeafNode(currentNode, currentNodeMaxKey);
-			if (newNode.getMaxKeyValue() > currentNode.getMaxKeyValue()) {
-			    currentNode.setMaxKeyValue(newNode.getMaxKeyValue());
+			currentNode = tool.moveRightNonLeafNode(currentNode, tmpKey);
+			if (newNode.getMaxValue() > currentNode.getMaxValue()) {
+			    currentNode.setMaxKeyValue(newNode.getMaxValue());
 			    nodeStore.writeNode(currentNode);
 			}
-			nodeStore.unlockNode(oldNode.getId());
+			nodeStore.unlockNode(previousCurrentNodeId);
 		    }
 		} else {
 		    /**
@@ -176,7 +175,7 @@ public class JbTreeImpl implements JbTree {
 	    Integer tmpKey = key;
 	    while (true) {
 		Integer oldMaxKey = currentNode.getMaxKey();
-		Integer oldMaxValue = currentNode.getMaxKeyValue();
+		Integer oldMaxValue = currentNode.getMaxValue();
 		currentNode.remove(tmpKey);
 		if (currentNode.getKeysCount() == 0) {
 		    /**
@@ -201,16 +200,16 @@ public class JbTreeImpl implements JbTree {
 		     * There are more than 1 key in node, so it's safe to remove
 		     * key.
 		     */
-		    if (!currentNode.getMaxKeyValue().equals(oldMaxValue)) {
+		    if (!currentNode.getMaxValue().equals(oldMaxValue)) {
 			/**
 			 * Max value was changed in current node. So max value
 			 * have to be updated in upper nodes.
 			 */
 			Integer nodeIdToUpdate = currentNode.getId();
-			Integer nodeMaxValue = currentNode.getMaxKeyValue();
+			Integer nodeMaxValue = currentNode.getMaxValue();
 			while (true) {
 			    Node nextNode = nodeStore.getAndLock(stack.pop());
-			    oldMaxValue = nextNode.getMaxKeyValue();
+			    oldMaxValue = nextNode.getMaxValue();
 			    // FIXME add moving right, by nodeId
 			    nextNode.updateNodeValue(nodeIdToUpdate, nodeMaxValue);
 			    nodeStore.writeNode(nextNode);
