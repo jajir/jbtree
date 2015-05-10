@@ -109,4 +109,19 @@ public interface JbTreeTool {
      */
     Integer splitRootNode(Node currentRootNode, Node newNode);
 
+    /**
+     * Update max value in parent node when child node contains bigger highes
+     * key. It correct state when node is added to rightmost node and added node
+     * contains bigger key than previously.
+     * <p>
+     * Method doesn't work with locks.
+     * </p>
+     * 
+     * @param parentNode
+     *            required parent node, this node should contains child node
+     * @param childNode
+     *            required child node
+     */
+    void updateMaxIfNecessary(final Node parentNode, final Node childNode);
+
 }

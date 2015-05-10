@@ -115,17 +115,15 @@ public class JbTreeImpl implements JbTree {
 			final Integer previousCurrentNodeId = currentNode.getId();
 			currentNode = nodeStore.getAndLock(stack.pop());
 			currentNode = tool.moveRightNonLeafNode(currentNode, tmpKey);
-			if (newNode.getMaxValue() > currentNode.getMaxValue()) {
-			    currentNode.setMaxKeyValue(newNode.getMaxValue());
-			    nodeStore.writeNode(currentNode);
-			}
+			tool.updateMaxIfNecessary(currentNode, newNode);
 			nodeStore.unlockNode(previousCurrentNodeId);
 		    }
 		} else {
 		    /**
-		     * There is a free space for key and value
+		     * There is a free space for new key and value.
 		     */
 		    storeValueIntoNode(currentNode, tmpKey, tmpValue);
+		    // FIXME call update max value in upper nodes
 		    return null;
 		}
 	    }
@@ -142,7 +140,6 @@ public class JbTreeImpl implements JbTree {
     private void storeValueIntoNode(final Node currentNode, final Integer key, final Integer value) {
 	currentNode.insert(key, value);
 	nodeStore.writeNode(currentNode);
-	// FIXME call update max value in upper nodes
 	nodeStore.unlockNode(currentNode.getId());
     }
 

@@ -45,9 +45,8 @@ public class JbTreeServiceImpl implements JbTreeService {
     public Integer findLeafNodeId(final Integer key, final Stack<Integer> stack,
 	    final Integer rootNodeId) {
 	Node currentNode = nodeStore.get(rootNodeId);
-	Integer nextNodeId = currentNode.getId();
 	while (!currentNode.isLeafNode()) {
-	    nextNodeId = currentNode.getCorrespondingNodeId(key);
+	    Integer nextNodeId = currentNode.getCorrespondingNodeId(key);
 	    if (nextNodeId == null) {
 		/**
 		 * This is rightmost node and next link is <code>null</code> so
@@ -59,11 +58,11 @@ public class JbTreeServiceImpl implements JbTreeService {
 		/**
 		 * I don't want to store nodes when cursor is moved right.
 		 */
-		stack.push(nextNodeId);
+		stack.push(currentNode.getId());
 	    }
 	    currentNode = nodeStore.get(nextNodeId);
 	}
-	return nextNodeId;
+	return currentNode.getId();
     }
 
 }

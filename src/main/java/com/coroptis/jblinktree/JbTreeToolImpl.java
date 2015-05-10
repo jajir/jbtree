@@ -99,7 +99,7 @@ public class JbTreeToolImpl implements JbTreeTool {
     public void updateMaxValueWhenNecessary(final Node currentNode, final Integer insertedKey,
 	    final Stack<Integer> stack) {
 	// if(currentNode.getmax)
-	//TODO finish implementation
+	// TODO finish implementation
     }
 
     /**
@@ -108,12 +108,22 @@ public class JbTreeToolImpl implements JbTreeTool {
      */
     @Override
     public Integer splitRootNode(final Node currentRootNode, final Node newNode) {
-	//TODO consider case when new node is smaller that currentRootNode 
+	// TODO consider case when new node is smaller that currentRootNode
 	Node newRoot = new Node(currentRootNode.getL(), nodeStore.size(), false);
 	newRoot.insert(currentRootNode.getMaxKey(), newNode.getId());
 	newRoot.setP0(currentRootNode.getId());
 	newRoot.setMaxKeyValue(newNode.getMaxKey());
 	nodeStore.writeNode(newRoot);
 	return newRoot.getId();
+    }
+
+    @Override
+    public void updateMaxIfNecessary(final Node parentNode, final Node childNode) {
+	if (childNode.getMaxValue() > parentNode.getMaxValue()) {
+	    Preconditions.checkState(parentNode.getLink() == null,
+		    "parent not rightemost node in tree");
+	    parentNode.setMaxKeyValue(childNode.getMaxValue());
+	    nodeStore.writeNode(parentNode);
+	}
     }
 }

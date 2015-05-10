@@ -78,7 +78,7 @@ public class TreeBasicTest extends TestCase {
     }
 
     @Test
-    public void test_10_values() throws Exception {
+    public void test_10_values_ascending() throws Exception {
 	tree.insert(1, -10);
 	tree.insert(2, -20);
 	tree.insert(3, -30);
@@ -89,6 +89,28 @@ public class TreeBasicTest extends TestCase {
 	tree.insert(8, -80);
 	tree.insert(9, -90);
 	tree.insert(10, -100);
+	tree.verify();
+
+	logger.debug(tree.toString());
+	assertEquals(10, tree.countValues());
+    }
+
+    @Test
+    public void test_10_values_descending() throws Exception {
+	tree.insert(10, -100);
+	tree.insert(9, -90);
+	tree.insert(8, -80);
+	logger.debug(tree.toString());
+	tree.insert(7, -70);
+	assertEquals(4, tree.countValues());
+	tree.insert(6, -60);
+	tree.insert(5, -50);
+	assertEquals(6, tree.countValues());
+	tree.insert(4, -40);
+	tree.insert(3, -30);
+	assertEquals(8, tree.countValues());
+	tree.insert(2, -20);
+	tree.insert(1, -10);
 	tree.verify();
 
 	logger.debug(tree.toString());

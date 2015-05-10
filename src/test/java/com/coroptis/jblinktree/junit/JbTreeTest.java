@@ -58,6 +58,34 @@ public class JbTreeTest extends TestCase {
     }
 
     @Test
+    public void test_insert_null_key() throws Exception {
+	EasyMock.replay(nodeStore, rootNode);
+
+	try {
+	    jbTree.insert(null, 3);
+	    fail();
+	} catch (NullPointerException e) {
+	    assertTrue(true);
+	}
+
+	EasyMock.verify(nodeStore, rootNode);
+    }
+
+    @Test
+    public void test_insert_null_value() throws Exception {
+	EasyMock.replay(nodeStore, rootNode);
+
+	try {
+	    jbTree.insert(3, null);
+	    fail();
+	} catch (NullPointerException e) {
+	    assertTrue(true);
+	}
+
+	EasyMock.verify(nodeStore, rootNode);
+    }
+
+    @Test
     public void test_countValues_just_leaf_node() throws Exception {
 	EasyMock.expect(nodeStore.get(0)).andReturn(rootNode);
 	EasyMock.expect(rootNode.isLeafNode()).andReturn(true);
