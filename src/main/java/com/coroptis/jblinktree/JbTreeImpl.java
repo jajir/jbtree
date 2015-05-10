@@ -110,12 +110,14 @@ public class JbTreeImpl implements JbTree {
 			/**
 			 * There is a previous node, so move there.
 			 */
+			final Integer previousCurrentNodeId = currentNode.getId();
+			Node parentNode = nodeStore.getAndLock(stack.pop());
+			parentNode = tool.moveRightNonLeafNode(parentNode, tmpKey);
+			parentNode.updateNodeValue(currentNode.getId(), currentNode.getMaxValue());
+			nodeStore.writeNode(parentNode);
+			currentNode = parentNode;
 			tmpValue = newNode.getId();
 			tmpKey = newNode.getMaxKey();
-			final Integer previousCurrentNodeId = currentNode.getId();
-			currentNode = nodeStore.getAndLock(stack.pop());
-			currentNode = tool.moveRightNonLeafNode(currentNode, tmpKey);
-			tool.updateMaxIfNecessary(currentNode, newNode);
 			nodeStore.unlockNode(previousCurrentNodeId);
 		    }
 		} else {

@@ -56,16 +56,18 @@ public class JbTreeServiceTest extends TestCase {
 	EasyMock.expect(nodeStore.get(2)).andReturn(n1);
 	EasyMock.expect(n1.getId()).andReturn(2);
 	EasyMock.expect(n1.isLeafNode()).andReturn(false);
-	
+
 	EasyMock.expect(n1.getCorrespondingNodeId(12)).andReturn(60);
 	EasyMock.expect(n1.getLink()).andReturn(98);
-	
+
 	EasyMock.expect(nodeStore.get(60)).andReturn(n2);
 	EasyMock.expect(n2.isLeafNode()).andReturn(true);
-	
-	EasyMock.replay(nodeStore, treeTool, n1, n2);
-	treeService.findLeafNodeId(12, stack, 2);
+	EasyMock.expect(n2.getId()).andReturn(62);
 
+	EasyMock.replay(nodeStore, treeTool, n1, n2);
+	Integer ret = treeService.findLeafNodeId(12, stack, 2);
+
+	assertEquals(Integer.valueOf(62), ret);
 	EasyMock.verify(nodeStore, treeTool, n1, n2);
     }
 

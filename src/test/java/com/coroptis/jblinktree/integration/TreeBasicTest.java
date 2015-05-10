@@ -100,10 +100,11 @@ public class TreeBasicTest extends TestCase {
 	tree.insert(10, -100);
 	tree.insert(9, -90);
 	tree.insert(8, -80);
-	logger.debug(tree.toString());
 	tree.insert(7, -70);
 	assertEquals(4, tree.countValues());
 	tree.insert(6, -60);
+	assertEquals(5, tree.countValues());
+	logger.debug(tree.toString());
 	tree.insert(5, -50);
 	assertEquals(6, tree.countValues());
 	tree.insert(4, -40);

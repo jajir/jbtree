@@ -53,7 +53,8 @@ public class JbTreeToolImpl implements JbTreeTool {
     @Override
     public Node moveRightNonLeafNode(Node current, final Integer key) {
 	if (current.isLeafNode()) {
-	    throw new JblinktreeException("method is for non-leaf nodes, but given node is leaf");
+	    throw new JblinktreeException("method is for non-leaf nodes, but given node is leaf: "
+		    + current.toString());
 	} else {
 	    Integer nextNodeId = current.getCorrespondingNodeId(key);
 	    while (nextNodeId != null && nextNodeId.equals(current.getLink())) {
