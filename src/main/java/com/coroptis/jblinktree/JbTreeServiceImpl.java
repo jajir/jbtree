@@ -53,6 +53,7 @@ public class JbTreeServiceImpl implements JbTreeService {
 		 * This is rightmost node and next link is <code>null</code> so
 		 * use node id associated with bigger key.
 		 */
+		stack.push(currentNode.getId());
 		nextNodeId = currentNode.getCorrespondingNodeId(currentNode.getMaxKeyValue());
 	    } else if (!nextNodeId.equals(currentNode.getLink())) {
 		/**

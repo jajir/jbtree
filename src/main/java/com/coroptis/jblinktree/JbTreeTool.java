@@ -1,5 +1,7 @@
 package com.coroptis.jblinktree;
 
+import java.util.Stack;
+
 /*
  * #%L
  * jblinktree
@@ -76,15 +78,35 @@ public interface JbTreeTool {
     /**
      * Split node into two nodes. It moved path of currentNode data int new one
      * which will be returned.
+     * <p>
+     * Method doesn't work with locks.
+     * </p>
      * 
      * @param currentNode
      *            required node which will be split
      * @param key
-     *            required key
-     * @param tmpValue
-     *            required value
+     *            required inserted key
+     * @param value
+     *            required inserted value
      * @return
      */
-    Node split(Node currentNode, Integer key, Integer tmpValue);
+    Node split(Node currentNode, Integer key, Integer value);
+
+    void updateMaxValueWhenNecessary(Node currentNode, Integer insertedKey, Stack<Integer> stack);
+
+    /**
+     * It get already existing node, new node a create new root node pointing on
+     * this two nodes.
+     * <p>
+     * Method doesn't work with locks.
+     * </p>
+     * 
+     * @param currentRootNode
+     *            required currently exiting root node
+     * @param newNode
+     *            new node that should be added to root node
+     * @return id of newly created root node
+     */
+    Integer splitRootNode(Node currentRootNode, Node newNode);
 
 }

@@ -1,5 +1,7 @@
 package com.coroptis.jblinktree;
 
+import java.util.Stack;
+
 import com.google.common.base.Preconditions;
 
 /*
@@ -82,14 +84,36 @@ public class JbTreeToolImpl implements JbTreeTool {
     }
 
     @Override
-    public Node split(final Node currentNode, final Integer key, final Integer tmpValue) {
+    public Node split(final Node currentNode, final Integer key, final Integer value) {
 	Node newNode = new Node(currentNode.getL(), nodeStore.size(), true);
 	currentNode.moveTopHalfOfDataTo(newNode);
 	if (currentNode.getMaxKey() < key) {
-	    newNode.insert(key, tmpValue);
+	    newNode.insert(key, value);
 	} else {
-	    currentNode.insert(key, tmpValue);
+	    currentNode.insert(key, value);
 	}
 	return newNode;
+    }
+
+    @Override
+    public void updateMaxValueWhenNecessary(final Node currentNode, final Integer insertedKey,
+	    final Stack<Integer> stack) {
+	// if(currentNode.getmax)
+	//TODO finish implementation
+    }
+
+    /**
+     * 
+     * @return new root id
+     */
+    @Override
+    public Integer splitRootNode(final Node currentRootNode, final Node newNode) {
+	//TODO consider case when new node is smaller that currentRootNode 
+	Node newRoot = new Node(currentRootNode.getL(), nodeStore.size(), false);
+	newRoot.insert(currentRootNode.getMaxKey(), newNode.getId());
+	newRoot.setP0(currentRootNode.getId());
+	newRoot.setMaxKeyValue(newNode.getMaxKey());
+	nodeStore.writeNode(newRoot);
+	return newRoot.getId();
     }
 }

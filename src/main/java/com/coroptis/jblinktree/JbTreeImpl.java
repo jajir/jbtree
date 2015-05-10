@@ -108,12 +108,7 @@ public class JbTreeImpl implements JbTree {
 			 * It's root node.
 			 */
 			nodeStore.unlockNode(oldNode.getId());
-			Node newRoot = new Node(l, nodeStore.size(), false);
-			newRoot.insert(currentNode.getMaxKey(), newNode.getId());
-			newRoot.setP0(currentNode.getId());
-			newRoot.setMaxKeyValue(newNode.getMaxKey());
-			nodeStore.writeNode(newRoot);
-			rootNodeId = newRoot.getId();
+			rootNodeId = tool.splitRootNode(currentNode, newNode);
 			return null;
 		    } else {
 			/**
@@ -129,11 +124,9 @@ public class JbTreeImpl implements JbTree {
 		    }
 		} else {
 		    /**
-		     * There is free space for key and value
+		     * There is a free space for key and value
 		     */
-		    currentNode.insert(tmpKey, tmpValue);
-		    nodeStore.writeNode(currentNode);
-		    nodeStore.unlockNode(currentNode.getId());
+		    storeValueIntoNode(currentNode, tmpKey, tmpValue);
 		    return null;
 		}
 	    }
@@ -142,11 +135,16 @@ public class JbTreeImpl implements JbTree {
 	     * Key already exists. Rewrite value.
 	     */
 	    Integer oldValue = currentNode.getValue(key);
-	    currentNode.insert(key, value);
-	    nodeStore.writeNode(currentNode);
-	    nodeStore.unlockNode(currentNode.getId());
+	    storeValueIntoNode(currentNode, key, value);
 	    return oldValue;
 	}
+    }
+
+    private void storeValueIntoNode(final Node currentNode, final Integer key, final Integer value) {
+	currentNode.insert(key, value);
+	nodeStore.writeNode(currentNode);
+	// FIXME call update max value in upper nodes
+	nodeStore.unlockNode(currentNode.getId());
     }
 
     /*
@@ -156,6 +154,7 @@ public class JbTreeImpl implements JbTree {
      */
     @Override
     public boolean remove(final Integer key) {
+	Preconditions.checkNotNull(key);
 	final Stack<Integer> stack = new Stack<Integer>();
 	Integer currentNodeId = treeService.findLeafNodeId(key, stack, rootNodeId);
 
