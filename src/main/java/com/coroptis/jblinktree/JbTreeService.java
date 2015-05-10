@@ -51,6 +51,8 @@ public interface JbTreeService {
      * @return leaf node id where should be key found or stored, it's never
      *         <code>null</code>
      */
-    Integer findLeafNodeId(final Integer key, final Stack<Integer> stack, final Integer rootNodeId);
+    Integer findLeafNodeId(Integer key, Stack<Integer> stack, Integer rootNodeId);
+
+    Node loadParentNode(Node currentNode, Integer tmpKey, Integer nexTNodeId);
 
 }

@@ -65,4 +65,15 @@ public class JbTreeServiceImpl implements JbTreeService {
 	return currentNode.getId();
     }
 
+    @Override
+    public Node loadParentNode(final Node currentNode, final Integer tmpKey,
+	    final Integer nexTNodeId) {
+	Node parentNode = nodeStore.getAndLock(nexTNodeId);
+	parentNode = tool.moveRightNonLeafNode(parentNode, tmpKey);
+	if (parentNode.updateNodeValue(currentNode.getId(), currentNode.getMaxValue())) {
+	    nodeStore.writeNode(parentNode);
+	}
+	return parentNode;
+    }
+
 }
