@@ -56,7 +56,7 @@ public class TreeBasicTest extends TestCase {
     }
 
     @Test
-    public void test_4_values() throws Exception {
+    public void test_insert_4_values() throws Exception {
 	tree.insert(1, -10);
 	tree.insert(2, -20);
 	tree.insert(3, -30);
@@ -78,49 +78,8 @@ public class TreeBasicTest extends TestCase {
     }
 
     @Test
-    public void test_10_values_ascending() throws Exception {
-	tree.insert(1, -10);
-	tree.insert(2, -20);
-	tree.insert(3, -30);
-	tree.insert(4, -40);
-	tree.insert(5, -50);
-	tree.insert(6, -60);
-	tree.insert(7, -70);
-	tree.insert(8, -80);
-	tree.insert(9, -90);
-	tree.insert(10, -100);
-	tree.verify();
-
-	logger.debug(tree.toString());
-	assertEquals(10, tree.countValues());
-    }
-
-    @Test
-    public void test_10_values_descending() throws Exception {
-	tree.insert(10, -100);
-	tree.insert(9, -90);
-	tree.insert(8, -80);
-	tree.insert(7, -70);
-	assertEquals(4, tree.countValues());
-	tree.insert(6, -60);
-	assertEquals(5, tree.countValues());
-	logger.debug(tree.toString());
-	tree.insert(5, -50);
-	assertEquals(6, tree.countValues());
-	tree.insert(4, -40);
-	tree.insert(3, -30);
-	assertEquals(8, tree.countValues());
-	tree.insert(2, -20);
-	tree.insert(1, -10);
-	tree.verify();
-
-	logger.debug(tree.toString());
-	assertEquals(10, tree.countValues());
-    }
-
-    @Test
-    public void test_100_values() throws Exception {
-	for (int i = 1; i < 101; i++) {
+    public void test_insert_50_values() throws Exception {
+	for (int i = 1; i < 51; i++) {
 	    logger.debug("inserting " + i);
 	    tree.insert(i, -i + 10);
 	    logger.debug(tree.toString());
@@ -130,26 +89,104 @@ public class TreeBasicTest extends TestCase {
     }
 
     @Test
-    public void test_remove_simple() throws Exception {
+    public void test_remove_3_values() throws Exception {
 	tree.insert(1, -10);
 	tree.insert(2, -20);
 	tree.insert(3, -30);
 
-	logger.debug(tree.toString());
 	tree.remove(1);
-	tree.verify();
-	logger.debug(tree.toString());
-	assertEquals(2, tree.countValues());
-
 	tree.remove(3);
-	tree.verify();
-	logger.debug(tree.toString());
-	assertEquals(1, tree.countValues());
-
 	tree.remove(2);
-	tree.verify();
-	logger.debug(tree.toString());
+
 	assertEquals(0, tree.countValues());
+    }
+
+    @Test
+    public void test_insert_10_asc_remove_10_asc() throws Exception {
+	insert_10_ascending();
+	assertEquals(10, tree.countValues());
+	
+	remove_10_ascending();
+	assertEquals(0, tree.countValues());
+    }
+
+    @Test
+    public void test_insert_10_asc_remove_10_desc() throws Exception {
+	insert_10_ascending();
+	assertEquals(10, tree.countValues());
+	
+	remove_10_descending();
+	assertEquals(0, tree.countValues());
+    }
+
+    @Test
+    public void test_insert_10_desc_remove_10_asc() throws Exception {
+	insert_10_descending();
+	assertEquals(10, tree.countValues());
+	
+	remove_10_ascending();
+	assertEquals(0, tree.countValues());
+    }
+
+    @Test
+    public void test_insert_10_desc_remove_10_desc() throws Exception {
+	insert_10_descending();
+	assertEquals(10, tree.countValues());
+	
+	remove_10_descending();
+	assertEquals(0, tree.countValues());
+    }
+
+    private void insert_10_ascending() {
+	tree.insert(1, -10);
+	tree.insert(2, -20);
+	tree.insert(3, -30);
+	tree.insert(4, -40);
+	tree.insert(5, -50);
+	tree.insert(6, -60);
+	tree.insert(7, -70);
+	tree.insert(8, -80);
+	tree.insert(9, -90);
+	tree.insert(10, -100);
+    }
+
+    private void remove_10_ascending() {
+	tree.remove(1);
+	tree.remove(2);
+	tree.remove(3);
+	tree.remove(4);
+	tree.remove(5);
+	tree.remove(6);
+	tree.remove(7);
+	tree.remove(8);
+	tree.remove(9);
+	tree.remove(10);
+    }
+
+    private void remove_10_descending() {
+	tree.remove(10);
+	tree.remove(9);
+	tree.remove(8);
+	tree.remove(7);
+	tree.remove(6);
+	tree.remove(5);
+	tree.remove(4);
+	tree.remove(3);
+	tree.remove(2);
+	tree.remove(1);
+    }
+
+    private void insert_10_descending() {
+	tree.insert(10, -100);
+	tree.insert(9, -90);
+	tree.insert(8, -80);
+	tree.insert(7, -70);
+	tree.insert(6, -60);
+	tree.insert(5, -50);
+	tree.insert(4, -40);
+	tree.insert(3, -30);
+	tree.insert(2, -20);
+	tree.insert(1, -10);
     }
 
     @Override
