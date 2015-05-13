@@ -94,9 +94,16 @@ public class TreeBasicTest extends TestCase {
 	tree.insert(2, -20);
 	tree.insert(3, -30);
 
+	logger.debug(tree.toString());
 	tree.remove(1);
+	assertEquals(2, tree.countValues());
+	assertEquals("All locks should be unlocked ", 0, tree.countLockedNodes());
 	tree.remove(3);
+	assertEquals(1, tree.countValues());
+	logger.debug(tree.toString());
+	assertEquals("All locks should be unlocked ", 0, tree.countLockedNodes());
 	tree.remove(2);
+	assertEquals(0, tree.countValues());
 
 	assertEquals(0, tree.countValues());
     }

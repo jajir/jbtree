@@ -336,9 +336,9 @@ public class Node {
 	}
 	for (int i = 0; i < field.length - 2; i = i + 2) {
 	    if (field[i].equals(nodeIdToUpdate)) {
-		if(field[i + 1] == nodeMaxValue){
+		if (field[i + 1] == nodeMaxValue) {
 		    return false;
-		}else{
+		} else {
 		    field[i + 1] = nodeMaxValue;
 		    return true;
 		}
@@ -484,6 +484,22 @@ public class Node {
 	    }
 	}
 	return field[field.length - 1];
+    }
+
+    public Integer getPreviousCorrespondingNode(Integer key) {
+	if (isLeafNode()) {
+	    throw new JblinktreeException("Leaf node doesn't have any child nodes.");
+	}
+	for (int i = 1; i < field.length - 1; i = i + 2) {
+	    if (key <= field[i]) {
+		if (i > 3) {
+		    return field[i - 3];
+		} else {
+		    return null;
+		}
+	    }
+	}
+	return null;
     }
 
     /**
