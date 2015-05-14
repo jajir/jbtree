@@ -85,7 +85,7 @@ public class TreeBasicTest extends TestCase {
 	    logger.debug(tree.toString());
 	}
 
-	assertEquals(100, tree.countValues());
+	assertEquals(50, tree.countValues());
     }
 
     @Test
@@ -98,6 +98,7 @@ public class TreeBasicTest extends TestCase {
 	tree.remove(1);
 	assertEquals(2, tree.countValues());
 	assertEquals("All locks should be unlocked ", 0, tree.countLockedNodes());
+	logger.debug(tree.toString());
 	tree.remove(3);
 	assertEquals(1, tree.countValues());
 	logger.debug(tree.toString());
@@ -172,9 +173,15 @@ public class TreeBasicTest extends TestCase {
 
     private void remove_10_descending() {
 	tree.remove(10);
+	logger.debug(tree.toString());
+	assertEquals("All locks should be unlocked ", 0, tree.countLockedNodes());
 	tree.remove(9);
+	logger.debug(tree.toString());
+	assertEquals("All locks should be unlocked ", 0, tree.countLockedNodes());
 	tree.remove(8);
 	tree.remove(7);
+	logger.debug(tree.toString());
+	assertEquals("All locks should be unlocked ", 0, tree.countLockedNodes());
 	tree.remove(6);
 	tree.remove(5);
 	tree.remove(4);

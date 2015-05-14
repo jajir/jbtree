@@ -175,7 +175,6 @@ public class JbTreeImpl implements JbTree {
 			nodeStore.unlockNode(currentNode.getId());
 			return true;
 		    }
-		    final Integer oldCurrentId = currentNode.getId();
 		    /**
 		     * Node to remove should be locked, if it's not than another
 		     * insert process could insert some value into it.
@@ -192,22 +191,8 @@ public class JbTreeImpl implements JbTree {
 		     * key.
 		     */
 		    if (!currentNode.getMaxKey().equals(oldMaxKey)) {
-			/**
-			 * Max value was changed in current node. So max value
-			 * have to be updated in upper nodes.
-			 */
-			Integer nodeIdToUpdate = currentNode.getId();
-			Integer nodeMaxValue = currentNode.getMaxValue();
-			while (true) {
-			    Node nextNode = nodeStore.getAndLock(stack.pop());
-			    nextNode = tool.moveRightNonLeafNode(nextNode, tmpKey);
-			    
-			    nextNode.updateNodeValue(nodeIdToUpdate, nodeMaxValue);
-			    nodeStore.writeNode(nextNode);
-			    // FIXME add recursion, check if max value was
-			    // changed.
-			    return true;
-			}
+			updateMaxKey(currentNode, stack, tmpKey);
+			return true;
 		    }
 		    nodeStore.unlockNode(currentNode.getId());
 		    removeNodes(nodesToRemove);
@@ -215,10 +200,36 @@ public class JbTreeImpl implements JbTree {
 		}
 	    }// end of while
 	}
-	// nodeStore.deleteNode(currentNode.getId());
+    }
+
+    private void updateMaxKey(Node currentNode, final Stack<Integer> stack, Integer tmpKey) {
+	Preconditions.checkArgument(currentNode.isLeafNode());
+	/**
+	 * Max value was changed in current node. So max value have to be
+	 * updated in upper nodes.
+	 */
+	while (true) {
+	    Node nextNode = nodeStore.getAndLock(stack.pop());
+	    nextNode = tool.moveRightNonLeafNode(nextNode, tmpKey);
+	    Integer oldMaxKey = nextNode.getMaxKey();
+	    nextNode.updateNodeValue(currentNode.getId(), currentNode.getMaxValue());
+	    nodeStore.writeNode(nextNode);
+	    nodeStore.unlockNode(currentNode.getId());
+	    currentNode = nextNode;
+	    if (currentNode.getMaxKey().equals(oldMaxKey)) {
+		nodeStore.unlockNode(currentNode.getId());
+		return;
+	    }
+	    if (stack.empty()) {
+		nodeStore.unlockNode(currentNode.getId());
+		return;
+	    }
+	}
     }
 
     private void updatePreviousNodeLink(Node nodeToRemove, Node parentNode, Integer removedKey) {
+	// FIXME following code will cause dead locks, locks should go from left
+	// to right
 	Integer previousNodeId = parentNode.getPreviousCorrespondingNode(removedKey);
 	if (previousNodeId != null) {
 	    Node previousNode = nodeStore.getAndLock(previousNodeId);
