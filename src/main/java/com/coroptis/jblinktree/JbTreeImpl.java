@@ -64,8 +64,8 @@ public class JbTreeImpl implements JbTree {
      * @param nodeStore
      *            required node store object
      */
-    public JbTreeImpl(final int l, final NodeStore nodeStore,
-	    final JbTreeTool tool, final JbTreeService jbTreeService) {
+    public JbTreeImpl(final int l, final NodeStore nodeStore, final JbTreeTool tool,
+	    final JbTreeService jbTreeService) {
 	this.l = l;
 	this.nodeStore = Preconditions.checkNotNull(nodeStore);
 	this.tool = Preconditions.checkNotNull(tool);
@@ -86,8 +86,7 @@ public class JbTreeImpl implements JbTree {
 	Preconditions.checkNotNull(key);
 	Preconditions.checkNotNull(value);
 	final Stack<Integer> stack = new Stack<Integer>();
-	Integer currentNodeId = treeService.findLeafNodeId(key, stack,
-		rootNodeId);
+	Integer currentNodeId = treeService.findLeafNodeId(key, stack, rootNodeId);
 	Node currentNode = nodeStore.getAndLock(currentNodeId);
 	currentNode = tool.moveRightLeafNode(currentNode, key);
 	if (currentNode.getValue(key) == null) {
@@ -101,8 +100,7 @@ public class JbTreeImpl implements JbTree {
 		    /**
 		     * There is no free space for key and value
 		     */
-		    final Node newNode = tool.split(currentNode, tmpKey,
-			    tmpValue);
+		    final Node newNode = tool.split(currentNode, tmpKey, tmpValue);
 		    nodeStore.writeNode(newNode);
 		    nodeStore.writeNode(currentNode);
 		    if (stack.empty()) {
@@ -118,11 +116,8 @@ public class JbTreeImpl implements JbTree {
 			 */
 			tmpValue = newNode.getId();
 			tmpKey = newNode.getMaxKey();
-			final Integer previousCurrentNodeId = currentNode
-				.getId();
-			Node oldCurrentNode = currentNode;
-			currentNode = treeService.loadParentNode(currentNode,
-				tmpKey, stack.pop());
+			final Integer previousCurrentNodeId = currentNode.getId();
+			currentNode = treeService.loadParentNode(currentNode, tmpKey, stack.pop());
 			nodeStore.unlockNode(previousCurrentNodeId);
 		    }
 		} else {
@@ -143,8 +138,7 @@ public class JbTreeImpl implements JbTree {
 	}
     }
 
-    private void storeValueIntoNode(final Node currentNode, final Integer key,
-	    final Integer value) {
+    private void storeValueIntoNode(final Node currentNode, final Integer key, final Integer value) {
 	currentNode.insert(key, value);
 	nodeStore.writeNode(currentNode);
 	nodeStore.unlockNode(currentNode.getId());
@@ -159,8 +153,7 @@ public class JbTreeImpl implements JbTree {
     public boolean remove(final Integer key) {
 	Preconditions.checkNotNull(key);
 	final Stack<Integer> stack = new Stack<Integer>();
-	Integer currentNodeId = treeService.findLeafNodeId(key, stack,
-		rootNodeId);
+	Integer currentNodeId = treeService.findLeafNodeId(key, stack, rootNodeId);
 	Node currentNode = nodeStore.getAndLock(currentNodeId);
 	currentNode = tool.moveRightLeafNode(currentNode, key);
 	if (currentNode.getValue(key) == null) {
@@ -193,8 +186,7 @@ public class JbTreeImpl implements JbTree {
 		    nodesToRemove.add(currentNode.getId());
 		    Node toDelete = currentNode;
 		    currentNode = nodeStore.getAndLock(stack.pop());
-		    currentNode = tool
-			    .moveRightNonLeafNode(currentNode, tmpKey);
+		    currentNode = tool.moveRightNonLeafNode(currentNode, tmpKey);
 		    updatePreviousNodeLink(toDelete, currentNode, tmpKey);
 		    tmpKey = oldMaxKey;
 		} else {
@@ -204,6 +196,7 @@ public class JbTreeImpl implements JbTree {
 		     */
 		    if (!currentNode.getMaxKey().equals(oldMaxKey)) {
 			updateMaxKey(currentNode, stack, tmpKey);
+			removeNodes(nodesToRemove);
 			return true;
 		    }
 		    nodeStore.unlockNode(currentNode.getId());
@@ -214,9 +207,7 @@ public class JbTreeImpl implements JbTree {
 	}
     }
 
-    private void updateMaxKey(Node currentNode, final Stack<Integer> stack,
-	    Integer tmpKey) {
-	Preconditions.checkArgument(currentNode.isLeafNode());
+    private void updateMaxKey(Node currentNode, final Stack<Integer> stack, Integer tmpKey) {
 	/**
 	 * Max value was changed in current node. So max value have to be
 	 * updated in upper nodes.
@@ -225,8 +216,7 @@ public class JbTreeImpl implements JbTree {
 	    Node nextNode = nodeStore.getAndLock(stack.pop());
 	    nextNode = tool.moveRightNonLeafNode(nextNode, tmpKey);
 	    Integer oldMaxKey = nextNode.getMaxKey();
-	    nextNode.updateNodeValue(currentNode.getId(),
-		    currentNode.getMaxValue());
+	    nextNode.updateNodeValue(currentNode.getId(), currentNode.getMaxValue());
 	    nodeStore.writeNode(nextNode);
 	    nodeStore.unlockNode(currentNode.getId());
 	    currentNode = nextNode;
@@ -241,19 +231,16 @@ public class JbTreeImpl implements JbTree {
 	}
     }
 
-    private void updatePreviousNodeLink(Node nodeToRemove, Node parentNode,
-	    Integer removedKey) {
+    private void updatePreviousNodeLink(Node nodeToRemove, Node parentNode, Integer removedKey) {
 	// FIXME following code will cause dead locks, locks should go from left
 	// to right
-	Integer previousNodeId = parentNode
-		.getPreviousCorrespondingNode(removedKey);
+	Integer previousNodeId = parentNode.getPreviousCorrespondingNode(removedKey);
 	if (previousNodeId != null) {
 	    Node previousNode = nodeStore.getAndLock(previousNodeId);
-	    Preconditions.checkArgument(
-		    previousNode.getLink().equals(nodeToRemove.getId()),
-		    "node %s should have link value %s instead if %s",
-		    previousNodeId, previousNode.getLink(),
-		    nodeToRemove.getId());
+	    Preconditions.checkArgument(previousNode.getLink().equals(nodeToRemove.getId()),
+		    "node %s should have link value %s instead if %s", previousNodeId,
+		    previousNode.getLink(), nodeToRemove.getId());
+	    // previousNode.remove(nodeToRemove.getId());
 	    previousNode.setLink(nodeToRemove.getLink());
 	    nodeStore.writeNode(previousNode);
 	    nodeStore.unlockNode(previousNodeId);
@@ -275,16 +262,9 @@ public class JbTreeImpl implements JbTree {
     @Override
     public Integer search(final Integer key) {
 	Preconditions.checkNotNull(key);
-	Integer idNode = treeService.findLeafNodeId(key, new Stack<Integer>(),
-		rootNodeId);
+	Integer idNode = treeService.findLeafNodeId(key, new Stack<Integer>(), rootNodeId);
 	Node node = nodeStore.get(idNode);
-
-	// TODO move right, re-use it from tool
-	while (node.getLink().equals(node.getCorrespondingNodeId(key))) {
-	    idNode = node.getLink();
-	    node = nodeStore.get(idNode);
-	}
-
+	node = tool.moveRightLeafNodeWithoutLocking(node, key);
 	return node.getValue(key);
     }
 
@@ -423,15 +403,15 @@ public class JbTreeImpl implements JbTree {
 	    } else {
 		final Node node = nodeStore.get(nodeId);
 		if (node.getLink() != null) {
-//		    buff.append(intendation);
-//		    buff.append("\"node");
-//		    buff.append(node.getId());
-//		    buff.append("\"");
-//		    buff.append(" -> ");
-//		    buff.append("\"node");
-//		    buff.append(node.getLink());
-//		    buff.append("\"");
-//		    buff.append("\n");
+		    // buff.append(intendation);
+		    // buff.append("\"node");
+		    // buff.append(node.getId());
+		    // buff.append("\"");
+		    // buff.append(" -> ");
+		    // buff.append("\"node");
+		    // buff.append(node.getLink());
+		    // buff.append("\"");
+		    // buff.append("\n");
 		}
 		if (!node.isLeafNode()) {
 		    for (final Integer i : node.getNodeIds()) {

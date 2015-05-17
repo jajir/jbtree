@@ -303,7 +303,7 @@ public class Node {
 		return true;
 	    }
 	}
-	for (int i = 1; i < field.length - 2; i = i + 2) {
+	for (int i = 1; i < field.length - 1; i = i + 2) {
 	    if (field[i] == key) {
 		/**
 		 * Remove key and value.

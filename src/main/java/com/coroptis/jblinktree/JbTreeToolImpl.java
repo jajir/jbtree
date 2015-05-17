@@ -85,6 +85,18 @@ public class JbTreeToolImpl implements JbTreeTool {
     }
 
     @Override
+    public Node moveRightLeafNodeWithoutLocking(Node current, final Integer key) {
+	if (current.isLeafNode()) {
+	    while (current.getLink() != null && key > current.getMaxValue()) {
+		current = nodeStore.get(current.getLink());
+	    }
+	    return current;
+	} else {
+	    throw new JblinktreeException("method is for leaf nodes, but given node is non-leaf");
+	}
+    }
+
+    @Override
     public Node split(final Node currentNode, final Integer key, final Integer value) {
 	Node newNode = new Node(currentNode.getL(), nodeStore.size(), true);
 	currentNode.moveTopHalfOfDataTo(newNode);

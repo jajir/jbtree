@@ -61,6 +61,20 @@ public interface JbTreeTool {
     Node moveRightLeafNode(Node current, Integer key);
 
     /**
+     * Move right in tree until suitable non-leaf node is found.
+     * <p>
+     * Method doesn't work with locks.
+     * </p>
+     * 
+     * @param current
+     *            required current node, this node should be locked
+     * @param key
+     *            required key
+     * @return moved right node
+     */
+    Node moveRightLeafNodeWithoutLocking(Node current, Integer key);
+
+    /**
      * Move right in tree until suitable leaf node is found.
      * <p>
      * When there is move right than current node is unlocked and new one is

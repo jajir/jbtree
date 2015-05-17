@@ -62,7 +62,6 @@ public class TreeBasicTest extends TestCase {
 	tree.insert(1, -10);
 	tree.insert(2, -20);
 	tree.insert(3, -30);
-	logger.debug(tree.toString());
 	tree.insert(4, -40);
 	tree.verify();
 	logger.debug(tree.toString());
@@ -125,8 +124,7 @@ public class TreeBasicTest extends TestCase {
 	insert_10_ascending();
 	assertEquals(10, tree.countValues());
 	logger.debug(tree.toString());
-	tree.toDotFile(new File("pok.dot"));
-	tree.remove(3);
+	
 	find_10();
 	remove_10_descending();
 	assertEquals(0, tree.countValues());
@@ -155,6 +153,8 @@ public class TreeBasicTest extends TestCase {
 	tree.insert(2, -20);
 	tree.insert(3, -30);
 	tree.insert(4, -40);
+	tree.toDotFile(new File("pok.dot"));
+	logger.debug(tree.toString());
 	tree.insert(5, -50);
 	tree.insert(6, -60);
 	tree.insert(7, -70);
@@ -177,7 +177,6 @@ public class TreeBasicTest extends TestCase {
     }
 
     private void remove_10_descending() {
-	tree.toDotFile(new File("pok.dot"));
 	tree.remove(10);
 	logger.debug(tree.toString());
 	assertEquals("All locks should be unlocked ", 0, tree.countLockedNodes());
@@ -188,6 +187,7 @@ public class TreeBasicTest extends TestCase {
 	tree.remove(7);
 	logger.debug(tree.toString());
 	assertEquals("All locks should be unlocked ", 0, tree.countLockedNodes());
+	tree.toDotFile(new File("pok.dot"));
 	tree.remove(6);
 	tree.remove(5);
 	tree.remove(4);

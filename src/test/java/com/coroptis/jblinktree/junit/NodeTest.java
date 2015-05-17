@@ -20,8 +20,6 @@ package com.coroptis.jblinktree.junit;
  * #L%
  */
 
-import static org.junit.Assert.*;
-
 import java.util.List;
 
 import junit.framework.TestCase;
@@ -104,15 +102,35 @@ public class NodeTest extends TestCase {
 	assertTrue(keys.contains(1));
 	assertTrue(keys.contains(4));
 	assertEquals(Integer.valueOf(98), n.getLink());
-	assertEquals("non-leaf nodes should preserver it's max key", Integer.valueOf(3),
+	assertEquals("non-leaf nodes should preserver it's max key", Integer.valueOf(4),
 		n.getMaxKey());
 	assertEquals(Integer.valueOf(0), n.getCorrespondingNodeId(1));
-	assertEquals(Integer.valueOf(1), n.getCorrespondingNodeId(4));
+	assertEquals(Integer.valueOf(1), n.getCorrespondingNodeId(3));
+	assertEquals(Integer.valueOf(-40), n.getCorrespondingNodeId(4));
 	assertEquals(Integer.valueOf(98), n.getCorrespondingNodeId(5));
     }
 
     @Test
-    public void test_remove_first() throws Exception {
+    public void test_insert_nonLeafNode2() throws Exception {
+	Node n = Node.makeNode(2, 0, new Integer[] { 0, 1, 1, 2, null });
+	n.insert(4, 3);
+
+	logger.debug(n.toString());
+
+	assertEquals(2, n.getKeysCount());
+	assertFalse("it's non leaf node", n.isLeafNode());
+	List<Integer> keys = n.getKeys();
+	assertTrue(keys.contains(1));
+	assertTrue(keys.contains(2));
+	assertTrue(keys.contains(4));
+	assertNull(n.getLink());
+	assertEquals(Integer.valueOf(0), n.getCorrespondingNodeId(1));
+	assertEquals(Integer.valueOf(1), n.getCorrespondingNodeId(2));
+	assertEquals(Integer.valueOf(3), n.getCorrespondingNodeId(4));
+    }
+
+    @Test
+    public void test_remove_leaf_first() throws Exception {
 	node.insert(2, 20);
 	node.insert(1, 10);
 	Boolean ret = node.remove(1);
@@ -122,13 +140,24 @@ public class NodeTest extends TestCase {
     }
 
     @Test
-    public void test_remove_last() throws Exception {
+    public void test_remove_leaf_last() throws Exception {
 	node.insert(2, 20);
 	Boolean ret = node.remove(2);
 
 	assertTrue(ret);
 	assertTrue(node.isEmpty());
 	assertNull(node.getMaxValue());
+    }
+
+    @Test
+    public void test_remove_nonLeaf_last2() throws Exception {
+	Node n = Node.makeNode(2, 22, new Integer[] { 13, 7, 16, 8, 21, 9, null });
+	Boolean ret = n.remove(9);
+
+	logger.debug(n.toString());
+	assertTrue(ret);
+	assertFalse(n.isEmpty());
+	assertEquals(Integer.valueOf(8), n.getMaxValue());
     }
 
     @Test
@@ -388,13 +417,13 @@ public class NodeTest extends TestCase {
     @Test
     public void test_writeTo() throws Exception {
 	Node n = Node.makeNode(2, 2, new Integer[] { 0, 2, 1, 3, 23 });
-	
+
 	StringBuilder buff = new StringBuilder();
 	n.writeTo(buff, "    ");
 	assertNotNull(buff);
 	logger.debug(buff.toString());
     }
-    
+
     @Override
     protected void setUp() throws Exception {
 	super.setUp();
