@@ -1,5 +1,7 @@
 package com.coroptis.jblinktree;
 
+import java.util.Set;
+
 /*
  * #%L
  * jblinktree
@@ -37,4 +39,6 @@ public interface NodeStore {
     int size();
 
     int countLockedNodes();
+    
+    Set<Integer> getKeys();
 }

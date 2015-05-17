@@ -20,6 +20,8 @@ package com.coroptis.jblinktree.integration;
  * #L%
  */
 
+import java.io.File;
+
 import junit.framework.TestCase;
 
 import org.junit.Test;
@@ -122,7 +124,7 @@ public class TreeBasicTest extends TestCase {
     public void test_insert_10_asc_remove_10_desc() throws Exception {
 	insert_10_ascending();
 	assertEquals(10, tree.countValues());
-	
+	find_10();
 	remove_10_descending();
 	assertEquals(0, tree.countValues());
     }
@@ -172,6 +174,7 @@ public class TreeBasicTest extends TestCase {
     }
 
     private void remove_10_descending() {
+	tree.toDotFile(new File("pok.dot"));
 	tree.remove(10);
 	logger.debug(tree.toString());
 	assertEquals("All locks should be unlocked ", 0, tree.countLockedNodes());
@@ -188,6 +191,19 @@ public class TreeBasicTest extends TestCase {
 	tree.remove(3);
 	tree.remove(2);
 	tree.remove(1);
+    }
+    
+    private void find_10() {
+	assertEquals(Integer.valueOf(-10), tree.search(1));
+	assertEquals(Integer.valueOf(-20), tree.search(2));
+	assertEquals(Integer.valueOf(-30), tree.search(3));
+	assertEquals(Integer.valueOf(-40), tree.search(4));
+	assertEquals(Integer.valueOf(-50), tree.search(5));
+	assertEquals(Integer.valueOf(-60), tree.search(6));
+	assertEquals(Integer.valueOf(-70), tree.search(7));
+	assertEquals(Integer.valueOf(-80), tree.search(8));
+	assertEquals(Integer.valueOf(-90), tree.search(9));
+	assertEquals(Integer.valueOf(-100), tree.search(10));
     }
 
     private void insert_10_descending() {

@@ -1,5 +1,7 @@
 package com.coroptis.jblinktree;
 
+import java.io.File;
+
 /*
  * #%L
  * jblinktree
@@ -90,5 +92,7 @@ public interface JbTree {
      * @return number of locked nodes.
      */
     int countLockedNodes();
+    
+    String toDotFile(final File file);
 
 }

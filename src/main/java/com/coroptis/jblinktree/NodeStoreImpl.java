@@ -20,8 +20,10 @@ package com.coroptis.jblinktree;
  * #L%
  */
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -93,5 +95,10 @@ public class NodeStoreImpl implements NodeStore {
     @Override
     public int countLockedNodes() {
 	return nodeLocks.countLockedThreads();
+    }
+    
+    @Override
+    public Set<Integer> getKeys() {
+	return Collections.unmodifiableSet(nodes.keySet());
     }
 }

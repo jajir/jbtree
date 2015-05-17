@@ -20,6 +20,8 @@ package com.coroptis.jblinktree.junit;
  * #L%
  */
 
+import static org.junit.Assert.*;
+
 import java.util.List;
 
 import junit.framework.TestCase;
@@ -383,6 +385,16 @@ public class NodeTest extends TestCase {
 	}
     }
 
+    @Test
+    public void test_writeTo() throws Exception {
+	Node n = Node.makeNode(2, 2, new Integer[] { 0, 2, 1, 3, 23 });
+	
+	StringBuilder buff = new StringBuilder();
+	n.writeTo(buff, "    ");
+	assertNotNull(buff);
+	logger.debug(buff.toString());
+    }
+    
     @Override
     protected void setUp() throws Exception {
 	super.setUp();
