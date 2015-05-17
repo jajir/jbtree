@@ -22,7 +22,6 @@ package com.coroptis.jblinktree;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
@@ -121,6 +120,7 @@ public class JbTreeImpl implements JbTree {
 			tmpKey = newNode.getMaxKey();
 			final Integer previousCurrentNodeId = currentNode
 				.getId();
+			Node oldCurrentNode = currentNode;
 			currentNode = treeService.loadParentNode(currentNode,
 				tmpKey, stack.pop());
 			nodeStore.unlockNode(previousCurrentNodeId);

@@ -110,10 +110,11 @@ public class JbTreeToolImpl implements JbTreeTool {
     @Override
     public Integer splitRootNode(final Node currentRootNode, final Node newNode) {
 	// TODO consider case when new node is smaller that currentRootNode
-	Node newRoot = new Node(currentRootNode.getL(), nodeStore.size(), false);
-	newRoot.insert(currentRootNode.getMaxKey(), newNode.getId());
-	newRoot.setP0(currentRootNode.getId());
-	newRoot.setMaxKeyValue(newNode.getMaxKey());
+	Node newRoot = Node.makeNode(
+		currentRootNode.getL(),
+		nodeStore.size(),
+		new Integer[] { currentRootNode.getId(), currentRootNode.getMaxKey(),
+			newNode.getId(), newNode.getMaxKey(), null });
 	nodeStore.writeNode(newRoot);
 	return newRoot.getId();
     }

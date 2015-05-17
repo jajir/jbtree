@@ -221,14 +221,22 @@ public class Node {
 		/**
 		 * Rewrite value.
 		 */
-		field[i + 1] = value;
+		if (isLeafNode()) {
+		    field[i + 1] = value;
+		} else {
+		    field[i - 1] = value;
+		}
 		return;
 	    } else if (field[i] > key) {
 		couldInsertedKey();
 		/**
 		 * given value should be inserted 1 before current index
 		 */
-		insertToPosition(key, value, i);
+		if (isLeafNode()) {
+		    insertToPosition(key, value, i);
+		} else {
+		    insertToPosition(key, value, i + 1);
+		}
 		return;
 	    }
 	}
@@ -236,9 +244,11 @@ public class Node {
 	/**
 	 * New key is bigger than all others so should be at the end.
 	 */
-	insertToPosition(key, value, field.length - 2);
 	if (isLeafNode()) {
+	    insertToPosition(key, value, field.length - 2);
 	    setMaxKeyValue(key);
+	} else {
+	    insertToPosition(value, key, field.length - 1);
 	}
     }
 
