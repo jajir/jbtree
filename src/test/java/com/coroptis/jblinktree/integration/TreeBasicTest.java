@@ -124,6 +124,9 @@ public class TreeBasicTest extends TestCase {
     public void test_insert_10_asc_remove_10_desc() throws Exception {
 	insert_10_ascending();
 	assertEquals(10, tree.countValues());
+	logger.debug(tree.toString());
+	tree.toDotFile(new File("pok.dot"));
+	tree.remove(3);
 	find_10();
 	remove_10_descending();
 	assertEquals(0, tree.countValues());
