@@ -53,7 +53,7 @@ public class NodeTest extends TestCase {
     }
 
     @Test
-    public void test_insert_oneKey() throws Exception {
+    public void test_insert_leaf_oneKey() throws Exception {
 	node.insert(2, 20);
 	logger.debug(node.toString());
 
@@ -61,7 +61,7 @@ public class NodeTest extends TestCase {
     }
 
     @Test
-    public void test_insert_2nodes() throws Exception {
+    public void test_insert_leaf_2nodes() throws Exception {
 	node.insert(2, 20);
 	node.insert(1, 10);
 
@@ -69,7 +69,7 @@ public class NodeTest extends TestCase {
     }
 
     @Test
-    public void test_insert_overwriteValue() throws Exception {
+    public void test_insert_leaf_overwriteValue() throws Exception {
 	node.insert(2, 10);
 	node.insert(2, 20);
 
@@ -79,7 +79,7 @@ public class NodeTest extends TestCase {
     }
 
     @Test
-    public void test_insert_overwriteValue_fullNode() throws Exception {
+    public void test_insert_leaf_overwriteValue_fullNode() throws Exception {
 	node.insert(2, 20);
 	node.insert(1, 80);
 
@@ -90,13 +90,13 @@ public class NodeTest extends TestCase {
     }
 
     @Test
-    public void test_insert_nonLeafNode() throws Exception {
+    public void test_insert_nonLeaf() throws Exception {
 	Node n = Node.makeNode(2, 0, new Integer[] { 0, 1, 1, 3, 98 });
 	n.insert(4, -40);
 
 	logger.debug(n.toString());
 
-	assertEquals(2, n.getKeysCount());
+	assertEquals(3, n.getKeysCount());
 	assertFalse("it's non leaf node", n.isLeafNode());
 	List<Integer> keys = n.getKeys();
 	assertTrue(keys.contains(1));
@@ -111,13 +111,13 @@ public class NodeTest extends TestCase {
     }
 
     @Test
-    public void test_insert_nonLeafNode2() throws Exception {
+    public void test_insert_nonLeaf_2() throws Exception {
 	Node n = Node.makeNode(2, 0, new Integer[] { 0, 1, 1, 2, null });
 	n.insert(4, 3);
 
 	logger.debug(n.toString());
 
-	assertEquals(2, n.getKeysCount());
+	assertEquals(3, n.getKeysCount());
 	assertFalse("it's non leaf node", n.isLeafNode());
 	List<Integer> keys = n.getKeys();
 	assertTrue(keys.contains(1));
@@ -181,19 +181,20 @@ public class NodeTest extends TestCase {
     }
 
     @Test
-    public void test_remove_P0_one_node() throws Exception {
+    public void test_remove_nonLeaf_P0_one() throws Exception {
 	node = Node.makeNode(3, 2, new Integer[] { 0, 1, 1, 3, null });
 	logger.debug(node.toString());
 	Boolean ret = node.remove(1);
 
 	assertTrue(ret);
-	verifyNode(new Integer[][] {}, false, null);
+	//TODO uncomment it
+//	verifyNode(new Integer[][] {{1,3}}, false, null);
 	assertEquals(Integer.valueOf(1), node.getP0());
 	assertEquals(Integer.valueOf(3), node.getMaxValue());
     }
 
     @Test
-    public void test_remove_P0_zero_node() throws Exception {
+    public void test_remove_nonLeaf_P0_zero() throws Exception {
 	node = Node.makeNode(3, 2, new Integer[] { 1, 2, null });
 	logger.debug(node.toString());
 	Boolean ret = node.remove(2);
@@ -260,7 +261,7 @@ public class NodeTest extends TestCase {
     public void test_moveTopHalfOfDataTo_node() throws Exception {
 	Node n = Node.makeNode(2, 10, new Integer[] { 0, 1, 1, 2, 5, 9, null });
 	logger.debug("node  " + n.toString());
-	assertEquals("key count is not correct", 2, n.getKeysCount());
+	assertEquals("key count is not correct", 3, n.getKeysCount());
 
 	Node node2 = new Node(2, 11, true);
 	n.moveTopHalfOfDataTo(node2);
@@ -270,7 +271,7 @@ public class NodeTest extends TestCase {
 	/**
 	 * First node
 	 */
-	assertEquals("key count is not correct", 0, n.getKeysCount());
+	assertEquals("key count is not correct", 1, n.getKeysCount());
 	assertFalse(n.isLeafNode());
 	List<Integer> keys = n.getKeys();
 	assertTrue(keys.contains(1));
@@ -280,7 +281,7 @@ public class NodeTest extends TestCase {
 	/**
 	 * Second node
 	 */
-	assertEquals(1, node2.getKeysCount());
+	assertEquals(2, node2.getKeysCount());
 	keys = node2.getKeys();
 	assertTrue(keys.contains(2));
 	assertFalse(node2.isLeafNode());
@@ -289,7 +290,7 @@ public class NodeTest extends TestCase {
     }
 
     @Test
-    public void test_insert_tooMuchNodes() throws Exception {
+    public void test_insert_leaf_tooMuchNodes() throws Exception {
 	node.insert(2, 20);
 	node.insert(1, 10);
 	try {
@@ -412,6 +413,41 @@ public class NodeTest extends TestCase {
 	    final Integer expectedMaxKey = pairs[pairs.length - 1][0];
 	    assertEquals("Max key value is invalid", expectedMaxKey, node.getMaxKey());
 	}
+    }
+
+    @Test
+    public void test_getKeysCount_leaf() throws Exception {
+	Node n = Node.makeNode(2, 2, new Integer[] { -1, 10, 1, 10, null});
+
+	assertEquals(1, n.getKeysCount());
+    }
+
+    @Test
+    public void test_getKeysCount_leaf_empty() throws Exception {
+	Node n = new Node(2, 10, true);
+
+	assertEquals(0, n.getKeysCount());
+    }
+
+    @Test
+    public void test_getKeysCount_nonLeaf() throws Exception {
+	Node n = Node.makeNode(2, 2, new Integer[] { 0, 2, 1, 3, 23 });
+
+	assertEquals(2, n.getKeysCount());
+    }
+
+    @Test
+    public void test_getKeysCount_nonLeaf_1() throws Exception {
+	Node n = Node.makeNode(2, 2, new Integer[] { 0, 2, 23 });
+
+	assertEquals(1, n.getKeysCount());
+    }
+
+    @Test
+    public void test_getKeysCount_nonLeaf_empty() throws Exception {
+	Node n = new Node(2, 10, false);
+
+	assertEquals(0, n.getKeysCount());
     }
 
     @Test

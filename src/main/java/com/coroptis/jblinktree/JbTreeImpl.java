@@ -213,6 +213,10 @@ public class JbTreeImpl implements JbTree {
 	 * updated in upper nodes.
 	 */
 	while (true) {
+	    if (stack.empty()) {
+		nodeStore.unlockNode(currentNode.getId());
+		return;
+	    }
 	    Node nextNode = nodeStore.getAndLock(stack.pop());
 	    nextNode = tool.moveRightNonLeafNode(nextNode, tmpKey);
 	    Integer oldMaxKey = nextNode.getMaxKey();
@@ -221,10 +225,6 @@ public class JbTreeImpl implements JbTree {
 	    nodeStore.unlockNode(currentNode.getId());
 	    currentNode = nextNode;
 	    if (currentNode.getMaxKey().equals(oldMaxKey)) {
-		nodeStore.unlockNode(currentNode.getId());
-		return;
-	    }
-	    if (stack.empty()) {
 		nodeStore.unlockNode(currentNode.getId());
 		return;
 	    }

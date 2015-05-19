@@ -196,12 +196,19 @@ public class Node {
     }
 
     /**
-     * return number of keys stored in node.
+     * Get number of keys stored in node.
      * 
      * @return number of stored keys.
      */
     public int getKeysCount() {
-	return (field.length - 3) / 2;
+	if (isLeafNode()) {
+	    return (field.length - 3) / 2;
+	} else {
+	    if (field[1] == null) {
+		return 0;
+	    }
+	    return (field.length - 1) / 2;
+	}
     }
 
     /**
@@ -404,7 +411,7 @@ public class Node {
 	    node.field[0] = M;
 	} else {
 	    // copy top half to empty node
-	    final int startKeyNo = (getKeysCount() + 1) / 2 - 1;
+	    final int startKeyNo = (getKeysCount() ) / 2 - 1;
 	    final int startIndex = startKeyNo * 2 + 2;
 	    final int length = field.length - startIndex;
 	    node.field = new Integer[length];
