@@ -258,7 +258,7 @@ public class Node {
 		    /**
 		     * given value should be inserted 1 before current index
 		     */
-		    insertToPosition(key, value, i - 1);
+		    insertToPosition(value, key, i - 1);
 		    return;
 		}
 	    }

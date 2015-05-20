@@ -69,11 +69,10 @@ public class TreeBasicTest extends TestCase {
 
     @Test
     public void test_insert_4_values_descending() throws Exception {
+	tree.insert(5, -50);
 	tree.insert(4, -40);
 	tree.insert(3, -30);
 	tree.insert(2, -20);
-	tree.insert(1, -10);
-	tree.toDotFile(new File("pok.dot"));
 	tree.verify();
 	logger.debug(tree.toString());
     }
@@ -128,6 +127,7 @@ public class TreeBasicTest extends TestCase {
 	
 	remove_10_ascending();
 	assertEquals(0, tree.countValues());
+	tree.toDotFile(new File("pok.dot"));
     }
 
     @Test

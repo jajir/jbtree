@@ -132,7 +132,7 @@ public class NodeTest extends TestCase {
     @Test
     public void test_insert_nonLeaf_loverKey() throws Exception {
 	Node n = Node.makeNode(2, 4, new Integer[] { 0, 4, null });
-	n.insert(3, 3);
+	n.insert(3, -30);
 
 	logger.debug(n.toString());
 
@@ -143,7 +143,7 @@ public class NodeTest extends TestCase {
 	assertTrue(keys.contains(4));
 	assertNull(n.getLink());
 	assertEquals(Integer.valueOf(0), n.getCorrespondingNodeId(4));
-	assertEquals(Integer.valueOf(3), n.getCorrespondingNodeId(3));
+	assertEquals(Integer.valueOf(-30), n.getCorrespondingNodeId(3));
     }
 
     @Test
