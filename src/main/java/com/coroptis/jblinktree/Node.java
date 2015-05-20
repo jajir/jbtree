@@ -222,39 +222,50 @@ public class Node {
     public void insert(final Integer key, final Integer value) {
 	Preconditions.checkNotNull(key);
 	Preconditions.checkNotNull(value);
-
-	for (int i = 1; i < field.length - 2; i = i + 2) {
-	    if (field[i] == key) {
-		/**
-		 * Rewrite value.
-		 */
-		if (isLeafNode()) {
-		    field[i + 1] = value;
-		} else {
-		    field[i - 1] = value;
-		}
-		return;
-	    } else if (field[i] > key) {
-		couldInsertedKey();
-		/**
-		 * given value should be inserted 1 before current index
-		 */
-		if (isLeafNode()) {
-		    insertToPosition(key, value, i);
-		} else {
-		    insertToPosition(key, value, i + 1);
-		}
-		return;
-	    }
-	}
-	couldInsertedKey();
-	/**
-	 * New key is bigger than all others so should be at the end.
-	 */
 	if (isLeafNode()) {
+	    for (int i = 1; i < field.length - 2; i = i + 2) {
+		if (field[i] == key) {
+		    /**
+		     * Rewrite value.
+		     */
+		    field[i + 1] = value;
+		    return;
+		} else if (field[i] > key) {
+		    couldInsertedKey();
+		    /**
+		     * given value should be inserted 1 before current index
+		     */
+		    insertToPosition(key, value, i);
+		    return;
+		}
+	    }
+	    couldInsertedKey();
+	    /**
+	     * New key is bigger than all others so should be at the end.
+	     */
 	    insertToPosition(key, value, field.length - 2);
 	    setMaxKeyValue(key);
 	} else {
+	    for (int i = 1; i < field.length - 1; i = i + 2) {
+		if (field[i] == key) {
+		    /**
+		     * Rewrite value.
+		     */
+		    field[i - 1] = value;
+		    return;
+		} else if (field[i] > key) {
+		    couldInsertedKey();
+		    /**
+		     * given value should be inserted 1 before current index
+		     */
+		    insertToPosition(key, value, i - 1);
+		    return;
+		}
+	    }
+	    couldInsertedKey();
+	    /**
+	     * New key is bigger than all others so should be at the end.
+	     */
 	    insertToPosition(value, key, field.length - 1);
 	}
     }
@@ -411,7 +422,7 @@ public class Node {
 	    node.field[0] = M;
 	} else {
 	    // copy top half to empty node
-	    final int startKeyNo = (getKeysCount() ) / 2 - 1;
+	    final int startKeyNo = (getKeysCount()) / 2 - 1;
 	    final int startIndex = startKeyNo * 2 + 2;
 	    final int length = field.length - startIndex;
 	    node.field = new Integer[length];

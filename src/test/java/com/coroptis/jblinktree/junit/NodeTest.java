@@ -111,7 +111,7 @@ public class NodeTest extends TestCase {
     }
 
     @Test
-    public void test_insert_nonLeaf_2() throws Exception {
+    public void test_insert_nonLeaf_maxKey() throws Exception {
 	Node n = Node.makeNode(2, 0, new Integer[] { 0, 1, 1, 2, null });
 	n.insert(4, 3);
 
@@ -127,6 +127,23 @@ public class NodeTest extends TestCase {
 	assertEquals(Integer.valueOf(0), n.getCorrespondingNodeId(1));
 	assertEquals(Integer.valueOf(1), n.getCorrespondingNodeId(2));
 	assertEquals(Integer.valueOf(3), n.getCorrespondingNodeId(4));
+    }
+
+    @Test
+    public void test_insert_nonLeaf_loverKey() throws Exception {
+	Node n = Node.makeNode(2, 4, new Integer[] { 0, 4, null });
+	n.insert(3, 3);
+
+	logger.debug(n.toString());
+
+	assertEquals(2, n.getKeysCount());
+	assertFalse("it's non leaf node", n.isLeafNode());
+	List<Integer> keys = n.getKeys();
+	assertTrue(keys.contains(3));
+	assertTrue(keys.contains(4));
+	assertNull(n.getLink());
+	assertEquals(Integer.valueOf(0), n.getCorrespondingNodeId(4));
+	assertEquals(Integer.valueOf(3), n.getCorrespondingNodeId(3));
     }
 
     @Test
