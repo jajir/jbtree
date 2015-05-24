@@ -20,6 +20,7 @@ package com.coroptis.jblinktree.integration;
  * #L%
  */
 
+import java.io.File;
 import java.util.Random;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
@@ -32,6 +33,7 @@ import org.slf4j.LoggerFactory;
 
 import com.coroptis.jblinktree.Executer;
 import com.coroptis.jblinktree.JbTree;
+import com.coroptis.jblinktree.JblinktreeException;
 import com.coroptis.jblinktree.TreeBuilder;
 import com.coroptis.jblinktree.Worker;
 
@@ -51,8 +53,8 @@ public class TreeConcurrencyTest extends TestCase {
 
     @Test
     public void testForThreadClash() throws Exception {
-	final int cycleCount = 10;
-	final int threadCount = 10;
+	final int cycleCount = 100;
+	final int threadCount = 100;
 	final CountDownLatch doneLatch = new CountDownLatch(cycleCount * threadCount);
 	final CountDownLatch startLatch = new CountDownLatch(1);
 
@@ -68,7 +70,7 @@ public class TreeConcurrencyTest extends TestCase {
 	}
 
 	startLatch.countDown();
-	doneLatch.await(10, TimeUnit.SECONDS);
+	doneLatch.await(100, TimeUnit.SECONDS);
 	assertEquals("Some thread didn't finished work", 0, doneLatch.getCount());
 	tree.verify();
 	logger.debug("I'm done!");
@@ -90,7 +92,14 @@ public class TreeConcurrencyTest extends TestCase {
     void doWorkNow() {
 	Integer integer = random.nextInt(100) + 1;
 	logger.debug("inserting :" + integer);
-	tree.insert(integer, integer);
+	try {
+	    tree.insert(integer, integer);
+	} catch (JblinktreeException e) {
+	    synchronized (e) {
+		tree.toDotFile(new File("dot.dot"));
+	    }
+	    throw e;
+	}
     }
 
 }

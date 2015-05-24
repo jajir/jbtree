@@ -1,5 +1,7 @@
 package com.coroptis.jblinktree;
 
+import java.util.concurrent.locks.ReentrantLock;
+
 /*
  * #%L
  * jblinktree
@@ -21,35 +23,27 @@ package com.coroptis.jblinktree;
  */
 
 /**
- * Provide fluent API for creating tree.
+ * Implementation of {@link IdGenerator}.
  * 
  * @author jajir
  * 
  */
-public final class TreeBuilder {
+public class IdGeneratorImpl implements IdGenerator {
 
-    private Integer l;
+    private int nextId;
 
-    public static TreeBuilder builder() {
-	return new TreeBuilder(5);
+    private final ReentrantLock lock = new ReentrantLock(false);
+
+    public IdGeneratorImpl() {
+	nextId = 0;
     }
 
-    private TreeBuilder(final Integer default_l) {
-	this.l = default_l;
-    }
-
-    public TreeBuilder setL(final Integer l) {
-	this.l = l;
-	return this;
-    }
-
-    public JbTree build() {
-	final IdGenerator idGenerator = new IdGeneratorImpl();
-	final NodeStoreImpl nodeStore = new NodeStoreImpl(idGenerator);
-	final JbTreeTool jbTreeTool = new JbTreeToolImpl(nodeStore);
-	final JbTreeService treeService = new JbTreeServiceImpl(nodeStore, jbTreeTool);
-	final JbTree tree = new JbTreeImpl(l, nodeStore, jbTreeTool, treeService);
-	return tree;
+    @Override
+    public int getNextId() {
+	lock.lock();
+	int out = nextId++;
+	lock.unlock();
+	return out;
     }
 
 }

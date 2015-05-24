@@ -1,5 +1,23 @@
 package com.coroptis.jblinktree.integration;
 
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
+
+import junit.framework.TestCase;
+
+import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.coroptis.jblinktree.Executer;
+import com.coroptis.jblinktree.IdGenerator;
+import com.coroptis.jblinktree.IdGeneratorImpl;
+import com.coroptis.jblinktree.JblinktreeException;
+import com.coroptis.jblinktree.Worker;
+
 /*
  * #%L
  * jblinktree
@@ -20,39 +38,24 @@ package com.coroptis.jblinktree.integration;
  * #L%
  */
 
-import java.util.Random;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.TimeUnit;
-
-import junit.framework.TestCase;
-
-import org.junit.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.coroptis.jblinktree.Executer;
-import com.coroptis.jblinktree.JbTree;
-import com.coroptis.jblinktree.TreeBuilder;
-import com.coroptis.jblinktree.Worker;
-
 /**
- * test verify that add and remove operations works in thread environment.
+ * Class try to verify that {@link IdGenerator} is thread safe.
  * 
  * @author jajir
  * 
  */
-public class TreeDeleteConcurrencyTest extends TestCase {
+public class IdGeneratorConcurrencyTest extends TestCase {
 
-    private final Logger logger = LoggerFactory.getLogger(TreeDeleteConcurrencyTest.class);
+    private final Logger logger = LoggerFactory.getLogger(IdGeneratorConcurrencyTest.class);
 
-    private JbTree tree;
+    private IdGenerator idGenerator;
 
-    private Random random;
+    private Set<Integer> s;
 
     @Test
     public void testForThreadClash() throws Exception {
 	final int cycleCount = 100;
-	final int threadCount = 100;
+	final int threadCount = 300;
 	final CountDownLatch doneLatch = new CountDownLatch(cycleCount * threadCount);
 	final CountDownLatch startLatch = new CountDownLatch(1);
 
@@ -68,34 +71,30 @@ public class TreeDeleteConcurrencyTest extends TestCase {
 	}
 
 	startLatch.countDown();
-	doneLatch.await(10, TimeUnit.SECONDS);
+	doneLatch.await(100, TimeUnit.SECONDS);
 	assertEquals("Some thread didn't finished work", 0, doneLatch.getCount());
-	tree.verify();
 	logger.debug("I'm done!");
     }
 
     @Override
     protected void setUp() throws Exception {
 	super.setUp();
-	tree = TreeBuilder.builder().setL(2).build();
-	random = new Random();
+	s = Collections.synchronizedSet(new HashSet<Integer>());
+	idGenerator = new IdGeneratorImpl();
     }
 
     @Override
     protected void tearDown() throws Exception {
-	tree = null;
+	s = null;
+	idGenerator = null;
 	super.tearDown();
     }
 
     void doWorkNow() {
-	Integer integer = random.nextInt(100) + 1;
-	if (integer % 2 == 0) {
-	    logger.debug("inserting :" + integer);
-	    tree.insert(integer, integer);
-	} else {
-	    logger.debug("removing :" + integer);
-	    tree.remove(integer);
+	Integer i = idGenerator.getNextId();
+	if (!s.add(i)) {
+	    throw new JblinktreeException("IdGenerator is not thread safe,"
+		    + " some node id was provdes at lest two times.");
 	}
     }
-
 }

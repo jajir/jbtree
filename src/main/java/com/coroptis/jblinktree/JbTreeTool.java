@@ -93,7 +93,7 @@ public interface JbTreeTool {
      * Split node into two nodes. It moved part of currentNode data into new one
      * which will be returned.
      * <p>
-     * Method doesn't work with locks.
+     * Method doesn't work with locks. New node is not locked.
      * </p>
      * 
      * @param currentNode

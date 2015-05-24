@@ -107,6 +107,7 @@ public class JbTreeImpl implements JbTree {
 			/**
 			 * There is no previous node, it's root node.
 			 */
+			Preconditions.checkArgument(rootNodeId == currentNode.getId());
 			rootNodeId = tool.splitRootNode(currentNode, newNode);
 			nodeStore.unlockNode(currentNode.getId());
 			return null;

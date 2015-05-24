@@ -31,6 +31,12 @@ import org.slf4j.LoggerFactory;
 import com.google.common.base.Preconditions;
 import com.google.inject.Inject;
 
+/**
+ * Implementation of {@link NodeStore}.
+ * 
+ * @author jajir
+ * 
+ */
 public class NodeStoreImpl implements NodeStore {
 
     private final Logger logger = LoggerFactory.getLogger(NodeStoreImpl.class);
@@ -39,8 +45,11 @@ public class NodeStoreImpl implements NodeStore {
 
     private final NodeLocks nodeLocks;
 
+    private final IdGenerator idGenerator;
+
     @Inject
-    public NodeStoreImpl() {
+    public NodeStoreImpl(final IdGenerator idGenerator) {
+	this.idGenerator = Preconditions.checkNotNull(idGenerator);
 	nodes = new HashMap<Integer, Node>();
 	nodeLocks = new NodeLocks();
 	logger.debug("staring in memory node store");
@@ -83,11 +92,6 @@ public class NodeStoreImpl implements NodeStore {
     }
 
     @Override
-    public int size() {
-	return nodes.size();
-    }
-
-    @Override
     public void deleteNode(final Integer idNode) {
 	nodes.remove(Preconditions.checkNotNull(idNode));
     }
@@ -96,9 +100,15 @@ public class NodeStoreImpl implements NodeStore {
     public int countLockedNodes() {
 	return nodeLocks.countLockedThreads();
     }
-    
+
     @Override
     public Set<Integer> getKeys() {
 	return Collections.unmodifiableSet(nodes.keySet());
     }
+
+    @Override
+    public Integer getNextId() {
+	return idGenerator.getNextId();
+    }
+
 }

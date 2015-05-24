@@ -504,7 +504,7 @@ public class Node {
      */
     public Integer getCorrespondingNodeId(final Integer key) {
 	if (isLeafNode()) {
-	    throw new JblinktreeException("Leaf node doesn't have any child nodes.");
+	    throw new JblinktreeException("Leaf node '" + id + "' doesn't have any child nodes.");
 	}
 	for (int i = 1; i < field.length - 1; i = i + 2) {
 	    if (key <= field[i]) {
@@ -541,7 +541,7 @@ public class Node {
     public Integer getValue(final Integer key) {
 	Preconditions.checkNotNull(key);
 	if (!isLeafNode()) {
-	    throw new JblinktreeException("Non-leaf node doesn't have leaf value.");
+	    throw new JblinktreeException("Non-leaf node '" + id + "' doesn't have leaf value.");
 	}
 	for (int i = 1; i < field.length - 2; i = i + 2) {
 	    if (key.equals(field[i])) {

@@ -22,6 +22,12 @@ import java.util.Set;
  * #L%
  */
 
+/**
+ * Allows to read & write nodes. Main methods are thread safe.
+ * 
+ * @author jajir
+ * 
+ */
 public interface NodeStore {
 
     void lockNode(Integer nodeId);
@@ -32,13 +38,43 @@ public interface NodeStore {
 
     Node getAndLock(Integer nodeId);
 
+    /**
+     * Persist node into node store.
+     * <p>
+     * Method doens't work with locks.
+     * </p>
+     * 
+     * @param node
+     *            required {@link Node}
+     */
     void writeNode(Node node);
 
     void deleteNode(Integer idNode);
 
-    int size();
-
+    /**
+     * Get number of nodes that are locked.
+     * 
+     * @return number of locked nodes.
+     */
     int countLockedNodes();
-    
+
+    /**
+     * Return set containing all keys.
+     * <p>
+     * This method id not thread-safe.
+     * </p>
+     * 
+     * @return unmodifiable set containing all keys
+     */
     Set<Integer> getKeys();
+
+    /**
+     * Method provide new node id.
+     * <p>
+     * Method just delegate to {@link IdGenerator#getNextId()}.
+     * </p>
+     * 
+     * @return new node id
+     */
+    Integer getNextId();
 }
