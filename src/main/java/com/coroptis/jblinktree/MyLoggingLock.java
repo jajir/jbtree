@@ -43,7 +43,7 @@ public class MyLoggingLock implements Lock {
     private final Integer nodeId;
 
     public MyLoggingLock(final Integer nodeId) {
-	lock = new ReentrantLock();
+	lock = new ReentrantLock(false);
 	this.nodeId = nodeId;
     }
 
