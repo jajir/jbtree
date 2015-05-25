@@ -70,7 +70,7 @@ public class JbTreeImpl implements JbTree {
 	this.nodeStore = Preconditions.checkNotNull(nodeStore);
 	this.tool = Preconditions.checkNotNull(tool);
 	this.treeService = Preconditions.checkNotNull(jbTreeService);
-	Node node = new Node(l, 0, true);
+	Node node = new Node(l, nodeStore.getNextId(), true);
 	rootNodeId = node.getId();
 	this.nodeStore.writeNode(node);
     }
