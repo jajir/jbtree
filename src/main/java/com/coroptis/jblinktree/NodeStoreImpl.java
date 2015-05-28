@@ -50,7 +50,7 @@ public class NodeStoreImpl implements NodeStore {
     @Inject
     public NodeStoreImpl(final IdGenerator idGenerator) {
 	this.idGenerator = Preconditions.checkNotNull(idGenerator);
-	nodes = new HashMap<Integer, Node>();
+	nodes = Collections.synchronizedMap(new HashMap<Integer, Node>());
 	nodeLocks = new NodeLocks();
 	logger.debug("staring in memory node store");
     }

@@ -25,6 +25,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
+import java.util.concurrent.locks.ReentrantLock;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -107,9 +108,23 @@ public class JbTreeImpl implements JbTree {
 			/**
 			 * There is no previous node, it's root node.
 			 */
-			Preconditions.checkArgument(rootNodeId == currentNode.getId());
-			rootNodeId = tool.splitRootNode(currentNode, newNode);
-			nodeStore.unlockNode(currentNode.getId());
+			ReentrantLock lock = new ReentrantLock(false);
+			lock.lock();
+			if (rootNodeId == currentNode.getId()) {
+			    Preconditions.checkArgument(rootNodeId == currentNode.getId());
+			    rootNodeId = tool.splitRootNode(currentNode, newNode);
+			    nodeStore.unlockNode(currentNode.getId());
+			} else {
+			    tmpValue = newNode.getId();
+			    tmpKey = newNode.getMaxKey();
+			    final Integer previousCurrentNodeId = currentNode.getId();
+			    treeService.fillPathToNode(tmpKey, rootNodeId, stack, rootNodeId);
+			    Preconditions.checkState(!stack.isEmpty());
+			    currentNode = treeService.loadParentNode(currentNode, tmpKey,
+				    stack.pop());
+			    nodeStore.unlockNode(previousCurrentNodeId);
+			}
+			lock.unlock();
 			return null;
 		    } else {
 			/**

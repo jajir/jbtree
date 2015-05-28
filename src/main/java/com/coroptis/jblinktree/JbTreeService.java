@@ -53,6 +53,8 @@ public interface JbTreeService {
      */
     Integer findLeafNodeId(Integer key, Stack<Integer> stack, Integer rootNodeId);
 
-    Node loadParentNode(Node currentNode, Integer tmpKey, Integer nexTNodeId);
+    Node loadParentNode(Node currentNode, Integer tmpKey, Integer nextNodeId);
 
+    void fillPathToNode(final Integer key, final Integer nodeId, final Stack<Integer> stack,
+	    final Integer rootNodeId);
 }

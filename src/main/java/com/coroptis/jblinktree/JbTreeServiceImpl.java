@@ -66,10 +66,35 @@ public class JbTreeServiceImpl implements JbTreeService {
     }
 
     @Override
+    public void fillPathToNode(final Integer key, final Integer nodeId, final Stack<Integer> stack,
+	    final Integer rootNodeId) {
+	Node currentNode = nodeStore.get(rootNodeId);
+	while (!currentNode.isLeafNode() && !currentNode.getId().equals(nodeId)) {
+	    stack.push(currentNode.getId());
+	    Integer nextNodeId = currentNode.getCorrespondingNodeId(key);
+	    if (nextNodeId == null) {
+		/**
+		 * This is rightmost node and next link is <code>null</code> so
+		 * use node id associated with bigger key.
+		 */
+		nextNodeId = currentNode.getCorrespondingNodeId(currentNode.getMaxValue());
+	    } else if (nextNodeId.equals(nodeId)) {
+		// My leaf is found
+		return;
+	    } else
+		while (nextNodeId != null && nextNodeId.equals(currentNode.getLink())) {
+		    nextNodeId = currentNode.getLink();
+		}
+	    currentNode = nodeStore.get(nextNodeId);
+	}
+    }
+
+    @Override
     public Node loadParentNode(final Node currentNode, final Integer tmpKey,
-	    final Integer nexTNodeId) {
-	Node parentNode = nodeStore.getAndLock(nexTNodeId);
-	//TODO link to current node which key should be updated can be in different node than tmpKey 
+	    final Integer nextNodeId) {
+	Node parentNode = nodeStore.getAndLock(nextNodeId);
+	// TODO link to current node which key should be updated can be in
+	// different node than tmpKey
 	parentNode = tool.moveRightNonLeafNode(parentNode, tmpKey);
 	if (parentNode.updateNodeValue(currentNode.getId(), currentNode.getMaxValue())) {
 	    nodeStore.writeNode(parentNode);
