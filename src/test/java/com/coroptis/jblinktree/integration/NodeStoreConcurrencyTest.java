@@ -20,7 +20,6 @@ package com.coroptis.jblinktree.integration;
  * #L%
  */
 
-
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
@@ -73,15 +72,15 @@ public class NodeStoreConcurrencyTest extends TestCase {
 	}
 
 	startLatch.countDown();
-	doneLatch.await(10,TimeUnit.SECONDS);
-	assertEquals("Some thread didn't finished",0, doneLatch.getCount());
+	doneLatch.await(10, TimeUnit.SECONDS);
+	assertEquals("Some thread didn't finished", 0, doneLatch.getCount());
 	logger.debug("I'm done!");
     }
 
     @Override
     protected void setUp() throws Exception {
 	super.setUp();
-	nodeStore = new NodeStoreImpl(new IdGeneratorImpl());
+	nodeStore = new NodeStoreImpl(new IdGeneratorImpl(), 2);
 	Node node = new Node(2, 1, true);
 	nodeStore.writeNode(node);
     }

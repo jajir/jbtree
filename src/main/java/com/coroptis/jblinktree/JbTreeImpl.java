@@ -114,15 +114,21 @@ public class JbTreeImpl implements JbTree {
 			    Preconditions.checkArgument(rootNodeId == currentNode.getId());
 			    rootNodeId = tool.splitRootNode(currentNode, newNode);
 			    nodeStore.unlockNode(currentNode.getId());
+			    return null;
 			} else {
-			    tmpValue = newNode.getId();
-			    tmpKey = newNode.getMaxKey();
-			    final Integer previousCurrentNodeId = currentNode.getId();
-			    treeService.fillPathToNode(tmpKey, rootNodeId, stack, rootNodeId);
-			    Preconditions.checkState(!stack.isEmpty());
-			    currentNode = treeService.loadParentNode(currentNode, tmpKey,
-				    stack.pop());
-			    nodeStore.unlockNode(previousCurrentNodeId);
+			    nodeStore.unlockNode(currentNode.getId());
+			    // so leave it in this state.
+			    // tmpValue = newNode.getId();
+			    // tmpKey = newNode.getMaxKey();
+			    // final Integer previousCurrentNodeId =
+			    // currentNode.getId();
+			    // treeService.fillPathToNode(tmpKey,
+			    // currentNode.getId(), stack, rootNodeId);
+			    // Preconditions.checkState(!stack.isEmpty());
+			    // currentNode =
+			    // treeService.loadParentNode(currentNode, tmpKey,
+			    // stack.pop());
+			    // nodeStore.unlockNode(previousCurrentNodeId);
 			}
 			lock.unlock();
 			return null;
@@ -410,44 +416,36 @@ public class JbTreeImpl implements JbTree {
 	    nodeStore.get(i).writeTo(buff, intendation);
 	}
 
-	final Stack<Integer> stack = new Stack<Integer>();
-	stack.push(rootNodeId);
-	while (!stack.isEmpty()) {
-	    final Integer nodeId = stack.pop();
-	    if (nodeId == null) {
-		return buff.toString();
-	    } else {
-		final Node node = nodeStore.get(nodeId);
-		if (node.getLink() != null) {
-		    // buff.append(intendation);
-		    // buff.append("\"node");
-		    // buff.append(node.getId());
-		    // buff.append("\"");
-		    // buff.append(" -> ");
-		    // buff.append("\"node");
-		    // buff.append(node.getLink());
-		    // buff.append("\"");
-		    // buff.append("\n");
-		}
-		if (!node.isLeafNode()) {
-		    for (final Integer i : node.getNodeIds()) {
-			buff.append(intendation);
-			buff.append("\"node");
-			buff.append(node.getId());
-			buff.append("\":F");
-			buff.append(i);
-			buff.append(" -> ");
-			buff.append("\"node");
-			buff.append(i);
-			buff.append("\" [label=\"");
-			buff.append(i);
-			buff.append("\"];");
-			buff.append("\n");
-		    }
-
-		    for (final Integer i : node.getNodeIds()) {
-			stack.push(i);
-		    }
+	for (final Integer j : nodeStore.getKeys()) {
+	    final Node node = nodeStore.get(j);
+	    if (node.getLink() != null) {
+		buff.append(intendation);
+		buff.append("\"node");
+		buff.append(node.getId());
+		buff.append("\":L");
+		buff.append(node.getLink());
+		buff.append(" -> ");
+		buff.append("\"node");
+		buff.append(node.getLink());
+		buff.append("\" [constraint=false, label=\"");
+		buff.append(node.getLink());
+		buff.append("\"]");
+		buff.append(";\n");
+	    }
+	    if (!node.isLeafNode()) {
+		for (final Integer i : node.getNodeIds()) {
+		    buff.append(intendation);
+		    buff.append("\"node");
+		    buff.append(node.getId());
+		    buff.append("\":F");
+		    buff.append(i);
+		    buff.append(" -> ");
+		    buff.append("\"node");
+		    buff.append(i);
+		    buff.append("\" [label=\"");
+		    buff.append(i);
+		    buff.append("\"];");
+		    buff.append("\n");
 		}
 	    }
 	}

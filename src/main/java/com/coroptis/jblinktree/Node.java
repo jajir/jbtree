@@ -611,8 +611,12 @@ public class Node {
 	    logger.error("node {} have null P0", id);
 	    return false;
 	}
-	if (isLeafNode()) {
-
+	if (!isLeafNode()) {
+	    for (int i = 0; i < field.length - 2; i = i + 2) {
+		if (field[i] != null && field[i].equals(id)) {
+		    throw new JblinktreeException("node contains pointer to itself: " + toString());
+		}
+	    }
 	}
 	return true;
     }
@@ -690,8 +694,20 @@ public class Node {
 	    }
 	}
 	buff.append(" | ");
+	if (getLink() != null) {
+	    buff.append("<L");
+	    buff.append(getLink());
+	    buff.append("> ");
+	}
 	buff.append(getLink());
 	buff.append("\"];\n");
+    }
+
+    /**
+     * @return the field
+     */
+    public Integer[] getField() {
+	return field;
     }
 
 }

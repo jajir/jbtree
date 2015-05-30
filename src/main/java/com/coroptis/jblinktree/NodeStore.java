@@ -23,7 +23,8 @@ import java.util.Set;
  */
 
 /**
- * Allows to read & write nodes. Main methods are thread safe.
+ * Allows to read & write nodes. Main methods are thread safe. Get method
+ * returns always new node instance with same data.
  * 
  * @author jajir
  * 
@@ -34,6 +35,13 @@ public interface NodeStore {
 
     void unlockNode(Integer nodeId);
 
+    /**
+     * Return defensive copy of node instance.
+     * 
+     * @param nodeId
+     *            required node id
+     * @return 
+     */
     Node get(Integer nodeId);
 
     Node getAndLock(Integer nodeId);

@@ -45,7 +45,7 @@ public final class TreeBuilder {
 
     public JbTree build() {
 	final IdGenerator idGenerator = new IdGeneratorImpl();
-	final NodeStoreImpl nodeStore = new NodeStoreImpl(idGenerator);
+	final NodeStoreImpl nodeStore = new NodeStoreImpl(idGenerator, l);
 	final JbTreeTool jbTreeTool = new JbTreeToolImpl(nodeStore);
 	final JbTreeService treeService = new JbTreeServiceImpl(nodeStore, jbTreeTool);
 	final JbTree tree = new JbTreeImpl(l, nodeStore, jbTreeTool, treeService);

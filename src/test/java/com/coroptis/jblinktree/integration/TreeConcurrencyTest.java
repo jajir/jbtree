@@ -74,6 +74,7 @@ public class TreeConcurrencyTest extends TestCase {
 	assertEquals("Some thread didn't finished work", 0, doneLatch.getCount());
 	tree.verify();
 	logger.debug("I'm done!");
+	tree.toDotFile(new File("pok.dot"));
     }
 
     @Override

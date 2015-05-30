@@ -41,16 +41,19 @@ public class NodeStoreImpl implements NodeStore {
 
     private final Logger logger = LoggerFactory.getLogger(NodeStoreImpl.class);
 
-    private final Map<Integer, Node> nodes;
+    private final Map<Integer, Integer[]> nodes;
 
     private final NodeLocks nodeLocks;
 
     private final IdGenerator idGenerator;
 
+    private final Integer l;
+
     @Inject
-    public NodeStoreImpl(final IdGenerator idGenerator) {
+    public NodeStoreImpl(final IdGenerator idGenerator, final Integer l) {
 	this.idGenerator = Preconditions.checkNotNull(idGenerator);
-	nodes = Collections.synchronizedMap(new HashMap<Integer, Node>());
+	this.l = Preconditions.checkNotNull(l);
+	nodes = Collections.synchronizedMap(new HashMap<Integer, Integer[]>());
 	nodeLocks = new NodeLocks();
 	logger.debug("staring in memory node store");
     }
@@ -67,11 +70,11 @@ public class NodeStoreImpl implements NodeStore {
 
     @Override
     public Node get(final Integer nodeId) {
-	Node node = nodes.get(Preconditions.checkNotNull(nodeId));
-	if (node == null) {
+	Integer[] field = nodes.get(Preconditions.checkNotNull(nodeId));
+	if (field == null) {
 	    throw new JblinktreeException("There is no node with id '" + nodeId + "'");
 	}
-	return node;
+	return Node.makeNode(l, nodeId, field);
     }
 
     @Override
@@ -80,15 +83,12 @@ public class NodeStoreImpl implements NodeStore {
 	return get(nodeId);
     }
 
-    private void put(final Integer idNode, final Node node) {
-	Preconditions.checkNotNull(idNode);
-	Preconditions.checkNotNull(node);
-	nodes.put(idNode, node);
-    }
-
     @Override
     public void writeNode(final Node node) {
-	put(node.getId(), node);
+	Preconditions.checkNotNull(node.getId());
+	Preconditions.checkNotNull(node);
+	node.verify();
+	nodes.put(node.getId(), node.getField());
     }
 
     @Override
