@@ -21,6 +21,7 @@ package com.coroptis.jblinktree;
  */
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -140,7 +141,8 @@ public class Node {
      *            required Integer array representing node content.
      * @return created {@link Node}
      */
-    public static Node makeNode(final int l, final Integer idNode, final Integer field[]) {
+    public static Node makeNode(final int l, final Integer idNode,
+	    final Integer field[]) {
 	Node n = new Node(l, idNode, true);
 	n.field = field;
 	return n;
@@ -276,7 +278,8 @@ public class Node {
      */
     private void couldInsertedKey() {
 	if (field.length >= l * 2 + 2) {
-	    logger.error("Leaf (" + id + ") is full another value can't be inserted. Leaf: "
+	    logger.error("Leaf (" + id
+		    + ") is full another value can't be inserted. Leaf: "
 		    + this.toString());
 	    throw new JblinktreeException("Leaf (" + id
 		    + ") is full another value can't be inserted.");
@@ -293,14 +296,16 @@ public class Node {
      * @param targetIndex
      *            required target index in field
      */
-    private void insertToPosition(final Integer key, final Integer value, final int targetIndex) {
+    private void insertToPosition(final Integer key, final Integer value,
+	    final int targetIndex) {
 	Integer[] field2 = new Integer[field.length + 2];
 	if (targetIndex > 0) {
 	    System.arraycopy(field, 0, field2, 0, targetIndex);
 	}
 	field2[targetIndex] = key;
 	field2[targetIndex + 1] = value;
-	System.arraycopy(field, targetIndex, field2, targetIndex + 2, field.length - targetIndex);
+	System.arraycopy(field, targetIndex, field2, targetIndex + 2,
+		field.length - targetIndex);
 	field = field2;
     }
 
@@ -358,9 +363,11 @@ public class Node {
      * @return return <code>true</code> when node max value was really updated
      *         otherwise return <code>false</code>
      */
-    public boolean updateNodeValue(final Integer nodeIdToUpdate, final Integer nodeMaxValue) {
+    public boolean updateNodeValue(final Integer nodeIdToUpdate,
+	    final Integer nodeMaxValue) {
 	if (isLeafNode()) {
-	    throw new JblinktreeException("method could by used just on non-leaf nodes");
+	    throw new JblinktreeException(
+		    "method could by used just on non-leaf nodes");
 	}
 	for (int i = 0; i < field.length - 2; i = i + 2) {
 	    if (field[i].equals(nodeIdToUpdate)) {
@@ -387,7 +394,8 @@ public class Node {
 	if (position > 0) {
 	    System.arraycopy(field, 0, tmp, 0, position);
 	}
-	System.arraycopy(field, position + 2, tmp, position, field.length - position - 2);
+	System.arraycopy(field, position + 2, tmp, position, field.length
+		- position - 2);
 	field = tmp;
     }
 
@@ -403,7 +411,8 @@ public class Node {
     public void moveTopHalfOfDataTo(final Node node) {
 	Preconditions.checkArgument(node.isEmpty());
 	if (getKeysCount() < 1) {
-	    throw new JblinktreeException("In node " + id + " are no values to move.");
+	    throw new JblinktreeException("In node " + id
+		    + " are no values to move.");
 	}
 	if (isLeafNode()) {
 	    // copy top half to empty node
@@ -460,7 +469,8 @@ public class Node {
 	}
 	buff.append("]");
 	return MoreObjects.toStringHelper(Node.class).add("id", getId())
-		.add("isLeafNode", isLeafNode()).add("field", buff.toString()).toString();
+		.add("isLeafNode", isLeafNode()).add("field", buff.toString())
+		.toString();
     }
 
     /**
@@ -504,7 +514,8 @@ public class Node {
      */
     public Integer getCorrespondingNodeId(final Integer key) {
 	if (isLeafNode()) {
-	    throw new JblinktreeException("Leaf node '" + id + "' doesn't have any child nodes.");
+	    throw new JblinktreeException("Leaf node '" + id
+		    + "' doesn't have any child nodes.");
 	}
 	for (int i = 1; i < field.length - 1; i = i + 2) {
 	    if (key <= field[i]) {
@@ -516,7 +527,8 @@ public class Node {
 
     public Integer getPreviousCorrespondingNode(Integer key) {
 	if (isLeafNode()) {
-	    throw new JblinktreeException("Leaf node doesn't have any child nodes.");
+	    throw new JblinktreeException(
+		    "Leaf node doesn't have any child nodes.");
 	}
 	for (int i = 1; i < field.length - 1; i = i + 2) {
 	    if (key <= field[i]) {
@@ -541,7 +553,8 @@ public class Node {
     public Integer getValue(final Integer key) {
 	Preconditions.checkNotNull(key);
 	if (!isLeafNode()) {
-	    throw new JblinktreeException("Non-leaf node '" + id + "' doesn't have leaf value.");
+	    throw new JblinktreeException("Non-leaf node '" + id
+		    + "' doesn't have leaf value.");
 	}
 	for (int i = 1; i < field.length - 2; i = i + 2) {
 	    if (key.equals(field[i])) {
@@ -604,7 +617,8 @@ public class Node {
      */
     public boolean verify() {
 	if ((field.length) % 2 == 0) {
-	    logger.error("node {} have inforrect number of items in field: {}", id, field);
+	    logger.error("node {} have inforrect number of items in field: {}",
+		    id, field);
 	    return false;
 	}
 	if (field[0] == null) {
@@ -614,7 +628,8 @@ public class Node {
 	if (!isLeafNode()) {
 	    for (int i = 0; i < field.length - 2; i = i + 2) {
 		if (field[i] != null && field[i].equals(id)) {
-		    throw new JblinktreeException("node contains pointer to itself: " + toString());
+		    throw new JblinktreeException(
+			    "node contains pointer to itself: " + toString());
 		}
 	    }
 	}
@@ -623,7 +638,7 @@ public class Node {
 
     @Override
     public int hashCode() {
-	return Objects.hashCode(l, id, field);
+	return Arrays.hashCode(new Object[] { l, id, field });
     }
 
     @Override
@@ -635,10 +650,10 @@ public class Node {
 	    return false;
 	}
 	Node n = (Node) obj;
-	if (Objects.equal(l, n.l) && Objects.equal(id, n.id)
-		&& Objects.equal(field.length, n.field.length)) {
+	if (equal(l, n.l) && equal(id, n.id)
+		&& equal(field.length, n.field.length)) {
 	    for (int i = 0; i < field.length; i++) {
-		if (!Objects.equal(field[i], n.field[i])) {
+		if (!equal(field[i], n.field[i])) {
 		    return false;
 		}
 	    }
@@ -646,6 +661,17 @@ public class Node {
 	} else {
 	    return false;
 	}
+    }
+
+    /**
+     * It's just copy of {@link Objects#equals(Object)}.
+     * 
+     * @param a
+     * @param b
+     * @return
+     */
+    private boolean equal(Object a, Object b) {
+	return a == b || (a != null && a.equals(b));
     }
 
     /**
