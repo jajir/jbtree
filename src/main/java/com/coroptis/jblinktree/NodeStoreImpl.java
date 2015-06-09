@@ -20,6 +20,7 @@ package com.coroptis.jblinktree;
  * #L%
  */
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -72,7 +73,7 @@ public class NodeStoreImpl implements NodeStore {
 	if (field == null) {
 	    throw new JblinktreeException("There is no node with id '" + nodeId + "'");
 	}
-	return Node.makeNode(l, nodeId, field);
+	return Node.makeNode(l, nodeId, Arrays.copyOf(field, field.length));
     }
 
     @Override

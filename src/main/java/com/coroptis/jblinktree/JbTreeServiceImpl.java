@@ -54,6 +54,10 @@ public class JbTreeServiceImpl implements JbTreeService {
 		 */
 		stack.push(currentNode.getId());
 		nextNodeId = currentNode.getCorrespondingNodeId(currentNode.getMaxValue());
+		if (nextNodeId == null) {
+		    throw new JblinktreeException("There is no node id for max value '"
+			    + currentNode.getMaxValue() + "' in node " + currentNode.toString());
+		}
 	    } else if (!nextNodeId.equals(currentNode.getLink())) {
 		/**
 		 * I don't want to store nodes when cursor is moved right.

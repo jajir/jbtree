@@ -501,7 +501,8 @@ public class Node {
      * 
      * @param key
      *            required key
-     * @return node id
+     * @return node id, in case of rightmost node it returns <code>null</code>
+     *         because link is empty
      */
     public Integer getCorrespondingNodeId(final Integer key) {
 	if (isLeafNode()) {

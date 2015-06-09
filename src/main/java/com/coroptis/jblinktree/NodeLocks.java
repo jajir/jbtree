@@ -20,6 +20,7 @@ package com.coroptis.jblinktree;
  * #L%
  */
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.locks.Lock;
@@ -48,7 +49,7 @@ public class NodeLocks {
     private final Map<Integer, Lock> locks;
 
     public NodeLocks() {
-	locks = new HashMap<Integer, Lock>();
+	locks = Collections.synchronizedMap(new HashMap<Integer, Lock>());
     }
 
     public void lockNode(final Integer nodeId) {
