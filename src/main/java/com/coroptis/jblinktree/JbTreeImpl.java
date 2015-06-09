@@ -284,10 +284,14 @@ public class JbTreeImpl implements JbTree {
     @Override
     public Integer search(final Integer key) {
 	Preconditions.checkNotNull(key);
+	return findAppropriateNode(key).getValue(key);
+    }
+
+    private Node findAppropriateNode(final Integer key) {
+	Preconditions.checkNotNull(key);
 	Integer idNode = treeService.findLeafNodeId(key, new Stack<Integer>(), rootNodeId);
 	Node node = nodeStore.get(idNode);
-	node = tool.moveRightLeafNodeWithoutLocking(node, key);
-	return node.getValue(key);
+	return tool.moveRightLeafNodeWithoutLocking(node, key);
     }
 
     /*
@@ -321,20 +325,7 @@ public class JbTreeImpl implements JbTree {
     @Override
     public boolean containsKey(final Integer key) {
 	Preconditions.checkNotNull(key);
-	Integer idNode = rootNodeId;
-	Node node = nodeStore.get(rootNodeId);
-	// TODO reuse code from search
-	while (!node.isLeafNode()) {
-	    idNode = node.getCorrespondingNodeId(key);
-	    node = nodeStore.get(idNode);
-	}
-
-	while (node.getLink().equals(node.getCorrespondingNodeId(key))) {
-	    idNode = node.getLink();
-	    node = nodeStore.get(idNode);
-	}
-
-	return node.getValue(key) != null;
+	return findAppropriateNode(key).getValue(key) != null;
     }
 
     /*

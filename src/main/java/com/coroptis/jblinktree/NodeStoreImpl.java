@@ -29,7 +29,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Preconditions;
-import com.google.inject.Inject;
 
 /**
  * Implementation of {@link NodeStore}.
@@ -49,7 +48,6 @@ public class NodeStoreImpl implements NodeStore {
 
     private final Integer l;
 
-    @Inject
     public NodeStoreImpl(final IdGenerator idGenerator, final Integer l) {
 	this.idGenerator = Preconditions.checkNotNull(idGenerator);
 	this.l = Preconditions.checkNotNull(l);

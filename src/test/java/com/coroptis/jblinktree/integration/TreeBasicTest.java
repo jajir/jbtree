@@ -125,7 +125,8 @@ public class TreeBasicTest extends TestCase {
     public void test_insert_10_asc_remove_10_asc() throws Exception {
 	insert_10_ascending();
 	assertEquals(10, tree.countValues());
-	
+	verify_contains_10();
+
 	remove_10_ascending();
 	assertEquals(0, tree.countValues());
 	tree.toDotFile(new File("pok.dot"));
@@ -136,8 +137,8 @@ public class TreeBasicTest extends TestCase {
 	insert_10_ascending();
 	assertEquals(10, tree.countValues());
 	logger.debug(tree.toString());
-	
-	find_10();
+
+	verify_search_10();
 	remove_10_descending();
 	assertEquals(0, tree.countValues());
     }
@@ -146,7 +147,7 @@ public class TreeBasicTest extends TestCase {
     public void test_insert_10_desc_remove_10_asc() throws Exception {
 	insert_10_descending();
 	assertEquals(10, tree.countValues());
-	
+
 	remove_10_ascending();
 	assertEquals(0, tree.countValues());
     }
@@ -155,7 +156,7 @@ public class TreeBasicTest extends TestCase {
     public void test_insert_10_desc_remove_10_desc() throws Exception {
 	insert_10_descending();
 	assertEquals(10, tree.countValues());
-	
+
 	remove_10_descending();
 	assertEquals(0, tree.countValues());
     }
@@ -204,8 +205,8 @@ public class TreeBasicTest extends TestCase {
 	tree.remove(2);
 	tree.remove(1);
     }
-    
-    private void find_10() {
+
+    private void verify_search_10() {
 	assertEquals(Integer.valueOf(-10), tree.search(1));
 	assertEquals(Integer.valueOf(-20), tree.search(2));
 	assertEquals(Integer.valueOf(-30), tree.search(3));
@@ -216,6 +217,19 @@ public class TreeBasicTest extends TestCase {
 	assertEquals(Integer.valueOf(-80), tree.search(8));
 	assertEquals(Integer.valueOf(-90), tree.search(9));
 	assertEquals(Integer.valueOf(-100), tree.search(10));
+    }
+
+    private void verify_contains_10() {
+	assertTrue(tree.containsKey(1));
+	assertTrue(tree.containsKey(2));
+	assertTrue(tree.containsKey(3));
+	assertTrue(tree.containsKey(4));
+	assertTrue(tree.containsKey(5));
+	assertTrue(tree.containsKey(6));
+	assertTrue(tree.containsKey(7));
+	assertTrue(tree.containsKey(8));
+	assertTrue(tree.containsKey(9));
+	assertTrue(tree.containsKey(10));
     }
 
     private void insert_10_descending() {
