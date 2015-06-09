@@ -20,7 +20,6 @@ package com.coroptis.jblinktree;
  * #L%
  */
 
-
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.locks.Lock;
@@ -74,7 +73,9 @@ public class NodeLocks {
     public void unlockNode(final Integer nodeId) {
 	Preconditions.checkNotNull(nodeId);
 	Lock lock = locks.get(nodeId);
-	if (lock != null) {
+	if (lock == null) {
+	    throw new JblinktreeException("Attempt to unlock not locked node '" + nodeId + "'");
+	} else {
 	    lock.unlock();
 	}
     }

@@ -72,6 +72,7 @@ public class TreeConcurrencyTest extends TestCase {
 	startLatch.countDown();
 	doneLatch.await(100, TimeUnit.MINUTES);
 	assertEquals("Some thread didn't finished work", 0, doneLatch.getCount());
+	assertEquals("Some locks wasn't unlocked", 0, tree.countLockedNodes());
 	tree.verify();
 	logger.debug("I'm done!");
 	tree.toDotFile(new File("pok.dot"));
@@ -92,12 +93,11 @@ public class TreeConcurrencyTest extends TestCase {
 
     void doWorkNow() {
 	Integer integer = random.nextInt(100) + 1;
-	logger.debug("inserting :" + integer);
 	try {
 	    tree.insert(integer, integer);
 	} catch (JblinktreeException e) {
 	    synchronized (e) {
-		tree.toDotFile(new File("dot.dot"));
+//		tree.toDotFile(new File("dot.dot"));
 	    }
 	    throw e;
 	}

@@ -110,11 +110,10 @@ public class JbTreeImpl implements JbTree {
 			 */
 			ReentrantLock lock = new ReentrantLock(false);
 			lock.lock();
-			if (rootNodeId == currentNode.getId()) {
-			    Preconditions.checkArgument(rootNodeId == currentNode.getId());
+			if (rootNodeId.equals(currentNode.getId())) {
+			    Preconditions.checkArgument(rootNodeId.equals(currentNode.getId()));
 			    rootNodeId = tool.splitRootNode(currentNode, newNode);
 			    nodeStore.unlockNode(currentNode.getId());
-			    return null;
 			} else {
 			    nodeStore.unlockNode(currentNode.getId());
 			    // so leave it in this state.
