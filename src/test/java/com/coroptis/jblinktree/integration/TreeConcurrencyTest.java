@@ -54,7 +54,7 @@ public class TreeConcurrencyTest extends TestCase {
     @Test
     public void testForThreadClash() throws Exception {
 	final int cycleCount = 100;
-	final int threadCount = 100;
+	final int threadCount = 500;
 	final CountDownLatch doneLatch = new CountDownLatch(cycleCount * threadCount);
 	final CountDownLatch startLatch = new CountDownLatch(1);
 

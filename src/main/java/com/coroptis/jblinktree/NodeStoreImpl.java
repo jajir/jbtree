@@ -22,9 +22,9 @@ package com.coroptis.jblinktree;
 
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -52,7 +52,7 @@ public class NodeStoreImpl implements NodeStore {
     public NodeStoreImpl(final IdGenerator idGenerator, final Integer l) {
 	this.idGenerator = Preconditions.checkNotNull(idGenerator);
 	this.l = Preconditions.checkNotNull(l);
-	nodes = Collections.synchronizedMap(new HashMap<Integer, Integer[]>());
+	nodes = new ConcurrentHashMap<Integer, Integer[]>();
 	nodeLocks = new NodeLocks();
 	logger.debug("staring in memory node store");
     }
