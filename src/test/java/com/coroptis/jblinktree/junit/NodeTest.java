@@ -44,6 +44,19 @@ public class NodeTest extends TestCase {
     private Node node;
 
     @Test
+    public void test_toString() throws Exception {
+	logger.debug(node.toString());
+
+	assertEquals("Node{id=0, isLeafNode=true, field=[-1, null, null]}", node.toString());
+
+	Node n = Node.makeNode(2, 0, new Integer[] { 0, 1, 1, 3, -40, 4, 98 });
+
+	logger.debug(n.toString());
+	assertEquals("Node{id=0, isLeafNode=false, field=[0, 1, 1, 3, -40, 4, 98]}", n.toString());
+
+    }
+
+    @Test
     public void test_emptyNode() throws Exception {
 	logger.debug(node.toString());
 
@@ -204,8 +217,8 @@ public class NodeTest extends TestCase {
 	Boolean ret = node.remove(1);
 
 	assertTrue(ret);
-	//TODO uncomment it
-//	verifyNode(new Integer[][] {{1,3}}, false, null);
+	// TODO uncomment it
+	// verifyNode(new Integer[][] {{1,3}}, false, null);
 	assertEquals(Integer.valueOf(1), node.getP0());
 	assertEquals(Integer.valueOf(3), node.getMaxValue());
     }
@@ -434,7 +447,7 @@ public class NodeTest extends TestCase {
 
     @Test
     public void test_getKeysCount_leaf() throws Exception {
-	Node n = Node.makeNode(2, 2, new Integer[] { -1, 10, 1, 10, null});
+	Node n = Node.makeNode(2, 2, new Integer[] { -1, 10, 1, 10, null });
 
 	assertEquals(1, n.getKeysCount());
     }

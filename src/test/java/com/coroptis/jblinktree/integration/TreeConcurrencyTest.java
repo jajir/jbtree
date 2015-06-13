@@ -35,6 +35,7 @@ import com.coroptis.jblinktree.Executer;
 import com.coroptis.jblinktree.JbTree;
 import com.coroptis.jblinktree.JblinktreeException;
 import com.coroptis.jblinktree.TreeBuilder;
+import com.coroptis.jblinktree.TreeUtil;
 import com.coroptis.jblinktree.Worker;
 
 /**
@@ -48,6 +49,8 @@ public class TreeConcurrencyTest extends TestCase {
     private final Logger logger = LoggerFactory.getLogger(TreeConcurrencyTest.class);
 
     private JbTree tree;
+
+    private TreeUtil treeUtil;
 
     private Random random;
 
@@ -75,19 +78,21 @@ public class TreeConcurrencyTest extends TestCase {
 	assertEquals("Some locks wasn't unlocked", 0, tree.countLockedNodes());
 	tree.verify();
 	logger.debug("I'm done!");
-	tree.toDotFile(new File("pok.dot"));
+	treeUtil.toDotFile(new File("pok.dot"));
     }
 
     @Override
     protected void setUp() throws Exception {
 	super.setUp();
 	tree = TreeBuilder.builder().setL(2).build();
+	treeUtil = new TreeUtil(tree);
 	random = new Random();
     }
 
     @Override
     protected void tearDown() throws Exception {
 	tree = null;
+	treeUtil = null;
 	super.tearDown();
     }
 
@@ -97,7 +102,7 @@ public class TreeConcurrencyTest extends TestCase {
 	    tree.insert(integer, integer);
 	} catch (JblinktreeException e) {
 	    synchronized (e) {
-//		tree.toDotFile(new File("dot.dot"));
+		// tree.toDotFile(new File("dot.dot"));
 	    }
 	    throw e;
 	}

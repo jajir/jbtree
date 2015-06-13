@@ -23,12 +23,9 @@ package com.coroptis.jblinktree;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.google.common.base.MoreObjects;
-import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
 
 /**
@@ -105,7 +102,7 @@ public class Node {
 
     private Integer field[];
 
-    private final Logger logger = LoggerFactory.getLogger(Node.class);
+    private final Logger logger = Logger.getLogger(Node.class.getName());
 
     /**
      * Create and initialize node.
@@ -277,8 +274,6 @@ public class Node {
      */
     private void couldInsertedKey() {
 	if (field.length >= l * 2 + 2) {
-	    logger.error("Leaf (" + id + ") is full another value can't be inserted. Leaf: "
-		    + this.toString());
 	    throw new JblinktreeException("Leaf (" + id
 		    + ") is full another value can't be inserted.");
 	}
@@ -452,16 +447,19 @@ public class Node {
     @Override
     public String toString() {
 	StringBuilder buff = new StringBuilder();
-	buff.append("[");
+	buff.append("Node{id=");
+	buff.append(id);
+	buff.append(", isLeafNode=");
+	buff.append(isLeafNode());
+	buff.append(", field=[");
 	for (int i = 0; i < field.length; i++) {
 	    if (i != 0) {
 		buff.append(", ");
 	    }
 	    buff.append(field[i]);
 	}
-	buff.append("]");
-	return MoreObjects.toStringHelper(Node.class).add("id", getId())
-		.add("isLeafNode", isLeafNode()).add("field", buff.toString()).toString();
+	buff.append("]}");
+	return buff.toString();
     }
 
     /**
@@ -606,11 +604,12 @@ public class Node {
      */
     public boolean verify() {
 	if ((field.length) % 2 == 0) {
-	    logger.error("node {} have inforrect number of items in field: {}", id, field);
+	    logger.log(Level.SEVERE, "node {0} have inforrect number of items in field: {1}",
+		    new Object[] { id, field });
 	    return false;
 	}
 	if (field[0] == null) {
-	    logger.error("node {} have null P0", id);
+	    logger.log(Level.SEVERE, "node {} have null P0", id);
 	    return false;
 	}
 	if (!isLeafNode()) {
@@ -650,7 +649,7 @@ public class Node {
     }
 
     /**
-     * It's just copy of {@link Objects#equals(Object)}.
+     * It's just copy of com.google.common.base.Objects.equals(Object).
      * 
      * @param a
      * @param b

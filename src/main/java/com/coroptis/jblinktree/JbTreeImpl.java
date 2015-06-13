@@ -20,17 +20,10 @@ package com.coroptis.jblinktree;
  * #L%
  */
 
-import java.io.File;
-import java.io.IOException;
 import java.util.Stack;
 import java.util.concurrent.locks.ReentrantLock;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.google.common.base.Charsets;
 import com.google.common.base.Preconditions;
-import com.google.common.io.Files;
 
 /**
  * Implementation of {@link JbTree}.
@@ -52,8 +45,6 @@ public class JbTreeImpl implements JbTree {
     private final JbTreeTool tool;
 
     private final JbTreeService treeService;
-
-    private final Logger logger = LoggerFactory.getLogger(JbTreeImpl.class);
 
     /**
      * Create and initialize tree.
@@ -305,23 +296,35 @@ public class JbTreeImpl implements JbTree {
      */
     @Override
     public String toString() {
-	StringBuilder buff = new StringBuilder();
+	final StringBuilder buff = new StringBuilder();
 	buff.append("Detail tree description continues: root node id: ");
 	buff.append(rootNodeId);
 	buff.append("\n");
+	visit(new JbTreeVisitor() {
+	    @Override
+	    public boolean visited(Node node) {
+		buff.append(node.toString());
+		buff.append("\n");
+		return true;
+	    }
+	});
+	return buff.toString();
+    }
 
+    @Override
+    public void visit(final JbTreeVisitor treeVisitor) {
+	Preconditions.checkNotNull("required JbTreeVisitor instance is null", treeVisitor);
 	final Stack<Integer> stack = new Stack<Integer>();
 	stack.push(rootNodeId);
 	while (!stack.isEmpty()) {
 	    final Integer nodeId = stack.pop();
 	    if (nodeId == null) {
-		buff.append("\nprevious node id is null");
-		return buff.toString();
+		throw new JblinktreeException("some node id was null");
 	    } else {
 		final Node node = nodeStore.get(nodeId);
-		node.verify();
-		buff.append(node.toString());
-		buff.append("\n");
+		if (!treeVisitor.visited(node)) {
+		    return;
+		}
 		if (!node.isLeafNode()) {
 		    for (final Integer i : node.getNodeIds()) {
 			stack.push(i);
@@ -329,8 +332,6 @@ public class JbTreeImpl implements JbTree {
 		}
 	    }
 	}
-
-	return buff.toString();
     }
 
     /*
@@ -340,87 +341,14 @@ public class JbTreeImpl implements JbTree {
      */
     @Override
     public void verify() {
-	final Stack<Integer> stack = new Stack<Integer>();
-	stack.push(rootNodeId);
-	while (!stack.isEmpty()) {
-	    final Integer nodeId = stack.pop();
-	    if (nodeId == null) {
-		logger.error("some node id was null");
-	    } else {
-		final Node node = nodeStore.get(nodeId);
+	visit(new JbTreeVisitor() {
+
+	    @Override
+	    public boolean visited(Node node) {
 		node.verify();
-		if (!node.isLeafNode()) {
-		    for (final Integer i : node.getNodeIds()) {
-			stack.push(i);
-		    }
-		}
+		return true;
 	    }
-	}
-
-    }
-
-    private final String intendation = "    ";
-
-    @Override
-    public String toDotFile(final File file) {
-	final StringBuilder buff = new StringBuilder();
-
-	buff.append("digraph graphname {\n");
-	buff.append(intendation);
-	buff.append("edge [label=0];\n");
-	buff.append(intendation);
-	buff.append("graph [ranksep=1];\n");
-	buff.append(intendation);
-	buff.append("node [shape=record]\n");
-
-	for (final Integer i : nodeStore.getKeys()) {
-	    nodeStore.get(i).writeTo(buff, intendation);
-	}
-
-	for (final Integer j : nodeStore.getKeys()) {
-	    final Node node = nodeStore.get(j);
-	    if (node.getLink() != null) {
-		buff.append(intendation);
-		buff.append("\"node");
-		buff.append(node.getId());
-		buff.append("\":L");
-		buff.append(node.getLink());
-		buff.append(" -> ");
-		buff.append("\"node");
-		buff.append(node.getLink());
-		buff.append("\" [constraint=false, label=\"");
-		buff.append(node.getLink());
-		buff.append("\"]");
-		buff.append(";\n");
-	    }
-	    if (!node.isLeafNode()) {
-		for (final Integer i : node.getNodeIds()) {
-		    buff.append(intendation);
-		    buff.append("\"node");
-		    buff.append(node.getId());
-		    buff.append("\":F");
-		    buff.append(i);
-		    buff.append(" -> ");
-		    buff.append("\"node");
-		    buff.append(i);
-		    buff.append("\" [label=\"");
-		    buff.append(i);
-		    buff.append("\"];");
-		    buff.append("\n");
-		}
-	    }
-	}
-
-	buff.append("");
-	buff.append("}");
-
-	try {
-	    Files.write(buff, file, Charsets.ISO_8859_1);
-	} catch (IOException e) {
-	    logger.error(e.getMessage(), e);
-	    throw new JblinktreeException(e.getMessage());
-	}
-	return buff.toString();
+	});
     }
 
     @Override

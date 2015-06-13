@@ -24,9 +24,8 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Wrapper around java.util.concurrent lock providing additional logging.
@@ -36,7 +35,7 @@ import org.slf4j.LoggerFactory;
  */
 public class MyLoggingLock implements Lock {
 
-    private final Logger logger = LoggerFactory.getLogger(MyLoggingLock.class);
+    private final Logger logger = Logger.getLogger(MyLoggingLock.class.getName());
 
     private final Lock lock;
 
@@ -49,7 +48,7 @@ public class MyLoggingLock implements Lock {
 
     @Override
     public void lock() {
-	logger.trace("locking node {}", nodeId);
+	logger.log(Level.FINEST, "locking node '{0}'", nodeId);
 	lock.lock();
     }
 
@@ -75,7 +74,7 @@ public class MyLoggingLock implements Lock {
 
     @Override
     public void unlock() {
-	logger.trace("unlocking node {}", nodeId);
+	logger.log(Level.FINEST, "unlocking node {0}", nodeId);
 	lock.unlock();
     }
 

@@ -29,6 +29,7 @@ import org.junit.Test;
 
 import com.coroptis.jblinktree.JbTree;
 import com.coroptis.jblinktree.TreeBuilder;
+import com.coroptis.jblinktree.TreeUtil;
 
 /**
  * Verify tree structure in case of random numbers in one thread.
@@ -40,6 +41,8 @@ public class SingleThreadLoadTest extends TestCase {
 
     private JbTree tree;
 
+    private TreeUtil treeUtil;
+
     @Test
     public void test_insert() throws Exception {
 	Random random = new Random();
@@ -47,7 +50,7 @@ public class SingleThreadLoadTest extends TestCase {
 	    Integer integer = random.nextInt(100) + 1;
 	    tree.insert(integer, integer);
 	}
-	tree.toDotFile(new File("pok.dot"));
+	treeUtil.toDotFile(new File("pok.dot"));
 
     }
 
@@ -55,12 +58,14 @@ public class SingleThreadLoadTest extends TestCase {
     protected void setUp() throws Exception {
 	super.setUp();
 	tree = TreeBuilder.builder().setL(2).build();
+	treeUtil = new TreeUtil(tree);
     }
 
     @Override
     protected void tearDown() throws Exception {
 	assertEquals("All locks should be unlocked ", 0, tree.countLockedNodes());
 	tree = null;
+	treeUtil = null;
 	super.tearDown();
     }
 

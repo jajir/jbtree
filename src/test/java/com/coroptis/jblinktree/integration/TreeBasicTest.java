@@ -30,12 +30,15 @@ import org.slf4j.LoggerFactory;
 
 import com.coroptis.jblinktree.JbTree;
 import com.coroptis.jblinktree.TreeBuilder;
+import com.coroptis.jblinktree.TreeUtil;
 
 public class TreeBasicTest extends TestCase {
 
     private Logger logger = LoggerFactory.getLogger(TreeBasicTest.class);
 
     private JbTree tree;
+
+    private TreeUtil treeUtil;
 
     @Test
     public void testJustOneNode() throws Exception {
@@ -106,7 +109,7 @@ public class TreeBasicTest extends TestCase {
 	tree.insert(3, -30);
 
 	logger.debug(tree.toString());
-	tree.toDotFile(new File("pok.dot"));
+	treeUtil.toDotFile(new File("pok.dot"));
 	tree.remove(1);
 	assertEquals(2, tree.countValues());
 	assertEquals("All locks should be unlocked ", 0, tree.countLockedNodes());
@@ -128,7 +131,7 @@ public class TreeBasicTest extends TestCase {
 
 	remove_10_ascending();
 	assertEquals(0, tree.countValues());
-	tree.toDotFile(new File("pok.dot"));
+	treeUtil.toDotFile(new File("pok.dot"));
     }
 
     @Test
@@ -248,12 +251,14 @@ public class TreeBasicTest extends TestCase {
     protected void setUp() throws Exception {
 	super.setUp();
 	tree = TreeBuilder.builder().setL(2).build();
+	treeUtil = new TreeUtil(tree);
     }
 
     @Override
     protected void tearDown() throws Exception {
 	assertEquals("All locks should be unlocked ", 0, tree.countLockedNodes());
 	tree = null;
+	treeUtil = null;
 	super.tearDown();
     }
 
