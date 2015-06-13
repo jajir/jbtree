@@ -22,8 +22,6 @@ package com.coroptis.jblinktree;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Stack;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -183,7 +181,6 @@ public class JbTreeImpl implements JbTree {
 	     */
 	    return false;
 	} else {
-	    List<Integer> nodesToRemove = new ArrayList<Integer>();
 	    /**
 	     * Leaf node contains key so remove it.
 	     */
@@ -192,11 +189,11 @@ public class JbTreeImpl implements JbTree {
 		Integer oldMaxKey = currentNode.getMaxKey();
 		currentNode.remove(tmpKey);
 		if (currentNode.getKeysCount() == 0) {
+		    nodeStore.writeNode(currentNode);
 		    /**
 		     * It's empty node, so remove it.
 		     */
 		    if (rootNodeId.equals(currentNode.getId())) {
-			removeNodes(nodesToRemove);
 			nodeStore.unlockNode(currentNode.getId());
 			return true;
 		    }
@@ -204,24 +201,21 @@ public class JbTreeImpl implements JbTree {
 		     * Node to remove should be locked, if it's not than another
 		     * insert process could insert some value into it.
 		     */
-		    nodesToRemove.add(currentNode.getId());
-		    Node toDelete = currentNode;
+		    nodeStore.unlockNode(currentNode.getId());
 		    currentNode = nodeStore.getAndLock(stack.pop());
 		    currentNode = tool.moveRightNonLeafNode(currentNode, tmpKey);
-		    updatePreviousNodeLink(toDelete, currentNode, tmpKey);
 		    tmpKey = oldMaxKey;
 		} else {
 		    /**
 		     * There are more than 1 key in node, so it's safe to remove
 		     * key.
 		     */
+		    nodeStore.writeNode(currentNode);
 		    if (!currentNode.getMaxKey().equals(oldMaxKey)) {
 			updateMaxKey(currentNode, stack, tmpKey);
-			removeNodes(nodesToRemove);
 			return true;
 		    }
 		    nodeStore.unlockNode(currentNode.getId());
-		    removeNodes(nodesToRemove);
 		    return true;
 		}
 	    }// end of while
@@ -249,29 +243,6 @@ public class JbTreeImpl implements JbTree {
 		nodeStore.unlockNode(currentNode.getId());
 		return;
 	    }
-	}
-    }
-
-    private void updatePreviousNodeLink(Node nodeToRemove, Node parentNode, Integer removedKey) {
-	// FIXME following code will cause dead locks, locks should go from left
-	// to right
-	Integer previousNodeId = parentNode.getPreviousCorrespondingNode(removedKey);
-	if (previousNodeId != null) {
-	    Node previousNode = nodeStore.getAndLock(previousNodeId);
-	    Preconditions.checkArgument(previousNode.getLink().equals(nodeToRemove.getId()),
-		    "node %s should have link value %s instead if %s", previousNodeId,
-		    previousNode.getLink(), nodeToRemove.getId());
-	    // previousNode.remove(nodeToRemove.getId());
-	    previousNode.setLink(nodeToRemove.getLink());
-	    nodeStore.writeNode(previousNode);
-	    nodeStore.unlockNode(previousNodeId);
-	}
-    }
-
-    private void removeNodes(final List<Integer> nodesToRemove) {
-	for (final Integer i : nodesToRemove) {
-	    nodeStore.unlockNode(i);
-	    nodeStore.deleteNode(i);
 	}
     }
 
