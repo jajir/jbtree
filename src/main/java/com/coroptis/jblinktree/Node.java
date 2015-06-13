@@ -23,8 +23,6 @@ package com.coroptis.jblinktree;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import com.google.common.base.Preconditions;
 
@@ -101,8 +99,6 @@ public class Node {
     private final Integer id;
 
     private Integer field[];
-
-    private final Logger logger = Logger.getLogger(Node.class.getName());
 
     /**
      * Create and initialize node.
@@ -604,13 +600,11 @@ public class Node {
      */
     public boolean verify() {
 	if ((field.length) % 2 == 0) {
-	    logger.log(Level.SEVERE, "node {0} have inforrect number of items in field: {1}",
-		    new Object[] { id, field });
-	    return false;
+	    throw new JblinktreeException("node " + id
+		    + " have inforrect number of items in field: " + field + "");
 	}
 	if (field[0] == null) {
-	    logger.log(Level.SEVERE, "node {} have null P0", id);
-	    return false;
+	    throw new JblinktreeException("node " + id + " have null P0");
 	}
 	if (!isLeafNode()) {
 	    for (int i = 0; i < field.length - 2; i = i + 2) {

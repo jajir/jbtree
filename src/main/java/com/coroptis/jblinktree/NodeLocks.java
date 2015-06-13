@@ -23,6 +23,7 @@ package com.coroptis.jblinktree;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import com.google.common.base.Preconditions;
 
@@ -62,7 +63,7 @@ public class NodeLocks {
 	    synchronized (this) {
 		lock = locks.get(nodeId);
 		if (lock == null) {
-		    lock = new MyLoggingLock(nodeId);
+		    lock = new ReentrantLock(false);
 		    locks.put(nodeId, lock);
 		}
 	    }
@@ -83,8 +84,8 @@ public class NodeLocks {
     public int countLockedThreads() {
 	int out = 0;
 	for (final Lock lock : locks.values()) {
-	    final MyLoggingLock l = (MyLoggingLock) lock;
-	    if (l.getLock().isLocked()) {
+	    final ReentrantLock l = (ReentrantLock) lock;
+	    if (l.isLocked()) {
 		out++;
 	    }
 	}

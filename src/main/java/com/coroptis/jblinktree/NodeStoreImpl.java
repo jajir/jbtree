@@ -25,8 +25,6 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import com.google.common.base.Preconditions;
 
@@ -37,8 +35,6 @@ import com.google.common.base.Preconditions;
  * 
  */
 public class NodeStoreImpl implements NodeStore {
-
-    private final Logger logger = Logger.getLogger(NodeStoreImpl.class.getName());
 
     private final Map<Integer, Integer[]> nodes;
 
@@ -53,7 +49,6 @@ public class NodeStoreImpl implements NodeStore {
 	this.l = Preconditions.checkNotNull(l);
 	nodes = new ConcurrentHashMap<Integer, Integer[]>();
 	nodeLocks = new NodeLocks();
-	logger.log(Level.FINE, "staring in memory node store");
     }
 
     @Override
