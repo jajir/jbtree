@@ -54,8 +54,8 @@ public class JbTreeImpl implements JbTree {
      * @param nodeStore
      *            required node store object
      */
-    public JbTreeImpl(final int l, final NodeStore nodeStore, final JbTreeTool tool,
-	    final JbTreeService jbTreeService) {
+    public JbTreeImpl(final int l, final NodeStore nodeStore,
+	    final JbTreeTool tool, final JbTreeService jbTreeService) {
 	this.l = l;
 	this.nodeStore = Preconditions.checkNotNull(nodeStore);
 	this.tool = Preconditions.checkNotNull(tool);
@@ -76,7 +76,8 @@ public class JbTreeImpl implements JbTree {
 	Preconditions.checkNotNull(key);
 	Preconditions.checkNotNull(value);
 	final Stack<Integer> stack = new Stack<Integer>();
-	Integer currentNodeId = treeService.findLeafNodeId(key, stack, rootNodeId);
+	Integer currentNodeId = treeService.findLeafNodeId(key, stack,
+		rootNodeId);
 	Node currentNode = nodeStore.getAndLock(currentNodeId);
 	currentNode = tool.moveRightLeafNode(currentNode, key);
 	if (currentNode.getValue(key) == null) {
@@ -90,7 +91,8 @@ public class JbTreeImpl implements JbTree {
 		    /**
 		     * There is no free space for key and value
 		     */
-		    final Node newNode = tool.split(currentNode, tmpKey, tmpValue);
+		    final Node newNode = tool.split(currentNode, tmpKey,
+			    tmpValue);
 		    nodeStore.writeNode(newNode);
 		    nodeStore.writeNode(currentNode);
 		    if (stack.empty()) {
@@ -100,8 +102,10 @@ public class JbTreeImpl implements JbTree {
 			ReentrantLock lock = new ReentrantLock(false);
 			lock.lock();
 			if (rootNodeId.equals(currentNode.getId())) {
-			    Preconditions.checkArgument(rootNodeId.equals(currentNode.getId()));
-			    rootNodeId = tool.splitRootNode(currentNode, newNode);
+			    Preconditions.checkArgument(rootNodeId
+				    .equals(currentNode.getId()));
+			    rootNodeId = tool.splitRootNode(currentNode,
+				    newNode);
 			    nodeStore.unlockNode(currentNode.getId());
 			} else {
 			    nodeStore.unlockNode(currentNode.getId());
@@ -126,8 +130,10 @@ public class JbTreeImpl implements JbTree {
 			 */
 			tmpValue = newNode.getId();
 			tmpKey = newNode.getMaxKey();
-			final Integer previousCurrentNodeId = currentNode.getId();
-			currentNode = treeService.loadParentNode(currentNode, tmpKey, stack.pop());
+			final Integer previousCurrentNodeId = currentNode
+				.getId();
+			currentNode = treeService.loadParentNode(currentNode,
+				tmpKey, stack.pop());
 			nodeStore.unlockNode(previousCurrentNodeId);
 		    }
 		} else {
@@ -148,7 +154,8 @@ public class JbTreeImpl implements JbTree {
 	}
     }
 
-    private void storeValueIntoNode(final Node currentNode, final Integer key, final Integer value) {
+    private void storeValueIntoNode(final Node currentNode, final Integer key,
+	    final Integer value) {
 	currentNode.insert(key, value);
 	nodeStore.writeNode(currentNode);
 	nodeStore.unlockNode(currentNode.getId());
@@ -163,7 +170,8 @@ public class JbTreeImpl implements JbTree {
     public boolean remove(final Integer key) {
 	Preconditions.checkNotNull(key);
 	final Stack<Integer> stack = new Stack<Integer>();
-	Integer currentNodeId = treeService.findLeafNodeId(key, stack, rootNodeId);
+	Integer currentNodeId = treeService.findLeafNodeId(key, stack,
+		rootNodeId);
 	Node currentNode = nodeStore.getAndLock(currentNodeId);
 	currentNode = tool.moveRightLeafNode(currentNode, key);
 	if (currentNode.getValue(key) == null) {
@@ -194,7 +202,8 @@ public class JbTreeImpl implements JbTree {
 		     */
 		    nodeStore.unlockNode(currentNode.getId());
 		    currentNode = nodeStore.getAndLock(stack.pop());
-		    currentNode = tool.moveRightNonLeafNode(currentNode, tmpKey);
+		    currentNode = tool
+			    .moveRightNonLeafNode(currentNode, tmpKey);
 		    tmpKey = oldMaxKey;
 		} else {
 		    /**
@@ -213,7 +222,8 @@ public class JbTreeImpl implements JbTree {
 	}
     }
 
-    private void updateMaxKey(Node currentNode, final Stack<Integer> stack, Integer tmpKey) {
+    private void updateMaxKey(Node currentNode, final Stack<Integer> stack,
+	    Integer tmpKey) {
 	/**
 	 * Max value was changed in current node. So max value have to be
 	 * updated in upper nodes.
@@ -226,7 +236,8 @@ public class JbTreeImpl implements JbTree {
 	    Node nextNode = nodeStore.getAndLock(stack.pop());
 	    nextNode = tool.moveRightNonLeafNode(nextNode, tmpKey);
 	    Integer oldMaxKey = nextNode.getMaxKey();
-	    nextNode.updateNodeValue(currentNode.getId(), currentNode.getMaxValue());
+	    nextNode.updateNodeValue(currentNode.getId(),
+		    currentNode.getMaxValue());
 	    nodeStore.writeNode(nextNode);
 	    nodeStore.unlockNode(currentNode.getId());
 	    currentNode = nextNode;
@@ -250,7 +261,8 @@ public class JbTreeImpl implements JbTree {
 
     private Node findAppropriateNode(final Integer key) {
 	Preconditions.checkNotNull(key);
-	Integer idNode = treeService.findLeafNodeId(key, new Stack<Integer>(), rootNodeId);
+	Integer idNode = treeService.findLeafNodeId(key, new Stack<Integer>(),
+		rootNodeId);
 	Node node = nodeStore.get(idNode);
 	return tool.moveRightLeafNodeWithoutLocking(node, key);
     }
@@ -262,20 +274,9 @@ public class JbTreeImpl implements JbTree {
      */
     @Override
     public int countValues() {
-	int out = 0;
-	final Stack<Integer> stack = new Stack<Integer>();
-	stack.push(rootNodeId);
-	while (!stack.isEmpty()) {
-	    final Node node = nodeStore.get(stack.pop());
-	    if (node.isLeafNode()) {
-		out += node.getKeysCount();
-	    } else {
-		for (final Integer i : node.getNodeIds()) {
-		    stack.push(i);
-		}
-	    }
-	}
-	return out;
+	JbTreeVisitorRecordCounter counter = new JbTreeVisitorRecordCounter();
+	visit(counter);
+	return counter.getCount();
     }
 
     /*
@@ -313,7 +314,8 @@ public class JbTreeImpl implements JbTree {
 
     @Override
     public void visit(final JbTreeVisitor treeVisitor) {
-	Preconditions.checkNotNull("required JbTreeVisitor instance is null", treeVisitor);
+	Preconditions.checkNotNull("required JbTreeVisitor instance is null",
+		treeVisitor);
 	final Stack<Integer> stack = new Stack<Integer>();
 	stack.push(rootNodeId);
 	while (!stack.isEmpty()) {
