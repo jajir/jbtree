@@ -32,7 +32,7 @@ import org.junit.Test;
  */
 public class SpeedComparisonTest extends TestCase {
 
-    private final int cycleCount = 1000 * 1000;
+    private final int cycleCount = 1000 * 1000 * 10;
 
     private final int threadCount = 10;
 
@@ -41,6 +41,7 @@ public class SpeedComparisonTest extends TestCase {
 	testFunctionality(new FunctionalityJbTree(), "JbTree");
 	testFunctionality(new FunctionalitySynchronizedMap(), "synchronized map");
 	testFunctionality(new FunctionalityConcurrentHashMap(), "concurrent hash map");
+	testFunctionality(new FunctionalitySynchronizedTreeMap(), "synchronized tree map");
     }
 
     private void testFunctionality(final TestedTreeFunctionality functionality, final String name)
