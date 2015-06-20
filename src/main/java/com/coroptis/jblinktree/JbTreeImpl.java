@@ -187,8 +187,8 @@ public class JbTreeImpl implements JbTree {
 	    while (true) {
 		Integer oldMaxKey = currentNode.getMaxKey();
 		currentNode.remove(tmpKey);
+		nodeStore.writeNode(currentNode);
 		if (currentNode.getKeysCount() == 0) {
-		    nodeStore.writeNode(currentNode);
 		    /**
 		     * It's empty node, so remove it.
 		     */
@@ -210,7 +210,6 @@ public class JbTreeImpl implements JbTree {
 		     * There are more than 1 key in node, so it's safe to remove
 		     * key.
 		     */
-		    nodeStore.writeNode(currentNode);
 		    if (!currentNode.getMaxKey().equals(oldMaxKey)) {
 			updateMaxKey(currentNode, stack, tmpKey);
 			return true;
