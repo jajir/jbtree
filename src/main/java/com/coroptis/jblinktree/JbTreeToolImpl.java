@@ -52,30 +52,42 @@ public class JbTreeToolImpl implements JbTreeTool {
 
     @Override
     public Node moveRightNonLeafNode(Node current, final Integer key) {
+	Preconditions.checkNotNull(key);
+	Preconditions.checkNotNull(current);
 	if (current.isLeafNode()) {
 	    throw new JblinktreeException("method is for non-leaf nodes, but given node is leaf: "
 		    + current.toString());
-	} else {
-	    Integer nextNodeId = current.getCorrespondingNodeId(key);
-	    while (nextNodeId != null && nextNodeId.equals(current.getLink())) {
-		current = moveToNextNode(current, nextNodeId);
-
-		nextNodeId = current.getCorrespondingNodeId(key);
-	    }
-	    return current;
 	}
+	Integer nextNodeId = current.getCorrespondingNodeId(key);
+	while (nextNodeId != null && nextNodeId.equals(current.getLink())) {
+	    current = moveToNextNode(current, nextNodeId);
+
+	    nextNodeId = current.getCorrespondingNodeId(key);
+	}
+	return current;
+    }
+
+    private boolean canMoveToNextNode(final Node node, final Integer key) {
+	if (node.getLink() == null) {
+	    return false;
+	}
+	if (node.isEmpty()) {
+	    return true;
+	}
+	return (node.getMaxValue() != null && key > node.getMaxValue());
     }
 
     @Override
     public Node moveRightLeafNode(Node current, final Integer key) {
-	if (current.isLeafNode()) {
-	    while (current.getLink() != null && key > current.getMaxValue()) {
-		current = moveToNextNode(current, current.getLink());
-	    }
-	    return current;
-	} else {
+	Preconditions.checkNotNull(key);
+	Preconditions.checkNotNull(current);
+	if (!current.isLeafNode()) {
 	    throw new JblinktreeException("method is for leaf nodes, but given node is non-leaf");
 	}
+	while (canMoveToNextNode(current, key)) {
+	    current = moveToNextNode(current, current.getLink());
+	}
+	return current;
     }
 
     private Node moveToNextNode(final Node currentNode, final Integer nextNodeId) {

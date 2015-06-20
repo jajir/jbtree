@@ -54,8 +54,8 @@ public class JbTreeImpl implements JbTree {
      * @param nodeStore
      *            required node store object
      */
-    public JbTreeImpl(final int l, final NodeStore nodeStore,
-	    final JbTreeTool tool, final JbTreeService jbTreeService) {
+    public JbTreeImpl(final int l, final NodeStore nodeStore, final JbTreeTool tool,
+	    final JbTreeService jbTreeService) {
 	this.l = l;
 	this.nodeStore = Preconditions.checkNotNull(nodeStore);
 	this.tool = Preconditions.checkNotNull(tool);
@@ -65,19 +65,12 @@ public class JbTreeImpl implements JbTree {
 	this.nodeStore.writeNode(node);
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.coroptis.jblinktree.JbTree#insert(java.lang.Integer,
-     * java.lang.Integer)
-     */
     @Override
     public Integer insert(final Integer key, final Integer value) {
 	Preconditions.checkNotNull(key);
 	Preconditions.checkNotNull(value);
 	final Stack<Integer> stack = new Stack<Integer>();
-	Integer currentNodeId = treeService.findLeafNodeId(key, stack,
-		rootNodeId);
+	Integer currentNodeId = treeService.findLeafNodeId(key, stack, rootNodeId);
 	Node currentNode = nodeStore.getAndLock(currentNodeId);
 	currentNode = tool.moveRightLeafNode(currentNode, key);
 	if (currentNode.getValue(key) == null) {
@@ -91,8 +84,7 @@ public class JbTreeImpl implements JbTree {
 		    /**
 		     * There is no free space for key and value
 		     */
-		    final Node newNode = tool.split(currentNode, tmpKey,
-			    tmpValue);
+		    final Node newNode = tool.split(currentNode, tmpKey, tmpValue);
 		    nodeStore.writeNode(newNode);
 		    nodeStore.writeNode(currentNode);
 		    if (stack.empty()) {
@@ -102,25 +94,11 @@ public class JbTreeImpl implements JbTree {
 			ReentrantLock lock = new ReentrantLock(false);
 			lock.lock();
 			if (rootNodeId.equals(currentNode.getId())) {
-			    Preconditions.checkArgument(rootNodeId
-				    .equals(currentNode.getId()));
-			    rootNodeId = tool.splitRootNode(currentNode,
-				    newNode);
+			    Preconditions.checkArgument(rootNodeId.equals(currentNode.getId()));
+			    rootNodeId = tool.splitRootNode(currentNode, newNode);
 			    nodeStore.unlockNode(currentNode.getId());
 			} else {
 			    nodeStore.unlockNode(currentNode.getId());
-			    // so leave it in this state.
-			    // tmpValue = newNode.getId();
-			    // tmpKey = newNode.getMaxKey();
-			    // final Integer previousCurrentNodeId =
-			    // currentNode.getId();
-			    // treeService.fillPathToNode(tmpKey,
-			    // currentNode.getId(), stack, rootNodeId);
-			    // Preconditions.checkState(!stack.isEmpty());
-			    // currentNode =
-			    // treeService.loadParentNode(currentNode, tmpKey,
-			    // stack.pop());
-			    // nodeStore.unlockNode(previousCurrentNodeId);
 			}
 			lock.unlock();
 			return null;
@@ -130,10 +108,8 @@ public class JbTreeImpl implements JbTree {
 			 */
 			tmpValue = newNode.getId();
 			tmpKey = newNode.getMaxKey();
-			final Integer previousCurrentNodeId = currentNode
-				.getId();
-			currentNode = treeService.loadParentNode(currentNode,
-				tmpKey, stack.pop());
+			final Integer previousCurrentNodeId = currentNode.getId();
+			currentNode = treeService.loadParentNode(currentNode, tmpKey, stack.pop());
 			nodeStore.unlockNode(previousCurrentNodeId);
 		    }
 		} else {
@@ -154,104 +130,37 @@ public class JbTreeImpl implements JbTree {
 	}
     }
 
-    private void storeValueIntoNode(final Node currentNode, final Integer key,
-	    final Integer value) {
+    private void storeValueIntoNode(final Node currentNode, final Integer key, final Integer value) {
 	currentNode.insert(key, value);
 	nodeStore.writeNode(currentNode);
 	nodeStore.unlockNode(currentNode.getId());
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.coroptis.jblinktree.JbTree#remove(java.lang.Integer)
-     */
     @Override
     public boolean remove(final Integer key) {
 	Preconditions.checkNotNull(key);
 	final Stack<Integer> stack = new Stack<Integer>();
-	Integer currentNodeId = treeService.findLeafNodeId(key, stack,
-		rootNodeId);
+	Integer currentNodeId = treeService.findLeafNodeId(key, stack, rootNodeId);
 	Node currentNode = nodeStore.getAndLock(currentNodeId);
 	currentNode = tool.moveRightLeafNode(currentNode, key);
 	if (currentNode.getValue(key) == null) {
 	    /**
 	     * Node doesn't contains key, there is nothing to delete
 	     */
+	    nodeStore.unlockNode(currentNode.getId());
 	    return false;
 	} else {
 	    /**
 	     * Leaf node contains key so remove it.
 	     */
 	    Integer tmpKey = key;
-	    while (true) {
-		Integer oldMaxKey = currentNode.getMaxKey();
-		currentNode.remove(tmpKey);
-		nodeStore.writeNode(currentNode);
-		if (currentNode.getKeysCount() == 0) {
-		    /**
-		     * It's empty node, so remove it.
-		     */
-		    if (rootNodeId.equals(currentNode.getId())) {
-			nodeStore.unlockNode(currentNode.getId());
-			return true;
-		    }
-		    /**
-		     * Node to remove should be locked, if it's not than another
-		     * insert process could insert some value into it.
-		     */
-		    nodeStore.unlockNode(currentNode.getId());
-		    currentNode = nodeStore.getAndLock(stack.pop());
-		    currentNode = tool
-			    .moveRightNonLeafNode(currentNode, tmpKey);
-		    tmpKey = oldMaxKey;
-		} else {
-		    /**
-		     * There are more than 1 key in node, so it's safe to remove
-		     * key.
-		     */
-		    if (!currentNode.getMaxKey().equals(oldMaxKey)) {
-			updateMaxKey(currentNode, stack, tmpKey);
-			return true;
-		    }
-		    nodeStore.unlockNode(currentNode.getId());
-		    return true;
-		}
-	    }// end of while
-	}
-    }
-
-    private void updateMaxKey(Node currentNode, final Stack<Integer> stack,
-	    Integer tmpKey) {
-	/**
-	 * Max value was changed in current node. So max value have to be
-	 * updated in upper nodes.
-	 */
-	while (true) {
-	    if (stack.empty()) {
-		nodeStore.unlockNode(currentNode.getId());
-		return;
-	    }
-	    Node nextNode = nodeStore.getAndLock(stack.pop());
-	    nextNode = tool.moveRightNonLeafNode(nextNode, tmpKey);
-	    Integer oldMaxKey = nextNode.getMaxKey();
-	    nextNode.updateNodeValue(currentNode.getId(),
-		    currentNode.getMaxValue());
-	    nodeStore.writeNode(nextNode);
+	    currentNode.remove(tmpKey);
+	    nodeStore.writeNode(currentNode);
 	    nodeStore.unlockNode(currentNode.getId());
-	    currentNode = nextNode;
-	    if (currentNode.getMaxKey().equals(oldMaxKey)) {
-		nodeStore.unlockNode(currentNode.getId());
-		return;
-	    }
+	    return true;
 	}
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.coroptis.jblinktree.JbTree#search(java.lang.Integer)
-     */
     @Override
     public Integer search(final Integer key) {
 	Preconditions.checkNotNull(key);
@@ -260,17 +169,11 @@ public class JbTreeImpl implements JbTree {
 
     private Node findAppropriateNode(final Integer key) {
 	Preconditions.checkNotNull(key);
-	Integer idNode = treeService.findLeafNodeId(key, new Stack<Integer>(),
-		rootNodeId);
+	Integer idNode = treeService.findLeafNodeId(key, new Stack<Integer>(), rootNodeId);
 	Node node = nodeStore.get(idNode);
 	return tool.moveRightLeafNodeWithoutLocking(node, key);
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.coroptis.jblinktree.JbTree#countValues()
-     */
     @Override
     public int countValues() {
 	JbTreeVisitorRecordCounter counter = new JbTreeVisitorRecordCounter();
@@ -278,22 +181,12 @@ public class JbTreeImpl implements JbTree {
 	return counter.getCount();
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.coroptis.jblinktree.JbTree#containsKey(java.lang.Integer)
-     */
     @Override
     public boolean containsKey(final Integer key) {
 	Preconditions.checkNotNull(key);
 	return findAppropriateNode(key).getValue(key) != null;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.coroptis.jblinktree.JbTree#toString()
-     */
     @Override
     public String toString() {
 	final StringBuilder buff = new StringBuilder();
@@ -313,8 +206,7 @@ public class JbTreeImpl implements JbTree {
 
     @Override
     public void visit(final JbTreeVisitor treeVisitor) {
-	Preconditions.checkNotNull("required JbTreeVisitor instance is null",
-		treeVisitor);
+	Preconditions.checkNotNull("required JbTreeVisitor instance is null", treeVisitor);
 	final Stack<Integer> stack = new Stack<Integer>();
 	stack.push(rootNodeId);
 	while (!stack.isEmpty()) {
@@ -335,11 +227,6 @@ public class JbTreeImpl implements JbTree {
 	}
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.coroptis.jblinktree.JbTree#verify()
-     */
     @Override
     public void verify() {
 	visit(new JbTreeVisitor() {

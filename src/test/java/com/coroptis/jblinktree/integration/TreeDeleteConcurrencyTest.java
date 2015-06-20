@@ -68,7 +68,7 @@ public class TreeDeleteConcurrencyTest extends TestCase {
 	}
 
 	startLatch.countDown();
-	doneLatch.await(100, TimeUnit.MINUTES);
+	doneLatch.await(2, TimeUnit.MINUTES);
 	assertEquals("Some thread didn't finished work", 0, doneLatch.getCount());
 	tree.verify();
 	logger.debug("I'm done!");
@@ -89,7 +89,8 @@ public class TreeDeleteConcurrencyTest extends TestCase {
 
     void doWorkNow() {
 	Integer integer = random.nextInt(100) + 1;
-	if (integer % 2 == 0) {
+	Integer operation = random.nextInt(100) + 1;
+	if (operation % 2 == 0) {
 	    logger.debug("inserting :" + integer);
 	    tree.insert(integer, integer);
 	} else {

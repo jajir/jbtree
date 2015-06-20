@@ -177,10 +177,11 @@ public class NodeTest extends TestCase {
 	assertTrue(ret);
 	assertTrue(node.isEmpty());
 	assertNull(node.getMaxValue());
+	assertTrue(node.isLeafNode());
     }
 
     @Test
-    public void test_remove_nonLeaf_last2() throws Exception {
+    public void test_remove_nonLeaf_last() throws Exception {
 	Node n = Node.makeNode(2, 22, new Integer[] { 13, 7, 16, 8, 21, 9, null });
 	Boolean ret = n.remove(9);
 
@@ -191,7 +192,7 @@ public class NodeTest extends TestCase {
     }
 
     @Test
-    public void test_remove_second() throws Exception {
+    public void test_remove_leaf_second() throws Exception {
 	node.insert(2, 20);
 	node.insert(1, 10);
 	Boolean ret = node.remove(2);
@@ -201,7 +202,7 @@ public class NodeTest extends TestCase {
     }
 
     @Test
-    public void test_remove_notExisting() throws Exception {
+    public void test_remove_leaf_notExisting() throws Exception {
 	node.insert(2, 20);
 	node.insert(1, 10);
 	Boolean ret = node.remove(12);
@@ -212,25 +213,24 @@ public class NodeTest extends TestCase {
 
     @Test
     public void test_remove_nonLeaf_P0_one() throws Exception {
-	node = Node.makeNode(3, 2, new Integer[] { 0, 1, 1, 3, null });
+	node = Node.makeNode(3, 2, new Integer[] { 0, 1, 1, 3, 999 });
 	logger.debug(node.toString());
 	Boolean ret = node.remove(1);
 
 	assertTrue(ret);
-	// TODO uncomment it
-	// verifyNode(new Integer[][] {{1,3}}, false, null);
+	verifyNode(new Integer[][] { { 3, 1 } }, false, 999);
 	assertEquals(Integer.valueOf(1), node.getP0());
 	assertEquals(Integer.valueOf(3), node.getMaxValue());
     }
 
     @Test
     public void test_remove_nonLeaf_P0_zero() throws Exception {
-	node = Node.makeNode(3, 2, new Integer[] { 1, 2, null });
+	node = Node.makeNode(3, 2, new Integer[] { 1, 2, 888 });
 	logger.debug(node.toString());
 	Boolean ret = node.remove(2);
 
 	assertTrue(ret);
-	verifyNode(new Integer[][] {}, true, null);
+	verifyNode(new Integer[][] {}, false, 888);
 	assertEquals(null, node.getMaxValue());
     }
 
@@ -436,7 +436,11 @@ public class NodeTest extends TestCase {
 	    final Integer key = pair[0];
 	    final Integer value = pair[1];
 	    assertTrue("keys should contains key " + pair[0], keys.contains(pair[0]));
-	    assertEquals(value, node.getValue(key));
+	    if (isLeafNode) {
+		assertEquals(value, node.getValue(key));
+	    } else {
+		assertEquals(value, node.getCorrespondingNodeId(key));
+	    }
 	}
 	assertEquals("Node link is invalid", expectedNodeLink, node.getLink());
 	if (pairs.length > 0) {

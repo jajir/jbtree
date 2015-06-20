@@ -308,10 +308,15 @@ public class Node {
 	Preconditions.checkNotNull(key);
 	if (!isLeafNode() && field.length == 3) {
 	    if (field[1] == key) {
-		field[0] = M;
+		/**
+		 * When last pointer is removed, null in field[0] means there is
+		 * no value, but it's not a leaf.
+		 */
+		field[0] = null;
 		field[1] = null;
 		return true;
 	    }
+	    return false;
 	}
 	for (int i = 1; i < field.length - 1; i = i + 2) {
 	    if (field[i] == key) {
@@ -502,6 +507,9 @@ public class Node {
 	if (isLeafNode()) {
 	    throw new JblinktreeException("Leaf node '" + id + "' doesn't have any child nodes.");
 	}
+	if (isEmpty()) {
+	    return getLink();
+	}
 	for (int i = 1; i < field.length - 1; i = i + 2) {
 	    if (key <= field[i]) {
 		return field[i - 1];
@@ -603,9 +611,9 @@ public class Node {
 	    throw new JblinktreeException("node " + id
 		    + " have inforrect number of items in field: " + field + "");
 	}
-	if (field[0] == null) {
-	    throw new JblinktreeException("node " + id + " have null P0");
-	}
+//	if (field[0] == null) {
+//	    throw new JblinktreeException("node " + id + " have null P0");
+//	}
 	if (!isLeafNode()) {
 	    for (int i = 0; i < field.length - 2; i = i + 2) {
 		if (field[i] != null && field[i].equals(id)) {
