@@ -96,9 +96,11 @@ public class Node {
      */
     private final static Integer M = -1;
 
+    private final static Integer EMPTY_NON_LEAF_NODE = -2;
+
     private final Integer id;
 
-    private Integer field[];
+    private Field field;
 
     /**
      * Create and initialize node.
@@ -117,9 +119,9 @@ public class Node {
 	/**
 	 * There is three position even in empty node: P0, max key and link.
 	 */
-	field = new Integer[3];
+	field = new Field(3);
 	if (isLeafNode) {
-	    field[0] = M;
+	    field.set(0, M);
 	}
     }
 
@@ -136,7 +138,7 @@ public class Node {
      */
     public static Node makeNode(final int l, final Integer idNode, final Integer field[]) {
 	Node n = new Node(l, idNode, true);
-	n.field = field;
+	n.field = new Field(field);
 	return n;
     }
 
@@ -146,7 +148,7 @@ public class Node {
      * @return link value,could be <code>null</code>
      */
     public Integer getLink() {
-	return field[field.length - 1];
+	return field.get(field.getLength() - 1);
     }
 
     /**
@@ -156,7 +158,7 @@ public class Node {
      *            link value, could be <code>null</code>
      */
     public void setLink(final Integer link) {
-	field[field.length - 1] = link;
+	field.set(field.getLength() - 1, link);
     }
 
     /**
@@ -165,7 +167,7 @@ public class Node {
      * @return link value,could be <code>null</code>
      */
     public Integer getP0() {
-	return field[0];
+	return field.get(0);
     }
 
     /**
@@ -175,7 +177,7 @@ public class Node {
      *            P0 value, could be <code>null</code>
      */
     public void setP0(final Integer p0) {
-	field[0] = p0;
+	field.set(0, p0);
     }
 
     /**
@@ -196,12 +198,12 @@ public class Node {
      */
     public int getKeysCount() {
 	if (isLeafNode()) {
-	    return (field.length - 3) / 2;
+	    return (field.getLength() - 3) / 2;
 	} else {
-	    if (field[1] == null) {
+	    if (field.get(1) == null) {
 		return 0;
 	    }
-	    return (field.length - 1) / 2;
+	    return (field.getLength() - 1) / 2;
 	}
     }
 
@@ -217,14 +219,14 @@ public class Node {
 	Preconditions.checkNotNull(key);
 	Preconditions.checkNotNull(value);
 	if (isLeafNode()) {
-	    for (int i = 1; i < field.length - 2; i = i + 2) {
-		if (field[i] == key) {
+	    for (int i = 1; i < field.getLength() - 2; i = i + 2) {
+		if (field.get(i) == key) {
 		    /**
 		     * Rewrite value.
 		     */
-		    field[i + 1] = value;
+		    field.set(i + 1, value);
 		    return;
-		} else if (field[i] > key) {
+		} else if (field.get(i) > key) {
 		    couldInsertedKey();
 		    /**
 		     * given value should be inserted 1 before current index
@@ -237,17 +239,17 @@ public class Node {
 	    /**
 	     * New key is bigger than all others so should be at the end.
 	     */
-	    insertToPosition(key, value, field.length - 2);
+	    insertToPosition(key, value, field.getLength() - 2);
 	    setMaxKeyValue(key);
 	} else {
-	    for (int i = 1; i < field.length - 1; i = i + 2) {
-		if (key.equals(field[i])) {
+	    for (int i = 1; i < field.getLength() - 1; i = i + 2) {
+		if (key.equals(field.get(i))) {
 		    /**
 		     * Rewrite value.
 		     */
-		    field[i - 1] = value;
+		    field.set(i - 1, value);
 		    return;
-		} else if (field[i] > key) {
+		} else if (field.get(i) > key) {
 		    couldInsertedKey();
 		    /**
 		     * given value should be inserted 1 before current index
@@ -260,7 +262,7 @@ public class Node {
 	    /**
 	     * New key is bigger than all others so should be at the end.
 	     */
-	    insertToPosition(value, key, field.length - 1);
+	    insertToPosition(value, key, field.getLength() - 1);
 	}
     }
 
@@ -269,7 +271,7 @@ public class Node {
      * {@link JblinktreeException}.
      */
     private void couldInsertedKey() {
-	if (field.length >= l * 2 + 2) {
+	if (field.getLength() >= l * 2 + 2) {
 	    throw new JblinktreeException("Leaf (" + id
 		    + ") is full another value can't be inserted.");
 	}
@@ -286,13 +288,13 @@ public class Node {
      *            required target index in field
      */
     private void insertToPosition(final Integer key, final Integer value, final int targetIndex) {
-	Integer[] field2 = new Integer[field.length + 2];
+	Field field2 = new Field(field.getLength() + 2);
 	if (targetIndex > 0) {
-	    System.arraycopy(field, 0, field2, 0, targetIndex);
+	    field2.copy(field, 0, 0, targetIndex);
 	}
-	field2[targetIndex] = key;
-	field2[targetIndex + 1] = value;
-	System.arraycopy(field, targetIndex, field2, targetIndex + 2, field.length - targetIndex);
+	field2.set(targetIndex, key);
+	field2.set(targetIndex + 1, value);
+	field2.copy(field, targetIndex, targetIndex + 2, field.getLength() - targetIndex);
 	field = field2;
     }
 
@@ -306,27 +308,27 @@ public class Node {
      */
     public boolean remove(final Integer key) {
 	Preconditions.checkNotNull(key);
-	if (!isLeafNode() && field.length == 3) {
-	    if (key.equals(field[1])) {
+	if (!isLeafNode() && field.getLength() == 3) {
+	    if (key.equals(field.get(1))) {
 		/**
 		 * When last pointer is removed, null in field[0] means there is
 		 * no value, but it's not a leaf.
 		 */
-		field[0] = null;
-		field[1] = null;
+		field.set(0, EMPTY_NON_LEAF_NODE);
+		field.set(1, null);
 		return true;
 	    }
 	    return false;
 	}
-	for (int i = 1; i < field.length - 1; i = i + 2) {
-	    if (key.equals(field[i])) {
+	for (int i = 1; i < field.getLength() - 1; i = i + 2) {
+	    if (key.equals(field.get(i))) {
 		/**
 		 * Remove key and value.
 		 */
 		if (isLeafNode()) {
 		    removeFromPosition(i);
-		    if (field.length > 3) {
-			setMaxKeyValue(field[field.length - 4]);
+		    if (field.getLength() > 3) {
+			setMaxKeyValue(field.get(field.getLength() - 4));
 		    } else {
 			setMaxKeyValue(null);
 		    }
@@ -334,7 +336,7 @@ public class Node {
 		    removeFromPosition(i - 1);
 		}
 		return true;
-	    } else if (field[i] > key) {
+	    } else if (field.get(i) > key) {
 		/**
 		 * if key in node is bigger than key than node doesn't contains
 		 * key to delete.
@@ -359,12 +361,12 @@ public class Node {
 	if (isLeafNode()) {
 	    throw new JblinktreeException("method could by used just on non-leaf nodes");
 	}
-	for (int i = 0; i < field.length - 2; i = i + 2) {
-	    if (field[i].equals(nodeIdToUpdate)) {
-		if (field[i + 1].equals(nodeMaxValue)) {
+	for (int i = 0; i < field.getLength() - 2; i = i + 2) {
+	    if (field.get(i).equals(nodeIdToUpdate)) {
+		if (field.get(i + 1).equals(nodeMaxValue)) {
 		    return false;
 		} else {
-		    field[i + 1] = nodeMaxValue;
+		    field.set(i + 1, nodeMaxValue);
 		    return true;
 		}
 	    }
@@ -380,11 +382,11 @@ public class Node {
      *            required position
      */
     private void removeFromPosition(final int position) {
-	Integer tmp[] = new Integer[field.length - 2];
+	Field tmp = new Field(field.getLength() - 2);
 	if (position > 0) {
-	    System.arraycopy(field, 0, tmp, 0, position);
+	    tmp.copy(field, 0, 0, position);
 	}
-	System.arraycopy(field, position + 2, tmp, position, field.length - position - 2);
+	tmp.copy(field, position + 2, position, field.getLength() - position - 2);
 	field = tmp;
     }
 
@@ -406,28 +408,28 @@ public class Node {
 	    // copy top half to empty node
 	    final int startKeyNo = getKeysCount() / 2;
 	    final int startIndex = startKeyNo * 2 + 1;
-	    final int length = field.length - startIndex;
-	    node.field = new Integer[length + 1];
-	    System.arraycopy(field, startIndex, node.field, 1, length);
+	    final int length = field.getLength() - startIndex;
+	    node.field = new Field(length + 1);
+	    node.field.copy(field, startIndex, 1, length);
 
 	    // remove copied data from this node
-	    Integer[] field2 = new Integer[startIndex + 2];
-	    System.arraycopy(field, 0, field2, 0, startIndex);
+	    Field field2 = new Field(startIndex + 2);
+	    field2.copy(field, 0, 0, startIndex);
 	    field = field2;
 	    setLink(node.getId());
-	    setMaxKeyValue(field[field.length - 4]);
-	    node.field[0] = M;
+	    setMaxKeyValue(field.get(field.getLength() - 4));
+	    node.field.set(0, M);
 	} else {
 	    // copy top half to empty node
 	    final int startKeyNo = (getKeysCount()) / 2 - 1;
 	    final int startIndex = startKeyNo * 2 + 2;
-	    final int length = field.length - startIndex;
-	    node.field = new Integer[length];
-	    System.arraycopy(field, startIndex, node.field, 0, length);
+	    final int length = field.getLength() - startIndex;
+	    node.field = new Field(length);
+	    node.field.copy(field, startIndex, 0, length);
 
 	    // remove copied data from this node
-	    Integer[] field2 = new Integer[startIndex + 1];
-	    System.arraycopy(field, 0, field2, 0, startIndex);
+	    Field field2 = new Field(startIndex + 1);
+	    field2.copy(field, 0, 0, startIndex);
 	    field = field2;
 	    setLink(node.getId());
 	}
@@ -439,7 +441,7 @@ public class Node {
      * @return
      */
     public Integer getMaxKey() {
-	return field[field.length - 2];
+	return field.get(field.getLength() - 2);
     }
 
     /**
@@ -453,11 +455,11 @@ public class Node {
 	buff.append(", isLeafNode=");
 	buff.append(isLeafNode());
 	buff.append(", field=[");
-	for (int i = 0; i < field.length; i++) {
+	for (int i = 0; i < field.getLength(); i++) {
 	    if (i != 0) {
 		buff.append(", ");
 	    }
-	    buff.append(field[i]);
+	    buff.append(field.get(i));
 	}
 	buff.append("]}");
 	return buff.toString();
@@ -479,7 +481,7 @@ public class Node {
      *         <code>false</code>
      */
     public boolean isLeafNode() {
-	return M.equals(field[0]);
+	return M.equals(field.get(0));
     }
 
     /**
@@ -510,22 +512,22 @@ public class Node {
 	if (isEmpty()) {
 	    return getLink();
 	}
-	for (int i = 1; i < field.length - 1; i = i + 2) {
-	    if (key <= field[i]) {
-		return field[i - 1];
+	for (int i = 1; i < field.getLength() - 1; i = i + 2) {
+	    if (key <= field.get(i)) {
+		return field.get(i - 1);
 	    }
 	}
-	return field[field.length - 1];
+	return field.get(field.getLength() - 1);
     }
 
     public Integer getPreviousCorrespondingNode(Integer key) {
 	if (isLeafNode()) {
 	    throw new JblinktreeException("Leaf node doesn't have any child nodes.");
 	}
-	for (int i = 1; i < field.length - 1; i = i + 2) {
-	    if (key <= field[i]) {
+	for (int i = 1; i < field.getLength() - 1; i = i + 2) {
+	    if (key <= field.get(i)) {
 		if (i > 3) {
-		    return field[i - 3];
+		    return field.get(i - 3);
 		} else {
 		    return null;
 		}
@@ -547,9 +549,9 @@ public class Node {
 	if (!isLeafNode()) {
 	    throw new JblinktreeException("Non-leaf node '" + id + "' doesn't have leaf value.");
 	}
-	for (int i = 1; i < field.length - 2; i = i + 2) {
-	    if (key.equals(field[i])) {
-		return field[i + 1];
+	for (int i = 1; i < field.getLength() - 2; i = i + 2) {
+	    if (key.equals(field.get(i))) {
+		return field.get(i + 1);
 	    }
 	}
 	return null;
@@ -562,8 +564,8 @@ public class Node {
      */
     public List<Integer> getNodeIds() {
 	final List<Integer> out = new ArrayList<Integer>();
-	for (int i = 0; i < field.length - 2; i = i + 2) {
-	    out.add(field[i]);
+	for (int i = 0; i < field.getLength() - 2; i = i + 2) {
+	    out.add(field.get(i));
 	}
 	return out;
     }
@@ -575,8 +577,8 @@ public class Node {
      */
     public List<Integer> getKeys() {
 	final List<Integer> out = new ArrayList<Integer>();
-	for (int i = 1; i < field.length; i = i + 2) {
-	    out.add(field[i]);
+	for (int i = 1; i < field.getLength(); i = i + 2) {
+	    out.add(field.get(i));
 	}
 	return out;
     }
@@ -588,7 +590,7 @@ public class Node {
      *            max key value, could be <code>null</code>
      */
     public void setMaxKeyValue(final Integer maxKey) {
-	field[field.length - 2] = maxKey;
+	field.set(field.getLength() - 2, maxKey);
     }
 
     /**
@@ -597,7 +599,7 @@ public class Node {
      * @return max value stored in node, could be <code>null</code>
      */
     public Integer getMaxValue() {
-	return field[field.length - 2];
+	return field.get(field.getLength() - 2);
     }
 
     /**
@@ -607,7 +609,7 @@ public class Node {
      *         <code>false</code>
      */
     public boolean verify() {
-	if ((field.length) % 2 == 0) {
+	if ((field.getLength()) % 2 == 0) {
 	    throw new JblinktreeException("node " + id
 		    + " have inforrect number of items in field: " + toString() + "");
 	}
@@ -615,8 +617,8 @@ public class Node {
 	// throw new JblinktreeException("node " + id + " have null P0");
 	// }
 	if (!isLeafNode()) {
-	    for (int i = 0; i < field.length - 2; i = i + 2) {
-		if (field[i] != null && field[i].equals(id)) {
+	    for (int i = 0; i < field.getLength() - 2; i = i + 2) {
+		if (field.get(i) != null && field.get(i).equals(id)) {
 		    throw new JblinktreeException("node contains pointer to itself: " + toString());
 		}
 	    }
@@ -638,9 +640,9 @@ public class Node {
 	    return false;
 	}
 	Node n = (Node) obj;
-	if (equal(l, n.l) && equal(id, n.id) && equal(field.length, n.field.length)) {
-	    for (int i = 0; i < field.length; i++) {
-		if (!equal(field[i], n.field[i])) {
+	if (equal(l, n.l) && equal(id, n.id) && equal(field.getLength(), n.field.getLength())) {
+	    for (int i = 0; i < field.getLength(); i++) {
+		if (!equal(field.get(i), n.field.get(i))) {
 		    return false;
 		}
 	    }
@@ -682,26 +684,26 @@ public class Node {
 	buff.append(getId());
 	buff.append("}");
 	if (isLeafNode()) {
-	    for (int i = 1; i < field.length - 2; i = i + 2) {
+	    for (int i = 1; i < field.getLength() - 2; i = i + 2) {
 		buff.append(" | {");
 		buff.append("");
-		buff.append(field[i]);
+		buff.append(field.get(i));
 		buff.append("| <F");
-		buff.append(field[i + 1]);
+		buff.append(field.get(i + 1));
 		buff.append("> ");
-		buff.append(field[i + 1]);
+		buff.append(field.get(i + 1));
 		buff.append("}");
 
 	    }
 	} else {
-	    for (int i = 0; i < field.length - 2; i = i + 2) {
+	    for (int i = 0; i < field.getLength() - 2; i = i + 2) {
 		buff.append(" | {");
 		buff.append("");
-		buff.append(field[i + 1]);
+		buff.append(field.get(i + 1));
 		buff.append("| <F");
-		buff.append(field[i]);
+		buff.append(field.get(i));
 		buff.append("> ");
-		buff.append(field[i]);
+		buff.append(field.get(i));
 		buff.append("}");
 
 	    }
@@ -720,7 +722,7 @@ public class Node {
      * @return the field
      */
     public Integer[] getField() {
-	return field;
+	return field.getField();
     }
 
 }

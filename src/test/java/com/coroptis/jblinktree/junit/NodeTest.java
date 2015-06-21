@@ -61,8 +61,8 @@ public class NodeTest extends TestCase {
 	logger.debug(node.toString());
 
 	verifyNode(new Integer[][] {}, true, null);
-	assertEquals(null, node.getMaxKey());
-	assertEquals(null, node.getValue(2));
+    	assertEquals(null, node.getMaxKey());
+    	assertEquals(null, node.getValue(2));
     }
 
     @Test
