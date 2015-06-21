@@ -1,7 +1,6 @@
 # jblinktree
 
-It should be easy to use b-link tree implementations.
-B-link tree is thread safe map. 
+jblinktree is thread safe implementation of b-link tree. 
 Implementations is based on "Efficient Locking for Concurrent Operations on B-Trees" 
 written by Philip L. Lehman and S. Bing Yao at 1981.
 
