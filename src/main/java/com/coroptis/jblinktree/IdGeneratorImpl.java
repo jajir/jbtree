@@ -41,9 +41,12 @@ public class IdGeneratorImpl implements IdGenerator {
     @Override
     public int getNextId() {
 	lock.lock();
-	int out = nextId++;
-	lock.unlock();
-	return out;
+	try {
+	    int out = nextId++;
+	    return out;
+	} finally {
+	    lock.unlock();
+	}
     }
 
 }

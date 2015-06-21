@@ -1,7 +1,5 @@
 package com.coroptis.jblinktree;
 
-import java.util.Set;
-
 /*
  * #%L
  * jblinktree
@@ -40,7 +38,7 @@ public interface NodeStore {
      * 
      * @param nodeId
      *            required node id
-     * @return 
+     * @return
      */
     Node get(Integer nodeId);
 
@@ -65,16 +63,6 @@ public interface NodeStore {
      * @return number of locked nodes.
      */
     int countLockedNodes();
-
-    /**
-     * Return set containing all keys.
-     * <p>
-     * This method id not thread-safe.
-     * </p>
-     * 
-     * @return unmodifiable set containing all keys
-     */
-    Set<Integer> getKeys();
 
     /**
      * Method provide new node id.

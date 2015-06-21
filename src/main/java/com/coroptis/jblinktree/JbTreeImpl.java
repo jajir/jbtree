@@ -93,14 +93,17 @@ public class JbTreeImpl implements JbTree {
 			 */
 			ReentrantLock lock = new ReentrantLock(false);
 			lock.lock();
-			if (rootNodeId.equals(currentNode.getId())) {
-			    Preconditions.checkArgument(rootNodeId.equals(currentNode.getId()));
-			    rootNodeId = tool.splitRootNode(currentNode, newNode);
-			    nodeStore.unlockNode(currentNode.getId());
-			} else {
-			    nodeStore.unlockNode(currentNode.getId());
+			try {
+			    if (rootNodeId.equals(currentNode.getId())) {
+				Preconditions.checkArgument(rootNodeId.equals(currentNode.getId()));
+				rootNodeId = tool.splitRootNode(currentNode, newNode);
+				nodeStore.unlockNode(currentNode.getId());
+			    } else {
+				nodeStore.unlockNode(currentNode.getId());
+			    }
+			} finally {
+			    lock.unlock();
 			}
-			lock.unlock();
 			return null;
 		    } else {
 			/**
@@ -204,9 +207,13 @@ public class JbTreeImpl implements JbTree {
 	return buff.toString();
     }
 
+    /**
+     * Current implementation doesn't visit nodes that are available with link
+     * pointer and don't have parent node.
+     */
     @Override
     public void visit(final JbTreeVisitor treeVisitor) {
-	Preconditions.checkNotNull("required JbTreeVisitor instance is null", treeVisitor);
+	Preconditions.checkNotNull(treeVisitor, "required JbTreeVisitor instance is null");
 	final Stack<Integer> stack = new Stack<Integer>();
 	stack.push(rootNodeId);
 	while (!stack.isEmpty()) {

@@ -70,38 +70,6 @@ public class JbTreeServiceImpl implements JbTreeService {
     }
 
     @Override
-    public void fillPathToNode(final Integer key, final Integer nodeId, final Stack<Integer> stack,
-	    final Integer rootNodeId) {
-	Node currentNode = nodeStore.get(rootNodeId);
-	if (!currentNode.isLeafNode()) {
-	    stack.push(currentNode.getId());
-	}
-	while (!currentNode.isLeafNode() && !currentNode.getId().equals(nodeId)) {
-	    Integer nextNodeId = currentNode.getCorrespondingNodeId(key);
-	    if (nextNodeId == null) {
-		/**
-		 * This is rightmost node and next link is <code>null</code> so
-		 * use node id associated with bigger key.
-		 */
-		nextNodeId = currentNode.getCorrespondingNodeId(currentNode.getMaxValue());
-	    }
-
-	    if (nextNodeId.equals(nodeId)) {
-		// My leaf is found
-		return;
-	    } else if (nextNodeId.equals(currentNode.getLink())) {
-		currentNode = nodeStore.get(nextNodeId);
-	    } else {
-		stack.push(currentNode.getId());
-		currentNode = nodeStore.get(nextNodeId);
-	    }
-	}
-	if (stack.isEmpty()) {
-	    System.out.println("blee");
-	}
-    }
-
-    @Override
     public Node loadParentNode(final Node currentNode, final Integer tmpKey,
 	    final Integer nextNodeId) {
 	Node parentNode = nodeStore.getAndLock(nextNodeId);

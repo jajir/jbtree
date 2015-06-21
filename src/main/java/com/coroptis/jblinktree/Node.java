@@ -241,7 +241,7 @@ public class Node {
 	    setMaxKeyValue(key);
 	} else {
 	    for (int i = 1; i < field.length - 1; i = i + 2) {
-		if (field[i] == key) {
+		if (key.equals(field[i])) {
 		    /**
 		     * Rewrite value.
 		     */
@@ -307,7 +307,7 @@ public class Node {
     public boolean remove(final Integer key) {
 	Preconditions.checkNotNull(key);
 	if (!isLeafNode() && field.length == 3) {
-	    if (field[1] == key) {
+	    if (key.equals(field[1])) {
 		/**
 		 * When last pointer is removed, null in field[0] means there is
 		 * no value, but it's not a leaf.
@@ -319,7 +319,7 @@ public class Node {
 	    return false;
 	}
 	for (int i = 1; i < field.length - 1; i = i + 2) {
-	    if (field[i] == key) {
+	    if (key.equals(field[i])) {
 		/**
 		 * Remove key and value.
 		 */
@@ -609,11 +609,11 @@ public class Node {
     public boolean verify() {
 	if ((field.length) % 2 == 0) {
 	    throw new JblinktreeException("node " + id
-		    + " have inforrect number of items in field: " + field + "");
+		    + " have inforrect number of items in field: " + toString() + "");
 	}
-//	if (field[0] == null) {
-//	    throw new JblinktreeException("node " + id + " have null P0");
-//	}
+	// if (field[0] == null) {
+	// throw new JblinktreeException("node " + id + " have null P0");
+	// }
 	if (!isLeafNode()) {
 	    for (int i = 0; i < field.length - 2; i = i + 2) {
 		if (field[i] != null && field[i].equals(id)) {

@@ -30,7 +30,6 @@ import com.coroptis.jblinktree.JbTreeService;
 import com.coroptis.jblinktree.JbTreeTool;
 import com.coroptis.jblinktree.Node;
 import com.coroptis.jblinktree.NodeStore;
-import com.google.common.collect.Lists;
 
 /**
  * Junit test form {@link JbTreeImpl}.
@@ -85,37 +84,6 @@ public class JbTreeTest extends TestCase {
 	EasyMock.verify(nodeStore, rootNode);
     }
 
-    @Test
-    public void test_countValues_just_leaf_node() throws Exception {
-	EasyMock.expect(nodeStore.get(0)).andReturn(rootNode);
-	EasyMock.expect(rootNode.isLeafNode()).andReturn(true);
-	EasyMock.expect(rootNode.getKeysCount()).andReturn(3);
-	EasyMock.replay(nodeStore, rootNode);
-
-	int ret = jbTree.countValues();
-
-	assertEquals(3, ret);
-	EasyMock.verify(nodeStore, rootNode);
-    }
-
-    @Test
-    public void test_countValues_one_nonLeaf_node() throws Exception {
-	Node n1 = EasyMock.createMock(Node.class);
-	EasyMock.expect(nodeStore.get(0)).andReturn(rootNode);
-	EasyMock.expect(rootNode.isLeafNode()).andReturn(false);
-	EasyMock.expect(rootNode.getNodeIds()).andReturn(Lists.newArrayList(5));
-
-	EasyMock.expect(nodeStore.get(5)).andReturn(n1);
-	EasyMock.expect(n1.isLeafNode()).andReturn(true);
-	EasyMock.expect(n1.getKeysCount()).andReturn(3);
-	EasyMock.replay(nodeStore, rootNode, n1);
-
-	int ret = jbTree.countValues();
-
-	assertEquals(3, ret);
-	EasyMock.verify(nodeStore, rootNode, n1);
-    }
-
     @Override
     protected void setUp() throws Exception {
 	super.setUp();
@@ -123,6 +91,7 @@ public class JbTreeTest extends TestCase {
 	rootNode = EasyMock.createMock(Node.class);
 	jbTreeTool = EasyMock.createMock(JbTreeTool.class);
 	jbTreeService = EasyMock.createMock(JbTreeService.class);
+	EasyMock.expect(nodeStore.getNextId()).andReturn(0);
 	nodeStore.writeNode(new Node(3, 0, true));
 	EasyMock.replay(nodeStore);
 	jbTree = new JbTreeImpl(3, nodeStore, jbTreeTool, jbTreeService);

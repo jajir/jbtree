@@ -21,9 +21,7 @@ package com.coroptis.jblinktree;
  */
 
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 import com.google.common.base.Preconditions;
@@ -92,11 +90,6 @@ public class NodeStoreImpl implements NodeStore {
     @Override
     public int countLockedNodes() {
 	return nodeLocks.countLockedThreads();
-    }
-
-    @Override
-    public Set<Integer> getKeys() {
-	return Collections.unmodifiableSet(nodes.keySet());
     }
 
     @Override
