@@ -117,7 +117,7 @@ public interface Node {
      * @param node
      *            required empty node
      */
-    public void moveTopHalfOfDataTo(NodeImpl node);
+    public void moveTopHalfOfDataTo(Node node);
 
     /**
      * Return max key, that could be use for representing this nide.

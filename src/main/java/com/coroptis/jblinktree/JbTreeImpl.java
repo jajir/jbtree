@@ -76,7 +76,7 @@ public class JbTreeImpl<K, V> implements JbTree<K, V> {
 		"key TypeDescriptor is null, use .setKeyType in builder");
 	this.valueTypeDescriptor = Preconditions.checkNotNull(valueTypeDescriptor,
 		"value TypeDescriptor is null, use .setValueType in builder");
-	NodeImpl node = new NodeImpl(l, nodeStore.getNextId(), true);
+	Node node = new NodeImpl(l, nodeStore.getNextId(), true);
 	rootNodeId = node.getId();
 	this.nodeStore.writeNode(node);
     }
@@ -87,7 +87,7 @@ public class JbTreeImpl<K, V> implements JbTree<K, V> {
 	Preconditions.checkNotNull(value);
 	final Stack<Integer> stack = new Stack<Integer>();
 	Integer currentNodeId = treeService.findLeafNodeId((Integer) key, stack, rootNodeId);
-	NodeImpl currentNode = nodeStore.getAndLock(currentNodeId);
+	Node currentNode = nodeStore.getAndLock(currentNodeId);
 	currentNode = tool.moveRightLeafNode(currentNode, (Integer) key);
 	if (currentNode.getValue((Integer) key) == null) {
 	    /**
@@ -100,7 +100,7 @@ public class JbTreeImpl<K, V> implements JbTree<K, V> {
 		    /**
 		     * There is no free space for key and value
 		     */
-		    final NodeImpl newNode = tool.split(currentNode, tmpKey, tmpValue);
+		    final Node newNode = tool.split(currentNode, tmpKey, tmpValue);
 		    nodeStore.writeNode(newNode);
 		    nodeStore.writeNode(currentNode);
 		    if (stack.empty()) {
@@ -149,7 +149,7 @@ public class JbTreeImpl<K, V> implements JbTree<K, V> {
 	}
     }
 
-    private void storeValueIntoNode(final NodeImpl currentNode, final Integer key,
+    private void storeValueIntoNode(final Node currentNode, final Integer key,
 	    final Integer value) {
 	currentNode.insert(key, value);
 	nodeStore.writeNode(currentNode);
@@ -161,7 +161,7 @@ public class JbTreeImpl<K, V> implements JbTree<K, V> {
 	Preconditions.checkNotNull(key);
 	final Stack<Integer> stack = new Stack<Integer>();
 	Integer currentNodeId = treeService.findLeafNodeId((Integer) key, stack, rootNodeId);
-	NodeImpl currentNode = nodeStore.getAndLock(currentNodeId);
+	Node currentNode = nodeStore.getAndLock(currentNodeId);
 	currentNode = tool.moveRightLeafNode(currentNode, (Integer) key);
 	if (currentNode.getValue((Integer) key) == null) {
 	    /**

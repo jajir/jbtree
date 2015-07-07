@@ -70,9 +70,9 @@ public class JbTreeServiceImpl implements JbTreeService {
     }
 
     @Override
-    public NodeImpl loadParentNode(final Node currentNode, final Integer tmpKey,
+    public Node loadParentNode(final Node currentNode, final Integer tmpKey,
 	    final Integer nextNodeId) {
-	NodeImpl parentNode = nodeStore.getAndLock(nextNodeId);
+	Node parentNode = nodeStore.getAndLock(nextNodeId);
 	// TODO link to current node which key should be updated can be in
 	// different node than tmpKey
 	parentNode = tool.moveRightNonLeafNode(parentNode, tmpKey);

@@ -24,12 +24,18 @@ import com.coroptis.jblinktree.type.TypeDescriptorInteger;
  */
 
 /**
- * Holds node data. Data are stored as k1,v1,k2,v2 ...
+ * Holds node data. Data are stored as v1,k1,v2,k2 ...
  * 
  * @author jajir
  * 
+ * 
+ * @param <K>
+ *            key type
+ * @param <V>
+ *            value type
+ * 
  */
-public class FieldImpl implements Field {
+public class FieldImpl<K, V> implements Field<K, V> {
 
     private final int KEY_LENGTH = 4;
 
@@ -172,6 +178,30 @@ public class FieldImpl implements Field {
 	data[from + 1] = (byte) ((v >>> 16) & 0xFF);
 	data[from + 2] = (byte) ((v >>> 8) & 0xFF);
 	data[from + 3] = (byte) ((v >>> 0) & 0xFF);
+    }
+
+    @Override
+    public K getKey(int position) {
+	// TODO Auto-generated method stub
+	return null;
+    }
+
+    @Override
+    public V getValue(int position) {
+	// TODO Auto-generated method stub
+	return null;
+    }
+
+    @Override
+    public void setKey(int position, K value) {
+	// TODO Auto-generated method stub
+
+    }
+
+    @Override
+    public void setValue(int position, V value) {
+	// TODO Auto-generated method stub
+
     }
 
 }

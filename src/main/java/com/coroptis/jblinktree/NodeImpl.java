@@ -75,8 +75,8 @@ import com.google.common.base.Preconditions;
  * <li>K(L*2+1) - highest key value from node in case of leaf node or highest
  * key value from all referenced nodes.</li>
  * </ul>
- * First value P0 at index 0 have special meaning, when it's {@link NodeImpl#M} than
- * this node is leaf node. In all other cases is non-leaf node.
+ * First value P0 at index 0 have special meaning, when it's {@link NodeImpl#M}
+ * than this node is leaf node. In all other cases is non-leaf node.
  * <p>
  * Node is not thread save.
  * </p>
@@ -84,7 +84,7 @@ import com.google.common.base.Preconditions;
  * @author jajir
  * 
  */
-public class NodeImpl implements Node  {
+public class NodeImpl implements Node {
 
     /**
      * Main node parameter, it's number of nodes.
@@ -142,7 +142,9 @@ public class NodeImpl implements Node  {
 	return n;
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see com.coroptis.jblinktree.Node#getLink()
      */
     @Override
@@ -150,7 +152,9 @@ public class NodeImpl implements Node  {
 	return field.get(field.getLength() - 1);
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see com.coroptis.jblinktree.Node#setLink(java.lang.Integer)
      */
     @Override
@@ -158,7 +162,9 @@ public class NodeImpl implements Node  {
 	field.set(field.getLength() - 1, link);
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see com.coroptis.jblinktree.Node#getP0()
      */
     @Override
@@ -166,7 +172,9 @@ public class NodeImpl implements Node  {
 	return field.get(0);
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see com.coroptis.jblinktree.Node#setP0(java.lang.Integer)
      */
     @Override
@@ -174,7 +182,9 @@ public class NodeImpl implements Node  {
 	field.set(0, p0);
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see com.coroptis.jblinktree.Node#isEmpty()
      */
     @Override
@@ -182,7 +192,9 @@ public class NodeImpl implements Node  {
 	return getKeysCount() == 0;
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see com.coroptis.jblinktree.Node#getKeysCount()
      */
     @Override
@@ -197,8 +209,11 @@ public class NodeImpl implements Node  {
 	}
     }
 
-    /* (non-Javadoc)
-     * @see com.coroptis.jblinktree.Node#insert(java.lang.Integer, java.lang.Integer)
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.coroptis.jblinktree.Node#insert(java.lang.Integer,
+     * java.lang.Integer)
      */
     @Override
     public void insert(final Integer key, final Integer value) {
@@ -284,7 +299,9 @@ public class NodeImpl implements Node  {
 	field = field2;
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see com.coroptis.jblinktree.Node#remove(java.lang.Integer)
      */
     @Override
@@ -329,8 +346,11 @@ public class NodeImpl implements Node  {
 	return false;
     }
 
-    /* (non-Javadoc)
-     * @see com.coroptis.jblinktree.Node#updateNodeValue(java.lang.Integer, java.lang.Integer)
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.coroptis.jblinktree.Node#updateNodeValue(java.lang.Integer,
+     * java.lang.Integer)
      */
     @Override
     public boolean updateNodeValue(final Integer nodeIdToUpdate, final Integer nodeMaxValue) {
@@ -366,11 +386,16 @@ public class NodeImpl implements Node  {
 	field = tmp;
     }
 
-    /* (non-Javadoc)
-     * @see com.coroptis.jblinktree.Node#moveTopHalfOfDataTo(com.coroptis.jblinktree.NodeImpl)
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * com.coroptis.jblinktree.Node#moveTopHalfOfDataTo(com.coroptis.jblinktree
+     * .NodeImpl)
      */
     @Override
-    public void moveTopHalfOfDataTo(final NodeImpl node) {
+    public void moveTopHalfOfDataTo(final Node nodea) {
+	final NodeImpl node = (NodeImpl) nodea;
 	Preconditions.checkArgument(node.isEmpty());
 	if (getKeysCount() < 1) {
 	    throw new JblinktreeException("In node " + id + " are no values to move.");
@@ -406,7 +431,9 @@ public class NodeImpl implements Node  {
 	}
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see com.coroptis.jblinktree.Node#getMaxKey()
      */
     @Override
@@ -435,7 +462,9 @@ public class NodeImpl implements Node  {
 	return buff.toString();
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see com.coroptis.jblinktree.Node#getId()
      */
     @Override
@@ -443,7 +472,9 @@ public class NodeImpl implements Node  {
 	return id;
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see com.coroptis.jblinktree.Node#isLeafNode()
      */
     @Override
@@ -451,8 +482,11 @@ public class NodeImpl implements Node  {
 	return M.equals(field.get(0));
     }
 
-    /* (non-Javadoc)
-     * @see com.coroptis.jblinktree.Node#getCorrespondingNodeId(java.lang.Integer)
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * com.coroptis.jblinktree.Node#getCorrespondingNodeId(java.lang.Integer)
      */
     @Override
     public Integer getCorrespondingNodeId(final Integer key) {
@@ -470,8 +504,12 @@ public class NodeImpl implements Node  {
 	return field.get(field.getLength() - 1);
     }
 
-    /* (non-Javadoc)
-     * @see com.coroptis.jblinktree.Node#getPreviousCorrespondingNode(java.lang.Integer)
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * com.coroptis.jblinktree.Node#getPreviousCorrespondingNode(java.lang.Integer
+     * )
      */
     @Override
     public Integer getPreviousCorrespondingNode(Integer key) {
@@ -490,7 +528,9 @@ public class NodeImpl implements Node  {
 	return null;
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see com.coroptis.jblinktree.Node#getValue(java.lang.Integer)
      */
     @Override
@@ -507,7 +547,9 @@ public class NodeImpl implements Node  {
 	return null;
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see com.coroptis.jblinktree.Node#getNodeIds()
      */
     @Override
@@ -519,7 +561,9 @@ public class NodeImpl implements Node  {
 	return out;
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see com.coroptis.jblinktree.Node#getKeys()
      */
     @Override
@@ -531,7 +575,9 @@ public class NodeImpl implements Node  {
 	return out;
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see com.coroptis.jblinktree.Node#setMaxKeyValue(java.lang.Integer)
      */
     @Override
@@ -539,7 +585,9 @@ public class NodeImpl implements Node  {
 	field.set(field.getLength() - 2, maxKey);
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see com.coroptis.jblinktree.Node#getMaxValue()
      */
     @Override
@@ -547,7 +595,9 @@ public class NodeImpl implements Node  {
 	return field.get(field.getLength() - 2);
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see com.coroptis.jblinktree.Node#verify()
      */
     @Override
@@ -606,7 +656,9 @@ public class NodeImpl implements Node  {
 	return a == b || (a != null && a.equals(b));
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see com.coroptis.jblinktree.Node#getL()
      */
     @Override
@@ -614,8 +666,11 @@ public class NodeImpl implements Node  {
 	return l;
     }
 
-    /* (non-Javadoc)
-     * @see com.coroptis.jblinktree.Node#writeTo(java.lang.StringBuilder, java.lang.String)
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.coroptis.jblinktree.Node#writeTo(java.lang.StringBuilder,
+     * java.lang.String)
      */
     @Override
     public void writeTo(final StringBuilder buff, final String intendation) {
@@ -666,7 +721,9 @@ public class NodeImpl implements Node  {
 	buff.append("\"];\n");
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see com.coroptis.jblinktree.Node#getField()
      */
     @Override
