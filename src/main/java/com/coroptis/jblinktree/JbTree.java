@@ -21,12 +21,17 @@ package com.coroptis.jblinktree;
  */
 
 /**
- * Provide operations with tree.
+ * Provide operations with tree. In tree could be stored key,value pairs.
  * 
  * @author jajir
  * 
+ * @param <K>
+ *            key type
+ * @param <V>
+ *            value type
+ * 
  */
-public interface JbTree {
+public interface JbTree<K, V> {
 
     /**
      * Insert value and key into tree.
@@ -35,7 +40,7 @@ public interface JbTree {
      *            required parameter key
      * @return previously associated value with given key.
      */
-    Integer insert(Integer key, Integer value);
+    Integer insert(K key, V value);
 
     /**
      * Remove key from tree. Associated value will be also removed.
@@ -45,7 +50,7 @@ public interface JbTree {
      * @return return <code>true</code> when key was found and removed otherwise
      *         return <code>false</code>.
      */
-    boolean remove(Integer key);
+    boolean remove(K key);
 
     /**
      * Find and return specific value for given key.
@@ -54,7 +59,7 @@ public interface JbTree {
      *            required key
      * @return find value if there is any otherwise return <code>null</code>
      */
-    Integer search(Integer key);
+    V search(K key);
 
     /**
      * Count all keys stored in tree.
@@ -69,7 +74,7 @@ public interface JbTree {
      * @return if key is in tree return <code>true</code> otherwise return
      *         <code>false</code>.
      */
-    boolean containsKey(Integer key);
+    boolean containsKey(K key);
 
     /**
      * Override {@link System#toString()} method.

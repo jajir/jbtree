@@ -37,6 +37,7 @@ import com.coroptis.jblinktree.JblinktreeException;
 import com.coroptis.jblinktree.TreeBuilder;
 import com.coroptis.jblinktree.TreeUtil;
 import com.coroptis.jblinktree.Worker;
+import com.coroptis.jblinktree.type.Types;
 
 /**
  * Test that tree could work in multiple threads environment.
@@ -48,7 +49,7 @@ public class TreeConcurrencyTest extends TestCase {
 
     private final Logger logger = LoggerFactory.getLogger(TreeConcurrencyTest.class);
 
-    private JbTree tree;
+    private JbTree<Integer, Integer> tree;
 
     private TreeUtil treeUtil;
 
@@ -84,7 +85,8 @@ public class TreeConcurrencyTest extends TestCase {
     @Override
     protected void setUp() throws Exception {
 	super.setUp();
-	tree = TreeBuilder.builder().setL(2).build();
+	tree = TreeBuilder.builder().setL(2).setKeyType(Types.integer())
+		.setValueType(Types.integer()).build();
 	treeUtil = new TreeUtil(tree);
 	random = new Random();
     }

@@ -20,6 +20,28 @@ package com.coroptis.jblinktree;
  * #L%
  */
 
+import com.coroptis.jblinktree.type.TypeDescriptor;
+
+/*
+ * #%L
+ * jblinktree
+ * %%
+ * Copyright (C) 2015 coroptis
+ * %%
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * #L%
+ */
+
 /**
  * Provide fluent API for creating tree.
  * 
@@ -29,6 +51,8 @@ package com.coroptis.jblinktree;
 public final class TreeBuilder {
 
     private Integer l;
+    private TypeDescriptor keyTypeDescriptor;
+    private TypeDescriptor valueTypeDescriptor;
 
     public static TreeBuilder builder() {
 	return new TreeBuilder(5);
@@ -43,12 +67,23 @@ public final class TreeBuilder {
 	return this;
     }
 
-    public JbTree build() {
+    public TreeBuilder setKeyType(final TypeDescriptor keyTypeDescriptor) {
+	this.keyTypeDescriptor = keyTypeDescriptor;
+	return this;
+    }
+
+    public TreeBuilder setValueType(final TypeDescriptor valueTypeDescriptor) {
+	this.valueTypeDescriptor = valueTypeDescriptor;
+	return this;
+    }
+
+    public <K, V> JbTree<K, V> build() {
 	final IdGenerator idGenerator = new IdGeneratorImpl();
 	final NodeStoreImpl nodeStore = new NodeStoreImpl(idGenerator, l);
 	final JbTreeTool jbTreeTool = new JbTreeToolImpl(nodeStore);
 	final JbTreeService treeService = new JbTreeServiceImpl(nodeStore, jbTreeTool);
-	final JbTree tree = new JbTreeImpl(l, nodeStore, jbTreeTool, treeService);
+	final JbTree tree = new JbTreeImpl(l, nodeStore, jbTreeTool, treeService,
+		keyTypeDescriptor, valueTypeDescriptor);
 	return tree;
     }
 

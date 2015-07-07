@@ -30,6 +30,7 @@ import org.junit.Test;
 import com.coroptis.jblinktree.JbTree;
 import com.coroptis.jblinktree.TreeBuilder;
 import com.coroptis.jblinktree.TreeUtil;
+import com.coroptis.jblinktree.type.Types;
 
 /**
  * Verify tree structure in case of random numbers in one thread.
@@ -39,7 +40,7 @@ import com.coroptis.jblinktree.TreeUtil;
  */
 public class SingleThreadLoadTest extends TestCase {
 
-    private JbTree tree;
+    private JbTree<Integer, Integer> tree;
 
     private TreeUtil treeUtil;
 
@@ -57,7 +58,8 @@ public class SingleThreadLoadTest extends TestCase {
     @Override
     protected void setUp() throws Exception {
 	super.setUp();
-	tree = TreeBuilder.builder().setL(2).build();
+	tree = TreeBuilder.builder().setL(2).setKeyType(Types.integer())
+		.setValueType(Types.integer()).build();
 	treeUtil = new TreeUtil(tree);
     }
 

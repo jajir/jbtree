@@ -58,7 +58,7 @@ public interface JbTreeTool {
      *            required key
      * @return moved right node
      */
-    Node moveRightLeafNode(Node current, Integer key);
+    NodeImpl moveRightLeafNode(NodeImpl current, Integer key);
 
     /**
      * Move right in tree until suitable non-leaf node is found.
@@ -87,7 +87,7 @@ public interface JbTreeTool {
      *            required key
      * @return moved right node
      */
-    Node moveRightNonLeafNode(Node current, Integer key);
+    NodeImpl moveRightNonLeafNode(NodeImpl current, Integer key);
 
     /**
      * Split node into two nodes. It moved part of currentNode data into new one
@@ -104,7 +104,7 @@ public interface JbTreeTool {
      *            required inserted value
      * @return newly created node, this node contains higher part of keys.
      */
-    Node split(Node currentNode, Integer key, Integer value);
+    NodeImpl split(Node currentNode, Integer key, Integer value);
 
     void updateMaxValueWhenNecessary(Node currentNode, Integer insertedKey, Stack<Integer> stack);
 
@@ -136,6 +136,6 @@ public interface JbTreeTool {
      * @param childNode
      *            required child node
      */
-    void updateMaxIfNecessary(final Node parentNode, final Node childNode);
+    void updateMaxIfNecessary(final NodeImpl parentNode, final Node childNode);
 
 }

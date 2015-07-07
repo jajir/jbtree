@@ -1,4 +1,4 @@
-package com.coroptis.jblinktree;
+package com.coroptis.jblinktree.type;
 
 /*
  * #%L
@@ -21,26 +21,15 @@ package com.coroptis.jblinktree;
  */
 
 /**
- * Contains data for node.
+ * Allows to set correct data type in tree creating DSL.
  * 
  * @author jajir
  * 
  */
-public interface Field {
+public class Types {
 
-    public Integer get(int position);
-
-    public void copy(Field src, int srcPos1, int destPos1, int length);
-
-    public void set(int position, Integer value);
-
-    /**
-     * @return the field
-     */
-    public Integer[] getField();
-
-    public byte[] getBytes();
-
-    public int getLength();
+    public static TypeDescriptor integer() {
+	return new TypeDescriptorInteger();
+    }
 
 }

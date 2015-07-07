@@ -29,7 +29,9 @@ import com.coroptis.jblinktree.JbTreeImpl;
 import com.coroptis.jblinktree.JbTreeService;
 import com.coroptis.jblinktree.JbTreeTool;
 import com.coroptis.jblinktree.Node;
+import com.coroptis.jblinktree.NodeImpl;
 import com.coroptis.jblinktree.NodeStore;
+import com.coroptis.jblinktree.type.Types;
 
 /**
  * Junit test form {@link JbTreeImpl}.
@@ -88,13 +90,14 @@ public class JbTreeTest extends TestCase {
     protected void setUp() throws Exception {
 	super.setUp();
 	nodeStore = EasyMock.createMock(NodeStore.class);
-	rootNode = EasyMock.createMock(Node.class);
+	rootNode = EasyMock.createMock(NodeImpl.class);
 	jbTreeTool = EasyMock.createMock(JbTreeTool.class);
 	jbTreeService = EasyMock.createMock(JbTreeService.class);
 	EasyMock.expect(nodeStore.getNextId()).andReturn(0);
-	nodeStore.writeNode(new Node(3, 0, true));
+	nodeStore.writeNode(new NodeImpl(3, 0, true));
 	EasyMock.replay(nodeStore);
-	jbTree = new JbTreeImpl(3, nodeStore, jbTreeTool, jbTreeService);
+	jbTree = new JbTreeImpl<Integer, Integer>(3, nodeStore, jbTreeTool, jbTreeService,
+		Types.integer(), Types.integer());
 	EasyMock.verify(nodeStore);
 	EasyMock.reset(nodeStore);
 

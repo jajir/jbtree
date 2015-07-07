@@ -40,9 +40,9 @@ public interface NodeStore {
      *            required node id
      * @return
      */
-    Node get(Integer nodeId);
+    NodeImpl get(Integer nodeId);
 
-    Node getAndLock(Integer nodeId);
+    NodeImpl getAndLock(Integer nodeId);
 
     /**
      * Persist node into node store.
@@ -51,9 +51,9 @@ public interface NodeStore {
      * </p>
      * 
      * @param node
-     *            required {@link Node}
+     *            required {@link NodeImpl}
      */
-    void writeNode(Node node);
+    void writeNode(NodeImpl node);
 
     void deleteNode(Integer idNode);
 

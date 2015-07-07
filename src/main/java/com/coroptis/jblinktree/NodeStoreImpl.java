@@ -60,22 +60,22 @@ public class NodeStoreImpl implements NodeStore {
     }
 
     @Override
-    public Node get(final Integer nodeId) {
+    public NodeImpl get(final Integer nodeId) {
 	Integer[] field = nodes.get(Preconditions.checkNotNull(nodeId));
 	if (field == null) {
 	    throw new JblinktreeException("There is no node with id '" + nodeId + "'");
 	}
-	return Node.makeNode(l, nodeId, Arrays.copyOf(field, field.length));
+	return NodeImpl.makeNode(l, nodeId, Arrays.copyOf(field, field.length));
     }
 
     @Override
-    public Node getAndLock(final Integer nodeId) {
+    public NodeImpl getAndLock(final Integer nodeId) {
 	lockNode(nodeId);
 	return get(nodeId);
     }
 
     @Override
-    public void writeNode(final Node node) {
+    public void writeNode(final NodeImpl node) {
 	Preconditions.checkNotNull(node.getId());
 	Preconditions.checkNotNull(node);
 	node.verify();

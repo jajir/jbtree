@@ -23,6 +23,7 @@ package com.coroptis.jblinktree;
 import java.util.Stack;
 import java.util.concurrent.locks.ReentrantLock;
 
+import com.coroptis.jblinktree.type.TypeDescriptor;
 import com.google.common.base.Preconditions;
 
 /**
@@ -30,8 +31,14 @@ import com.google.common.base.Preconditions;
  * 
  * @author jajir
  * 
+ * @param <K>
+ *            key type
+ * @param <V>
+ *            value type
+ * 
+ * 
  */
-public class JbTreeImpl implements JbTree {
+public class JbTreeImpl<K, V> implements JbTree<K, V> {
 
     /**
      * Main node parameter, it's number of nodes.
@@ -46,6 +53,10 @@ public class JbTreeImpl implements JbTree {
 
     private final JbTreeService treeService;
 
+    private final TypeDescriptor keyTypeDescriptor;
+
+    private final TypeDescriptor valueTypeDescriptor;
+
     /**
      * Create and initialize tree.
      * 
@@ -55,36 +66,41 @@ public class JbTreeImpl implements JbTree {
      *            required node store object
      */
     public JbTreeImpl(final int l, final NodeStore nodeStore, final JbTreeTool tool,
-	    final JbTreeService jbTreeService) {
+	    final JbTreeService jbTreeService, final TypeDescriptor keyTypeDescriptor,
+	    final TypeDescriptor valueTypeDescriptor) {
 	this.l = l;
 	this.nodeStore = Preconditions.checkNotNull(nodeStore);
 	this.tool = Preconditions.checkNotNull(tool);
 	this.treeService = Preconditions.checkNotNull(jbTreeService);
-	Node node = new Node(l, nodeStore.getNextId(), true);
+	this.keyTypeDescriptor = Preconditions.checkNotNull(keyTypeDescriptor,
+		"key TypeDescriptor is null, use .setKeyType in builder");
+	this.valueTypeDescriptor = Preconditions.checkNotNull(valueTypeDescriptor,
+		"value TypeDescriptor is null, use .setValueType in builder");
+	NodeImpl node = new NodeImpl(l, nodeStore.getNextId(), true);
 	rootNodeId = node.getId();
 	this.nodeStore.writeNode(node);
     }
 
     @Override
-    public Integer insert(final Integer key, final Integer value) {
+    public Integer insert(final K key, final V value) {
 	Preconditions.checkNotNull(key);
 	Preconditions.checkNotNull(value);
 	final Stack<Integer> stack = new Stack<Integer>();
-	Integer currentNodeId = treeService.findLeafNodeId(key, stack, rootNodeId);
-	Node currentNode = nodeStore.getAndLock(currentNodeId);
-	currentNode = tool.moveRightLeafNode(currentNode, key);
-	if (currentNode.getValue(key) == null) {
+	Integer currentNodeId = treeService.findLeafNodeId((Integer) key, stack, rootNodeId);
+	NodeImpl currentNode = nodeStore.getAndLock(currentNodeId);
+	currentNode = tool.moveRightLeafNode(currentNode, (Integer) key);
+	if (currentNode.getValue((Integer) key) == null) {
 	    /**
 	     * Key and value have to be inserted
 	     */
-	    Integer tmpValue = value;
-	    Integer tmpKey = key;
+	    Integer tmpValue = (Integer) value;
+	    Integer tmpKey = (Integer) key;
 	    while (true) {
 		if (currentNode.getKeysCount() >= l) {
 		    /**
 		     * There is no free space for key and value
 		     */
-		    final Node newNode = tool.split(currentNode, tmpKey, tmpValue);
+		    final NodeImpl newNode = tool.split(currentNode, tmpKey, tmpValue);
 		    nodeStore.writeNode(newNode);
 		    nodeStore.writeNode(currentNode);
 		    if (stack.empty()) {
@@ -127,26 +143,27 @@ public class JbTreeImpl implements JbTree {
 	    /**
 	     * Key already exists. Rewrite value.
 	     */
-	    Integer oldValue = currentNode.getValue(key);
-	    storeValueIntoNode(currentNode, key, value);
+	    Integer oldValue = currentNode.getValue((Integer) key);
+	    storeValueIntoNode(currentNode, (Integer) key, (Integer) value);
 	    return oldValue;
 	}
     }
 
-    private void storeValueIntoNode(final Node currentNode, final Integer key, final Integer value) {
+    private void storeValueIntoNode(final NodeImpl currentNode, final Integer key,
+	    final Integer value) {
 	currentNode.insert(key, value);
 	nodeStore.writeNode(currentNode);
 	nodeStore.unlockNode(currentNode.getId());
     }
 
     @Override
-    public boolean remove(final Integer key) {
+    public boolean remove(final K key) {
 	Preconditions.checkNotNull(key);
 	final Stack<Integer> stack = new Stack<Integer>();
-	Integer currentNodeId = treeService.findLeafNodeId(key, stack, rootNodeId);
-	Node currentNode = nodeStore.getAndLock(currentNodeId);
-	currentNode = tool.moveRightLeafNode(currentNode, key);
-	if (currentNode.getValue(key) == null) {
+	Integer currentNodeId = treeService.findLeafNodeId((Integer) key, stack, rootNodeId);
+	NodeImpl currentNode = nodeStore.getAndLock(currentNodeId);
+	currentNode = tool.moveRightLeafNode(currentNode, (Integer) key);
+	if (currentNode.getValue((Integer) key) == null) {
 	    /**
 	     * Node doesn't contains key, there is nothing to delete
 	     */
@@ -156,7 +173,7 @@ public class JbTreeImpl implements JbTree {
 	    /**
 	     * Leaf node contains key so remove it.
 	     */
-	    Integer tmpKey = key;
+	    Integer tmpKey = (Integer) key;
 	    currentNode.remove(tmpKey);
 	    nodeStore.writeNode(currentNode);
 	    nodeStore.unlockNode(currentNode.getId());
@@ -165,9 +182,9 @@ public class JbTreeImpl implements JbTree {
     }
 
     @Override
-    public Integer search(final Integer key) {
+    public V search(final K key) {
 	Preconditions.checkNotNull(key);
-	return findAppropriateNode(key).getValue(key);
+	return (V) findAppropriateNode((Integer) key).getValue((Integer) key);
     }
 
     private Node findAppropriateNode(final Integer key) {
@@ -185,9 +202,9 @@ public class JbTreeImpl implements JbTree {
     }
 
     @Override
-    public boolean containsKey(final Integer key) {
+    public boolean containsKey(final K key) {
 	Preconditions.checkNotNull(key);
-	return findAppropriateNode(key).getValue(key) != null;
+	return findAppropriateNode((Integer) key).getValue((Integer) key) != null;
     }
 
     @Override

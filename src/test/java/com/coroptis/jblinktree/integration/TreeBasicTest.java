@@ -31,12 +31,13 @@ import org.slf4j.LoggerFactory;
 import com.coroptis.jblinktree.JbTree;
 import com.coroptis.jblinktree.TreeBuilder;
 import com.coroptis.jblinktree.TreeUtil;
+import com.coroptis.jblinktree.type.Types;
 
 public class TreeBasicTest extends TestCase {
 
     private Logger logger = LoggerFactory.getLogger(TreeBasicTest.class);
 
-    private JbTree tree;
+    private JbTree<Integer, Integer> tree;
 
     private TreeUtil treeUtil;
 
@@ -250,7 +251,8 @@ public class TreeBasicTest extends TestCase {
     @Override
     protected void setUp() throws Exception {
 	super.setUp();
-	tree = TreeBuilder.builder().setL(2).build();
+	tree = TreeBuilder.builder().setL(2).setKeyType(Types.integer())
+		.setValueType(Types.integer()).build();
 	treeUtil = new TreeUtil(tree);
     }
 

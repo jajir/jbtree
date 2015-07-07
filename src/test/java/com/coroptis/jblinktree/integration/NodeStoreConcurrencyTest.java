@@ -31,7 +31,7 @@ import org.slf4j.LoggerFactory;
 
 import com.coroptis.jblinktree.Executer;
 import com.coroptis.jblinktree.IdGeneratorImpl;
-import com.coroptis.jblinktree.Node;
+import com.coroptis.jblinktree.NodeImpl;
 import com.coroptis.jblinktree.NodeStore;
 import com.coroptis.jblinktree.NodeStoreImpl;
 import com.coroptis.jblinktree.Worker;
@@ -81,7 +81,7 @@ public class NodeStoreConcurrencyTest extends TestCase {
     protected void setUp() throws Exception {
 	super.setUp();
 	nodeStore = new NodeStoreImpl(new IdGeneratorImpl(), 2);
-	Node node = new Node(2, 1, true);
+	NodeImpl node = new NodeImpl(2, 1, true);
 	nodeStore.writeNode(node);
     }
 

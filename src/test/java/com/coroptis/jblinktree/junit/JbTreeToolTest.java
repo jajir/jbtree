@@ -28,6 +28,7 @@ import com.coroptis.jblinktree.JbTreeTool;
 import com.coroptis.jblinktree.JbTreeToolImpl;
 import com.coroptis.jblinktree.JblinktreeException;
 import com.coroptis.jblinktree.Node;
+import com.coroptis.jblinktree.NodeImpl;
 import com.coroptis.jblinktree.NodeStore;
 
 /**
@@ -42,9 +43,9 @@ public class JbTreeToolTest extends TestCase {
 
     private NodeStore nodeStore;
 
-    private Node n1;
+    private NodeImpl n1;
 
-    private Node n2;
+    private NodeImpl n2;
 
     @Test
     public void test_findCorrespondingNode() throws Exception {
@@ -199,8 +200,8 @@ public class JbTreeToolTest extends TestCase {
 	super.setUp();
 	nodeStore = EasyMock.createMock(NodeStore.class);
 	jbTreeTool = new JbTreeToolImpl(nodeStore);
-	n1 = EasyMock.createMock(Node.class);
-	n2 = EasyMock.createMock(Node.class);
+	n1 = EasyMock.createMock(NodeImpl.class);
+	n2 = EasyMock.createMock(NodeImpl.class);
     }
 
     @Override

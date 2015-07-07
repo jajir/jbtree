@@ -1,4 +1,4 @@
-package com.coroptis.jblinktree;
+package com.coroptis.jblinktree.type;
 
 /*
  * #%L
@@ -21,26 +21,18 @@ package com.coroptis.jblinktree;
  */
 
 /**
- * Contains data for node.
+ * Interface describing data type entering to tree as key or value.
  * 
  * @author jajir
  * 
  */
-public interface Field {
-
-    public Integer get(int position);
-
-    public void copy(Field src, int srcPos1, int destPos1, int length);
-
-    public void set(int position, Integer value);
+public interface TypeDescriptor {
 
     /**
-     * @return the field
+     * Get maximum length of field.
+     * 
+     * @return maximum length of type.
      */
-    public Integer[] getField();
-
-    public byte[] getBytes();
-
-    public int getLength();
+    public int getMaxLength();
 
 }

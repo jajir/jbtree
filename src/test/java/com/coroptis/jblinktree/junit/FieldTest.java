@@ -26,10 +26,11 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.coroptis.jblinktree.FieldImpl;
 import com.coroptis.jblinktree.Field;
 
 /**
- * Junit test for {@link Field}.
+ * Junit test for {@link FieldImpl}.
  * 
  * @author jajir
  * 
@@ -62,7 +63,7 @@ public class FieldTest extends TestCase {
     @Override
     protected void setUp() throws Exception {
 	super.setUp();
-	field = new Field(3);
+	field = new FieldImpl(3);
     }
 
     @Override

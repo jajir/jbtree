@@ -34,6 +34,7 @@ import com.coroptis.jblinktree.Executer;
 import com.coroptis.jblinktree.JbTree;
 import com.coroptis.jblinktree.TreeBuilder;
 import com.coroptis.jblinktree.Worker;
+import com.coroptis.jblinktree.type.Types;
 
 /**
  * test verify that add and remove operations works in thread environment.
@@ -45,7 +46,7 @@ public class TreeDeleteConcurrencyTest extends TestCase {
 
     private final Logger logger = LoggerFactory.getLogger(TreeDeleteConcurrencyTest.class);
 
-    private JbTree tree;
+    private JbTree<Integer, Integer> tree;
 
     private Random random;
 
@@ -77,7 +78,8 @@ public class TreeDeleteConcurrencyTest extends TestCase {
     @Override
     protected void setUp() throws Exception {
 	super.setUp();
-	tree = TreeBuilder.builder().setL(2).build();
+	tree = TreeBuilder.builder().setL(2).setKeyType(Types.integer())
+		.setValueType(Types.integer()).build();
 	random = new Random();
     }
 
