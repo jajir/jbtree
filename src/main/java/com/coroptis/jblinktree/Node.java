@@ -53,14 +53,6 @@ public interface Node {
     public Integer getP0();
 
     /**
-     * Allows to set P0 value.
-     * 
-     * @param p0
-     *            P0 value, could be <code>null</code>
-     */
-    public void setP0(Integer p0);
-
-    /**
      * Return true when node is empty. Empty means there are no keys in node. In
      * case of non-leaf node there still can be P0 link and max value.
      * 

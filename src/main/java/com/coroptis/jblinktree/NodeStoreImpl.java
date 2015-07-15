@@ -65,7 +65,15 @@ public class NodeStoreImpl implements NodeStore {
 	if (field == null) {
 	    throw new JblinktreeException("There is no node with id '" + nodeId + "'");
 	}
-	return NodeImpl.makeNode(l, nodeId, Arrays.copyOf(field, field.length));
+	/**
+	 * FIXME node should be created without inspecting field. It's not
+	 * thread safe.
+	 */
+	if (field[0].equals(NodeImpl.M)) {
+	    return NodeImpl.makeNode(l, nodeId, true, Arrays.copyOf(field, field.length));
+	} else {
+	    return NodeImpl.makeNode(l, nodeId, false, Arrays.copyOf(field, field.length));
+	}
     }
 
     @Override

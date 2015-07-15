@@ -94,7 +94,7 @@ public class NodeImpl implements Node {
     /**
      * When this value in at P(0) position than it's leaf node.
      */
-    private final static Integer M = -1;
+    public final static Integer M = -1;
 
     private final static Integer EMPTY_NON_LEAF_NODE = -2;
 
@@ -136,8 +136,12 @@ public class NodeImpl implements Node {
      *            required Integer array representing node content.
      * @return created {@link NodeImpl}
      */
-    public static NodeImpl makeNode(final int l, final Integer idNode, final Integer field[]) {
-	NodeImpl n = new NodeImpl(l, idNode, true);
+    public static NodeImpl makeNode(final int l, final Integer idNode, final boolean isLeafNode,
+	    final Integer field[]) {
+	if (isLeafNode && field[0] != M) {
+	    throw new JblinktreeException("leaf tree should have first int M.");
+	}
+	NodeImpl n = new NodeImpl(l, idNode, isLeafNode);
 	n.field = new FieldImpl(field);
 	return n;
     }
@@ -170,16 +174,6 @@ public class NodeImpl implements Node {
     @Override
     public Integer getP0() {
 	return field.get(0);
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.coroptis.jblinktree.Node#setP0(java.lang.Integer)
-     */
-    @Override
-    public void setP0(final Integer p0) {
-	field.set(0, p0);
     }
 
     /*

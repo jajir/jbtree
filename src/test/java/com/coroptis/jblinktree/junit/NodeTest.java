@@ -50,7 +50,7 @@ public class NodeTest extends TestCase {
 
 	assertEquals("Node{id=0, isLeafNode=true, field=[-1, null, null]}", node.toString());
 
-	Node n = NodeImpl.makeNode(2, 0, new Integer[] { 0, 1, 1, 3, -40, 4, 98 });
+	Node n = NodeImpl.makeNode(2, 0, false, new Integer[] { 0, 1, 1, 3, -40, 4, 98 });
 
 	logger.debug(n.toString());
 	assertEquals("Node{id=0, isLeafNode=false, field=[0, 1, 1, 3, -40, 4, 98]}", n.toString());
@@ -62,8 +62,8 @@ public class NodeTest extends TestCase {
 	logger.debug(node.toString());
 
 	verifyNode(new Integer[][] {}, true, null);
-    	assertEquals(null, node.getMaxKey());
-    	assertEquals(null, node.getValue(2));
+	assertEquals(null, node.getMaxKey());
+	assertEquals(null, node.getValue(2));
     }
 
     @Test
@@ -105,7 +105,7 @@ public class NodeTest extends TestCase {
 
     @Test
     public void test_insert_nonLeaf() throws Exception {
-	Node n = NodeImpl.makeNode(2, 0, new Integer[] { 0, 1, 1, 3, 98 });
+	Node n = NodeImpl.makeNode(2, 0, false, new Integer[] { 0, 1, 1, 3, 98 });
 	n.insert(4, -40);
 
 	logger.debug(n.toString());
@@ -126,7 +126,7 @@ public class NodeTest extends TestCase {
 
     @Test
     public void test_insert_nonLeaf_maxKey() throws Exception {
-	Node n = NodeImpl.makeNode(2, 0, new Integer[] { 0, 1, 1, 2, null });
+	Node n = NodeImpl.makeNode(2, 0, false, new Integer[] { 0, 1, 1, 2, null });
 	n.insert(4, 3);
 
 	logger.debug(n.toString());
@@ -145,7 +145,7 @@ public class NodeTest extends TestCase {
 
     @Test
     public void test_insert_nonLeaf_loverKey() throws Exception {
-	Node n = NodeImpl.makeNode(2, 4, new Integer[] { 0, 4, null });
+	Node n = NodeImpl.makeNode(2, 4, false, new Integer[] { 0, 4, null });
 	n.insert(3, -30);
 
 	logger.debug(n.toString());
@@ -183,7 +183,7 @@ public class NodeTest extends TestCase {
 
     @Test
     public void test_remove_nonLeaf_last() throws Exception {
-	Node n = NodeImpl.makeNode(2, 22, new Integer[] { 13, 7, 16, 8, 21, 9, null });
+	Node n = NodeImpl.makeNode(2, 22, false, new Integer[] { 13, 7, 16, 8, 21, 9, null });
 	Boolean ret = n.remove(9);
 
 	logger.debug(n.toString());
@@ -214,7 +214,7 @@ public class NodeTest extends TestCase {
 
     @Test
     public void test_remove_nonLeaf_P0_one() throws Exception {
-	node = NodeImpl.makeNode(3, 2, new Integer[] { 0, 1, 1, 3, 999 });
+	node = NodeImpl.makeNode(3, 2, false, new Integer[] { 0, 1, 1, 3, 999 });
 	logger.debug(node.toString());
 	Boolean ret = node.remove(1);
 
@@ -226,7 +226,7 @@ public class NodeTest extends TestCase {
 
     @Test
     public void test_remove_nonLeaf_P0_zero() throws Exception {
-	node = NodeImpl.makeNode(3, 2, new Integer[] { 1, 2, 888 });
+	node = NodeImpl.makeNode(3, 2, false, new Integer[] { 1, 2, 888 });
 	logger.debug(node.toString());
 	Boolean ret = node.remove(2);
 
@@ -290,7 +290,7 @@ public class NodeTest extends TestCase {
 
     @Test
     public void test_moveTopHalfOfDataTo_node() throws Exception {
-	Node n = NodeImpl.makeNode(2, 10, new Integer[] { 0, 1, 1, 2, 5, 9, null });
+	Node n = NodeImpl.makeNode(2, 10, false, new Integer[] { 0, 1, 1, 2, 5, 9, null });
 	logger.debug("node  " + n.toString());
 	assertEquals("key count is not correct", 3, n.getKeysCount());
 
@@ -360,7 +360,7 @@ public class NodeTest extends TestCase {
 
     @Test
     public void test_getCorrespondingNodeId_return_link() throws Exception {
-	Node n = NodeImpl.makeNode(2, 2, new Integer[] { 0, 1, 2, 3, 33 });
+	Node n = NodeImpl.makeNode(2, 2, false, new Integer[] { 0, 1, 2, 3, 33 });
 
 	logger.debug(n.toString());
 
@@ -372,7 +372,7 @@ public class NodeTest extends TestCase {
 
     @Test
     public void test_getCorrespondingNodeId_simple() throws Exception {
-	Node n = NodeImpl.makeNode(2, 2, new Integer[] { 0, 2, 1, 3, 23 });
+	Node n = NodeImpl.makeNode(2, 2, false, new Integer[] { 0, 2, 1, 3, 23 });
 
 	logger.debug(n.toString());
 
@@ -384,7 +384,7 @@ public class NodeTest extends TestCase {
 
     @Test
     public void test_updateNodeValue_value_was_updated() throws Exception {
-	Node n = NodeImpl.makeNode(2, 2, new Integer[] { 0, 2, 1, 3, 23 });
+	Node n = NodeImpl.makeNode(2, 2, false, new Integer[] { 0, 2, 1, 3, 23 });
 
 	boolean ret = n.updateNodeValue(0, 3);
 
@@ -393,7 +393,7 @@ public class NodeTest extends TestCase {
 
     @Test
     public void test_updateNodeValue_value_was_not_updated() throws Exception {
-	Node n = NodeImpl.makeNode(2, 2, new Integer[] { 0, 2, 1, 3, 23 });
+	Node n = NodeImpl.makeNode(2, 2, false, new Integer[] { 0, 2, 1, 3, 23 });
 
 	boolean ret = n.updateNodeValue(0, 2);
 
@@ -402,7 +402,7 @@ public class NodeTest extends TestCase {
 
     @Test
     public void test_updateNodeValue_missing_node_id() throws Exception {
-	Node n = NodeImpl.makeNode(2, 2, new Integer[] { 0, 2, 1, 3, 23 });
+	Node n = NodeImpl.makeNode(2, 2, false, new Integer[] { 0, 2, 1, 3, 23 });
 
 	boolean ret = n.updateNodeValue(10, 2);
 
@@ -452,7 +452,7 @@ public class NodeTest extends TestCase {
 
     @Test
     public void test_getKeysCount_leaf() throws Exception {
-	Node n = NodeImpl.makeNode(2, 2, new Integer[] { -1, 10, 1, 10, null });
+	Node n = NodeImpl.makeNode(2, 2, true, new Integer[] { -1, 10, 1, 10, null });
 
 	assertEquals(1, n.getKeysCount());
     }
@@ -466,14 +466,14 @@ public class NodeTest extends TestCase {
 
     @Test
     public void test_getKeysCount_nonLeaf() throws Exception {
-	Node n = NodeImpl.makeNode(2, 2, new Integer[] { 0, 2, 1, 3, 23 });
+	Node n = NodeImpl.makeNode(2, 2, false, new Integer[] { 0, 2, 1, 3, 23 });
 
 	assertEquals(2, n.getKeysCount());
     }
 
     @Test
     public void test_getKeysCount_nonLeaf_1() throws Exception {
-	Node n = NodeImpl.makeNode(2, 2, new Integer[] { 0, 2, 23 });
+	Node n = NodeImpl.makeNode(2, 2, false, new Integer[] { 0, 2, 23 });
 
 	assertEquals(1, n.getKeysCount());
     }
@@ -487,7 +487,7 @@ public class NodeTest extends TestCase {
 
     @Test
     public void test_writeTo() throws Exception {
-	Node n = NodeImpl.makeNode(2, 2, new Integer[] { 0, 2, 1, 3, 23 });
+	Node n = NodeImpl.makeNode(2, 2, false, new Integer[] { 0, 2, 1, 3, 23 });
 
 	StringBuilder buff = new StringBuilder();
 	n.writeTo(buff, "    ");

@@ -137,6 +137,7 @@ public class JbTreeToolImpl implements JbTreeTool {
 	Node newRoot = NodeImpl.makeNode(
 		currentRootNode.getL(),
 		nodeStore.getNextId(),
+		false,
 		new Integer[] { currentRootNode.getId(), currentRootNode.getMaxKey(),
 			newNode.getId(), newNode.getMaxKey(), null });
 	nodeStore.writeNode(newRoot);

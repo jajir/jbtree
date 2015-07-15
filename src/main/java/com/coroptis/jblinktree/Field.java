@@ -58,5 +58,10 @@ public interface Field<K, V> {
     public byte[] getBytes();
 
     public int getLength();
+    
+    public byte getFlag();
+    
+    public void setFlag(byte b);
+    
 
 }

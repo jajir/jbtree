@@ -37,15 +37,13 @@ import com.coroptis.jblinktree.type.TypeDescriptorInteger;
  */
 public class FieldImpl<K, V> implements Field<K, V> {
 
-    private final int KEY_LENGTH = 4;
-
-    private final int VALUE_LENGTH = 4;
-
     private byte[] field;
 
     private final TypeDescriptor keyTypeDescriptor;
 
     private final TypeDescriptor valueTypeDescriptor;
+
+    private byte flag;
 
     public FieldImpl(final int numberOfField) {
 	keyTypeDescriptor = new TypeDescriptorInteger();
@@ -66,7 +64,7 @@ public class FieldImpl<K, V> implements Field<K, V> {
     private int getPosition(int position) {
 	final int p1 = position >>> 1;
 	final int p2 = (position + 1) >>> 1;
-	return p1 * KEY_LENGTH + p2 * VALUE_LENGTH;
+	return p1 * keyTypeDescriptor.getMaxLength() + p2 * valueTypeDescriptor.getMaxLength();
     }
 
     /*
@@ -105,7 +103,7 @@ public class FieldImpl<K, V> implements Field<K, V> {
      * int, int, int)
      */
     @Override
-    public void copy(Field src, int srcPos1, int destPos1, int length) {
+    public void copy(Field<K, V> src, int srcPos1, int destPos1, int length) {
 	int p = getPosition(srcPos1 + length) - getPosition(srcPos1);
 	int srcPos = getPosition(srcPos1);
 	int destPos = getPosition(destPos1);
@@ -155,8 +153,9 @@ public class FieldImpl<K, V> implements Field<K, V> {
     @Override
     public int getLength() {
 	int length = field.length - 4; // remove link length
-	int rest = length % (KEY_LENGTH + VALUE_LENGTH);
-	int out = length / (KEY_LENGTH + VALUE_LENGTH) * 2;
+	int rest = length % (keyTypeDescriptor.getMaxLength() + valueTypeDescriptor.getMaxLength());
+	int out = length / (keyTypeDescriptor.getMaxLength() + valueTypeDescriptor.getMaxLength())
+		* 2;
 	if (rest == 0) {
 	    return out + 1;
 	} else {
@@ -202,6 +201,16 @@ public class FieldImpl<K, V> implements Field<K, V> {
     public void setValue(int position, V value) {
 	// TODO Auto-generated method stub
 
+    }
+
+    @Override
+    public byte getFlag() {
+	return flag;
+    }
+
+    @Override
+    public void setFlag(final byte flag) {
+	this.flag = flag;
     }
 
 }

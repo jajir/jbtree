@@ -29,7 +29,7 @@ package com.coroptis.jblinktree.type;
 public interface TypeDescriptor {
 
     /**
-     * Get maximum length of field.
+     * Get maximum length of field when it's stored in bytes.
      * 
      * @return maximum length of type.
      */
