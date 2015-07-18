@@ -43,8 +43,6 @@ public class FieldImpl<K, V> implements Field<K, V> {
 
     private final TypeDescriptor valueTypeDescriptor;
 
-    private byte flag;
-
     public FieldImpl(final int numberOfField) {
 	keyTypeDescriptor = new TypeDescriptorInteger();
 	valueTypeDescriptor = new TypeDescriptorInteger();
@@ -61,10 +59,16 @@ public class FieldImpl<K, V> implements Field<K, V> {
 	}
     }
 
+    public FieldImpl(final byte[] field) {
+	this(0);
+	this.field = new byte[field.length ];
+	System.arraycopy(field, 0, this.field, 0, this.field.length);
+    }
+
     private int getPosition(int position) {
 	final int p1 = position >>> 1;
 	final int p2 = (position + 1) >>> 1;
-	return p1 * keyTypeDescriptor.getMaxLength() + p2 * valueTypeDescriptor.getMaxLength();
+	return p1 * keyTypeDescriptor.getMaxLength() + p2 * valueTypeDescriptor.getMaxLength() + 1;
     }
 
     /*
@@ -108,6 +112,7 @@ public class FieldImpl<K, V> implements Field<K, V> {
 	int srcPos = getPosition(srcPos1);
 	int destPos = getPosition(destPos1);
 	System.arraycopy(src.getBytes(), srcPos, field, destPos, p);
+	setFlag(src.getFlag());
     }
 
     /*
@@ -157,9 +162,9 @@ public class FieldImpl<K, V> implements Field<K, V> {
 	int out = length / (keyTypeDescriptor.getMaxLength() + valueTypeDescriptor.getMaxLength())
 		* 2;
 	if (rest == 0) {
-	    return out + 1;
+	    return out ;
 	} else {
-	    return out + 2;
+	    return out + 1;
 	}
     }
 
@@ -181,14 +186,12 @@ public class FieldImpl<K, V> implements Field<K, V> {
 
     @Override
     public K getKey(int position) {
-	// TODO Auto-generated method stub
-	return null;
+	return (K)load(field, getPosition(position));
     }
 
     @Override
     public V getValue(int position) {
-	// TODO Auto-generated method stub
-	return null;
+	return (V)load(field, getPosition(position));
     }
 
     @Override
@@ -205,12 +208,12 @@ public class FieldImpl<K, V> implements Field<K, V> {
 
     @Override
     public byte getFlag() {
-	return flag;
+	return field[0];
     }
 
     @Override
     public void setFlag(final byte flag) {
-	this.flag = flag;
+	this.field[0] = flag;
     }
 
 }

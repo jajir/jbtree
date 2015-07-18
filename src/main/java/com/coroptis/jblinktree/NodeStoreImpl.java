@@ -34,7 +34,7 @@ import com.google.common.base.Preconditions;
  */
 public class NodeStoreImpl implements NodeStore {
 
-    private final Map<Integer, Integer[]> nodes;
+    private final Map<Integer, byte[]> nodes;
 
     private final NodeLocks nodeLocks;
 
@@ -45,7 +45,7 @@ public class NodeStoreImpl implements NodeStore {
     public NodeStoreImpl(final IdGenerator idGenerator, final Integer l) {
 	this.idGenerator = Preconditions.checkNotNull(idGenerator);
 	this.l = Preconditions.checkNotNull(l);
-	nodes = new ConcurrentHashMap<Integer, Integer[]>();
+	nodes = new ConcurrentHashMap<Integer, byte[]>();
 	nodeLocks = new NodeLocks();
     }
 
@@ -61,7 +61,7 @@ public class NodeStoreImpl implements NodeStore {
 
     @Override
     public Node get(final Integer nodeId) {
-	Integer[] field = nodes.get(Preconditions.checkNotNull(nodeId));
+	byte[] field = nodes.get(Preconditions.checkNotNull(nodeId));
 	if (field == null) {
 	    throw new JblinktreeException("There is no node with id '" + nodeId + "'");
 	}
@@ -69,11 +69,7 @@ public class NodeStoreImpl implements NodeStore {
 	 * FIXME node should be created without inspecting field. It's not
 	 * thread safe.
 	 */
-	if (field[0].equals(NodeImpl.M)) {
-	    return NodeImpl.makeNode(l, nodeId, true, Arrays.copyOf(field, field.length));
-	} else {
-	    return NodeImpl.makeNode(l, nodeId, false, Arrays.copyOf(field, field.length));
-	}
+	return NodeImpl.makeNodeFromBytes(l, nodeId, Arrays.copyOf(field, field.length));
     }
 
     @Override
@@ -87,7 +83,7 @@ public class NodeStoreImpl implements NodeStore {
 	Preconditions.checkNotNull(node.getId());
 	Preconditions.checkNotNull(node);
 	node.verify();
-	nodes.put(node.getId(), node.getField());
+	nodes.put(node.getId(), node.getFieldBytes());
     }
 
     @Override

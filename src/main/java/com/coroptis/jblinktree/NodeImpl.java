@@ -87,18 +87,18 @@ import com.google.common.base.Preconditions;
 public class NodeImpl implements Node {
 
     /**
+     * When this value in at P(0) position than it's leaf node.
+     */
+    public final static byte M = -77;
+
+    /**
      * Main node parameter, it's number of nodes.
      */
     private final int l;
 
-    /**
-     * When this value in at P(0) position than it's leaf node.
-     */
-    public final static Integer M = -1;
+    private final int id;
 
     private final static Integer EMPTY_NON_LEAF_NODE = -2;
-
-    private final Integer id;
 
     private Field field;
 
@@ -119,9 +119,9 @@ public class NodeImpl implements Node {
 	/**
 	 * There is three position even in empty node: P0, max key and link.
 	 */
-	field = new FieldImpl(3);
+	field = new FieldImpl(1);
 	if (isLeafNode) {
-	    field.set(0, M);
+	    field.setFlag(M);
 	}
     }
 
@@ -136,12 +136,21 @@ public class NodeImpl implements Node {
      *            required Integer array representing node content.
      * @return created {@link NodeImpl}
      */
-    public static NodeImpl makeNode(final int l, final Integer idNode, final boolean isLeafNode,
-	    final Integer field[]) {
+    public static NodeImpl makeNodeFromIntegers(final int l, final Integer idNode,
+	    final boolean isLeafNode, final Integer field[]) {
 	if (isLeafNode && field[0] != M) {
 	    throw new JblinktreeException("leaf tree should have first int M.");
 	}
 	NodeImpl n = new NodeImpl(l, idNode, isLeafNode);
+	n.field = new FieldImpl(field);
+	if (isLeafNode) {
+	    n.field.setFlag(NodeImpl.M);
+	}
+	return n;
+    }
+
+    public static NodeImpl makeNodeFromBytes(final int l, final int idNode, final byte field[]) {
+	NodeImpl n = new NodeImpl(l, idNode, field[0] == M);
 	n.field = new FieldImpl(field);
 	return n;
     }
@@ -193,14 +202,7 @@ public class NodeImpl implements Node {
      */
     @Override
     public int getKeysCount() {
-	if (isLeafNode()) {
-	    return (field.getLength() - 3) / 2;
-	} else {
-	    if (field.get(1) == null) {
-		return 0;
-	    }
-	    return (field.getLength() - 1) / 2;
-	}
+	return (field.getLength() - 1) / 2;
     }
 
     /*
@@ -214,19 +216,19 @@ public class NodeImpl implements Node {
 	Preconditions.checkNotNull(key);
 	Preconditions.checkNotNull(value);
 	if (isLeafNode()) {
-	    for (int i = 1; i < field.getLength() - 2; i = i + 2) {
+	    for (int i = 1; i < field.getLength() - 1; i = i + 2) {
 		if (field.get(i) == key) {
 		    /**
 		     * Rewrite value.
 		     */
-		    field.set(i + 1, value);
+		    field.set(i - 1, value);
 		    return;
 		} else if (field.get(i) > key) {
 		    couldInsertedKey();
 		    /**
 		     * given value should be inserted 1 before current index
 		     */
-		    insertToPosition(key, value, i);
+		    insertToPosition(key, value, i - 1);
 		    return;
 		}
 	    }
@@ -234,8 +236,7 @@ public class NodeImpl implements Node {
 	    /**
 	     * New key is bigger than all others so should be at the end.
 	     */
-	    insertToPosition(key, value, field.getLength() - 2);
-	    setMaxKeyValue(key);
+	    insertToPosition(key, value, field.getLength() - 1);
 	} else {
 	    for (int i = 1; i < field.getLength() - 1; i = i + 2) {
 		if (key.equals(field.get(i))) {
@@ -249,7 +250,7 @@ public class NodeImpl implements Node {
 		    /**
 		     * given value should be inserted 1 before current index
 		     */
-		    insertToPosition(value, key, i - 1);
+		    insertToPosition(key, value, i - 1);
 		    return;
 		}
 	    }
@@ -257,7 +258,7 @@ public class NodeImpl implements Node {
 	    /**
 	     * New key is bigger than all others so should be at the end.
 	     */
-	    insertToPosition(value, key, field.getLength() - 1);
+	    insertToPosition(key, value, field.getLength() - 1);
 	}
     }
 
@@ -266,7 +267,7 @@ public class NodeImpl implements Node {
      * {@link JblinktreeException}.
      */
     private void couldInsertedKey() {
-	if (field.getLength() >= l * 2 + 2) {
+	if (getKeysCount() >= l) {
 	    throw new JblinktreeException("Leaf (" + id
 		    + ") is full another value can't be inserted.");
 	}
@@ -287,8 +288,8 @@ public class NodeImpl implements Node {
 	if (targetIndex > 0) {
 	    field2.copy(field, 0, 0, targetIndex);
 	}
-	field2.set(targetIndex, key);
-	field2.set(targetIndex + 1, value);
+	field2.set(targetIndex, value);
+	field2.set(targetIndex + 1, key);
 	field2.copy(field, targetIndex, targetIndex + 2, field.getLength() - targetIndex);
 	field = field2;
     }
@@ -301,30 +302,13 @@ public class NodeImpl implements Node {
     @Override
     public boolean remove(final Integer key) {
 	Preconditions.checkNotNull(key);
-	if (!isLeafNode() && field.getLength() == 3) {
-	    if (key.equals(field.get(1))) {
-		/**
-		 * When last pointer is removed, null in field[0] means there is
-		 * no value, but it's not a leaf.
-		 */
-		field.set(0, EMPTY_NON_LEAF_NODE);
-		field.set(1, null);
-		return true;
-	    }
-	    return false;
-	}
 	for (int i = 1; i < field.getLength() - 1; i = i + 2) {
 	    if (key.equals(field.get(i))) {
 		/**
 		 * Remove key and value.
 		 */
 		if (isLeafNode()) {
-		    removeFromPosition(i);
-		    if (field.getLength() > 3) {
-			setMaxKeyValue(field.get(field.getLength() - 4));
-		    } else {
-			setMaxKeyValue(null);
-		    }
+		    removeFromPosition(i - 1);
 		} else {
 		    removeFromPosition(i - 1);
 		}
@@ -394,35 +378,19 @@ public class NodeImpl implements Node {
 	if (getKeysCount() < 1) {
 	    throw new JblinktreeException("In node " + id + " are no values to move.");
 	}
-	if (isLeafNode()) {
-	    // copy top half to empty node
-	    final int startKeyNo = getKeysCount() / 2;
-	    final int startIndex = startKeyNo * 2 + 1;
-	    final int length = field.getLength() - startIndex;
-	    node.field = new FieldImpl(length + 1);
-	    node.field.copy(field, startIndex, 1, length);
+	// copy top half to empty node
+	final int startKeyNo = getKeysCount() / 2;
+	final int startIndex = startKeyNo * 2;
+	final int length = field.getLength() - startIndex;
+	node.field = new FieldImpl(length);
+	node.field.copy(field, startIndex, 0, length);
 
-	    // remove copied data from this node
-	    Field field2 = new FieldImpl(startIndex + 2);
-	    field2.copy(field, 0, 0, startIndex);
-	    field = field2;
-	    setLink(node.getId());
-	    setMaxKeyValue(field.get(field.getLength() - 4));
-	    node.field.set(0, M);
-	} else {
-	    // copy top half to empty node
-	    final int startKeyNo = (getKeysCount()) / 2 - 1;
-	    final int startIndex = startKeyNo * 2 + 2;
-	    final int length = field.getLength() - startIndex;
-	    node.field = new FieldImpl(length);
-	    node.field.copy(field, startIndex, 0, length);
-
-	    // remove copied data from this node
-	    Field field2 = new FieldImpl(startIndex + 1);
-	    field2.copy(field, 0, 0, startIndex);
-	    field = field2;
-	    setLink(node.getId());
-	}
+	// remove copied data from this node
+	Field field2 = new FieldImpl(startIndex + 1);
+	field2.copy(field, 0, 0, startIndex);
+	field = field2;
+	setLink(node.getId());
+	node.field.setFlag(field.getFlag());
     }
 
     /*
@@ -432,7 +400,11 @@ public class NodeImpl implements Node {
      */
     @Override
     public Integer getMaxKey() {
-	return field.get(field.getLength() - 2);
+	if (isEmpty()) {
+	    return null;
+	} else {
+	    return field.get(field.getLength() - 2);
+	}
     }
 
     /**
@@ -452,7 +424,9 @@ public class NodeImpl implements Node {
 	    }
 	    buff.append(field.get(i));
 	}
-	buff.append("]}");
+	buff.append("], flag=");
+	buff.append(field.getFlag());
+	buff.append("}");
 	return buff.toString();
     }
 
@@ -473,7 +447,8 @@ public class NodeImpl implements Node {
      */
     @Override
     public boolean isLeafNode() {
-	return M.equals(field.get(0));
+	return M == field.getFlag();
+	// return ((int)M)==(int)field.get(0);
     }
 
     /*
@@ -529,13 +504,14 @@ public class NodeImpl implements Node {
      */
     @Override
     public Integer getValue(final Integer key) {
+	// TODO it's same as getCorrespondingNodeId
 	Preconditions.checkNotNull(key);
 	if (!isLeafNode()) {
 	    throw new JblinktreeException("Non-leaf node '" + id + "' doesn't have leaf value.");
 	}
-	for (int i = 1; i < field.getLength() - 2; i = i + 2) {
+	for (int i = 1; i < field.getLength() - 1; i = i + 2) {
 	    if (key.equals(field.get(i))) {
-		return field.get(i + 1);
+		return field.get(i - 1);
 	    }
 	}
 	return null;
@@ -586,7 +562,11 @@ public class NodeImpl implements Node {
      */
     @Override
     public Integer getMaxValue() {
-	return field.get(field.getLength() - 2);
+	if (isEmpty()) {
+	    return null;
+	} else {
+	    return field.get(field.getLength() - 2);
+	}
     }
 
     /*
@@ -723,6 +703,11 @@ public class NodeImpl implements Node {
     @Override
     public Integer[] getField() {
 	return field.getField();
+    }
+
+    @Override
+    public byte[] getFieldBytes() {
+	return field.getBytes();
     }
 
 }

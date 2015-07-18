@@ -215,6 +215,9 @@ public interface Node {
     /**
      * @return the field
      */
+    @Deprecated
     public Integer[] getField();
+
+    public byte[] getFieldBytes();
 
 }

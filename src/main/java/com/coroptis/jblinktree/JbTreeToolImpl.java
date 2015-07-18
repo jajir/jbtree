@@ -134,7 +134,7 @@ public class JbTreeToolImpl implements JbTreeTool {
     @Override
     public Integer splitRootNode(final Node currentRootNode, final Node newNode) {
 	// TODO consider case when new node is smaller that currentRootNode
-	Node newRoot = NodeImpl.makeNode(
+	Node newRoot = NodeImpl.makeNodeFromIntegers(
 		currentRootNode.getL(),
 		nodeStore.getNextId(),
 		false,

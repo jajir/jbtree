@@ -20,14 +20,17 @@ package com.coroptis.jblinktree.junit;
  * #L%
  */
 
-import junit.framework.TestCase;
+import static org.junit.Assert.*;
+import static org.junit.Assert.assertNull;
 
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.coroptis.jblinktree.FieldImpl;
 import com.coroptis.jblinktree.Field;
+import com.coroptis.jblinktree.FieldImpl;
 
 /**
  * Junit test for {@link FieldImpl}.
@@ -35,7 +38,7 @@ import com.coroptis.jblinktree.Field;
  * @author jajir
  * 
  */
-public class FieldTest extends TestCase {
+public class FieldTest {
 
     private final Logger logger = LoggerFactory.getLogger(FieldTest.class);
 
@@ -55,21 +58,53 @@ public class FieldTest extends TestCase {
     }
 
     @Test
-    public void test_toString() throws Exception {
-	logger.debug(field.toString());
-	assertEquals("Field{field=[-128, 0, 0, 0, -128, 0, 0, 0, -128, 0, 0, 0]}", field.toString());
+    public void test_length_2() throws Exception {
+	FieldImpl<Integer, Integer> f = new FieldImpl<Integer, Integer>(new Integer[] { 10, 1, 30 });
+
+	assertEquals(3, f.getLength());
     }
 
-    @Override
-    protected void setUp() throws Exception {
-	super.setUp();
+    @Test
+    public void test_length_3() throws Exception {
+	FieldImpl<Integer, Integer> f = new FieldImpl<Integer, Integer>(new Integer[] { 10, 1, 20,
+		2, 30 });
+
+	assertEquals(5, f.getLength());
+    }
+
+    @Test
+    public void test_getKey() throws Exception {
+	FieldImpl<Integer, Integer> f = new FieldImpl<Integer, Integer>(new Integer[] { 10, 1, 20,
+		2, 30 });
+
+	assertEquals(Integer.valueOf(2), f.getKey(3));
+    }
+
+    @Test
+    public void test_get() throws Exception {
+	FieldImpl<Integer, Integer> f = new FieldImpl<Integer, Integer>(new Integer[] { 10, 1, 20,
+		2, 30 });
+
+	assertEquals(Integer.valueOf(10), f.get(0));
+	assertEquals(Integer.valueOf(1), f.get(1));
+	assertEquals(Integer.valueOf(20), f.get(2));
+	assertEquals(Integer.valueOf(2), f.get(3));
+    }
+
+    @Test
+    public void test_toString() throws Exception {
+	logger.debug(field.toString());
+	assertEquals("Field{field=[0, -128, 0, 0, 0, -128, 0, 0, 0, -128, 0, 0, 0]}", field.toString());
+    }
+
+    @Before
+    public void setUp() throws Exception {
 	field = new FieldImpl(3);
     }
 
-    @Override
-    protected void tearDown() throws Exception {
+    @After
+    public void tearDown() throws Exception {
 	field = null;
-	super.tearDown();
     }
 
 }
