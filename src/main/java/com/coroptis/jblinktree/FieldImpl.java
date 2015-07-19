@@ -39,25 +39,32 @@ public class FieldImpl<K, V> implements Field<K, V> {
 
     private byte[] field;
 
-    private final TypeDescriptor keyTypeDescriptor;
+    private final TypeDescriptor<K> keyTypeDescriptor;
 
-    private final TypeDescriptor valueTypeDescriptor;
+    private final TypeDescriptor<V> valueTypeDescriptor;
 
-    public FieldImpl(final int numberOfField) {
-	keyTypeDescriptor = new TypeDescriptorInteger();
-	valueTypeDescriptor = new TypeDescriptorInteger();
+    private final TypeDescriptor<Integer> linkTypeDescriptor;
+
+    public FieldImpl(final int numberOfField, final TypeDescriptor<K> keyTypeDescriptor,
+	    final TypeDescriptor<V> valueTypeDescriptor) {
+	// FIXME move it out side.
+	linkTypeDescriptor = new TypeDescriptorInteger();
+	this.keyTypeDescriptor = keyTypeDescriptor;
+	this.valueTypeDescriptor = valueTypeDescriptor;
 	this.field = new byte[getPosition(numberOfField)];
     }
 
-    public FieldImpl(final Integer[] field) {
-	this(field.length);
+    public FieldImpl(final Integer[] field, final TypeDescriptor<K> keyTypeDescriptor,
+	    final TypeDescriptor<V> valueTypeDescriptor) {
+	this(field.length, keyTypeDescriptor, valueTypeDescriptor);
 	for (int i = 0; i < field.length; i++) {
 	    set(i, field[i]);
 	}
     }
 
-    public FieldImpl(final byte[] field) {
-	this(0);
+    public FieldImpl(final byte[] field, final TypeDescriptor<K> keyTypeDescriptor,
+	    final TypeDescriptor<V> valueTypeDescriptor) {
+	this(0, keyTypeDescriptor, valueTypeDescriptor);
 	this.field = new byte[field.length];
 	System.arraycopy(field, 0, this.field, 0, this.field.length);
     }
@@ -180,22 +187,22 @@ public class FieldImpl<K, V> implements Field<K, V> {
 
     @Override
     public K getKey(int position) {
-	return (K) load(field, getPosition(position));
+	return keyTypeDescriptor.load(field, getPosition(position));
     }
 
     @Override
     public V getValue(int position) {
-	return (V) load(field, getPosition(position));
+	return valueTypeDescriptor.load(field, position);
     }
 
     @Override
     public void setKey(int position, K value) {
-	save(field, getPosition(position), (Integer) value);
+	keyTypeDescriptor.save(field, getPosition(position), value);
     }
 
     @Override
     public void setValue(int position, V value) {
-	save(field, getPosition(position), (Integer) value);
+	valueTypeDescriptor.save(field, getPosition(position), value);
     }
 
     @Override
@@ -206,6 +213,16 @@ public class FieldImpl<K, V> implements Field<K, V> {
     @Override
     public void setFlag(final byte flag) {
 	this.field[0] = flag;
+    }
+
+    @Override
+    public Integer getLink() {
+	return linkTypeDescriptor.load(field, field.length - 4);
+    }
+
+    @Override
+    public void setLink(final Integer link) {
+	linkTypeDescriptor.save(field, field.length - 4, link);
     }
 
 }

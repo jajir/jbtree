@@ -24,6 +24,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import com.coroptis.jblinktree.type.TypeDescriptor;
+import com.coroptis.jblinktree.type.TypeDescriptorInteger;
 import com.google.common.base.Preconditions;
 
 /**
@@ -84,14 +86,12 @@ import com.google.common.base.Preconditions;
  * @author jajir
  * 
  */
-public class NodeImpl implements Node {
+public class NodeImpl<K, V> implements Node<K, V> {
 
     /**
      * When this value in at P(0) position than it's leaf node.
      */
     public final static byte M = -77;
-
-    public final static Integer EMPTY_INT = -1;
 
     /**
      * Main node parameter, it's number of nodes.
@@ -100,9 +100,11 @@ public class NodeImpl implements Node {
 
     private final int id;
 
-    private final static Integer EMPTY_NON_LEAF_NODE = -2;
+    private final TypeDescriptor<K> keyTypeDescriptor;
 
-    private Field field;
+    private final TypeDescriptor<V> valueTypeDescriptor;
+
+    private Field<K, V> field;
 
     /**
      * Create and initialize node.
@@ -115,13 +117,16 @@ public class NodeImpl implements Node {
      *            required value, when it's <code>true</code> than it's leaf
      *            node otherwise it's non-leaf node.
      */
-    public NodeImpl(final int l, final Integer nodeId, final boolean isLeafNode) {
+    public NodeImpl(final int l, final Integer nodeId, final boolean isLeafNode,
+	    final TypeDescriptor keyTypeDescriptor, final TypeDescriptor valueTypeDescriptor) {
 	this.l = l;
 	this.id = nodeId;
+	this.keyTypeDescriptor = keyTypeDescriptor;
+	this.valueTypeDescriptor = valueTypeDescriptor;
 	/**
 	 * There is three position even in empty node: P0, max key and link.
 	 */
-	field = new FieldImpl(1);
+	field = new FieldImpl<K, V>(1, keyTypeDescriptor, valueTypeDescriptor);
 	if (isLeafNode) {
 	    field.setFlag(M);
 	}
@@ -139,53 +144,48 @@ public class NodeImpl implements Node {
      *            required Integer array representing node content.
      * @return created {@link NodeImpl}
      */
-    public static NodeImpl makeNodeFromIntegers(final int l, final Integer idNode,
-	    final boolean isLeafNode, final Integer field[]) {
+    public static NodeImpl<Integer, Integer> makeNodeFromIntegers(final int l,
+	    final Integer idNode, final boolean isLeafNode, final Integer field[]) {
 	if (isLeafNode && field[0] != M) {
 	    throw new JblinktreeException("leaf tree should have first int M.");
 	}
-	NodeImpl n = new NodeImpl(l, idNode, isLeafNode);
-	n.field = new FieldImpl(field);
+	// TODO type descriptors are created duplicitely.
+	NodeImpl<Integer, Integer> n = new NodeImpl<Integer, Integer>(l, idNode, isLeafNode,
+		new TypeDescriptorInteger(), new TypeDescriptorInteger());
+	n.field = new FieldImpl<Integer, Integer>(field, new TypeDescriptorInteger(),
+		new TypeDescriptorInteger());
 	if (isLeafNode) {
 	    n.field.setFlag(NodeImpl.M);
 	}
 	return n;
     }
 
-    public static NodeImpl makeNodeFromBytes(final int l, final int idNode, final byte field[]) {
-	NodeImpl n = new NodeImpl(l, idNode, field[0] == M);
-	n.field = new FieldImpl(field);
+    /**
+     * TODO this shoudl move to separate class. Functionality creating node from
+     * byte field.
+     * 
+     * @param l
+     * @param idNode
+     * @param field
+     * @return
+     */
+    public static NodeImpl<Integer, Integer> makeNodeFromBytes(final int l, final int idNode,
+	    final byte field[]) {
+	NodeImpl<Integer, Integer> n = new NodeImpl<Integer, Integer>(l, idNode, field[0] == M,
+		new TypeDescriptorInteger(), new TypeDescriptorInteger());
+	n.field = new FieldImpl<Integer, Integer>(field, new TypeDescriptorInteger(),
+		new TypeDescriptorInteger());
 	return n;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.coroptis.jblinktree.Node#getLink()
-     */
     @Override
     public Integer getLink() {
-	return field.get(field.getLength() - 1);
+	return field.getLink();
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.coroptis.jblinktree.Node#setLink(java.lang.Integer)
-     */
     @Override
     public void setLink(final Integer link) {
-	field.set(field.getLength() - 1, link);
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.coroptis.jblinktree.Node#getP0()
-     */
-    @Override
-    public Integer getP0() {
-	return field.get(0);
+	field.setLink(link);
     }
 
     /*
@@ -215,7 +215,10 @@ public class NodeImpl implements Node {
      * java.lang.Integer)
      */
     @Override
-    public void insert(final Integer key, final Integer value) {
+    public void insert(final K key1, final V value1) {
+	// FIXME don't convert K,V to Integer
+	Integer key = (Integer) key1;
+	Integer value = (Integer) value1;
 	Preconditions.checkNotNull(key);
 	Preconditions.checkNotNull(value);
 	if (isLeafNode()) {
@@ -287,7 +290,7 @@ public class NodeImpl implements Node {
      *            required target index in field
      */
     private void insertToPosition(final Integer key, final Integer value, final int targetIndex) {
-	Field field2 = new FieldImpl(field.getLength() + 2);
+	Field field2 = new FieldImpl(field.getLength() + 2, keyTypeDescriptor, valueTypeDescriptor);
 	if (targetIndex > 0) {
 	    field2.copy(field, 0, 0, targetIndex);
 	}
@@ -303,7 +306,8 @@ public class NodeImpl implements Node {
      * @see com.coroptis.jblinktree.Node#remove(java.lang.Integer)
      */
     @Override
-    public boolean remove(final Integer key) {
+    public boolean remove(final K key1) {
+	Integer key = (Integer) key1;
 	Preconditions.checkNotNull(key);
 	for (int i = 1; i < field.getLength() - 1; i = i + 2) {
 	    if (key.equals(field.get(i))) {
@@ -359,7 +363,7 @@ public class NodeImpl implements Node {
      *            required position
      */
     private void removeFromPosition(final int position) {
-	Field tmp = new FieldImpl(field.getLength() - 2);
+	Field tmp = new FieldImpl(field.getLength() - 2, keyTypeDescriptor, valueTypeDescriptor);
 	if (position > 0) {
 	    tmp.copy(field, 0, 0, position);
 	}
@@ -375,7 +379,7 @@ public class NodeImpl implements Node {
      * .NodeImpl)
      */
     @Override
-    public void moveTopHalfOfDataTo(final Node nodea) {
+    public void moveTopHalfOfDataTo(final Node<K, V> nodea) {
 	final NodeImpl node = (NodeImpl) nodea;
 	Preconditions.checkArgument(node.isEmpty());
 	if (getKeysCount() < 1) {
@@ -385,11 +389,12 @@ public class NodeImpl implements Node {
 	final int startKeyNo = getKeysCount() / 2;
 	final int startIndex = startKeyNo * 2;
 	final int length = field.getLength() - startIndex;
-	node.field = new FieldImpl(length);
+	node.field = new FieldImpl<K, V>(length, keyTypeDescriptor, valueTypeDescriptor);
 	node.field.copy(field, startIndex, 0, length);
 
 	// remove copied data from this node
-	Field field2 = new FieldImpl(startIndex + 1);
+	Field<K, V> field2 = new FieldImpl<K, V>(startIndex + 1, keyTypeDescriptor,
+		valueTypeDescriptor);
 	field2.copy(field, 0, 0, startIndex);
 	field = field2;
 	setLink(node.getId());
@@ -402,11 +407,11 @@ public class NodeImpl implements Node {
      * @see com.coroptis.jblinktree.Node#getMaxKey()
      */
     @Override
-    public Integer getMaxKey() {
+    public K getMaxKey() {
 	if (isEmpty()) {
 	    return null;
 	} else {
-	    return field.get(field.getLength() - 2);
+	    return field.getKey(field.getLength() - 2);
 	}
     }
 
@@ -451,7 +456,6 @@ public class NodeImpl implements Node {
     @Override
     public boolean isLeafNode() {
 	return M == field.getFlag();
-	// return ((int)M)==(int)field.get(0);
     }
 
     /*
@@ -540,10 +544,10 @@ public class NodeImpl implements Node {
      * @see com.coroptis.jblinktree.Node#getKeys()
      */
     @Override
-    public List<Integer> getKeys() {
-	final List<Integer> out = new ArrayList<Integer>();
+    public List<K> getKeys() {
+	final List<K> out = new ArrayList<K>();
 	for (int i = 1; i < field.getLength(); i = i + 2) {
-	    out.add(field.get(i));
+	    out.add(field.getKey(i));
 	}
 	return out;
     }
@@ -554,8 +558,8 @@ public class NodeImpl implements Node {
      * @see com.coroptis.jblinktree.Node#setMaxKeyValue(java.lang.Integer)
      */
     @Override
-    public void setMaxKeyValue(final Integer maxKey) {
-	field.set(field.getLength() - 2, maxKey);
+    public void setMaxKeyValue(final K maxKey) {
+	field.setKey(field.getLength() - 2, maxKey);
     }
 
     /*
@@ -564,11 +568,11 @@ public class NodeImpl implements Node {
      * @see com.coroptis.jblinktree.Node#getMaxValue()
      */
     @Override
-    public Integer getMaxValue() {
+    public K getMaxValue() {
 	if (isEmpty()) {
 	    return null;
 	} else {
-	    return field.get(field.getLength() - 2);
+	    return field.getKey(field.getLength() - 2);
 	}
     }
 
@@ -601,6 +605,7 @@ public class NodeImpl implements Node {
 	return Arrays.hashCode(new Object[] { l, id, field });
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public boolean equals(Object obj) {
 	if (obj == null) {
@@ -609,10 +614,13 @@ public class NodeImpl implements Node {
 	if (!(obj instanceof NodeImpl)) {
 	    return false;
 	}
-	NodeImpl n = (NodeImpl) obj;
+	NodeImpl<K, V> n = (NodeImpl<K, V>) obj;
+	// TODO delegate equals to field
 	if (equal(l, n.l) && equal(id, n.id) && equal(field.getLength(), n.field.getLength())) {
-	    for (int i = 0; i < field.getLength(); i++) {
-		if (!equal(field.get(i), n.field.get(i))) {
+	    byte b1[] = n.field.getBytes();
+	    byte b2[] = field.getBytes();
+	    for (int i = 0; i < b1.length; i++) {
+		if (b1[i] != b2[i]) {
 		    return false;
 		}
 	    }
@@ -696,16 +704,6 @@ public class NodeImpl implements Node {
 	}
 	buff.append(getLink());
 	buff.append("\"];\n");
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.coroptis.jblinktree.Node#getField()
-     */
-    @Override
-    public Integer[] getField() {
-	return field.getField();
     }
 
     @Override

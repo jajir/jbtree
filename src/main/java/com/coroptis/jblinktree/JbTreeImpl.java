@@ -76,7 +76,8 @@ public class JbTreeImpl<K, V> implements JbTree<K, V> {
 		"key TypeDescriptor is null, use .setKeyType in builder");
 	this.valueTypeDescriptor = Preconditions.checkNotNull(valueTypeDescriptor,
 		"value TypeDescriptor is null, use .setValueType in builder");
-	Node node = new NodeImpl(l, nodeStore.getNextId(), true);
+	Node node = new NodeImpl(l, nodeStore.getNextId(), true, keyTypeDescriptor,
+		valueTypeDescriptor);
 	rootNodeId = node.getId();
 	this.nodeStore.writeNode(node);
     }
@@ -100,7 +101,8 @@ public class JbTreeImpl<K, V> implements JbTree<K, V> {
 		    /**
 		     * There is no free space for key and value
 		     */
-		    final Node newNode = tool.split(currentNode, tmpKey, tmpValue);
+		    final Node newNode = tool.split(currentNode, tmpKey, tmpValue,
+			    keyTypeDescriptor, valueTypeDescriptor);
 		    nodeStore.writeNode(newNode);
 		    nodeStore.writeNode(currentNode);
 		    if (stack.empty()) {
@@ -126,7 +128,7 @@ public class JbTreeImpl<K, V> implements JbTree<K, V> {
 			 * There is a previous node, so move there.
 			 */
 			tmpValue = newNode.getId();
-			tmpKey = newNode.getMaxKey();
+			tmpKey = (Integer) newNode.getMaxKey();
 			final Integer previousCurrentNodeId = currentNode.getId();
 			currentNode = treeService.loadParentNode(currentNode, tmpKey, stack.pop());
 			nodeStore.unlockNode(previousCurrentNodeId);
@@ -149,8 +151,7 @@ public class JbTreeImpl<K, V> implements JbTree<K, V> {
 	}
     }
 
-    private void storeValueIntoNode(final Node currentNode, final Integer key,
-	    final Integer value) {
+    private void storeValueIntoNode(final Node currentNode, final Integer key, final Integer value) {
 	currentNode.insert(key, value);
 	nodeStore.writeNode(currentNode);
 	nodeStore.unlockNode(currentNode.getId());
@@ -238,7 +239,7 @@ public class JbTreeImpl<K, V> implements JbTree<K, V> {
 	    if (nodeId == null) {
 		throw new JblinktreeException("some node id was null");
 	    } else {
-		final Node node = nodeStore.get(nodeId);
+		final Node<K, V> node = nodeStore.get(nodeId);
 		if (!treeVisitor.visited(node)) {
 		    return;
 		}

@@ -35,6 +35,8 @@ import com.coroptis.jblinktree.NodeImpl;
 import com.coroptis.jblinktree.NodeStore;
 import com.coroptis.jblinktree.NodeStoreImpl;
 import com.coroptis.jblinktree.Worker;
+import com.coroptis.jblinktree.type.TypeDescriptor;
+import com.coroptis.jblinktree.type.TypeDescriptorInteger;
 
 /**
  * Test verify that access to some node from multiple threads could be
@@ -81,7 +83,8 @@ public class NodeStoreConcurrencyTest extends TestCase {
     protected void setUp() throws Exception {
 	super.setUp();
 	nodeStore = new NodeStoreImpl(new IdGeneratorImpl(), 2);
-	NodeImpl node = new NodeImpl(2, 1, true);
+	TypeDescriptor td = new TypeDescriptorInteger();
+	NodeImpl node = new NodeImpl(2, 1, true, td, td);
 	nodeStore.writeNode(node);
     }
 

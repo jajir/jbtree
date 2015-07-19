@@ -81,7 +81,8 @@ public class TreeUtil {
 		    buff.append(";\n");
 		}
 		if (!node.isLeafNode()) {
-		    for (final Integer i : node.getNodeIds()) {
+		    for (final Object o : node.getNodeIds()) {
+			Integer i = (Integer) o;
 			buff.append(intendation);
 			buff.append("\"node");
 			buff.append(node.getId());

@@ -53,7 +53,7 @@ public class JbTreeServiceImpl implements JbTreeService {
 		 * use node id associated with bigger key.
 		 */
 		stack.push(currentNode.getId());
-		nextNodeId = currentNode.getCorrespondingNodeId(currentNode.getMaxValue());
+		nextNodeId = currentNode.getCorrespondingNodeId((Integer)currentNode.getMaxValue());
 		if (NodeImpl.EMPTY_INT.equals(nextNodeId)) {
 		    throw new JblinktreeException("There is no node id for max value '"
 			    + currentNode.getMaxValue() + "' in node " + currentNode.toString());
@@ -70,13 +70,13 @@ public class JbTreeServiceImpl implements JbTreeService {
     }
 
     @Override
-    public Node loadParentNode(final Node currentNode, final Integer tmpKey,
+    public Node<Integer,Integer> loadParentNode(final Node currentNode, final Integer tmpKey,
 	    final Integer nextNodeId) {
 	Node parentNode = nodeStore.getAndLock(nextNodeId);
 	// TODO link to current node which key should be updated can be in
 	// different node than tmpKey
 	parentNode = tool.moveRightNonLeafNode(parentNode, tmpKey);
-	if (parentNode.updateNodeValue(currentNode.getId(), currentNode.getMaxValue())) {
+	if (parentNode.updateNodeValue(currentNode.getId(), (Integer)currentNode.getMaxValue())) {
 	    nodeStore.writeNode(parentNode);
 	}
 	return parentNode;

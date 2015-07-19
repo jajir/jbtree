@@ -31,6 +31,8 @@ import com.coroptis.jblinktree.JbTreeTool;
 import com.coroptis.jblinktree.Node;
 import com.coroptis.jblinktree.NodeImpl;
 import com.coroptis.jblinktree.NodeStore;
+import com.coroptis.jblinktree.type.TypeDescriptor;
+import com.coroptis.jblinktree.type.TypeDescriptorInteger;
 import com.coroptis.jblinktree.type.Types;
 
 /**
@@ -50,6 +52,8 @@ public class JbTreeTest extends TestCase {
     private JbTreeService jbTreeService;
 
     private Node rootNode;
+
+    private TypeDescriptor intDescriptor;
 
     @Test
     public void test_constructor() throws Exception {
@@ -89,12 +93,13 @@ public class JbTreeTest extends TestCase {
     @Override
     protected void setUp() throws Exception {
 	super.setUp();
+	intDescriptor = new TypeDescriptorInteger();
 	nodeStore = EasyMock.createMock(NodeStore.class);
 	rootNode = EasyMock.createMock(NodeImpl.class);
 	jbTreeTool = EasyMock.createMock(JbTreeTool.class);
 	jbTreeService = EasyMock.createMock(JbTreeService.class);
 	EasyMock.expect(nodeStore.getNextId()).andReturn(0);
-	nodeStore.writeNode(new NodeImpl(3, 0, true));
+	nodeStore.writeNode(new NodeImpl(3, 0, true, intDescriptor, intDescriptor));
 	EasyMock.replay(nodeStore);
 	jbTree = new JbTreeImpl<Integer, Integer>(3, nodeStore, jbTreeTool, jbTreeService,
 		Types.integer(), Types.integer());
@@ -110,6 +115,7 @@ public class JbTreeTest extends TestCase {
 	jbTree = null;
 	nodeStore = null;
 	jbTreeService = null;
+	intDescriptor = null;
 	super.tearDown();
     }
 

@@ -63,5 +63,20 @@ public interface Field<K, V> {
     
     public void setFlag(byte b);
     
+    /**
+     * Get link value.
+     * 
+     * @return link value, could be {@link Node#EMPTY_INT}
+     */
+    public Integer getLink();
 
+    /**
+     * Allows to set link value.
+     * 
+     * @param link
+     *            link value, could be {@link Node#EMPTY_INT}
+     * @throws NullPointerException
+     *             when link is <code>null</code>
+     */
+    public void setLink(Integer link);
 }

@@ -19,8 +19,16 @@ package com.coroptis.jblinktree.junit;
  * limitations under the License.
  * #L%
  */
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import java.util.List;
-import static org.junit.Assert.*;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -30,6 +38,8 @@ import org.slf4j.LoggerFactory;
 import com.coroptis.jblinktree.JblinktreeException;
 import com.coroptis.jblinktree.Node;
 import com.coroptis.jblinktree.NodeImpl;
+import com.coroptis.jblinktree.type.TypeDescriptor;
+import com.coroptis.jblinktree.type.TypeDescriptorInteger;
 
 /**
  * Junit test for {@link NodeImpl}.
@@ -41,7 +51,9 @@ public class NodeTest {
 
     private Logger logger = LoggerFactory.getLogger(NodeTest.class);
 
-    private Node node;
+    private Node<Integer, Integer> node;
+
+    private TypeDescriptor<Integer> intDescriptor;
 
     @Test
     public void test_toString() throws Exception {
@@ -49,8 +61,8 @@ public class NodeTest {
 
 	assertEquals("Node{id=0, isLeafNode=true, field=[-1], flag=-77}", node.toString());
 
-	Node n = NodeImpl.makeNodeFromIntegers(2, 0, false,
-		new Integer[] { 0, 1, 1, 3, -40, 4, 98 });
+	Node<Integer, Integer> n = NodeImpl.makeNodeFromIntegers(2, 0, false, new Integer[] { 0, 1,
+		1, 3, -40, 4, 98 });
 
 	logger.debug(n.toString());
 	assertEquals("Node{id=0, isLeafNode=false, field=[0, 1, 1, 3, -40, 4, 98], flag=0}",
@@ -111,7 +123,8 @@ public class NodeTest {
 
     @Test
     public void test_insert_nonLeaf() throws Exception {
-	Node n = NodeImpl.makeNodeFromIntegers(3, 0, false, new Integer[] { 0, 1, 1, 3, 98 });
+	Node<Integer, Integer> n = NodeImpl.makeNodeFromIntegers(3, 0, false, new Integer[] { 0, 1,
+		1, 3, 98 });
 	n.insert(4, -40);
 
 	logger.debug(n.toString());
@@ -132,7 +145,8 @@ public class NodeTest {
 
     @Test
     public void test_insert_nonLeaf_maxKey() throws Exception {
-	Node n = NodeImpl.makeNodeFromIntegers(3, 0, false, new Integer[] { 0, 1, 1, 2, -1 });
+	Node<Integer, Integer> n = NodeImpl.makeNodeFromIntegers(3, 0, false, new Integer[] { 0, 1,
+		1, 2, -1 });
 	n.insert(4, 3);
 
 	logger.debug(n.toString());
@@ -151,7 +165,8 @@ public class NodeTest {
 
     @Test
     public void test_insert_nonLeaf_loverKey() throws Exception {
-	Node n = NodeImpl.makeNodeFromIntegers(2, 4, false, new Integer[] { 0, 4, 0 });
+	Node<Integer, Integer> n = NodeImpl.makeNodeFromIntegers(2, 4, false, new Integer[] { 0, 4,
+		0 });
 	n.insert(3, -30);
 
 	logger.debug(n.toString());
@@ -164,6 +179,16 @@ public class NodeTest {
 	assertEquals(Integer.valueOf(0), n.getLink());
 	assertEquals(Integer.valueOf(0), n.getCorrespondingNodeId(4));
 	assertEquals(Integer.valueOf(-30), n.getCorrespondingNodeId(3));
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void test_insert_key_null() throws Exception {
+	node.insert(null, 2);
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void test_insert_value_null() throws Exception {
+	node.insert(4, null);
     }
 
     @Test
@@ -190,8 +215,8 @@ public class NodeTest {
 
     @Test
     public void test_remove_nonLeaf_last() throws Exception {
-	Node n = NodeImpl.makeNodeFromIntegers(2, 22, false, new Integer[] { 13, 7, 16, 8, 21, 9,
-		-1 });
+	Node<Integer, Integer> n = NodeImpl.makeNodeFromIntegers(2, 22, false, new Integer[] { 13,
+		7, 16, 8, 21, 9, -1 });
 	Boolean ret = n.remove(9);
 
 	logger.debug(n.toString());
@@ -228,7 +253,6 @@ public class NodeTest {
 
 	assertTrue(ret);
 	verifyNode(new Integer[][] { { 3, 1 } }, false, 999);
-	assertEquals(Integer.valueOf(1), node.getP0());
 	assertEquals(Integer.valueOf(3), node.getMaxValue());
     }
 
@@ -243,13 +267,23 @@ public class NodeTest {
 	assertEquals(null, node.getMaxValue());
     }
 
+    @Test(expected = NullPointerException.class)
+    public void test_remove_key_null() throws Exception {
+	node.remove(null);
+    }
+
     @Test
-    public void test_link() throws Exception {
+    public void test_setLink() throws Exception {
 	node.setLink(-10);
 	node.insert(2, 20);
 	node.insert(1, 10);
 
 	verifyNode(new Integer[][] { { 1, 10 }, { 2, 20 } }, true, -10);
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void test_setLink_null() throws Exception {
+	node.setLink(null);
     }
 
     @Test
@@ -259,7 +293,8 @@ public class NodeTest {
 	node.setLink(100);
 	logger.debug("node1  " + node.toString());
 
-	NodeImpl node2 = new NodeImpl(2, 1, true);
+	NodeImpl<Integer, Integer> node2 = new NodeImpl<Integer, Integer>(2, 1, true,
+		intDescriptor, intDescriptor);
 	node.moveTopHalfOfDataTo(node2);
 
 	logger.debug("node1  " + node.toString());
@@ -287,7 +322,8 @@ public class NodeTest {
 
     @Test
     public void test_moveTopHalfOfDataTo_nothingToMove() throws Exception {
-	NodeImpl node2 = new NodeImpl(2, 11, true);
+	NodeImpl<Integer, Integer> node2 = new NodeImpl<Integer, Integer>(2, 11, true,
+		intDescriptor, intDescriptor);
 	try {
 	    node.moveTopHalfOfDataTo(node2);
 	    fail();
@@ -298,12 +334,13 @@ public class NodeTest {
 
     @Test
     public void test_moveTopHalfOfDataTo_node() throws Exception {
-	Node n = NodeImpl
-		.makeNodeFromIntegers(2, 10, false, new Integer[] { 0, 1, 1, 2, 5, 9, -1 });
+	Node<Integer, Integer> n = NodeImpl.makeNodeFromIntegers(2, 10, false, new Integer[] { 0,
+		1, 1, 2, 5, 9, -1 });
 	logger.debug("node  " + n.toString());
 	assertEquals("key count is not correct", 3, n.getKeysCount());
 
-	NodeImpl node2 = new NodeImpl(2, 11, true);
+	NodeImpl<Integer, Integer> node2 = new NodeImpl<Integer, Integer>(2, 11, true,
+		intDescriptor, intDescriptor);
 	n.moveTopHalfOfDataTo(node2);
 
 	logger.debug("node  " + n.toString());
@@ -371,7 +408,8 @@ public class NodeTest {
 
     @Test
     public void test_getCorrespondingNodeId_return_link() throws Exception {
-	Node n = NodeImpl.makeNodeFromIntegers(2, 2, false, new Integer[] { 0, 1, 2, 3, 33 });
+	Node<Integer, Integer> n = NodeImpl.makeNodeFromIntegers(2, 2, false, new Integer[] { 0, 1,
+		2, 3, 33 });
 
 	logger.debug(n.toString());
 
@@ -383,7 +421,8 @@ public class NodeTest {
 
     @Test
     public void test_getCorrespondingNodeId_simple() throws Exception {
-	Node n = NodeImpl.makeNodeFromIntegers(2, 2, false, new Integer[] { 0, 2, 1, 3, 23 });
+	Node<Integer, Integer> n = NodeImpl.makeNodeFromIntegers(2, 2, false, new Integer[] { 0, 2,
+		1, 3, 23 });
 
 	logger.debug(n.toString());
 
@@ -395,7 +434,8 @@ public class NodeTest {
 
     @Test
     public void test_updateNodeValue_value_was_updated() throws Exception {
-	Node n = NodeImpl.makeNodeFromIntegers(2, 2, false, new Integer[] { 0, 2, 1, 3, 23 });
+	Node<Integer, Integer> n = NodeImpl.makeNodeFromIntegers(2, 2, false, new Integer[] { 0, 2,
+		1, 3, 23 });
 
 	boolean ret = n.updateNodeValue(0, 3);
 
@@ -404,7 +444,8 @@ public class NodeTest {
 
     @Test
     public void test_updateNodeValue_value_was_not_updated() throws Exception {
-	Node n = NodeImpl.makeNodeFromIntegers(2, 2, false, new Integer[] { 0, 2, 1, 3, 23 });
+	Node<Integer, Integer> n = NodeImpl.makeNodeFromIntegers(2, 2, false, new Integer[] { 0, 2,
+		1, 3, 23 });
 
 	boolean ret = n.updateNodeValue(0, 2);
 
@@ -413,7 +454,8 @@ public class NodeTest {
 
     @Test
     public void test_updateNodeValue_missing_node_id() throws Exception {
-	Node n = NodeImpl.makeNodeFromIntegers(2, 2, false, new Integer[] { 0, 2, 1, 3, 23 });
+	Node<Integer, Integer> n = NodeImpl.makeNodeFromIntegers(2, 2, false, new Integer[] { 0, 2,
+		1, 3, 23 });
 
 	boolean ret = n.updateNodeValue(10, 2);
 
@@ -463,42 +505,48 @@ public class NodeTest {
 
     @Test
     public void test_getKeysCount_leaf() throws Exception {
-	Node n = NodeImpl.makeNodeFromIntegers(2, 2, true, new Integer[] { -77, 10, 1, 10, -1 });
+	Node<Integer, Integer> n = NodeImpl.makeNodeFromIntegers(2, 2, true, new Integer[] { -77,
+		10, 1, 10, -1 });
 
 	assertEquals(2, n.getKeysCount());
     }
 
     @Test
     public void test_getKeysCount_leaf_empty() throws Exception {
-	Node n = new NodeImpl(2, 10, true);
+	Node<Integer, Integer> n = new NodeImpl<Integer, Integer>(2, 10, true, intDescriptor,
+		intDescriptor);
 
 	assertEquals(0, n.getKeysCount());
     }
 
     @Test
     public void test_getKeysCount_nonLeaf() throws Exception {
-	Node n = NodeImpl.makeNodeFromIntegers(2, 2, false, new Integer[] { 0, 2, 1, 3, 23 });
+	Node<Integer, Integer> n = NodeImpl.makeNodeFromIntegers(2, 2, false, new Integer[] { 0, 2,
+		1, 3, 23 });
 
 	assertEquals(2, n.getKeysCount());
     }
 
     @Test
     public void test_getKeysCount_nonLeaf_1() throws Exception {
-	Node n = NodeImpl.makeNodeFromIntegers(2, 2, false, new Integer[] { 0, 2, 23 });
+	Node<Integer, Integer> n = NodeImpl.makeNodeFromIntegers(2, 2, false, new Integer[] { 0, 2,
+		23 });
 
 	assertEquals(1, n.getKeysCount());
     }
 
     @Test
     public void test_getKeysCount_nonLeaf_empty() throws Exception {
-	Node n = new NodeImpl(2, 10, false);
+	Node<Integer, Integer> n = new NodeImpl<Integer, Integer>(2, 10, false, intDescriptor,
+		intDescriptor);
 
 	assertEquals(0, n.getKeysCount());
     }
 
     @Test
     public void test_writeTo() throws Exception {
-	Node n = NodeImpl.makeNodeFromIntegers(2, 2, false, new Integer[] { 0, 2, 1, 3, 23 });
+	Node<Integer, Integer> n = NodeImpl.makeNodeFromIntegers(2, 2, false, new Integer[] { 0, 2,
+		1, 3, 23 });
 
 	StringBuilder buff = new StringBuilder();
 	n.writeTo(buff, "    ");
@@ -508,11 +556,13 @@ public class NodeTest {
 
     @Before
     public void setUp() throws Exception {
-	node = new NodeImpl(2, 0, true);
+	intDescriptor = new TypeDescriptorInteger();
+	node = new NodeImpl<Integer, Integer>(2, 0, true, intDescriptor, intDescriptor);
     }
 
     @After
     public void tearDown() throws Exception {
 	node = null;
+	intDescriptor = null;
     }
 }

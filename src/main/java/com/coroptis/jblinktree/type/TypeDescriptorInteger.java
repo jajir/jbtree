@@ -1,5 +1,8 @@
 package com.coroptis.jblinktree.type;
 
+import com.coroptis.jblinktree.JblinktreeException;
+import com.google.common.base.Preconditions;
+
 /*
  * #%L
  * jblinktree
@@ -26,11 +29,35 @@ package com.coroptis.jblinktree.type;
  * @author jajir
  * 
  */
-public class TypeDescriptorInteger implements TypeDescriptor {
+public class TypeDescriptorInteger implements TypeDescriptor<Integer> {
 
     @Override
     public int getMaxLength() {
 	return 4;
+    }
+
+    @Override
+    public void save(byte[] data, int from, Integer value) {
+	int v = value.intValue();
+	data[from] = (byte) ((v >>> 24) & 0xFF);
+	data[from + 1] = (byte) ((v >>> 16) & 0xFF);
+	data[from + 2] = (byte) ((v >>> 8) & 0xFF);
+	data[from + 3] = (byte) ((v >>> 0) & 0xFF);
+    }
+
+    @Override
+    public Integer load(byte[] data, int from) {
+	return data[from] << 24 | (data[from + 1] & 0xFF) << 16 | (data[from + 2] & 0xFF) << 8
+		| (data[from + 3] & 0xFF);
+    }
+
+    @Override
+    public void verifyType(Object object) {
+	Preconditions.checkNotNull(object);
+	if (!(object instanceof Integer)) {
+	    throw new JblinktreeException("Object of wrong type (" + object.getClass().getName()
+		    + ")");
+	}
     }
 
 }

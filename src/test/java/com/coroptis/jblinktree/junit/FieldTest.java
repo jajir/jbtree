@@ -30,6 +30,8 @@ import org.slf4j.LoggerFactory;
 
 import com.coroptis.jblinktree.Field;
 import com.coroptis.jblinktree.FieldImpl;
+import com.coroptis.jblinktree.type.TypeDescriptor;
+import com.coroptis.jblinktree.type.TypeDescriptorInteger;
 
 /**
  * Junit test for {@link FieldImpl}.
@@ -41,7 +43,9 @@ public class FieldTest {
 
     private final Logger logger = LoggerFactory.getLogger(FieldTest.class);
 
-    private Field<Integer,Integer> field;
+    private Field<Integer, Integer> field;
+
+    private TypeDescriptor intDescriptor;
 
     @Test
     public void test_default_field_value_0() throws Exception {
@@ -61,7 +65,8 @@ public class FieldTest {
 
     @Test
     public void test_length_2() throws Exception {
-	FieldImpl<Integer, Integer> f = new FieldImpl<Integer, Integer>(new Integer[] { 10, 1, 30 });
+	FieldImpl<Integer, Integer> f = new FieldImpl<Integer, Integer>(
+		new Integer[] { 10, 1, 30 }, intDescriptor, intDescriptor);
 
 	assertEquals(3, f.getLength());
     }
@@ -69,7 +74,7 @@ public class FieldTest {
     @Test
     public void test_length_3() throws Exception {
 	FieldImpl<Integer, Integer> f = new FieldImpl<Integer, Integer>(new Integer[] { 10, 1, 20,
-		2, 30 });
+		2, 30 }, intDescriptor, intDescriptor);
 
 	assertEquals(5, f.getLength());
     }
@@ -77,7 +82,7 @@ public class FieldTest {
     @Test
     public void test_getKey() throws Exception {
 	FieldImpl<Integer, Integer> f = new FieldImpl<Integer, Integer>(new Integer[] { 10, 1, 20,
-		2, 30 });
+		2, 30 }, intDescriptor, intDescriptor);
 
 	assertEquals(Integer.valueOf(2), f.getKey(3));
     }
@@ -85,7 +90,7 @@ public class FieldTest {
     @Test
     public void test_get() throws Exception {
 	FieldImpl<Integer, Integer> f = new FieldImpl<Integer, Integer>(new Integer[] { 10, 1, 20,
-		2, 30 });
+		2, 30 }, intDescriptor, intDescriptor);
 
 	assertEquals(Integer.valueOf(10), f.get(0));
 	assertEquals(Integer.valueOf(1), f.get(1));
@@ -118,11 +123,13 @@ public class FieldTest {
 
     @Before
     public void setUp() throws Exception {
-	field = new FieldImpl<Integer, Integer>(3);
+	intDescriptor = new TypeDescriptorInteger();
+	field = new FieldImpl<Integer, Integer>(3, intDescriptor, intDescriptor);
     }
 
     @After
     public void tearDown() throws Exception {
+	intDescriptor = null;
 	field = null;
     }
 

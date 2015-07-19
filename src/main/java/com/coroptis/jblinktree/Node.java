@@ -27,30 +27,35 @@ import java.util.List;
  * 
  * @author jan
  * 
+ * 
+ * @param <K>
+ *            key type
+ * @param <V>
+ *            value type
  */
-public interface Node {
+public interface Node<K, V> {
 
     /**
-     * Get link value.
+     * Value for Integer represents empty state.
+     */
+    final static Integer EMPTY_INT = -1;
+
+    /**
+     * Get link value. Delegate to {@link Field#getLink()}
      * 
-     * @return link value,could be <code>null</code>
+     * @return link value, could be {@link Node#EMPTY_INT}
      */
     public Integer getLink();
 
     /**
-     * Allows to set link value
+     * Allows to set link value. Delegate to {@link Field#setLink()}
      * 
      * @param link
-     *            link value, could be <code>null</code>
+     *            link value, could be {@link Node#EMPTY_INT}
+     * @throws NullPointerException
+     *             when link is <code>null</code>
      */
     public void setLink(Integer link);
-
-    /**
-     * Return P0 value
-     * 
-     * @return link value,could be <code>null</code>
-     */
-    public Integer getP0();
 
     /**
      * Return true when node is empty. Empty means there are no keys in node. In
@@ -75,8 +80,10 @@ public interface Node {
      *            required key
      * @param value
      *            required value
+     * @throws NullPointerException
+     *             when key or value is null
      */
-    public void insert(Integer key, Integer value);
+    public void insert(K key, V value);
 
     /**
      * Remove key and associated value from node.
@@ -85,8 +92,10 @@ public interface Node {
      *            required key to remove
      * @return when key was found and removed it return <code>true</code>
      *         otherwise it return <code>false</code>
+     * @throws NullPointerException
+     *             when key or value is null
      */
-    public boolean remove(Integer key);
+    public boolean remove(K key);
 
     /**
      * For non-leaf tree it update value of some tree.
@@ -98,6 +107,7 @@ public interface Node {
      * @return return <code>true</code> when node max value was really updated
      *         otherwise return <code>false</code>
      */
+    // TODO add generic
     public boolean updateNodeValue(Integer nodeIdToUpdate, Integer nodeMaxValue);
 
     /**
@@ -109,14 +119,14 @@ public interface Node {
      * @param node
      *            required empty node
      */
-    public void moveTopHalfOfDataTo(Node node);
+    public void moveTopHalfOfDataTo(Node<K, V> node);
 
     /**
-     * Return max key, that could be use for representing this nide.
+     * Return max key, that could be use for representing this node.
      * 
      * @return
      */
-    public Integer getMaxKey();
+    public K getMaxKey();
 
     /**
      * Return node id.
@@ -180,7 +190,7 @@ public interface Node {
      * 
      * @return list of keys.
      */
-    public List<Integer> getKeys();
+    public List<K> getKeys();
 
     /**
      * Allows to set max key value.
@@ -188,14 +198,16 @@ public interface Node {
      * @param maxKey
      *            max key value, could be <code>null</code>
      */
-    public void setMaxKeyValue(Integer maxKey);
+    public void setMaxKeyValue(K maxKey);
 
     /**
-     * Get max value.
+     * FIXME this return max key not value. Get max value.
      * 
      * @return max value stored in node, could be <code>null</code>
+     * @return replace by getMaxKey
      */
-    public Integer getMaxValue();
+    @Deprecated
+    public K getMaxValue();
 
     /**
      * Verify that node is consistent.
@@ -211,12 +223,6 @@ public interface Node {
     public int getL();
 
     public void writeTo(StringBuilder buff, String intendation);
-
-    /**
-     * @return the field
-     */
-    @Deprecated
-    public Integer[] getField();
 
     public byte[] getFieldBytes();
 

@@ -2,6 +2,8 @@ package com.coroptis.jblinktree;
 
 import java.util.Stack;
 
+import com.coroptis.jblinktree.type.TypeDescriptor;
+
 /*
  * #%L
  * jblinktree
@@ -104,7 +106,8 @@ public interface JbTreeTool {
      *            required inserted value
      * @return newly created node, this node contains higher part of keys.
      */
-    Node split(Node currentNode, Integer key, Integer value);
+    Node split(Node currentNode, Integer key, Integer value, TypeDescriptor keyTypeDescriptor,
+	    TypeDescriptor valueTypeDescriptor);
 
     void updateMaxValueWhenNecessary(Node currentNode, Integer insertedKey, Stack<Integer> stack);
 

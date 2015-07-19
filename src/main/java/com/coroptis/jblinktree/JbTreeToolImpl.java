@@ -2,6 +2,7 @@ package com.coroptis.jblinktree;
 
 import java.util.Stack;
 
+import com.coroptis.jblinktree.type.TypeDescriptor;
 import com.google.common.base.Preconditions;
 
 /*
@@ -74,7 +75,7 @@ public class JbTreeToolImpl implements JbTreeTool {
 	if (node.isEmpty()) {
 	    return true;
 	}
-	return (node.getMaxValue() != null && key > node.getMaxValue());
+	return (node.getMaxValue() != null && key > (Integer)node.getMaxValue());
     }
 
     @Override
@@ -99,7 +100,7 @@ public class JbTreeToolImpl implements JbTreeTool {
     @Override
     public Node moveRightLeafNodeWithoutLocking(Node current, final Integer key) {
 	if (current.isLeafNode()) {
-	    while (current.getLink() != null && key > current.getMaxValue()) {
+	    while (current.getLink() != null && key > (Integer)current.getMaxValue()) {
 		current = nodeStore.get(current.getLink());
 	    }
 	    return current;
@@ -109,10 +110,12 @@ public class JbTreeToolImpl implements JbTreeTool {
     }
 
     @Override
-    public Node split(final Node currentNode, final Integer key, final Integer value) {
-	Node newNode = new NodeImpl(currentNode.getL(), nodeStore.getNextId(), true);
+    public Node split(final Node currentNode, final Integer key, final Integer value,
+	    TypeDescriptor keyTypeDescriptor, TypeDescriptor valueTypeDescriptor) {
+	Node newNode = new NodeImpl(currentNode.getL(), nodeStore.getNextId(), true,
+		keyTypeDescriptor, valueTypeDescriptor);
 	currentNode.moveTopHalfOfDataTo(newNode);
-	if (currentNode.getMaxKey() < key) {
+	if (((Integer) currentNode.getMaxKey()) < key) {
 	    newNode.insert(key, value);
 	} else {
 	    currentNode.insert(key, value);
@@ -135,15 +138,16 @@ public class JbTreeToolImpl implements JbTreeTool {
     public Integer splitRootNode(final Node currentRootNode, final Node newNode) {
 	// TODO consider case when new node is smaller that currentRootNode
 	Node newRoot = NodeImpl.makeNodeFromIntegers(currentRootNode.getL(), nodeStore.getNextId(),
-		false, new Integer[] { currentRootNode.getId(), currentRootNode.getMaxKey(),
-			newNode.getId(), newNode.getMaxKey(), NodeImpl.EMPTY_INT });
+		false,
+		new Integer[] { currentRootNode.getId(), (Integer) currentRootNode.getMaxKey(),
+			newNode.getId(), (Integer) newNode.getMaxKey(), NodeImpl.EMPTY_INT });
 	nodeStore.writeNode(newRoot);
 	return newRoot.getId();
     }
 
     @Override
     public void updateMaxIfNecessary(final Node parentNode, final Node childNode) {
-	if (childNode.getMaxValue() > parentNode.getMaxValue()) {
+	if ((Integer)childNode.getMaxValue() > (Integer)parentNode.getMaxValue()) {
 	    Preconditions.checkState(NodeImpl.EMPTY_INT.equals(parentNode.getLink()),
 		    "parent not rightemost node in tree");
 	    parentNode.setMaxKeyValue(childNode.getMaxValue());

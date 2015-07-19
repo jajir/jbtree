@@ -1,5 +1,7 @@
 package com.coroptis.jblinktree.type;
 
+import com.coroptis.jblinktree.JblinktreeException;
+
 /*
  * #%L
  * jblinktree
@@ -24,9 +26,11 @@ package com.coroptis.jblinktree.type;
  * Interface describing data type entering to tree as key or value.
  * 
  * @author jajir
+ * @param T
+ *            type that will be described
  * 
  */
-public interface TypeDescriptor {
+public interface TypeDescriptor<T> {
 
     /**
      * Get maximum length of field when it's stored in bytes.
@@ -34,5 +38,42 @@ public interface TypeDescriptor {
      * @return maximum length of type.
      */
     public int getMaxLength();
+
+    /**
+     * Write given value to byte array.
+     * 
+     * @param data
+     *            required byte array
+     * @param from
+     *            required position when will be object written
+     * @param value
+     *            required type instance
+     * @throws NullPointerException
+     *             when value is <code>null</code>
+     */
+    void save(byte[] data, int from, T value);
+
+    /**
+     * Load type instance from byte array.
+     * 
+     * @param data
+     *            required byte field where will be data stored.
+     * @param from
+     *            required position from where will be object loaded
+     * @return loaded type instance
+     */
+    T load(byte[] data, int from);
+
+    /**
+     * Verify that given type is same as described.
+     * 
+     * @param o
+     *            required verified object
+     * @throws NullPointerException
+     *             when object is <code>null</code>
+     * @throws JblinktreeException
+     *             when given object is not described
+     */
+    void verifyType(Object object);
 
 }
