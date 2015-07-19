@@ -145,7 +145,8 @@ public class JbTreeImpl<K, V> implements JbTree<K, V> {
 	    /**
 	     * Key already exists. Rewrite value.
 	     */
-	    Integer oldValue = currentNode.getValue((Integer) key);
+	    //TODO remove re-typing
+	    Integer oldValue = (Integer)currentNode.getValue((Integer) key);
 	    storeValueIntoNode(currentNode, (Integer) key, (Integer) value);
 	    return oldValue;
 	}

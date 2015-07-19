@@ -45,7 +45,7 @@ public class FieldTest {
 
     private Field<Integer, Integer> field;
 
-    private TypeDescriptor intDescriptor;
+    private TypeDescriptor<Integer> intDescriptor;
 
     @Test
     public void test_default_field_value_0() throws Exception {
@@ -118,7 +118,21 @@ public class FieldTest {
     @Test
     public void test_toString() throws Exception {
 	logger.debug(field.toString());
-	assertEquals("Field{field=[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]}", field.toString());
+	assertEquals("Field{field=[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]}",
+		field.toString());
+    }
+
+    @Test
+    public void test_setLink_getLink() throws Exception {
+	field.setLink(98);
+	logger.debug(field.toString());
+
+	assertEquals(Integer.valueOf(98), field.getLink());
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void test_setLink_null() throws Exception {
+	field.setLink(null);
     }
 
     @Before

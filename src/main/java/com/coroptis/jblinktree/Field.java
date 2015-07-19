@@ -21,15 +21,16 @@ package com.coroptis.jblinktree;
  */
 
 /**
- * Contains data for node.
+ * Contains data for node. It contains in flag[byte], value, key pairs and link
+ * as Integer.
  * 
- * @author jajir
  * 
  * @param <K>
  *            key type
  * @param <V>
  *            value type
  * 
+ * @author jajir
  * 
  */
 public interface Field<K, V> {
@@ -58,11 +59,11 @@ public interface Field<K, V> {
     public byte[] getBytes();
 
     public int getLength();
-    
+
     public byte getFlag();
-    
+
     public void setFlag(byte b);
-    
+
     /**
      * Get link value.
      * 

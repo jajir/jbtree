@@ -29,39 +29,34 @@ import com.google.common.base.Preconditions;
  * @author jajir
  * 
  */
-public class TypeDescriptorInteger implements TypeDescriptor<Integer> {
+public class TypeDescriptorByte implements TypeDescriptor<Byte> {
 
     @Override
     public int getMaxLength() {
-	return 4;
+	return 1;
     }
 
     @Override
-    public void save(final byte[] data, final int from, final Integer value) {
-	int v = value.intValue();
-	data[from] = (byte) ((v >>> 24) & 0xFF);
-	data[from + 1] = (byte) ((v >>> 16) & 0xFF);
-	data[from + 2] = (byte) ((v >>> 8) & 0xFF);
-	data[from + 3] = (byte) ((v >>> 0) & 0xFF);
+    public void save(final byte[] data, final int from, final Byte value) {
+	data[from] = value.byteValue();
     }
 
     @Override
-    public Integer load(final byte[] data, final int from) {
-	return data[from] << 24 | (data[from + 1] & 0xFF) << 16 | (data[from + 2] & 0xFF) << 8
-		| (data[from + 3] & 0xFF);
+    public Byte load(final byte[] data, final int from) {
+	return data[from];
     }
 
     @Override
     public void verifyType(final Object object) {
 	Preconditions.checkNotNull(object);
-	if (!(object instanceof Integer)) {
+	if (!(object instanceof Byte)) {
 	    throw new JblinktreeException("Object of wrong type (" + object.getClass().getName()
 		    + ")");
 	}
     }
 
     @Override
-    public int compare(final Integer value1, final Integer value2) {
+    public int compare(final Byte value1, final Byte value2) {
 	return value1 - value2;
     }
 

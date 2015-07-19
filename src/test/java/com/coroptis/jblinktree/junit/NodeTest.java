@@ -114,9 +114,9 @@ public class NodeTest {
     public void test_insert_leaf_overwriteValue_fullNode() throws Exception {
 	node.insert(2, 20);
 	node.insert(1, 80);
+	logger.debug(node.toString());
 
 	node.insert(2, 30);
-	logger.debug(node.toString());
 
 	verifyNode(new Integer[][] { { 1, 80 }, { 2, 30 } }, true, -1);
     }

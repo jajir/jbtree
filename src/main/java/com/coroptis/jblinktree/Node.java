@@ -107,8 +107,7 @@ public interface Node<K, V> {
      * @return return <code>true</code> when node max value was really updated
      *         otherwise return <code>false</code>
      */
-    // TODO add generic
-    public boolean updateNodeValue(Integer nodeIdToUpdate, Integer nodeMaxValue);
+    public boolean updateNodeValue(Integer nodeIdToUpdate, K nodeMaxValue);
 
     /**
      * About half of keys will be copied to <code>node</code>.
@@ -176,7 +175,7 @@ public interface Node<K, V> {
      * @return found value if there is any, when value is <code>null</code> or
      *         there is no such key <code>null</code> is returned.
      */
-    public Integer getValue(Integer key);
+    public V getValue(K key);
 
     /**
      * Get list of all node id stored in this node.

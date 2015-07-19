@@ -1,5 +1,7 @@
 package com.coroptis.jblinktree.type;
 
+import java.util.Comparator;
+
 import com.coroptis.jblinktree.JblinktreeException;
 
 /*
@@ -30,7 +32,7 @@ import com.coroptis.jblinktree.JblinktreeException;
  *            type that will be described
  * 
  */
-public interface TypeDescriptor<T> {
+public interface TypeDescriptor<T> extends Comparator<T>{
 
     /**
      * Get maximum length of field when it's stored in bytes.

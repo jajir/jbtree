@@ -51,12 +51,12 @@ public class FieldImpl<K, V> implements Field<K, V> {
 	linkTypeDescriptor = new TypeDescriptorInteger();
 	this.keyTypeDescriptor = keyTypeDescriptor;
 	this.valueTypeDescriptor = valueTypeDescriptor;
-	this.field = new byte[getPosition(numberOfField)];
+	this.field = new byte[getPosition(numberOfField) + linkTypeDescriptor.getMaxLength()];
     }
 
     public FieldImpl(final Integer[] field, final TypeDescriptor<K> keyTypeDescriptor,
 	    final TypeDescriptor<V> valueTypeDescriptor) {
-	this(field.length, keyTypeDescriptor, valueTypeDescriptor);
+	this(field.length - 1, keyTypeDescriptor, valueTypeDescriptor);
 	for (int i = 0; i < field.length; i++) {
 	    set(i, field[i]);
 	}
@@ -192,7 +192,7 @@ public class FieldImpl<K, V> implements Field<K, V> {
 
     @Override
     public V getValue(int position) {
-	return valueTypeDescriptor.load(field, position);
+	return valueTypeDescriptor.load(field, getPosition(position));
     }
 
     @Override

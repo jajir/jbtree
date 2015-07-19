@@ -110,6 +110,7 @@ public class JbTreeToolTest extends TestCase {
     public void test_moveRightNonLeafNode_nextNodeId_isNull() throws Exception {
 	EasyMock.expect(n1.isLeafNode()).andReturn(false);
 	EasyMock.expect(n1.getCorrespondingNodeId(10)).andReturn(null);
+	EasyMock.expect(n1.getLink()).andReturn(NodeImpl.EMPTY_INT);
 	EasyMock.replay(nodeStore, n1, n2);
 	Node ret = jbTreeTool.moveRightNonLeafNode(n1, 10);
 
@@ -164,7 +165,8 @@ public class JbTreeToolTest extends TestCase {
     @Test
     public void test_moveRightLeafNode_linkIsNull() throws Exception {
 	EasyMock.expect(n1.isLeafNode()).andReturn(true);
-	EasyMock.expect(n1.getLink()).andReturn(null);
+	EasyMock.expect(n1.getLink()).andReturn(null).times(2);
+	EasyMock.expect(n1.isEmpty()).andReturn(true);
 	EasyMock.replay(nodeStore, n1, n2);
 	Node ret = jbTreeTool.moveRightLeafNode(n1, 10);
 
