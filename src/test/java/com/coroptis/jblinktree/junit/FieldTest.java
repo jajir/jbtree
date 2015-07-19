@@ -20,8 +20,7 @@ package com.coroptis.jblinktree.junit;
  * #L%
  */
 
-import static org.junit.Assert.*;
-import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertEquals;
 
 import org.junit.After;
 import org.junit.Before;
@@ -42,19 +41,22 @@ public class FieldTest {
 
     private final Logger logger = LoggerFactory.getLogger(FieldTest.class);
 
-    private Field field;
+    private Field<Integer,Integer> field;
 
     @Test
-    public void test_default_field_value_null() throws Exception {
-	assertNull(field.get(0));
+    public void test_default_field_value_0() throws Exception {
+	assertEquals(Integer.valueOf(0), field.getValue(0));
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void test_save_null() throws Exception {
+	field.set(2, null);
     }
 
     @Test
-    public void test_save_null() throws Exception {
+    public void test_save() throws Exception {
 	field.set(2, -40);
 	assertEquals(Integer.valueOf(-40), field.get(2));
-	field.set(2, null);
-	assertNull(field.get(2));
     }
 
     @Test
@@ -92,14 +94,31 @@ public class FieldTest {
     }
 
     @Test
+    public void test_setKey() throws Exception {
+	field.setKey(1, -3);
+
+	assertEquals(Integer.valueOf(-3), field.getKey(1));
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void test_setKey_nullPointerException() {
+	field.setKey(1, null);
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void test_setValue_nullPointerException() {
+	field.setKey(2, null);
+    }
+
+    @Test
     public void test_toString() throws Exception {
 	logger.debug(field.toString());
-	assertEquals("Field{field=[0, -128, 0, 0, 0, -128, 0, 0, 0, -128, 0, 0, 0]}", field.toString());
+	assertEquals("Field{field=[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]}", field.toString());
     }
 
     @Before
     public void setUp() throws Exception {
-	field = new FieldImpl(3);
+	field = new FieldImpl<Integer, Integer>(3);
     }
 
     @After

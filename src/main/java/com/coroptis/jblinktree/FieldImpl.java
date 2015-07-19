@@ -47,9 +47,6 @@ public class FieldImpl<K, V> implements Field<K, V> {
 	keyTypeDescriptor = new TypeDescriptorInteger();
 	valueTypeDescriptor = new TypeDescriptorInteger();
 	this.field = new byte[getPosition(numberOfField)];
-	for (int i = 0; i < field.length / 4; i++) {
-	    set(i, null);
-	}
     }
 
     public FieldImpl(final Integer[] field) {
@@ -61,7 +58,7 @@ public class FieldImpl<K, V> implements Field<K, V> {
 
     public FieldImpl(final byte[] field) {
 	this(0);
-	this.field = new byte[field.length ];
+	this.field = new byte[field.length];
 	System.arraycopy(field, 0, this.field, 0, this.field.length);
     }
 
@@ -162,22 +159,19 @@ public class FieldImpl<K, V> implements Field<K, V> {
 	int out = length / (keyTypeDescriptor.getMaxLength() + valueTypeDescriptor.getMaxLength())
 		* 2;
 	if (rest == 0) {
-	    return out ;
+	    return out;
 	} else {
 	    return out + 1;
 	}
     }
 
     private Integer load(byte[] data, int from) {
-	if (data[from] == -128 && data[from + 1] == 0 && data[from + 2] == 0 && data[from + 3] == 0) {
-	    return null;
-	}
 	return data[from] << 24 | (data[from + 1] & 0xFF) << 16 | (data[from + 2] & 0xFF) << 8
 		| (data[from + 3] & 0xFF);
     }
 
     private void save(byte[] data, int from, Integer value) {
-	int v = value == null ? Integer.MIN_VALUE : value.intValue();
+	int v = value.intValue();
 	data[from] = (byte) ((v >>> 24) & 0xFF);
 	data[from + 1] = (byte) ((v >>> 16) & 0xFF);
 	data[from + 2] = (byte) ((v >>> 8) & 0xFF);
@@ -186,24 +180,22 @@ public class FieldImpl<K, V> implements Field<K, V> {
 
     @Override
     public K getKey(int position) {
-	return (K)load(field, getPosition(position));
+	return (K) load(field, getPosition(position));
     }
 
     @Override
     public V getValue(int position) {
-	return (V)load(field, getPosition(position));
+	return (V) load(field, getPosition(position));
     }
 
     @Override
     public void setKey(int position, K value) {
-	// TODO Auto-generated method stub
-
+	save(field, getPosition(position), (Integer) value);
     }
 
     @Override
     public void setValue(int position, V value) {
-	// TODO Auto-generated method stub
-
+	save(field, getPosition(position), (Integer) value);
     }
 
     @Override

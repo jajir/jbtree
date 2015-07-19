@@ -47,14 +47,14 @@ public class JbTreeServiceImpl implements JbTreeService {
 	Node currentNode = nodeStore.get(rootNodeId);
 	while (!currentNode.isLeafNode()) {
 	    Integer nextNodeId = currentNode.getCorrespondingNodeId(key);
-	    if (nextNodeId == null) {
+	    if (NodeImpl.EMPTY_INT.equals(nextNodeId)) {
 		/**
 		 * This is rightmost node and next link is <code>null</code> so
 		 * use node id associated with bigger key.
 		 */
 		stack.push(currentNode.getId());
 		nextNodeId = currentNode.getCorrespondingNodeId(currentNode.getMaxValue());
-		if (nextNodeId == null) {
+		if (NodeImpl.EMPTY_INT.equals(nextNodeId)) {
 		    throw new JblinktreeException("There is no node id for max value '"
 			    + currentNode.getMaxValue() + "' in node " + currentNode.toString());
 		}

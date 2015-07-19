@@ -91,6 +91,8 @@ public class NodeImpl implements Node {
      */
     public final static byte M = -77;
 
+    public final static Integer EMPTY_INT = -1;
+
     /**
      * Main node parameter, it's number of nodes.
      */
@@ -123,6 +125,7 @@ public class NodeImpl implements Node {
 	if (isLeafNode) {
 	    field.setFlag(M);
 	}
+	setLink(EMPTY_INT);
     }
 
     /**

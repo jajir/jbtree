@@ -19,10 +19,8 @@ package com.coroptis.jblinktree.junit;
  * limitations under the License.
  * #L%
  */
-import static org.junit.Assert.*;
-
 import java.util.List;
-
+import static org.junit.Assert.*;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -49,13 +47,14 @@ public class NodeTest {
     public void test_toString() throws Exception {
 	logger.debug(node.toString());
 
-	assertEquals("Node{id=0, isLeafNode=true, field=[null], flag=-77}", node.toString());
+	assertEquals("Node{id=0, isLeafNode=true, field=[-1], flag=-77}", node.toString());
 
 	Node n = NodeImpl.makeNodeFromIntegers(2, 0, false,
 		new Integer[] { 0, 1, 1, 3, -40, 4, 98 });
 
 	logger.debug(n.toString());
-	assertEquals("Node{id=0, isLeafNode=false, field=[0, 1, 1, 3, -40, 4, 98], flag=0}", n.toString());
+	assertEquals("Node{id=0, isLeafNode=false, field=[0, 1, 1, 3, -40, 4, 98], flag=0}",
+		n.toString());
 
     }
 
@@ -63,7 +62,7 @@ public class NodeTest {
     public void test_emptyNode() throws Exception {
 	logger.debug(node.toString());
 
-	verifyNode(new Integer[][] {}, true, null);
+	verifyNode(new Integer[][] {}, true, -1);
 	assertEquals(null, node.getMaxKey());
 	assertEquals(null, node.getValue(2));
     }
@@ -78,7 +77,7 @@ public class NodeTest {
 	node.insert(2, 20);
 	logger.debug(node.toString());
 
-	verifyNode(new Integer[][] { { 2, 20 } }, true, null);
+	verifyNode(new Integer[][] { { 2, 20 } }, true, -1);
     }
 
     @Test
@@ -86,7 +85,7 @@ public class NodeTest {
 	node.insert(2, 20);
 	node.insert(1, 10);
 
-	verifyNode(new Integer[][] { { 1, 10 }, { 2, 20 } }, true, null);
+	verifyNode(new Integer[][] { { 1, 10 }, { 2, 20 } }, true, -1);
     }
 
     @Test
@@ -96,7 +95,7 @@ public class NodeTest {
 
 	logger.debug(node.toString());
 
-	verifyNode(new Integer[][] { { 2, 20 } }, true, null);
+	verifyNode(new Integer[][] { { 2, 20 } }, true, -1);
     }
 
     @Test
@@ -107,7 +106,7 @@ public class NodeTest {
 	node.insert(2, 30);
 	logger.debug(node.toString());
 
-	verifyNode(new Integer[][] { { 1, 80 }, { 2, 30 } }, true, null);
+	verifyNode(new Integer[][] { { 1, 80 }, { 2, 30 } }, true, -1);
     }
 
     @Test
@@ -133,7 +132,7 @@ public class NodeTest {
 
     @Test
     public void test_insert_nonLeaf_maxKey() throws Exception {
-	Node n = NodeImpl.makeNodeFromIntegers(3, 0, false, new Integer[] { 0, 1, 1, 2, null });
+	Node n = NodeImpl.makeNodeFromIntegers(3, 0, false, new Integer[] { 0, 1, 1, 2, -1 });
 	n.insert(4, 3);
 
 	logger.debug(n.toString());
@@ -144,7 +143,7 @@ public class NodeTest {
 	assertTrue(keys.contains(1));
 	assertTrue(keys.contains(2));
 	assertTrue(keys.contains(4));
-	assertNull(n.getLink());
+	assertEquals(Integer.valueOf(-1), n.getLink());
 	assertEquals(Integer.valueOf(0), n.getCorrespondingNodeId(1));
 	assertEquals(Integer.valueOf(1), n.getCorrespondingNodeId(2));
 	assertEquals(Integer.valueOf(3), n.getCorrespondingNodeId(4));
@@ -152,7 +151,7 @@ public class NodeTest {
 
     @Test
     public void test_insert_nonLeaf_loverKey() throws Exception {
-	Node n = NodeImpl.makeNodeFromIntegers(2, 4, false, new Integer[] { 0, 4, null });
+	Node n = NodeImpl.makeNodeFromIntegers(2, 4, false, new Integer[] { 0, 4, 0 });
 	n.insert(3, -30);
 
 	logger.debug(n.toString());
@@ -162,7 +161,7 @@ public class NodeTest {
 	List<Integer> keys = n.getKeys();
 	assertTrue(keys.contains(3));
 	assertTrue(keys.contains(4));
-	assertNull(n.getLink());
+	assertEquals(Integer.valueOf(0), n.getLink());
 	assertEquals(Integer.valueOf(0), n.getCorrespondingNodeId(4));
 	assertEquals(Integer.valueOf(-30), n.getCorrespondingNodeId(3));
     }
@@ -175,7 +174,7 @@ public class NodeTest {
 	Boolean ret = node.remove(1);
 
 	assertTrue(ret);
-	verifyNode(new Integer[][] { { 2, 20 } }, true, null);
+	verifyNode(new Integer[][] { { 2, 20 } }, true, -1);
     }
 
     @Test
@@ -192,7 +191,7 @@ public class NodeTest {
     @Test
     public void test_remove_nonLeaf_last() throws Exception {
 	Node n = NodeImpl.makeNodeFromIntegers(2, 22, false, new Integer[] { 13, 7, 16, 8, 21, 9,
-		null });
+		-1 });
 	Boolean ret = n.remove(9);
 
 	logger.debug(n.toString());
@@ -208,7 +207,7 @@ public class NodeTest {
 	Boolean ret = node.remove(2);
 
 	assertTrue(ret);
-	verifyNode(new Integer[][] { { 1, 10 } }, true, null);
+	verifyNode(new Integer[][] { { 1, 10 } }, true, -1);
     }
 
     @Test
@@ -218,7 +217,7 @@ public class NodeTest {
 	Boolean ret = node.remove(12);
 
 	assertFalse(ret);
-	verifyNode(new Integer[][] { { 1, 10 }, { 2, 20 } }, true, null);
+	verifyNode(new Integer[][] { { 1, 10 }, { 2, 20 } }, true, -1);
     }
 
     @Test
@@ -299,8 +298,8 @@ public class NodeTest {
 
     @Test
     public void test_moveTopHalfOfDataTo_node() throws Exception {
-	Node n = NodeImpl.makeNodeFromIntegers(2, 10, false,
-		new Integer[] { 0, 1, 1, 2, 5, 9, null });
+	Node n = NodeImpl
+		.makeNodeFromIntegers(2, 10, false, new Integer[] { 0, 1, 1, 2, 5, 9, -1 });
 	logger.debug("node  " + n.toString());
 	assertEquals("key count is not correct", 3, n.getKeysCount());
 
@@ -326,7 +325,7 @@ public class NodeTest {
 	keys = node2.getKeys();
 	assertTrue(keys.contains(2));
 	assertFalse(node2.isLeafNode());
-	assertNull("ln in new node should be null", node2.getLink());
+	assertEquals("ln in new node should be null", Integer.valueOf(-1), node2.getLink());
 	assertEquals("Invalid getMaxKey", Integer.valueOf(9), node2.getMaxKey());
     }
 
@@ -347,7 +346,7 @@ public class NodeTest {
 	List<Integer> keys = node.getKeys();
 	assertTrue(keys.contains(1));
 	assertTrue(keys.contains(2));
-	assertNull(node.getLink());
+	assertEquals(Integer.valueOf(-1), node.getLink());
     }
 
     @Test
@@ -464,7 +463,7 @@ public class NodeTest {
 
     @Test
     public void test_getKeysCount_leaf() throws Exception {
-	Node n = NodeImpl.makeNodeFromIntegers(2, 2, true, new Integer[] { -77, 10, 1, 10, null });
+	Node n = NodeImpl.makeNodeFromIntegers(2, 2, true, new Integer[] { -77, 10, 1, 10, -1 });
 
 	assertEquals(2, n.getKeysCount());
     }
