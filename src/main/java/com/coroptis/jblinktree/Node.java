@@ -163,9 +163,9 @@ public interface Node<K, V> {
      * @return node id, in case of rightmost node it returns <code>null</code>
      *         because link is empty
      */
-    public Integer getCorrespondingNodeId(Integer key);
+    public Integer getCorrespondingNodeId(K key);
 
-    public Integer getPreviousCorrespondingNode(Integer key);
+    public Integer getPreviousCorrespondingNode(K key);
 
     /**
      * Find value for given key.
