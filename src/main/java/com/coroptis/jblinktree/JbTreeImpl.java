@@ -208,7 +208,7 @@ public class JbTreeImpl<K, V> implements JbTree<K, V> {
 
     @Override
     public int countValues() {
-	JbTreeVisitorRecordCounter counter = new JbTreeVisitorRecordCounter();
+	JbTreeVisitorRecordCounter<K,V> counter = new JbTreeVisitorRecordCounter<K,V>();
 	visit(counter);
 	return counter.getCount();
     }
@@ -248,7 +248,7 @@ public class JbTreeImpl<K, V> implements JbTree<K, V> {
      * pointer and don't have parent node.
      */
     @Override
-    public void visit(final JbTreeVisitor treeVisitor) {
+    public void visit(final JbTreeVisitor<K, V> treeVisitor) {
 	Preconditions.checkNotNull(treeVisitor,
 		"required JbTreeVisitor instance is null");
 	final Stack<Integer> stack = new Stack<Integer>();
@@ -264,7 +264,7 @@ public class JbTreeImpl<K, V> implements JbTree<K, V> {
 			return;
 		    }
 		} else {
-		    if (!treeVisitor.visitedNonLeaf(node)) {
+		    if (!treeVisitor.visitedNonLeaf((Node<K, Integer>) node)) {
 			return;
 		    }
 		    for (final Integer i : node.getNodeIds()) {

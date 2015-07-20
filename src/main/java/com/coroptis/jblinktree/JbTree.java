@@ -102,5 +102,5 @@ public interface JbTree<K, V> {
      * @param treeVisitor
      *            required visitor implementation
      */
-    void visit(JbTreeVisitor treeVisitor);
+    void visit(JbTreeVisitor<K, V> treeVisitor);
 }

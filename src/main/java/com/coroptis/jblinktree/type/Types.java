@@ -28,7 +28,7 @@ package com.coroptis.jblinktree.type;
  */
 public class Types {
 
-    public static TypeDescriptor integer() {
+    public static TypeDescriptor<Integer> integer() {
 	return new TypeDescriptorInteger();
     }
 
