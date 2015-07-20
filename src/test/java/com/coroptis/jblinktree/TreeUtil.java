@@ -36,9 +36,9 @@ public class TreeUtil {
 
     private final String intendation = "    ";
 
-    private final JbTree jbTree;
+    private final JbTree<Integer, Integer> jbTree;
 
-    public TreeUtil(final JbTree jbTree) {
+    public TreeUtil(final JbTree<Integer, Integer> jbTree) {
 	this.jbTree = jbTree;
     }
 
@@ -53,19 +53,24 @@ public class TreeUtil {
 	buff.append(intendation);
 	buff.append("node [shape=record]\n");
 
-	jbTree.visit(new JbTreeVisitor() {
+	jbTree.visit(new JbTreeVisitor<Integer, Integer>() {
 
 	    @Override
-	    public boolean visited(final Node node) {
+	    public boolean visitedLeaf(final Node<Integer, Integer> node) {
+		node.writeTo(buff, intendation);
+		return true;
+	    }
+
+	    @Override
+	    public boolean visitedNonLeaf(final Node<Integer, Integer> node) {
 		node.writeTo(buff, intendation);
 		return true;
 	    }
 	});
 
-	jbTree.visit(new JbTreeVisitor() {
+	jbTree.visit(new JbTreeVisitor<Integer, Integer>() {
 
-	    @Override
-	    public boolean visited(final Node node) {
+	    private void addLink(final Node<Integer, Integer> node) {
 		if (node.getLink() != null) {
 		    buff.append(intendation);
 		    buff.append("\"node");
@@ -80,22 +85,31 @@ public class TreeUtil {
 		    buff.append("\"]");
 		    buff.append(";\n");
 		}
-		if (!node.isLeafNode()) {
-		    for (final Object o : node.getNodeIds()) {
-			Integer i = (Integer) o;
-			buff.append(intendation);
-			buff.append("\"node");
-			buff.append(node.getId());
-			buff.append("\":F");
-			buff.append(i);
-			buff.append(" -> ");
-			buff.append("\"node");
-			buff.append(i);
-			buff.append("\" [label=\"");
-			buff.append(i);
-			buff.append("\"];");
-			buff.append("\n");
-		    }
+	    }
+
+	    @Override
+	    public boolean visitedLeaf(final Node<Integer, Integer> node) {
+		addLink(node);
+		return true;
+	    }
+
+	    @Override
+	    public boolean visitedNonLeaf(final Node<Integer, Integer> node) {
+		addLink(node);
+		for (final Object o : node.getNodeIds()) {
+		    Integer i = (Integer) o;
+		    buff.append(intendation);
+		    buff.append("\"node");
+		    buff.append(node.getId());
+		    buff.append("\":F");
+		    buff.append(i);
+		    buff.append(" -> ");
+		    buff.append("\"node");
+		    buff.append(i);
+		    buff.append("\" [label=\"");
+		    buff.append(i);
+		    buff.append("\"];");
+		    buff.append("\n");
 		}
 		return true;
 	    }

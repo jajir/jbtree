@@ -51,7 +51,8 @@ import com.coroptis.jblinktree.type.TypeDescriptorInteger;
  */
 public class NodeStoreConcurrencyTest extends TestCase {
 
-    private final Logger logger = LoggerFactory.getLogger(NodeStoreConcurrencyTest.class);
+    private final Logger logger = LoggerFactory
+	    .getLogger(NodeStoreConcurrencyTest.class);
 
     private NodeStore nodeStore;
 
@@ -59,7 +60,8 @@ public class NodeStoreConcurrencyTest extends TestCase {
     public void testForThreadClash() throws Exception {
 	final int cycleCount = 10;
 	final int threadCount = 10;
-	final CountDownLatch doneLatch = new CountDownLatch(cycleCount * threadCount);
+	final CountDownLatch doneLatch = new CountDownLatch(cycleCount
+		* threadCount);
 	final CountDownLatch startLatch = new CountDownLatch(1);
 
 	for (int i = 0; i < threadCount; ++i) {
@@ -83,8 +85,9 @@ public class NodeStoreConcurrencyTest extends TestCase {
     protected void setUp() throws Exception {
 	super.setUp();
 	nodeStore = new NodeStoreImpl(new IdGeneratorImpl(), 2);
-	TypeDescriptor td = new TypeDescriptorInteger();
-	NodeImpl node = new NodeImpl(2, 1, true, td, td);
+	TypeDescriptor<Integer> td = new TypeDescriptorInteger();
+	NodeImpl<Integer, Integer> node = new NodeImpl<Integer, Integer>(2, 1,
+		true, td, td);
 	nodeStore.writeNode(node);
     }
 

@@ -27,16 +27,26 @@ package com.coroptis.jblinktree;
  * @author jajir
  * 
  */
-public interface JbTreeVisitor {
+public interface JbTreeVisitor<K, V> {
 
     /**
-     * When particular node is visited this method is called.
+     * When particular leaf node is visited this method is called.
      * 
      * @param node
-     *            required visited node
+     *            required visited leaf node
      * @return when it's <code>true</code> traversing will try to find next
      *         node, when it's <code>false</code> traversing immediately stops.
      */
-    boolean visited(Node node);
+    boolean visitedLeaf(Node<K, V> node);
+
+    /**
+     * When particular non-leaf node is visited this method is called.
+     * 
+     * @param node
+     *            required visited non-leaf node
+     * @return when it's <code>true</code> traversing will try to find next
+     *         node, when it's <code>false</code> traversing immediately stops.
+     */
+    boolean visitedNonLeaf(Node<K, Integer> node);
 
 }

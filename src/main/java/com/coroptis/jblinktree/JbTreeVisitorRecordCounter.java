@@ -26,12 +26,20 @@ package com.coroptis.jblinktree;
  * @author jajir
  *
  */
-class JbTreeVisitorRecordCounter implements JbTreeVisitor {
+class JbTreeVisitorRecordCounter<K, V> implements JbTreeVisitor<K, V> {
 
     private int count = 0;
 
     @Override
-    public boolean visited(Node node) {
+    public boolean visitedLeaf(Node<K, V> node) {
+	if (node.isLeafNode()) {
+	    count += node.getKeysCount();
+	}
+	return true;
+    }
+
+    @Override
+    public boolean visitedNonLeaf(Node<K, Integer> node) {
 	if (node.isLeafNode()) {
 	    count += node.getKeysCount();
 	}
