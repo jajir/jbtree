@@ -27,7 +27,7 @@ package com.coroptis.jblinktree;
  * @author jajir
  * 
  */
-public interface NodeStore {
+public interface NodeStore<K, V> {
 
     void lockNode(Integer nodeId);
 
@@ -40,9 +40,9 @@ public interface NodeStore {
      *            required node id
      * @return
      */
-    Node get(Integer nodeId);
+    Node<K, ?> get(Integer nodeId);
 
-    Node getAndLock(Integer nodeId);
+    Node<K, ?> getAndLock(Integer nodeId);
 
     /**
      * Persist node into node store.
@@ -53,7 +53,7 @@ public interface NodeStore {
      * @param node
      *            required {@link Node}
      */
-    void writeNode(Node node);
+    void writeNode(Node<K, ?> node);
 
     void deleteNode(Integer idNode);
 

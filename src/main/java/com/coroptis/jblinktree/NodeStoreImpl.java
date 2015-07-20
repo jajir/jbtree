@@ -32,7 +32,7 @@ import com.google.common.base.Preconditions;
  * @author jajir
  * 
  */
-public class NodeStoreImpl implements NodeStore {
+public class NodeStoreImpl<K, V> implements NodeStore<K, V> {
 
     private final Map<Integer, byte[]> nodes;
 

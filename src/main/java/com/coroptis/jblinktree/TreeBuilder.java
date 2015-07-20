@@ -51,8 +51,8 @@ import com.coroptis.jblinktree.type.TypeDescriptor;
 public final class TreeBuilder {
 
     private Integer l;
-    private TypeDescriptor keyTypeDescriptor;
-    private TypeDescriptor valueTypeDescriptor;
+    private TypeDescriptor<?> keyTypeDescriptor;
+    private TypeDescriptor<?> valueTypeDescriptor;
 
     public static TreeBuilder builder() {
 	return new TreeBuilder(5);
@@ -67,23 +67,26 @@ public final class TreeBuilder {
 	return this;
     }
 
-    public TreeBuilder setKeyType(final TypeDescriptor keyTypeDescriptor) {
+    public TreeBuilder setKeyType(final TypeDescriptor<?> keyTypeDescriptor) {
 	this.keyTypeDescriptor = keyTypeDescriptor;
 	return this;
     }
 
-    public TreeBuilder setValueType(final TypeDescriptor valueTypeDescriptor) {
+    public TreeBuilder setValueType(final TypeDescriptor<?> valueTypeDescriptor) {
 	this.valueTypeDescriptor = valueTypeDescriptor;
 	return this;
     }
 
     public <K, V> JbTree<K, V> build() {
 	final IdGenerator idGenerator = new IdGeneratorImpl();
-	final NodeStoreImpl nodeStore = new NodeStoreImpl(idGenerator, l);
-	final JbTreeTool jbTreeTool = new JbTreeToolImpl(nodeStore);
-	final JbTreeService treeService = new JbTreeServiceImpl(nodeStore, jbTreeTool);
-	final JbTree<K, V> tree = new JbTreeImpl<K, V>(l, nodeStore, jbTreeTool, treeService,
-		keyTypeDescriptor, valueTypeDescriptor);
+	final NodeStoreImpl<K, V> nodeStore = new NodeStoreImpl<K, V>(idGenerator, l);
+	final JbTreeTool<K, V> jbTreeTool = new JbTreeToolImpl<K, V>(nodeStore,
+		(TypeDescriptor<K>) keyTypeDescriptor);
+	final JbTreeService treeService = new JbTreeServiceImpl(nodeStore,
+		jbTreeTool);
+	final JbTree<K, V> tree = new JbTreeImpl<K, V>(l, nodeStore,
+		jbTreeTool, treeService, (TypeDescriptor<K>) keyTypeDescriptor,
+		(TypeDescriptor<V>) valueTypeDescriptor);
 	return tree;
     }
 

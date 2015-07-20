@@ -30,7 +30,7 @@ import com.coroptis.jblinktree.type.TypeDescriptor;
  * @author jajir
  * 
  */
-public interface JbTreeTool {
+public interface JbTreeTool<K, V> {
 
     /**
      * For given key find corresponding node in which key should belongs.
@@ -45,7 +45,7 @@ public interface JbTreeTool {
      * @return found node if there is such, when there is no corresponding key
      *         <code>null</code> is returned.
      */
-    Node findCorrespondingNode(Node node, Integer key);
+    Node<K, ?> findCorrespondingNode(Node<K, V> node, K key);
 
     /**
      * Move right in tree until suitable non-leaf node is found.
@@ -60,7 +60,7 @@ public interface JbTreeTool {
      *            required key
      * @return moved right node
      */
-    Node moveRightLeafNode(Node current, Integer key);
+    Node moveRightLeafNode(Node<K, V> current, K key);
 
     /**
      * Move right in tree until suitable non-leaf node is found.
@@ -89,7 +89,7 @@ public interface JbTreeTool {
      *            required key
      * @return moved right node
      */
-    Node moveRightNonLeafNode(Node current, Integer key);
+    Node moveRightNonLeafNode(Node<K, Integer> current, K key);
 
     /**
      * Split node into two nodes. It moved part of currentNode data into new one
@@ -106,10 +106,11 @@ public interface JbTreeTool {
      *            required inserted value
      * @return newly created node, this node contains higher part of keys.
      */
-    Node split(Node currentNode, Integer key, Integer value, TypeDescriptor keyTypeDescriptor,
-	    TypeDescriptor valueTypeDescriptor);
+    Node split(Node currentNode, Integer key, Integer value,
+	    TypeDescriptor keyTypeDescriptor, TypeDescriptor valueTypeDescriptor);
 
-    void updateMaxValueWhenNecessary(Node currentNode, Integer insertedKey, Stack<Integer> stack);
+    void updateMaxValueWhenNecessary(Node currentNode, Integer insertedKey,
+	    Stack<Integer> stack);
 
     /**
      * It get already existing node, new node a create new root node pointing on

@@ -30,6 +30,7 @@ import com.coroptis.jblinktree.JblinktreeException;
 import com.coroptis.jblinktree.Node;
 import com.coroptis.jblinktree.NodeImpl;
 import com.coroptis.jblinktree.NodeStore;
+import com.coroptis.jblinktree.type.TypeDescriptorInteger;
 
 /**
  * Tests for {@link JbTreeTool}
@@ -201,7 +202,7 @@ public class JbTreeToolTest extends TestCase {
     protected void setUp() throws Exception {
 	super.setUp();
 	nodeStore = EasyMock.createMock(NodeStore.class);
-	jbTreeTool = new JbTreeToolImpl(nodeStore);
+	jbTreeTool = new JbTreeToolImpl(nodeStore, new TypeDescriptorInteger());
 	n1 = EasyMock.createMock(NodeImpl.class);
 	n2 = EasyMock.createMock(NodeImpl.class);
     }
