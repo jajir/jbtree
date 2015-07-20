@@ -49,39 +49,6 @@ public class JbTreeToolTest extends TestCase {
     private NodeImpl n2;
 
     @Test
-    public void test_findCorrespondingNode() throws Exception {
-	EasyMock.expect(n1.getCorrespondingNodeId(6)).andReturn(18);
-	EasyMock.expect(nodeStore.get(18)).andReturn(n2);
-	EasyMock.replay(nodeStore, n1, n2);
-
-	Node ret = jbTreeTool.findCorrespondingNode(n1, 6);
-
-	assertEquals(n2, ret);
-	EasyMock.verify(nodeStore, n1, n2);
-    }
-
-    /**
-     * Verify that method doesn't sink exception.
-     * 
-     * @throws Exception
-     */
-    @Test
-    public void test_findCorrespondingNode_exceptionSinking() throws Exception {
-	EasyMock.expect(n1.getCorrespondingNodeId(6)).andReturn(18);
-	EasyMock.expect(nodeStore.get(18)).andThrow(new JblinktreeException("error"));
-	EasyMock.replay(nodeStore, n1, n2);
-
-	try {
-	    jbTreeTool.findCorrespondingNode(n1, 6);
-	    fail();
-	} catch (JblinktreeException e) {
-	    assertEquals("error", e.getMessage());
-	}
-
-	EasyMock.verify(nodeStore, n1, n2);
-    }
-
-    @Test
     public void test_moveRightNonLeafNode_isLeafNode() throws Exception {
 	EasyMock.expect(n1.isLeafNode()).andReturn(true);
 	EasyMock.replay(nodeStore, n1, n2);

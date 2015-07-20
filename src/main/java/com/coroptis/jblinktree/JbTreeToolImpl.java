@@ -50,12 +50,6 @@ public class JbTreeToolImpl<K, V> implements JbTreeTool<K, V> {
     }
 
     @Override
-    public Node findCorrespondingNode(final Node node, final K key) {
-	Integer nextNodeId = node.getCorrespondingNodeId(key);
-	return nodeStore.get(nextNodeId);
-    }
-
-    @Override
     public Node moveRightNonLeafNode(Node<K, Integer> current, final K key) {
 	Preconditions.checkNotNull(key);
 	Preconditions.checkNotNull(current);

@@ -33,21 +33,6 @@ import com.coroptis.jblinktree.type.TypeDescriptor;
 public interface JbTreeTool<K, V> {
 
     /**
-     * For given key find corresponding node in which key should belongs.
-     * <p>
-     * Method doesn't lock any node.
-     * </p>
-     * 
-     * @param node
-     *            required node object
-     * @param key
-     *            required key
-     * @return found node if there is such, when there is no corresponding key
-     *         <code>null</code> is returned.
-     */
-    Node<K, ?> findCorrespondingNode(Node<K, V> node, K key);
-
-    /**
      * Move right in tree until suitable non-leaf node is found.
      * <p>
      * When there is move right than current node is unlocked and new one is
