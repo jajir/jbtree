@@ -52,50 +52,28 @@ public class FieldTest {
 	assertEquals(Integer.valueOf(0), field.getValue(0));
     }
 
-    @Test(expected = NullPointerException.class)
-    public void test_save_null() throws Exception {
-	field.set(2, null);
-    }
-
-    @Test
-    public void test_save() throws Exception {
-	field.set(2, -40);
-	assertEquals(Integer.valueOf(-40), field.get(2));
-    }
-
     @Test
     public void test_length_2() throws Exception {
-	FieldImpl<Integer, Integer> f = new FieldImpl<Integer, Integer>(
-		new Integer[] { 10, 1, 30 }, intDescriptor, intDescriptor);
+	Field<Integer, Integer> f = FieldImpl
+		.makeFromIntegerField(new Integer[] { 10, 1, 30 });
 
 	assertEquals(3, f.getLength());
     }
 
     @Test
     public void test_length_3() throws Exception {
-	FieldImpl<Integer, Integer> f = new FieldImpl<Integer, Integer>(new Integer[] { 10, 1, 20,
-		2, 30 }, intDescriptor, intDescriptor);
+	Field<Integer, Integer> f = FieldImpl
+		.makeFromIntegerField(new Integer[] { 10, 1, 20, 2, 30 });
 
 	assertEquals(5, f.getLength());
     }
 
     @Test
     public void test_getKey() throws Exception {
-	FieldImpl<Integer, Integer> f = new FieldImpl<Integer, Integer>(new Integer[] { 10, 1, 20,
-		2, 30 }, intDescriptor, intDescriptor);
+	Field<Integer, Integer> f = FieldImpl
+		.makeFromIntegerField(new Integer[] { 10, 1, 20, 2, 30 });
 
 	assertEquals(Integer.valueOf(2), f.getKey(3));
-    }
-
-    @Test
-    public void test_get() throws Exception {
-	FieldImpl<Integer, Integer> f = new FieldImpl<Integer, Integer>(new Integer[] { 10, 1, 20,
-		2, 30 }, intDescriptor, intDescriptor);
-
-	assertEquals(Integer.valueOf(10), f.get(0));
-	assertEquals(Integer.valueOf(1), f.get(1));
-	assertEquals(Integer.valueOf(20), f.get(2));
-	assertEquals(Integer.valueOf(2), f.get(3));
     }
 
     @Test
@@ -118,7 +96,8 @@ public class FieldTest {
     @Test
     public void test_toString() throws Exception {
 	logger.debug(field.toString());
-	assertEquals("Field{field=[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]}",
+	assertEquals(
+		"Field{field=[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]}",
 		field.toString());
     }
 

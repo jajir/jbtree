@@ -153,7 +153,7 @@ public class JbTreeToolTest extends TestCase {
     public void test_moveRightLeafNode_noMove() throws Exception {
 	EasyMock.expect(n1.isLeafNode()).andReturn(true);
 	EasyMock.expect(n1.getLink()).andReturn(32);
-	EasyMock.expect(n1.getMaxValue()).andReturn(18).times(2);
+	EasyMock.expect(n1.getMaxKey()).andReturn(18).times(2);
 	EasyMock.expect(n1.isEmpty()).andReturn(false);
 	EasyMock.replay(nodeStore, n1, n2);
 	Node ret = jbTreeTool.moveRightLeafNode(n1, 10);
@@ -178,7 +178,7 @@ public class JbTreeToolTest extends TestCase {
     public void test_moveRightLeafNode_move() throws Exception {
 	EasyMock.expect(n1.isLeafNode()).andReturn(true);
 	EasyMock.expect(n1.getLink()).andReturn(32);
-	EasyMock.expect(n1.getMaxValue()).andReturn(5).times(2);
+	EasyMock.expect(n1.getMaxKey()).andReturn(5).times(2);
 	EasyMock.expect(n1.isEmpty()).andReturn(false);
 
 	EasyMock.expect(n1.getLink()).andReturn(32);
@@ -187,7 +187,7 @@ public class JbTreeToolTest extends TestCase {
 
 	EasyMock.expect(n2.getLink()).andReturn(45);
 	EasyMock.expect(n2.isEmpty()).andReturn(false);
-	EasyMock.expect(n2.getMaxValue()).andReturn(15).times(2);
+	EasyMock.expect(n2.getMaxKey()).andReturn(15).times(2);
 	nodeStore.unlockNode(5);
 
 	EasyMock.replay(nodeStore, n1, n2);

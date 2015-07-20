@@ -45,24 +45,29 @@ public class FieldImpl<K, V> implements Field<K, V> {
 
     private final TypeDescriptor<Integer> linkTypeDescriptor;
 
-    public FieldImpl(final int numberOfField, final TypeDescriptor<K> keyTypeDescriptor,
+    public static Field<Integer, Integer> makeFromIntegerField(
+	    final Integer[] fieldInt) {
+	TypeDescriptor<Integer> tdInt = new TypeDescriptorInteger();
+	byte fieldByte[] = new byte[fieldInt.length * 4 + 1];
+	for (int i = 0; i < fieldInt.length; i++) {
+	    tdInt.save(fieldByte, i * 4 + 1, fieldInt[i]);
+	}
+	return new FieldImpl<Integer, Integer>(fieldByte, tdInt, tdInt);
+    }
+
+    public FieldImpl(final int numberOfField,
+	    final TypeDescriptor<K> keyTypeDescriptor,
 	    final TypeDescriptor<V> valueTypeDescriptor) {
 	// FIXME move it out side.
 	linkTypeDescriptor = new TypeDescriptorInteger();
 	this.keyTypeDescriptor = keyTypeDescriptor;
 	this.valueTypeDescriptor = valueTypeDescriptor;
-	this.field = new byte[getPosition(numberOfField) + linkTypeDescriptor.getMaxLength()];
+	this.field = new byte[getPosition(numberOfField)
+		+ linkTypeDescriptor.getMaxLength()];
     }
 
-    public FieldImpl(final Integer[] field, final TypeDescriptor<K> keyTypeDescriptor,
-	    final TypeDescriptor<V> valueTypeDescriptor) {
-	this(field.length - 1, keyTypeDescriptor, valueTypeDescriptor);
-	for (int i = 0; i < field.length; i++) {
-	    set(i, field[i]);
-	}
-    }
-
-    public FieldImpl(final byte[] field, final TypeDescriptor<K> keyTypeDescriptor,
+    public FieldImpl(final byte[] field,
+	    final TypeDescriptor<K> keyTypeDescriptor,
 	    final TypeDescriptor<V> valueTypeDescriptor) {
 	this(0, keyTypeDescriptor, valueTypeDescriptor);
 	this.field = new byte[field.length];
@@ -72,17 +77,8 @@ public class FieldImpl<K, V> implements Field<K, V> {
     private int getPosition(int position) {
 	final int p1 = position >>> 1;
 	final int p2 = (position + 1) >>> 1;
-	return p1 * keyTypeDescriptor.getMaxLength() + p2 * valueTypeDescriptor.getMaxLength() + 1;
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.coroptis.jblinktree.Filed#get(int)
-     */
-    @Override
-    public Integer get(int position) {
-	return load(field, getPosition(position));
+	return p1 * keyTypeDescriptor.getMaxLength() + p2
+		* valueTypeDescriptor.getMaxLength() + 1;
     }
 
     /*
@@ -122,31 +118,6 @@ public class FieldImpl<K, V> implements Field<K, V> {
     /*
      * (non-Javadoc)
      * 
-     * @see com.coroptis.jblinktree.Filed#set(int, java.lang.Integer)
-     */
-    @Override
-    public void set(int position, Integer value) {
-	int index = getPosition(position);
-	save(field, index, value);
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.coroptis.jblinktree.Filed#getField()
-     */
-    @Override
-    public Integer[] getField() {
-	Integer[] out = new Integer[getLength()];
-	for (int i = 0; i < out.length; i++) {
-	    out[i] = get(i);
-	}
-	return out;
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
      * @see com.coroptis.jblinktree.Filed#getBytes()
      */
     @Override
@@ -162,27 +133,17 @@ public class FieldImpl<K, V> implements Field<K, V> {
     @Override
     public int getLength() {
 	int length = field.length - 4; // remove link length
-	int rest = length % (keyTypeDescriptor.getMaxLength() + valueTypeDescriptor.getMaxLength());
-	int out = length / (keyTypeDescriptor.getMaxLength() + valueTypeDescriptor.getMaxLength())
-		* 2;
+	int rest = length
+		% (keyTypeDescriptor.getMaxLength() + valueTypeDescriptor
+			.getMaxLength());
+	int out = length
+		/ (keyTypeDescriptor.getMaxLength() + valueTypeDescriptor
+			.getMaxLength()) * 2;
 	if (rest == 0) {
 	    return out;
 	} else {
 	    return out + 1;
 	}
-    }
-
-    private Integer load(byte[] data, int from) {
-	return data[from] << 24 | (data[from + 1] & 0xFF) << 16 | (data[from + 2] & 0xFF) << 8
-		| (data[from + 3] & 0xFF);
-    }
-
-    private void save(byte[] data, int from, Integer value) {
-	int v = value.intValue();
-	data[from] = (byte) ((v >>> 24) & 0xFF);
-	data[from + 1] = (byte) ((v >>> 16) & 0xFF);
-	data[from + 2] = (byte) ((v >>> 8) & 0xFF);
-	data[from + 3] = (byte) ((v >>> 0) & 0xFF);
     }
 
     @Override

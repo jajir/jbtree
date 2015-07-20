@@ -75,7 +75,7 @@ public class JbTreeToolImpl implements JbTreeTool {
 	if (node.isEmpty()) {
 	    return true;
 	}
-	return (node.getMaxValue() != null && key > (Integer)node.getMaxValue());
+	return (node.getMaxKey() != null && key > (Integer)node.getMaxKey());
     }
 
     @Override
@@ -100,7 +100,7 @@ public class JbTreeToolImpl implements JbTreeTool {
     @Override
     public Node moveRightLeafNodeWithoutLocking(Node current, final Integer key) {
 	if (current.isLeafNode()) {
-	    while (current.getLink() != null && key > (Integer)current.getMaxValue()) {
+	    while (current.getLink() != null && key > (Integer)current.getMaxKey()) {
 		current = nodeStore.get(current.getLink());
 	    }
 	    return current;
@@ -147,10 +147,10 @@ public class JbTreeToolImpl implements JbTreeTool {
 
     @Override
     public void updateMaxIfNecessary(final Node parentNode, final Node childNode) {
-	if ((Integer)childNode.getMaxValue() > (Integer)parentNode.getMaxValue()) {
+	if ((Integer)childNode.getMaxKey() > (Integer)parentNode.getMaxKey()) {
 	    Preconditions.checkState(NodeImpl.EMPTY_INT.equals(parentNode.getLink()),
 		    "parent not rightemost node in tree");
-	    parentNode.setMaxKeyValue(childNode.getMaxValue());
+	    parentNode.setMaxKey(childNode.getMaxKey());
 	    nodeStore.writeNode(parentNode);
 	}
     }

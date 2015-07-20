@@ -209,7 +209,7 @@ public class NodeTest {
 
 	assertTrue(ret);
 	assertTrue(node.isEmpty());
-	assertNull(node.getMaxValue());
+	assertNull(node.getMaxKey());
 	assertTrue(node.isLeafNode());
     }
 
@@ -222,7 +222,7 @@ public class NodeTest {
 	logger.debug(n.toString());
 	assertTrue(ret);
 	assertFalse(n.isEmpty());
-	assertEquals(Integer.valueOf(8), n.getMaxValue());
+	assertEquals(Integer.valueOf(8), n.getMaxKey());
     }
 
     @Test
@@ -253,7 +253,7 @@ public class NodeTest {
 
 	assertTrue(ret);
 	verifyNode(new Integer[][] { { 3, 1 } }, false, 999);
-	assertEquals(Integer.valueOf(3), node.getMaxValue());
+	assertEquals(Integer.valueOf(3), node.getMaxKey());
     }
 
     @Test
@@ -264,7 +264,7 @@ public class NodeTest {
 
 	assertTrue(ret);
 	verifyNode(new Integer[][] {}, false, 888);
-	assertEquals(null, node.getMaxValue());
+	assertEquals(null, node.getMaxKey());
     }
 
     @Test(expected = NullPointerException.class)

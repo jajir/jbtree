@@ -148,16 +148,14 @@ public class NodeImpl<K, V> implements Node<K, V> {
      */
     public static NodeImpl<Integer, Integer> makeNodeFromIntegers(final int l,
 	    final Integer idNode, final boolean isLeafNode,
-	    final Integer field[]) {
-	if (isLeafNode && field[0] != M) {
+	    final Integer fieldInt[]) {
+	if (isLeafNode && fieldInt[0] != M) {
 	    throw new JblinktreeException("leaf tree should have first int M.");
 	}
-	// TODO type descriptors are created duplicitely.
+	TypeDescriptor<Integer> tdInt = new TypeDescriptorInteger();
 	NodeImpl<Integer, Integer> n = new NodeImpl<Integer, Integer>(l,
-		idNode, isLeafNode, new TypeDescriptorInteger(),
-		new TypeDescriptorInteger());
-	n.field = new FieldImpl<Integer, Integer>(field,
-		new TypeDescriptorInteger(), new TypeDescriptorInteger());
+		idNode, isLeafNode, tdInt, tdInt);
+	n.field = FieldImpl.makeFromIntegerField(fieldInt);
 	if (isLeafNode) {
 	    n.field.setFlag(NodeImpl.M);
 	}
@@ -165,7 +163,7 @@ public class NodeImpl<K, V> implements Node<K, V> {
     }
 
     /**
-     * TODO this shoudl move to separate class. Functionality creating node from
+     * TODO this should move to separate class. Functionality creating node from
      * byte field.
      * 
      * @param l
@@ -576,22 +574,8 @@ public class NodeImpl<K, V> implements Node<K, V> {
      * @see com.coroptis.jblinktree.Node#setMaxKeyValue(java.lang.Integer)
      */
     @Override
-    public void setMaxKeyValue(final K maxKey) {
+    public void setMaxKey(final K maxKey) {
 	field.setKey(field.getLength() - 2, maxKey);
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.coroptis.jblinktree.Node#getMaxValue()
-     */
-    @Override
-    public K getMaxValue() {
-	if (isEmpty()) {
-	    return null;
-	} else {
-	    return field.getKey(field.getLength() - 2);
-	}
     }
 
     /*

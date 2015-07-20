@@ -197,16 +197,7 @@ public interface Node<K, V> {
      * @param maxKey
      *            max key value, could be <code>null</code>
      */
-    public void setMaxKeyValue(K maxKey);
-
-    /**
-     * FIXME this return max key not value. Get max value.
-     * 
-     * @return max value stored in node, could be <code>null</code>
-     * @return replace by getMaxKey
-     */
-    @Deprecated
-    public K getMaxValue();
+    public void setMaxKey(K maxKey);
 
     /**
      * Verify that node is consistent.
