@@ -60,26 +60,25 @@ public class NodeStoreImpl<K, V> implements NodeStore<K, V> {
     }
 
     @Override
-    public Node get(final Integer nodeId) {
+    public <S> Node<K, S> get(final Integer nodeId) {
 	byte[] field = nodes.get(Preconditions.checkNotNull(nodeId));
 	if (field == null) {
 	    throw new JblinktreeException("There is no node with id '" + nodeId + "'");
 	}
 	/**
-	 * FIXME node should be created without inspecting field. It's not
-	 * thread safe.
+	 * FIXME Creating of node instance should be extracted to separate class and typed
 	 */
-	return NodeImpl.makeNodeFromBytes(l, nodeId, Arrays.copyOf(field, field.length));
+	return (Node<K, S>)NodeImpl.makeNodeFromBytes(l, nodeId, Arrays.copyOf(field, field.length));
     }
 
     @Override
-    public Node getAndLock(final Integer nodeId) {
+    public <S> Node<K, S> getAndLock(final Integer nodeId) {
 	lockNode(nodeId);
 	return get(nodeId);
     }
 
     @Override
-    public void writeNode(final Node node) {
+    public <S> void writeNode(final Node<K, S> node) {
 	Preconditions.checkNotNull(node.getId());
 	Preconditions.checkNotNull(node);
 	node.verify();

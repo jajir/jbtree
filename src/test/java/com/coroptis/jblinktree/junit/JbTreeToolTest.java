@@ -40,13 +40,13 @@ import com.coroptis.jblinktree.type.TypeDescriptorInteger;
  */
 public class JbTreeToolTest extends TestCase {
 
-    private JbTreeTool jbTreeTool;
+    private JbTreeTool<Integer, Integer> jbTreeTool;
 
-    private NodeStore nodeStore;
+    private NodeStore<Integer, Integer> nodeStore;
 
-    private NodeImpl n1;
+    private NodeImpl<Integer, Integer> n1;
 
-    private NodeImpl n2;
+    private NodeImpl<Integer, Integer> n2;
 
     @Test
     public void test_moveRightNonLeafNode_isLeafNode() throws Exception {
@@ -68,7 +68,7 @@ public class JbTreeToolTest extends TestCase {
 	EasyMock.expect(n1.getCorrespondingNodeId(10)).andReturn(4);
 	EasyMock.expect(n1.getLink()).andReturn(12);
 	EasyMock.replay(nodeStore, n1, n2);
-	Node ret = jbTreeTool.moveRightNonLeafNode(n1, 10);
+	Node<Integer, Integer> ret = jbTreeTool.moveRightNonLeafNode(n1, 10);
 
 	assertEquals(n1, ret);
 	EasyMock.verify(nodeStore, n1, n2);
@@ -80,7 +80,7 @@ public class JbTreeToolTest extends TestCase {
 	EasyMock.expect(n1.getCorrespondingNodeId(10)).andReturn(null);
 	EasyMock.expect(n1.getLink()).andReturn(NodeImpl.EMPTY_INT);
 	EasyMock.replay(nodeStore, n1, n2);
-	Node ret = jbTreeTool.moveRightNonLeafNode(n1, 10);
+	Node<Integer, Integer> ret = jbTreeTool.moveRightNonLeafNode(n1, 10);
 
 	assertEquals(n1, ret);
 	EasyMock.verify(nodeStore, n1, n2);
@@ -91,13 +91,13 @@ public class JbTreeToolTest extends TestCase {
 	EasyMock.expect(n1.isLeafNode()).andReturn(false);
 	EasyMock.expect(n1.getCorrespondingNodeId(10)).andReturn(4);
 	EasyMock.expect(n1.getLink()).andReturn(4);
-	EasyMock.expect(nodeStore.getAndLock(4)).andReturn(n2);
+	EasyMock.expect(nodeStore.getAndLock(4)).andReturn((Node) n2);
 	EasyMock.expect(n1.getId()).andReturn(5);
 	nodeStore.unlockNode(5);
 	EasyMock.expect(n2.getCorrespondingNodeId(10)).andReturn(6);
 	EasyMock.expect(n2.getLink()).andReturn(60);
 	EasyMock.replay(nodeStore, n1, n2);
-	Node ret = jbTreeTool.moveRightNonLeafNode(n1, 10);
+	Node<Integer, Integer> ret = jbTreeTool.moveRightNonLeafNode(n1, 10);
 
 	assertEquals(n2, ret);
 	EasyMock.verify(nodeStore, n1, n2);
@@ -124,7 +124,7 @@ public class JbTreeToolTest extends TestCase {
 	EasyMock.expect(n1.getMaxKey()).andReturn(18).times(2);
 	EasyMock.expect(n1.isEmpty()).andReturn(false);
 	EasyMock.replay(nodeStore, n1, n2);
-	Node ret = jbTreeTool.moveRightLeafNode(n1, 10);
+	Node<Integer, Integer> ret = jbTreeTool.moveRightLeafNode(n1, 10);
 
 	assertEquals(n1, ret);
 	EasyMock.verify(nodeStore, n1, n2);
@@ -136,7 +136,7 @@ public class JbTreeToolTest extends TestCase {
 	EasyMock.expect(n1.getLink()).andReturn(null).times(2);
 	EasyMock.expect(n1.isEmpty()).andReturn(true);
 	EasyMock.replay(nodeStore, n1, n2);
-	Node ret = jbTreeTool.moveRightLeafNode(n1, 10);
+	Node<Integer, Integer> ret = jbTreeTool.moveRightLeafNode(n1, 10);
 
 	assertEquals(n1, ret);
 	EasyMock.verify(nodeStore, n1, n2);
@@ -150,7 +150,7 @@ public class JbTreeToolTest extends TestCase {
 	EasyMock.expect(n1.isEmpty()).andReturn(false);
 
 	EasyMock.expect(n1.getLink()).andReturn(32);
-	EasyMock.expect(nodeStore.getAndLock(32)).andReturn(n2);
+	EasyMock.expect(nodeStore.getAndLock(32)).andReturn((Node) n2);
 	EasyMock.expect(n1.getId()).andReturn(5);
 
 	EasyMock.expect(n2.getLink()).andReturn(45);
@@ -159,17 +159,19 @@ public class JbTreeToolTest extends TestCase {
 	nodeStore.unlockNode(5);
 
 	EasyMock.replay(nodeStore, n1, n2);
-	Node ret = jbTreeTool.moveRightLeafNode(n1, 10);
+	Node<Integer, Integer> ret = jbTreeTool.moveRightLeafNode(n1, 10);
 
 	assertEquals(n2, ret);
 	EasyMock.verify(nodeStore, n1, n2);
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     protected void setUp() throws Exception {
 	super.setUp();
 	nodeStore = EasyMock.createMock(NodeStore.class);
-	jbTreeTool = new JbTreeToolImpl(nodeStore, new TypeDescriptorInteger());
+	jbTreeTool = new JbTreeToolImpl<Integer, Integer>(nodeStore,
+		new TypeDescriptorInteger());
 	n1 = EasyMock.createMock(NodeImpl.class);
 	n2 = EasyMock.createMock(NodeImpl.class);
     }

@@ -47,11 +47,11 @@ public class JbTreeImpl<K, V> implements JbTree<K, V> {
 
     private Integer rootNodeId;
 
-    private final NodeStore nodeStore;
+    private final NodeStore<K, V> nodeStore;
 
-    private final JbTreeTool tool;
+    private final JbTreeTool<K, V> tool;
 
-    private final JbTreeService treeService;
+    private final JbTreeService<K, V> treeService;
 
     private final TypeDescriptor<K> keyTypeDescriptor;
 
@@ -65,8 +65,9 @@ public class JbTreeImpl<K, V> implements JbTree<K, V> {
      * @param nodeStore
      *            required node store object
      */
-    public JbTreeImpl(final int l, final NodeStore nodeStore,
-	    final JbTreeTool tool, final JbTreeService jbTreeService,
+    public JbTreeImpl(final int l, final NodeStore<K, V> nodeStore,
+	    final JbTreeTool<K, V> tool,
+	    final JbTreeService<K, V> jbTreeService,
 	    final TypeDescriptor<K> keyTypeDescriptor,
 	    final TypeDescriptor<V> valueTypeDescriptor) {
 	this.l = l;
@@ -85,27 +86,28 @@ public class JbTreeImpl<K, V> implements JbTree<K, V> {
     }
 
     @Override
-    public Integer insert(final K key, final V value) {
+    public V insert(final K key, final V value) {
 	Preconditions.checkNotNull(key);
 	Preconditions.checkNotNull(value);
 	final Stack<Integer> stack = new Stack<Integer>();
-	Integer currentNodeId = treeService.findLeafNodeId((Integer) key,
-		stack, rootNodeId);
+	Integer currentNodeId = treeService.findLeafNodeId(key, stack,
+		rootNodeId);
 	Node currentNode = nodeStore.getAndLock(currentNodeId);
-	currentNode = tool.moveRightLeafNode(currentNode, (Integer) key);
-	if (currentNode.getValue((Integer) key) == null) {
+	currentNode = tool.moveRightLeafNode(currentNode, key);
+	if (currentNode.getValue(key) == null) {
 	    /**
 	     * Key and value have to be inserted
 	     */
 	    Integer tmpValue = (Integer) value;
-	    Integer tmpKey = (Integer) key;
+	    K tmpKey = key;
 	    while (true) {
 		if (currentNode.getKeysCount() >= l) {
 		    /**
 		     * There is no free space for key and value
 		     */
-		    final Node newNode = tool.split(currentNode, tmpKey,
-			    tmpValue, keyTypeDescriptor, valueTypeDescriptor);
+		    final Node<K, Integer> newNode = tool.split(currentNode,
+			    tmpKey, tmpValue,
+			    (TypeDescriptor<Integer>) valueTypeDescriptor);
 		    nodeStore.writeNode(newNode);
 		    nodeStore.writeNode(currentNode);
 		    if (stack.empty()) {
@@ -133,7 +135,7 @@ public class JbTreeImpl<K, V> implements JbTree<K, V> {
 			 * There is a previous node, so move there.
 			 */
 			tmpValue = newNode.getId();
-			tmpKey = (Integer) newNode.getMaxKey();
+			tmpKey = newNode.getMaxKey();
 			final Integer previousCurrentNodeId = currentNode
 				.getId();
 			currentNode = treeService.loadParentNode(currentNode,
@@ -144,7 +146,7 @@ public class JbTreeImpl<K, V> implements JbTree<K, V> {
 		    /**
 		     * There is a free space for new key and value.
 		     */
-		    storeValueIntoNode(currentNode, tmpKey, tmpValue);
+		    storeValueIntoNode(currentNode, tmpKey, (V) tmpValue);
 		    return null;
 		}
 	    }
@@ -153,14 +155,14 @@ public class JbTreeImpl<K, V> implements JbTree<K, V> {
 	     * Key already exists. Rewrite value.
 	     */
 	    // TODO remove re-typing
-	    Integer oldValue = (Integer) currentNode.getValue((Integer) key);
-	    storeValueIntoNode(currentNode, (Integer) key, (Integer) value);
-	    return oldValue;
+	    Integer oldValue = (Integer) currentNode.getValue(key);
+	    storeValueIntoNode(currentNode, key, (V) value);
+	    return (V) oldValue;
 	}
     }
 
-    private void storeValueIntoNode(final Node currentNode, final Integer key,
-	    final Integer value) {
+    private void storeValueIntoNode(final Node currentNode, final K key,
+	    final V value) {
 	currentNode.insert(key, value);
 	nodeStore.writeNode(currentNode);
 	nodeStore.unlockNode(currentNode.getId());
@@ -170,11 +172,11 @@ public class JbTreeImpl<K, V> implements JbTree<K, V> {
     public boolean remove(final K key) {
 	Preconditions.checkNotNull(key);
 	final Stack<Integer> stack = new Stack<Integer>();
-	Integer currentNodeId = treeService.findLeafNodeId((Integer) key,
-		stack, rootNodeId);
-	Node currentNode = nodeStore.getAndLock(currentNodeId);
-	currentNode = tool.moveRightLeafNode(currentNode, (Integer) key);
-	if (currentNode.getValue((Integer) key) == null) {
+	Integer currentNodeId = treeService.findLeafNodeId(key, stack,
+		rootNodeId);
+	Node<K, V> currentNode = nodeStore.getAndLock(currentNodeId);
+	currentNode = tool.moveRightLeafNode(currentNode, key);
+	if (currentNode.getValue(key) == null) {
 	    /**
 	     * Node doesn't contains key, there is nothing to delete
 	     */
@@ -184,8 +186,7 @@ public class JbTreeImpl<K, V> implements JbTree<K, V> {
 	    /**
 	     * Leaf node contains key so remove it.
 	     */
-	    Integer tmpKey = (Integer) key;
-	    currentNode.remove(tmpKey);
+	    currentNode.remove(key);
 	    nodeStore.writeNode(currentNode);
 	    nodeStore.unlockNode(currentNode.getId());
 	    return true;
@@ -195,20 +196,20 @@ public class JbTreeImpl<K, V> implements JbTree<K, V> {
     @Override
     public V search(final K key) {
 	Preconditions.checkNotNull(key);
-	return (V) findAppropriateNode((Integer) key).getValue((Integer) key);
+	return (V) findAppropriateNode(key).getValue(key);
     }
 
-    private Node findAppropriateNode(final Integer key) {
+    private <S> Node<K, S> findAppropriateNode(final K key) {
 	Preconditions.checkNotNull(key);
 	Integer idNode = treeService.findLeafNodeId(key, new Stack<Integer>(),
 		rootNodeId);
 	Node node = nodeStore.get(idNode);
-	return tool.moveRightLeafNodeWithoutLocking(node, key);
+	return (Node<K, S>) tool.moveRightLeafNodeWithoutLocking(node, key);
     }
 
     @Override
     public int countValues() {
-	JbTreeVisitorRecordCounter<K,V> counter = new JbTreeVisitorRecordCounter<K,V>();
+	JbTreeVisitorRecordCounter<K, V> counter = new JbTreeVisitorRecordCounter<K, V>();
 	visit(counter);
 	return counter.getCount();
     }
@@ -216,7 +217,7 @@ public class JbTreeImpl<K, V> implements JbTree<K, V> {
     @Override
     public boolean containsKey(final K key) {
 	Preconditions.checkNotNull(key);
-	return findAppropriateNode((Integer) key).getValue((Integer) key) != null;
+	return findAppropriateNode(key).getValue(key) != null;
     }
 
     @Override

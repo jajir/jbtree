@@ -28,7 +28,7 @@ import java.util.Stack;
  * @author jajir
  * 
  */
-public interface JbTreeService {
+public interface JbTreeService<K, V> {
 
     /**
      * Non locking method that find leaf node id where should be given key
@@ -51,7 +51,8 @@ public interface JbTreeService {
      * @return leaf node id where should be key found or stored, it's never
      *         <code>null</code>
      */
-    Integer findLeafNodeId(Integer key, Stack<Integer> stack, Integer rootNodeId);
+    Integer findLeafNodeId(K key, Stack<Integer> stack, Integer rootNodeId);
 
-    Node loadParentNode(Node currentNode, Integer tmpKey, Integer nextNodeId);
+    <S> Node<K, Integer> loadParentNode(Node<K, S> currentNode, K tmpKey,
+	    Integer nextNodeId);
 }

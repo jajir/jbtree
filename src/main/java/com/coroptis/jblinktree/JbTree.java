@@ -40,7 +40,7 @@ public interface JbTree<K, V> {
      *            required parameter key
      * @return previously associated value with given key.
      */
-    Integer insert(K key, V value);
+    V insert(K key, V value);
 
     /**
      * Remove key from tree. Associated value will be also removed.

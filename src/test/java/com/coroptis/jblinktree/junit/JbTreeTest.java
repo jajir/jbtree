@@ -43,17 +43,17 @@ import com.coroptis.jblinktree.type.Types;
  */
 public class JbTreeTest extends TestCase {
 
-    private JbTreeImpl jbTree;
+    private JbTreeImpl<Integer, Integer> jbTree;
 
-    private NodeStore nodeStore;
+    private NodeStore<Integer, Integer> nodeStore;
 
-    private JbTreeTool jbTreeTool;
+    private JbTreeTool<Integer, Integer> jbTreeTool;
 
-    private JbTreeService jbTreeService;
+    private JbTreeService<Integer, Integer> jbTreeService;
 
-    private Node rootNode;
+    private Node<Integer, Integer> rootNode;
 
-    private TypeDescriptor intDescriptor;
+    private TypeDescriptor<Integer> intDescriptor;
 
     @Test
     public void test_constructor() throws Exception {
@@ -90,6 +90,7 @@ public class JbTreeTest extends TestCase {
 	EasyMock.verify(nodeStore, rootNode);
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     protected void setUp() throws Exception {
 	super.setUp();
@@ -99,10 +100,11 @@ public class JbTreeTest extends TestCase {
 	jbTreeTool = EasyMock.createMock(JbTreeTool.class);
 	jbTreeService = EasyMock.createMock(JbTreeService.class);
 	EasyMock.expect(nodeStore.getNextId()).andReturn(0);
-	nodeStore.writeNode(new NodeImpl(3, 0, true, intDescriptor, intDescriptor));
+	nodeStore.writeNode(new NodeImpl<Integer,Integer>(3, 0, true, intDescriptor,
+		intDescriptor));
 	EasyMock.replay(nodeStore);
-	jbTree = new JbTreeImpl<Integer, Integer>(3, nodeStore, jbTreeTool, jbTreeService,
-		Types.integer(), Types.integer());
+	jbTree = new JbTreeImpl<Integer, Integer>(3, nodeStore, jbTreeTool,
+		jbTreeService, Types.integer(), Types.integer());
 	EasyMock.verify(nodeStore);
 	EasyMock.reset(nodeStore);
 

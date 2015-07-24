@@ -40,9 +40,9 @@ public interface NodeStore<K, V> {
      *            required node id
      * @return
      */
-    Node<K, ?> get(Integer nodeId);
+    <S> Node<K, S> get(Integer nodeId);
 
-    Node<K, ?> getAndLock(Integer nodeId);
+    <S> Node<K, S> getAndLock(Integer nodeId);
 
     /**
      * Persist node into node store.
@@ -53,7 +53,7 @@ public interface NodeStore<K, V> {
      * @param node
      *            required {@link Node}
      */
-    void writeNode(Node<K, ?> node);
+    <S> void writeNode(Node<K, S> node);
 
     void deleteNode(Integer idNode);
 

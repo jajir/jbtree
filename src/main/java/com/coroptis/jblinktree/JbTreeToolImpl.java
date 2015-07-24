@@ -50,7 +50,8 @@ public class JbTreeToolImpl<K, V> implements JbTreeTool<K, V> {
     }
 
     @Override
-    public Node moveRightNonLeafNode(Node<K, Integer> current, final K key) {
+    public Node<K, Integer> moveRightNonLeafNode(Node<K, Integer> current,
+	    final K key) {
 	Preconditions.checkNotNull(key);
 	Preconditions.checkNotNull(current);
 	if (current.isLeafNode()) {
@@ -67,7 +68,7 @@ public class JbTreeToolImpl<K, V> implements JbTreeTool<K, V> {
 	return current;
     }
 
-    private boolean canMoveToNextNode(final Node<K,?> node, final K key) {
+    private boolean canMoveToNextNode(final Node<K, ?> node, final K key) {
 	if (NodeImpl.EMPTY_INT.equals(node.getLink())) {
 	    return false;
 	}
@@ -79,7 +80,7 @@ public class JbTreeToolImpl<K, V> implements JbTreeTool<K, V> {
     }
 
     @Override
-    public Node moveRightLeafNode(Node<K, V> current, final K key) {
+    public Node<K, V> moveRightLeafNode(Node<K, V> current, final K key) {
 	Preconditions.checkNotNull(key);
 	Preconditions.checkNotNull(current);
 	if (!current.isLeafNode()) {
@@ -92,18 +93,19 @@ public class JbTreeToolImpl<K, V> implements JbTreeTool<K, V> {
 	return current;
     }
 
-    private <S,T> Node<S, T> moveToNextNode(final Node<K, ?> currentNode,
+    private <S> Node<K, S> moveToNextNode(final Node<K, ?> currentNode,
 	    final Integer nextNodeId) {
-	final Node<K,?> n = nodeStore.getAndLock(nextNodeId);
+	final Node<K, S> n = nodeStore.getAndLock(nextNodeId);
 	nodeStore.unlockNode(currentNode.getId());
-	return (Node<S, T>)n;
+	return n;
     }
 
     @Override
-    public Node moveRightLeafNodeWithoutLocking(Node current, final Integer key) {
+    public Node<K, V> moveRightLeafNodeWithoutLocking(Node<K, V> current,
+	    final K key) {
 	if (current.isLeafNode()) {
 	    while (current.getLink() != null
-		    && key > (Integer) current.getMaxKey()) {
+		    && keyTypeDescriptor.compare(key, current.getMaxKey()) > 0) {
 		current = nodeStore.get(current.getLink());
 	    }
 	    return current;
@@ -114,13 +116,13 @@ public class JbTreeToolImpl<K, V> implements JbTreeTool<K, V> {
     }
 
     @Override
-    public Node split(final Node currentNode, final Integer key,
-	    final Integer value, TypeDescriptor keyTypeDescriptor,
-	    TypeDescriptor valueTypeDescriptor) {
-	Node newNode = new NodeImpl(currentNode.getL(), nodeStore.getNextId(),
-		true, keyTypeDescriptor, valueTypeDescriptor);
+    public <S> Node<K, S> split(final Node<K, S> currentNode, final K key,
+	    final S value, TypeDescriptor<S> valueTypeDescriptor) {
+	Node<K, S> newNode = new NodeImpl<K, S>(currentNode.getL(),
+		nodeStore.getNextId(), true, keyTypeDescriptor,
+		valueTypeDescriptor);
 	currentNode.moveTopHalfOfDataTo(newNode);
-	if (((Integer) currentNode.getMaxKey()) < key) {
+	if (keyTypeDescriptor.compare(currentNode.getMaxKey(), key) < 0) {
 	    newNode.insert(key, value);
 	} else {
 	    currentNode.insert(key, value);
@@ -129,8 +131,8 @@ public class JbTreeToolImpl<K, V> implements JbTreeTool<K, V> {
     }
 
     @Override
-    public void updateMaxValueWhenNecessary(final Node currentNode,
-	    final Integer insertedKey, final Stack<Integer> stack) {
+    public <S> void updateMaxValueWhenNecessary(final Node<K, S> currentNode,
+	    final K insertedKey, final Stack<Integer> stack) {
 	// if(currentNode.getmax)
 	// TODO finish implementation
     }
@@ -140,10 +142,11 @@ public class JbTreeToolImpl<K, V> implements JbTreeTool<K, V> {
      * @return new root id
      */
     @Override
-    public Integer splitRootNode(final Node currentRootNode, final Node newNode) {
+    public <S> Integer splitRootNode(final Node<K, S> currentRootNode,
+	    final Node<K, S> newNode) {
 	// TODO consider case when new node is smaller that currentRootNode
-	Node newRoot = NodeImpl.makeNodeFromIntegers(currentRootNode.getL(),
-		nodeStore.getNextId(), false,
+	Node<K, S> newRoot = (Node<K, S>) NodeImpl.makeNodeFromIntegers(
+		currentRootNode.getL(), nodeStore.getNextId(), false,
 		new Integer[] { currentRootNode.getId(),
 			(Integer) currentRootNode.getMaxKey(), newNode.getId(),
 			(Integer) newNode.getMaxKey(), NodeImpl.EMPTY_INT });
@@ -152,8 +155,10 @@ public class JbTreeToolImpl<K, V> implements JbTreeTool<K, V> {
     }
 
     @Override
-    public void updateMaxIfNecessary(final Node parentNode, final Node childNode) {
-	if ((Integer) childNode.getMaxKey() > (Integer) parentNode.getMaxKey()) {
+    public <S> void updateMaxIfNecessary(final Node<K, Integer> parentNode,
+	    final Node<K, S> childNode) {
+	if (keyTypeDescriptor.compare(childNode.getMaxKey(),
+		parentNode.getMaxKey()) > 0) {
 	    Preconditions.checkState(
 		    NodeImpl.EMPTY_INT.equals(parentNode.getLink()),
 		    "parent not rightemost node in tree");

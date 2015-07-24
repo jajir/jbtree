@@ -54,7 +54,7 @@ public class NodeStoreConcurrencyTest extends TestCase {
     private final Logger logger = LoggerFactory
 	    .getLogger(NodeStoreConcurrencyTest.class);
 
-    private NodeStore nodeStore;
+    private NodeStore<Integer, Integer> nodeStore;
 
     @Test
     public void testForThreadClash() throws Exception {
@@ -84,7 +84,8 @@ public class NodeStoreConcurrencyTest extends TestCase {
     @Override
     protected void setUp() throws Exception {
 	super.setUp();
-	nodeStore = new NodeStoreImpl(new IdGeneratorImpl(), 2);
+	nodeStore = new NodeStoreImpl<Integer, Integer>(new IdGeneratorImpl(),
+		2);
 	TypeDescriptor<Integer> td = new TypeDescriptorInteger();
 	NodeImpl<Integer, Integer> node = new NodeImpl<Integer, Integer>(2, 1,
 		true, td, td);

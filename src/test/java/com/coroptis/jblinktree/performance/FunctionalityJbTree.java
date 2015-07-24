@@ -33,7 +33,7 @@ import com.coroptis.jblinktree.TreeBuilder;
  */
 public class FunctionalityJbTree implements TestedTreeFunctionality {
 
-    private JbTree tree;
+    private JbTree<Integer, Integer> tree;
 
     private Random random;
 

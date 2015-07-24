@@ -45,7 +45,7 @@ public interface JbTreeTool<K, V> {
      *            required key
      * @return moved right node
      */
-    Node moveRightLeafNode(Node<K, V> current, K key);
+    Node<K, V> moveRightLeafNode(Node<K, V> current, K key);
 
     /**
      * Move right in tree until suitable non-leaf node is found.
@@ -59,7 +59,7 @@ public interface JbTreeTool<K, V> {
      *            required key
      * @return moved right node
      */
-    Node moveRightLeafNodeWithoutLocking(Node current, Integer key);
+    Node<K, V> moveRightLeafNodeWithoutLocking(Node<K, V> current, K key);
 
     /**
      * Move right in tree until suitable leaf node is found.
@@ -74,7 +74,7 @@ public interface JbTreeTool<K, V> {
      *            required key
      * @return moved right node
      */
-    Node moveRightNonLeafNode(Node<K, Integer> current, K key);
+    Node<K, Integer> moveRightNonLeafNode(Node<K, Integer> current, K key);
 
     /**
      * Split node into two nodes. It moved part of currentNode data into new one
@@ -91,10 +91,10 @@ public interface JbTreeTool<K, V> {
      *            required inserted value
      * @return newly created node, this node contains higher part of keys.
      */
-    Node split(Node currentNode, Integer key, Integer value,
-	    TypeDescriptor keyTypeDescriptor, TypeDescriptor valueTypeDescriptor);
+    <S> Node<K, S> split(Node<K, S> currentNode, K key, S value,
+	    TypeDescriptor<S> valueTypeDescriptor);
 
-    void updateMaxValueWhenNecessary(Node currentNode, Integer insertedKey,
+    <S> void updateMaxValueWhenNecessary(Node<K, S> currentNode, K insertedKey,
 	    Stack<Integer> stack);
 
     /**
@@ -110,7 +110,7 @@ public interface JbTreeTool<K, V> {
      *            new node that should be added to root node
      * @return id of newly created root node
      */
-    Integer splitRootNode(Node currentRootNode, Node newNode);
+    <S> Integer splitRootNode(Node<K, S> currentRootNode, Node<K, S> newNode);
 
     /**
      * Update max value in parent node when child node contains bigger highes
@@ -125,6 +125,7 @@ public interface JbTreeTool<K, V> {
      * @param childNode
      *            required child node
      */
-    void updateMaxIfNecessary(final Node parentNode, final Node childNode);
+    <S> void updateMaxIfNecessary(final Node<K, Integer> parentNode,
+	    final Node<K, S> childNode);
 
 }
