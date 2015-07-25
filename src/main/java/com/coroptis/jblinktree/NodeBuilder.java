@@ -1,6 +1,4 @@
-package com.coroptis.jblinktree.type;
-
-import java.nio.charset.Charset;
+package com.coroptis.jblinktree;
 
 /*
  * #%L
@@ -22,20 +20,22 @@ import java.nio.charset.Charset;
  * #L%
  */
 
+import com.coroptis.jblinktree.type.TypeDescriptor;
+
 /**
- * Allows to set correct data type in tree creating DSL.
+ * Helps create modes.
  * 
- * @author jajir
+ * @author jan
  * 
+ * @param <K>
+ * @param <V>
  */
-public class Types {
+public interface NodeBuilder<K, V> {
 
-    public static TypeDescriptor<Integer> integer() {
-	return new TypeDescriptorInteger();
-    }
+    <T> Node<K, T> makeNode(final int idNode, final byte field[],
+	    final TypeDescriptor<T> valueTypeDescriptor);
 
-    public static TypeDescriptor<String> string() {
-	return new TypeDescriptorString(10, Charset.forName("ISO_8859_1"));
-    }
+    Node<K, Integer> makeNonLeafNode(final int idNode, final Integer value1, final K key1,
+	    final Integer value2, final K key2);
 
 }

@@ -45,8 +45,7 @@ public class FieldImpl<K, V> implements Field<K, V> {
 
     private final TypeDescriptor<Integer> linkTypeDescriptor;
 
-    public static Field<Integer, Integer> makeFromIntegerField(
-	    final Integer[] fieldInt) {
+    public static Field<Integer, Integer> makeFromIntegerField(final Integer[] fieldInt) {
 	TypeDescriptor<Integer> tdInt = new TypeDescriptorInteger();
 	byte fieldByte[] = new byte[fieldInt.length * 4 + 1];
 	for (int i = 0; i < fieldInt.length; i++) {
@@ -55,19 +54,16 @@ public class FieldImpl<K, V> implements Field<K, V> {
 	return new FieldImpl<Integer, Integer>(fieldByte, tdInt, tdInt);
     }
 
-    public FieldImpl(final int numberOfField,
-	    final TypeDescriptor<K> keyTypeDescriptor,
+    public FieldImpl(final int numberOfField, final TypeDescriptor<K> keyTypeDescriptor,
 	    final TypeDescriptor<V> valueTypeDescriptor) {
 	// FIXME move it out side.
 	linkTypeDescriptor = new TypeDescriptorInteger();
 	this.keyTypeDescriptor = keyTypeDescriptor;
 	this.valueTypeDescriptor = valueTypeDescriptor;
-	this.field = new byte[getPosition(numberOfField)
-		+ linkTypeDescriptor.getMaxLength()];
+	this.field = new byte[getPosition(numberOfField) + linkTypeDescriptor.getMaxLength()];
     }
 
-    public FieldImpl(final byte[] field,
-	    final TypeDescriptor<K> keyTypeDescriptor,
+    public FieldImpl(final byte[] field, final TypeDescriptor<K> keyTypeDescriptor,
 	    final TypeDescriptor<V> valueTypeDescriptor) {
 	this(0, keyTypeDescriptor, valueTypeDescriptor);
 	this.field = new byte[field.length];
@@ -77,8 +73,7 @@ public class FieldImpl<K, V> implements Field<K, V> {
     private int getPosition(int position) {
 	final int p1 = position >>> 1;
 	final int p2 = (position + 1) >>> 1;
-	return p1 * keyTypeDescriptor.getMaxLength() + p2
-		* valueTypeDescriptor.getMaxLength() + 1;
+	return p1 * keyTypeDescriptor.getMaxLength() + p2 * valueTypeDescriptor.getMaxLength() + 1;
     }
 
     /*
@@ -133,12 +128,9 @@ public class FieldImpl<K, V> implements Field<K, V> {
     @Override
     public int getLength() {
 	int length = field.length - 4; // remove link length
-	int rest = length
-		% (keyTypeDescriptor.getMaxLength() + valueTypeDescriptor
-			.getMaxLength());
-	int out = length
-		/ (keyTypeDescriptor.getMaxLength() + valueTypeDescriptor
-			.getMaxLength()) * 2;
+	int rest = length % (keyTypeDescriptor.getMaxLength() + valueTypeDescriptor.getMaxLength());
+	int out = length / (keyTypeDescriptor.getMaxLength() + valueTypeDescriptor.getMaxLength())
+		* 2;
 	if (rest == 0) {
 	    return out;
 	} else {

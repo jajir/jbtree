@@ -29,6 +29,7 @@ import org.junit.Test;
 import com.coroptis.jblinktree.JbTreeService;
 import com.coroptis.jblinktree.JbTreeServiceImpl;
 import com.coroptis.jblinktree.JbTreeTool;
+import com.coroptis.jblinktree.Node;
 import com.coroptis.jblinktree.NodeImpl;
 import com.coroptis.jblinktree.NodeStore;
 
@@ -40,27 +41,27 @@ import com.coroptis.jblinktree.NodeStore;
  */
 public class JbTreeServiceTest extends TestCase {
 
-    private JbTreeService treeService;
+    private JbTreeService<Integer, Integer> treeService;
 
-    private JbTreeTool treeTool;
+    private JbTreeTool<Integer, Integer> treeTool;
 
-    private NodeStore nodeStore;
+    private NodeStore<Integer, Integer> nodeStore;
 
-    private NodeImpl n1;
+    private NodeImpl<Integer, Integer> n1;
 
-    private NodeImpl n2;
+    private NodeImpl<Integer, Integer> n2;
 
     @Test
     public void test_findLeafNodeId() throws Exception {
 	final Stack<Integer> stack = new Stack<Integer>();
-	EasyMock.expect(nodeStore.get(2)).andReturn(n1);
+	EasyMock.expect(nodeStore.get(2)).andReturn((Node) n1);
 	EasyMock.expect(n1.getId()).andReturn(2);
 	EasyMock.expect(n1.isLeafNode()).andReturn(false);
 
 	EasyMock.expect(n1.getCorrespondingNodeId(12)).andReturn(60);
 	EasyMock.expect(n1.getLink()).andReturn(98);
 
-	EasyMock.expect(nodeStore.get(60)).andReturn(n2);
+	EasyMock.expect(nodeStore.get(60)).andReturn((Node) n2);
 	EasyMock.expect(n2.isLeafNode()).andReturn(true);
 	EasyMock.expect(n2.getId()).andReturn(62);
 
@@ -71,12 +72,13 @@ public class JbTreeServiceTest extends TestCase {
 	EasyMock.verify(nodeStore, treeTool, n1, n2);
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     protected void setUp() throws Exception {
 	super.setUp();
 	nodeStore = EasyMock.createMock(NodeStore.class);
 	treeTool = EasyMock.createMock(JbTreeTool.class);
-	treeService = new JbTreeServiceImpl(nodeStore, treeTool);
+	treeService = new JbTreeServiceImpl<Integer, Integer>(nodeStore, treeTool);
 	n1 = EasyMock.createMock(NodeImpl.class);
 	n2 = EasyMock.createMock(NodeImpl.class);
     }

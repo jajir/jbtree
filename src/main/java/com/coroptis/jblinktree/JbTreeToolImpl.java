@@ -37,6 +37,8 @@ public class JbTreeToolImpl<K, V> implements JbTreeTool<K, V> {
 
     private final TypeDescriptor<K> keyTypeDescriptor;
 
+    private final NodeBuilder<K, V> nodeBuilder;
+
     /**
      * Default constructor.
      * 
@@ -44,24 +46,22 @@ public class JbTreeToolImpl<K, V> implements JbTreeTool<K, V> {
      *            required node store service
      */
     public JbTreeToolImpl(final NodeStore<K, V> nodeStore,
-	    final TypeDescriptor<K> keyTypeDescriptor) {
+	    final TypeDescriptor<K> keyTypeDescriptor, final NodeBuilder<K, V> nodeBuilder) {
 	this.nodeStore = Preconditions.checkNotNull(nodeStore);
 	this.keyTypeDescriptor = Preconditions.checkNotNull(keyTypeDescriptor);
+	this.nodeBuilder = nodeBuilder;
     }
 
     @Override
-    public Node<K, Integer> moveRightNonLeafNode(Node<K, Integer> current,
-	    final K key) {
+    public Node<K, Integer> moveRightNonLeafNode(Node<K, Integer> current, final K key) {
 	Preconditions.checkNotNull(key);
 	Preconditions.checkNotNull(current);
 	if (current.isLeafNode()) {
-	    throw new JblinktreeException(
-		    "method is for non-leaf nodes, but given node is leaf: "
-			    + current.toString());
+	    throw new JblinktreeException("method is for non-leaf nodes, but given node is leaf: "
+		    + current.toString());
 	}
 	Integer nextNodeId = current.getCorrespondingNodeId(key);
-	while (!NodeImpl.EMPTY_INT.equals(nextNodeId)
-		&& nextNodeId.equals(current.getLink())) {
+	while (!NodeImpl.EMPTY_INT.equals(nextNodeId) && nextNodeId.equals(current.getLink())) {
 	    current = moveToNextNode(current, nextNodeId);
 	    nextNodeId = current.getCorrespondingNodeId(key);
 	}
@@ -75,8 +75,7 @@ public class JbTreeToolImpl<K, V> implements JbTreeTool<K, V> {
 	if (node.isEmpty()) {
 	    return true;
 	}
-	return (node.getMaxKey() != null && keyTypeDescriptor.compare(key,
-		node.getMaxKey()) > 0);
+	return (node.getMaxKey() != null && keyTypeDescriptor.compare(key, node.getMaxKey()) > 0);
     }
 
     @Override
@@ -84,8 +83,7 @@ public class JbTreeToolImpl<K, V> implements JbTreeTool<K, V> {
 	Preconditions.checkNotNull(key);
 	Preconditions.checkNotNull(current);
 	if (!current.isLeafNode()) {
-	    throw new JblinktreeException(
-		    "method is for leaf nodes, but given node is non-leaf");
+	    throw new JblinktreeException("method is for leaf nodes, but given node is non-leaf");
 	}
 	while (canMoveToNextNode(current, key)) {
 	    current = moveToNextNode(current, current.getLink());
@@ -93,16 +91,14 @@ public class JbTreeToolImpl<K, V> implements JbTreeTool<K, V> {
 	return current;
     }
 
-    private <S> Node<K, S> moveToNextNode(final Node<K, ?> currentNode,
-	    final Integer nextNodeId) {
+    private <S> Node<K, S> moveToNextNode(final Node<K, ?> currentNode, final Integer nextNodeId) {
 	final Node<K, S> n = nodeStore.getAndLock(nextNodeId);
 	nodeStore.unlockNode(currentNode.getId());
 	return n;
     }
 
     @Override
-    public Node<K, V> moveRightLeafNodeWithoutLocking(Node<K, V> current,
-	    final K key) {
+    public Node<K, V> moveRightLeafNodeWithoutLocking(Node<K, V> current, final K key) {
 	if (current.isLeafNode()) {
 	    while (current.getLink() != null
 		    && keyTypeDescriptor.compare(key, current.getMaxKey()) > 0) {
@@ -110,17 +106,15 @@ public class JbTreeToolImpl<K, V> implements JbTreeTool<K, V> {
 	    }
 	    return current;
 	} else {
-	    throw new JblinktreeException(
-		    "method is for leaf nodes, but given node is non-leaf");
+	    throw new JblinktreeException("method is for leaf nodes, but given node is non-leaf");
 	}
     }
 
     @Override
-    public <S> Node<K, S> split(final Node<K, S> currentNode, final K key,
-	    final S value, TypeDescriptor<S> valueTypeDescriptor) {
-	Node<K, S> newNode = new NodeImpl<K, S>(currentNode.getL(),
-		nodeStore.getNextId(), true, keyTypeDescriptor,
-		valueTypeDescriptor);
+    public <S> Node<K, S> split(final Node<K, S> currentNode, final K key, final S value,
+	    TypeDescriptor<S> valueTypeDescriptor) {
+	Node<K, S> newNode = new NodeImpl<K, S>(currentNode.getL(), nodeStore.getNextId(), true,
+		keyTypeDescriptor, valueTypeDescriptor);
 	currentNode.moveTopHalfOfDataTo(newNode);
 	if (keyTypeDescriptor.compare(currentNode.getMaxKey(), key) < 0) {
 	    newNode.insert(key, value);
@@ -131,8 +125,8 @@ public class JbTreeToolImpl<K, V> implements JbTreeTool<K, V> {
     }
 
     @Override
-    public <S> void updateMaxValueWhenNecessary(final Node<K, S> currentNode,
-	    final K insertedKey, final Stack<Integer> stack) {
+    public <S> void updateMaxValueWhenNecessary(final Node<K, S> currentNode, final K insertedKey,
+	    final Stack<Integer> stack) {
 	// if(currentNode.getmax)
 	// TODO finish implementation
     }
@@ -142,14 +136,12 @@ public class JbTreeToolImpl<K, V> implements JbTreeTool<K, V> {
      * @return new root id
      */
     @Override
-    public <S> Integer splitRootNode(final Node<K, S> currentRootNode,
-	    final Node<K, S> newNode) {
+    public <S> Integer splitRootNode(final Node<K, S> currentRootNode, final Node<K, S> newNode) {
 	// TODO consider case when new node is smaller that currentRootNode
-	Node<K, S> newRoot = (Node<K, S>) NodeImpl.makeNodeFromIntegers(
-		currentRootNode.getL(), nodeStore.getNextId(), false,
-		new Integer[] { currentRootNode.getId(),
-			(Integer) currentRootNode.getMaxKey(), newNode.getId(),
-			(Integer) newNode.getMaxKey(), NodeImpl.EMPTY_INT });
+	Node<K, S> newRoot = (Node<K, S>) NodeImpl.makeNodeFromIntegers(currentRootNode.getL(),
+		nodeStore.getNextId(), false,
+		new Integer[] { currentRootNode.getId(), (Integer) currentRootNode.getMaxKey(),
+			newNode.getId(), (Integer) newNode.getMaxKey(), NodeImpl.EMPTY_INT });
 	nodeStore.writeNode(newRoot);
 	return newRoot.getId();
     }
@@ -157,10 +149,8 @@ public class JbTreeToolImpl<K, V> implements JbTreeTool<K, V> {
     @Override
     public <S> void updateMaxIfNecessary(final Node<K, Integer> parentNode,
 	    final Node<K, S> childNode) {
-	if (keyTypeDescriptor.compare(childNode.getMaxKey(),
-		parentNode.getMaxKey()) > 0) {
-	    Preconditions.checkState(
-		    NodeImpl.EMPTY_INT.equals(parentNode.getLink()),
+	if (keyTypeDescriptor.compare(childNode.getMaxKey(), parentNode.getMaxKey()) > 0) {
+	    Preconditions.checkState(NodeImpl.EMPTY_INT.equals(parentNode.getLink()),
 		    "parent not rightemost node in tree");
 	    parentNode.setMaxKey(childNode.getMaxKey());
 	    nodeStore.writeNode(parentNode);

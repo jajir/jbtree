@@ -68,6 +68,7 @@ public class NodeStoreImpl<K, V> implements NodeStore<K, V> {
 	/**
 	 * FIXME Creating of node instance should be extracted to separate class and typed
 	 */
+	
 	return (Node<K, S>)NodeImpl.makeNodeFromBytes(l, nodeId, Arrays.copyOf(field, field.length));
     }
 
