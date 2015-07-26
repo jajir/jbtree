@@ -31,8 +31,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.coroptis.jblinktree.Executer;
-import com.coroptis.jblinktree.JbTree;
 import com.coroptis.jblinktree.TreeBuilder;
+import com.coroptis.jblinktree.TreeMap;
 import com.coroptis.jblinktree.Worker;
 import com.coroptis.jblinktree.type.Types;
 
@@ -46,7 +46,7 @@ public class TreeDeleteConcurrencyTest extends TestCase {
 
     private final Logger logger = LoggerFactory.getLogger(TreeDeleteConcurrencyTest.class);
 
-    private JbTree<Integer, Integer> tree;
+    private TreeMap<Integer, Integer> tree;
 
     private Random random;
 
@@ -94,7 +94,7 @@ public class TreeDeleteConcurrencyTest extends TestCase {
 	Integer operation = random.nextInt(100) + 1;
 	if (operation % 2 == 0) {
 	    logger.debug("inserting :" + integer);
-	    tree.insert(integer, integer);
+	    tree.put(integer, integer);
 	} else {
 	    logger.debug("removing :" + integer);
 	    tree.remove(integer);

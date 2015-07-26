@@ -50,7 +50,7 @@ public interface JbTree<K, V> {
      * @return return <code>true</code> when key was found and removed otherwise
      *         return <code>false</code>.
      */
-    boolean remove(K key);
+    V remove(K key);
 
     /**
      * Find and return specific value for given key.

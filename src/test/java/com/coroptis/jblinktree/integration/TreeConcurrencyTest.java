@@ -32,9 +32,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.coroptis.jblinktree.Executer;
-import com.coroptis.jblinktree.JbTree;
 import com.coroptis.jblinktree.JblinktreeException;
 import com.coroptis.jblinktree.TreeBuilder;
+import com.coroptis.jblinktree.TreeMap;
 import com.coroptis.jblinktree.TreeUtil;
 import com.coroptis.jblinktree.Worker;
 import com.coroptis.jblinktree.type.Types;
@@ -49,7 +49,7 @@ public class TreeConcurrencyTest extends TestCase {
 
     private final Logger logger = LoggerFactory.getLogger(TreeConcurrencyTest.class);
 
-    private JbTree<Integer, Integer> tree;
+    private TreeMap<Integer, Integer> tree;
 
     private TreeUtil treeUtil;
 
@@ -101,7 +101,7 @@ public class TreeConcurrencyTest extends TestCase {
     void doWorkNow() {
 	Integer integer = random.nextInt(100) + 1;
 	try {
-	    tree.insert(integer, integer);
+	    tree.put(integer, integer);
 	} catch (JblinktreeException e) {
 	    synchronized (e) {
 		// tree.toDotFile(new File("dot.dot"));

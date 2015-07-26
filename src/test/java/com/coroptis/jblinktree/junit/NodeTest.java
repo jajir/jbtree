@@ -196,18 +196,18 @@ public class NodeTest {
 	node.insert(2, 20);
 	node.insert(1, 10);
 	logger.debug(node.toString());
-	Boolean ret = node.remove(1);
+	Integer ret = node.remove(1);
 
-	assertTrue(ret);
+	assertEquals(Integer.valueOf(10), ret);
 	verifyNode(new Integer[][] { { 2, 20 } }, true, -1);
     }
 
     @Test
     public void test_remove_leaf_last() throws Exception {
 	node.insert(2, 20);
-	Boolean ret = node.remove(2);
+	Integer ret = node.remove(2);
 
-	assertTrue(ret);
+	assertEquals(Integer.valueOf(20), ret);
 	assertTrue(node.isEmpty());
 	assertNull(node.getMaxKey());
 	assertTrue(node.isLeafNode());
@@ -217,10 +217,10 @@ public class NodeTest {
     public void test_remove_nonLeaf_last() throws Exception {
 	Node<Integer, Integer> n = TreeUtil.makeNodeFromIntegers(2, 22, new Integer[] { 13, 7, 16,
 		8, 21, 9, -1 });
-	Boolean ret = n.remove(9);
+	Integer ret = n.remove(9);
 
 	logger.debug(n.toString());
-	assertTrue(ret);
+	assertEquals(Integer.valueOf(21), ret);
 	assertFalse(n.isEmpty());
 	assertEquals(Integer.valueOf(8), n.getMaxKey());
     }
@@ -229,9 +229,9 @@ public class NodeTest {
     public void test_remove_leaf_second() throws Exception {
 	node.insert(2, 20);
 	node.insert(1, 10);
-	Boolean ret = node.remove(2);
+	Integer ret = node.remove(2);
 
-	assertTrue(ret);
+	assertEquals(Integer.valueOf(20), ret);
 	verifyNode(new Integer[][] { { 1, 10 } }, true, -1);
     }
 
@@ -239,9 +239,9 @@ public class NodeTest {
     public void test_remove_leaf_notExisting() throws Exception {
 	node.insert(2, 20);
 	node.insert(1, 10);
-	Boolean ret = node.remove(12);
+	Integer ret = node.remove(12);
 
-	assertFalse(ret);
+	assertNull(ret);
 	verifyNode(new Integer[][] { { 1, 10 }, { 2, 20 } }, true, -1);
     }
 
@@ -249,9 +249,9 @@ public class NodeTest {
     public void test_remove_nonLeaf_P0_one() throws Exception {
 	node = TreeUtil.makeNodeFromIntegers(3, 2, new Integer[] { 0, 1, 1, 3, 999 });
 	logger.debug(node.toString());
-	Boolean ret = node.remove(1);
+	Integer ret = node.remove(1);
 
-	assertTrue(ret);
+	assertEquals(Integer.valueOf(0), ret);
 	verifyNode(new Integer[][] { { 3, 1 } }, false, 999);
 	assertEquals(Integer.valueOf(3), node.getMaxKey());
     }
@@ -260,9 +260,9 @@ public class NodeTest {
     public void test_remove_nonLeaf_P0_zero() throws Exception {
 	node = TreeUtil.makeNodeFromIntegers(3, 2, new Integer[] { 1, 2, 888 });
 	logger.debug(node.toString());
-	Boolean ret = node.remove(2);
+	Integer ret = node.remove(2);
 
-	assertTrue(ret);
+	assertEquals(Integer.valueOf(1), ret);
 	verifyNode(new Integer[][] {}, false, 888);
 	assertEquals(null, node.getMaxKey());
     }

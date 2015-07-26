@@ -22,8 +22,8 @@ package com.coroptis.jblinktree.performance;
 
 import java.util.Random;
 
-import com.coroptis.jblinktree.JbTree;
 import com.coroptis.jblinktree.TreeBuilder;
+import com.coroptis.jblinktree.TreeMap;
 
 /**
  * User JbTree as map.
@@ -33,7 +33,7 @@ import com.coroptis.jblinktree.TreeBuilder;
  */
 public class FunctionalityJbTree implements TestedTreeFunctionality {
 
-    private JbTree<Integer, Integer> tree;
+    private TreeMap<Integer, Integer> tree;
 
     private Random random;
 
@@ -52,7 +52,7 @@ public class FunctionalityJbTree implements TestedTreeFunctionality {
     @Override
     public void doWork() {
 	Integer integer = random.nextInt(100) + 1;
-	tree.insert(integer, integer);
+	tree.put(integer, integer);
     }
 
 }

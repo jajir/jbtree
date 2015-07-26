@@ -38,9 +38,9 @@ public class TreeUtil {
 
     private final String intendation = "    ";
 
-    private final JbTree<Integer, Integer> jbTree;
+    private final TreeMap<Integer, Integer> jbTree;
 
-    public TreeUtil(final JbTree<Integer, Integer> jbTree) {
+    public TreeUtil(final TreeMap<Integer, Integer> jbTree) {
 	this.jbTree = jbTree;
     }
 

@@ -28,8 +28,8 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.coroptis.jblinktree.JbTree;
 import com.coroptis.jblinktree.TreeBuilder;
+import com.coroptis.jblinktree.TreeMap;
 import com.coroptis.jblinktree.TreeUtil;
 import com.coroptis.jblinktree.type.Types;
 
@@ -37,57 +37,57 @@ public class TreeBasicTest extends TestCase {
 
     private Logger logger = LoggerFactory.getLogger(TreeBasicTest.class);
 
-    private JbTree<Integer, Integer> tree;
+    private TreeMap<Integer, Integer> tree;
 
     private TreeUtil treeUtil;
 
     @Test
     public void testJustOneNode() throws Exception {
 
-	tree.insert(3, -30);
-	tree.insert(1, -10);
+	tree.put(3, -30);
+	tree.put(1, -10);
 
 	logger.debug(tree.toString());
-	assertEquals(2, tree.countValues());
+	assertEquals(2, tree.size());
     }
 
     @Test
     public void testSimpleSplitting() throws Exception {
-	tree.insert(3, -30);
-	tree.insert(1, -10);
-	tree.insert(5, -50);
+	tree.put(3, -30);
+	tree.put(1, -10);
+	tree.put(5, -50);
 
 	logger.debug(tree.toString());
-	assertEquals(3, tree.countValues());
+	assertEquals(3, tree.size());
     }
 
     @Test
     public void test_insert_4_values_ascending() throws Exception {
-	tree.insert(1, -10);
-	tree.insert(2, -20);
-	tree.insert(3, -30);
-	tree.insert(4, -40);
+	tree.put(1, -10);
+	tree.put(2, -20);
+	tree.put(3, -30);
+	tree.put(4, -40);
 	tree.verify();
 	logger.debug(tree.toString());
     }
 
     @Test
     public void test_insert_4_values_descending() throws Exception {
-	tree.insert(5, -50);
-	tree.insert(4, -40);
-	tree.insert(3, -30);
-	tree.insert(2, -20);
+	tree.put(5, -50);
+	tree.put(4, -40);
+	tree.put(3, -30);
+	tree.put(2, -20);
 	tree.verify();
 	logger.debug(tree.toString());
     }
 
     @Test
     public void test_overwriting_values() throws Exception {
-	assertNull(tree.insert(1, -10));
-	assertNull(tree.insert(2, -20));
-	assertNull(tree.insert(3, -30));
-	assertNull(tree.insert(4, -40));
-	assertEquals(Integer.valueOf(-10), tree.insert(1, -100));
+	assertNull(tree.put(1, -10));
+	assertNull(tree.put(2, -20));
+	assertNull(tree.put(3, -30));
+	assertNull(tree.put(4, -40));
+	assertEquals(Integer.valueOf(-10), tree.put(1, -100));
 	tree.verify();
 	logger.debug(tree.toString());
     }
@@ -96,85 +96,85 @@ public class TreeBasicTest extends TestCase {
     public void test_insert_50_values() throws Exception {
 	for (int i = 1; i < 51; i++) {
 	    logger.debug("inserting " + i);
-	    tree.insert(i, -i + 10);
+	    tree.put(i, -i + 10);
 	    logger.debug(tree.toString());
 	}
 
-	assertEquals(50, tree.countValues());
+	assertEquals(50, tree.size());
     }
 
     @Test
     public void test_remove_3_values() throws Exception {
-	tree.insert(1, -10);
-	tree.insert(2, -20);
-	tree.insert(3, -30);
+	tree.put(1, -10);
+	tree.put(2, -20);
+	tree.put(3, -30);
 
 	logger.debug(tree.toString());
 	treeUtil.toDotFile(new File("pok.dot"));
 	tree.remove(1);
-	assertEquals(2, tree.countValues());
+	assertEquals(2, tree.size());
 	assertEquals("All locks should be unlocked ", 0, tree.countLockedNodes());
 	logger.debug(tree.toString());
 	tree.remove(3);
-	assertEquals(1, tree.countValues());
+	assertEquals(1, tree.size());
 	logger.debug(tree.toString());
 	assertEquals("All locks should be unlocked ", 0, tree.countLockedNodes());
 	tree.remove(2);
 	logger.debug(tree.toString());
-	assertEquals(0, tree.countValues());
+	assertEquals(0, tree.size());
     }
 
     @Test
     public void test_insert_10_asc_remove_10_asc() throws Exception {
 	insert_10_ascending();
-	assertEquals(10, tree.countValues());
+	assertEquals(10, tree.size());
 	verify_contains_10();
 
 	remove_10_ascending();
-	assertEquals(0, tree.countValues());
+	assertEquals(0, tree.size());
 	treeUtil.toDotFile(new File("pok.dot"));
     }
 
     @Test
     public void test_insert_10_asc_remove_10_desc() throws Exception {
 	insert_10_ascending();
-	assertEquals(10, tree.countValues());
+	assertEquals(10, tree.size());
 	logger.debug(tree.toString());
 
 	verify_search_10();
 	remove_10_descending();
-	assertEquals(0, tree.countValues());
+	assertEquals(0, tree.size());
     }
 
     @Test
     public void test_insert_10_desc_remove_10_asc() throws Exception {
 	insert_10_descending();
-	assertEquals(10, tree.countValues());
+	assertEquals(10, tree.size());
 
 	remove_10_ascending();
-	assertEquals(0, tree.countValues());
+	assertEquals(0, tree.size());
     }
 
     @Test
     public void test_insert_10_desc_remove_10_desc() throws Exception {
 	insert_10_descending();
-	assertEquals(10, tree.countValues());
+	assertEquals(10, tree.size());
 
 	remove_10_descending();
-	assertEquals(0, tree.countValues());
+	assertEquals(0, tree.size());
     }
 
     private void insert_10_ascending() {
-	tree.insert(1, -10);
-	tree.insert(2, -20);
-	tree.insert(3, -30);
-	tree.insert(4, -40);
-	tree.insert(5, -50);
-	tree.insert(6, -60);
-	tree.insert(7, -70);
-	tree.insert(8, -80);
-	tree.insert(9, -90);
-	tree.insert(10, -100);
+	tree.put(1, -10);
+	tree.put(2, -20);
+	tree.put(3, -30);
+	tree.put(4, -40);
+	tree.put(5, -50);
+	tree.put(6, -60);
+	tree.put(7, -70);
+	tree.put(8, -80);
+	tree.put(9, -90);
+	tree.put(10, -100);
     }
 
     private void remove_10_ascending() {
@@ -210,16 +210,16 @@ public class TreeBasicTest extends TestCase {
     }
 
     private void verify_search_10() {
-	assertEquals(Integer.valueOf(-10), tree.search(1));
-	assertEquals(Integer.valueOf(-20), tree.search(2));
-	assertEquals(Integer.valueOf(-30), tree.search(3));
-	assertEquals(Integer.valueOf(-40), tree.search(4));
-	assertEquals(Integer.valueOf(-50), tree.search(5));
-	assertEquals(Integer.valueOf(-60), tree.search(6));
-	assertEquals(Integer.valueOf(-70), tree.search(7));
-	assertEquals(Integer.valueOf(-80), tree.search(8));
-	assertEquals(Integer.valueOf(-90), tree.search(9));
-	assertEquals(Integer.valueOf(-100), tree.search(10));
+	assertEquals(Integer.valueOf(-10), tree.get(1));
+	assertEquals(Integer.valueOf(-20), tree.get(2));
+	assertEquals(Integer.valueOf(-30), tree.get(3));
+	assertEquals(Integer.valueOf(-40), tree.get(4));
+	assertEquals(Integer.valueOf(-50), tree.get(5));
+	assertEquals(Integer.valueOf(-60), tree.get(6));
+	assertEquals(Integer.valueOf(-70), tree.get(7));
+	assertEquals(Integer.valueOf(-80), tree.get(8));
+	assertEquals(Integer.valueOf(-90), tree.get(9));
+	assertEquals(Integer.valueOf(-100), tree.get(10));
     }
 
     private void verify_contains_10() {
@@ -236,16 +236,16 @@ public class TreeBasicTest extends TestCase {
     }
 
     private void insert_10_descending() {
-	tree.insert(10, -100);
-	tree.insert(9, -90);
-	tree.insert(8, -80);
-	tree.insert(7, -70);
-	tree.insert(6, -60);
-	tree.insert(5, -50);
-	tree.insert(4, -40);
-	tree.insert(3, -30);
-	tree.insert(2, -20);
-	tree.insert(1, -10);
+	tree.put(10, -100);
+	tree.put(9, -90);
+	tree.put(8, -80);
+	tree.put(7, -70);
+	tree.put(6, -60);
+	tree.put(5, -50);
+	tree.put(4, -40);
+	tree.put(3, -30);
+	tree.put(2, -20);
+	tree.put(1, -10);
     }
 
     @Override

@@ -27,8 +27,8 @@ import junit.framework.TestCase;
 
 import org.junit.Test;
 
-import com.coroptis.jblinktree.JbTree;
 import com.coroptis.jblinktree.TreeBuilder;
+import com.coroptis.jblinktree.TreeMap;
 import com.coroptis.jblinktree.TreeUtil;
 import com.coroptis.jblinktree.type.Types;
 
@@ -40,7 +40,7 @@ import com.coroptis.jblinktree.type.Types;
  */
 public class SingleThreadLoadTest extends TestCase {
 
-    private JbTree<Integer, Integer> tree;
+    private TreeMap<Integer, Integer> tree;
 
     private TreeUtil treeUtil;
 
@@ -49,7 +49,7 @@ public class SingleThreadLoadTest extends TestCase {
 	Random random = new Random();
 	for (int i = 0; i < 10000; i++) {
 	    Integer integer = random.nextInt(100) + 1;
-	    tree.insert(integer, integer);
+	    tree.put(integer, integer);
 	}
 	treeUtil.toDotFile(new File("pok.dot"));
 

@@ -100,7 +100,7 @@ public interface Node<K, V> {
      * @throws NullPointerException
      *             when key or value is null
      */
-    public boolean remove(K key);
+    public V remove(K key);
 
     /**
      * For non-leaf tree it update value of some tree.

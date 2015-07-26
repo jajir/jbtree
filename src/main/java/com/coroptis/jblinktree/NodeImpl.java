@@ -284,24 +284,25 @@ public class NodeImpl<K, V> implements Node<K, V> {
      * @see com.coroptis.jblinktree.Node#remove(java.lang.Integer)
      */
     @Override
-    public boolean remove(final K key) {
+    public V remove(final K key) {
 	Preconditions.checkNotNull(key);
 	for (int i = 1; i < field.getLength() - 1; i = i + 2) {
 	    if (key.equals(field.getKey(i))) {
 		/**
 		 * Remove key and value.
 		 */
+		final V oldValue = field.getValue(i - 1);
 		removeFromPosition(i - 1);
-		return true;
+		return oldValue;
 	    } else if (keyTypeDescriptor.compare(field.getKey(i), key) > 0) {
 		/**
 		 * if key in node is bigger than given key than node doesn't
 		 * contains key to delete.
 		 */
-		return false;
+		return null;
 	    }
 	}
-	return false;
+	return null;
     }
 
     /*

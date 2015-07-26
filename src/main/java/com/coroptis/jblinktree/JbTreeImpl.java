@@ -208,7 +208,7 @@ public class JbTreeImpl<K, V> implements JbTree<K, V> {
     }
 
     @Override
-    public boolean remove(final K key) {
+    public V remove(final K key) {
 	Preconditions.checkNotNull(key);
 	final Stack<Integer> stack = new Stack<Integer>();
 	Integer currentNodeId = treeService.findLeafNodeId(key, stack, rootNodeId);
@@ -219,15 +219,15 @@ public class JbTreeImpl<K, V> implements JbTree<K, V> {
 	     * Node doesn't contains key, there is nothing to delete
 	     */
 	    nodeStore.unlockNode(currentNode.getId());
-	    return false;
+	    return null;
 	} else {
 	    /**
 	     * Leaf node contains key so remove it.
 	     */
-	    currentNode.remove(key);
+	    final V oldValue = currentNode.remove(key);
 	    nodeStore.writeNode(currentNode);
 	    nodeStore.unlockNode(currentNode.getId());
-	    return true;
+	    return oldValue;
 	}
     }
 
