@@ -100,11 +100,11 @@ public class JbTreeTest extends TestCase {
 	jbTreeTool = EasyMock.createMock(JbTreeTool.class);
 	jbTreeService = EasyMock.createMock(JbTreeService.class);
 	EasyMock.expect(nodeStore.getNextId()).andReturn(0);
-	nodeStore.writeNode(new NodeImpl<Integer,Integer>(3, 0, true, intDescriptor,
-		intDescriptor));
+	nodeStore
+		.writeNode(new NodeImpl<Integer, Integer>(3, 0, true, intDescriptor, intDescriptor));
 	EasyMock.replay(nodeStore);
-	jbTree = new JbTreeImpl<Integer, Integer>(3, nodeStore, jbTreeTool,
-		jbTreeService, Types.integer(), Types.integer());
+	jbTree = new JbTreeImpl<Integer, Integer>(3, nodeStore, jbTreeTool, jbTreeService,
+		Types.integer(), Types.integer(), Types.integer());
 	EasyMock.verify(nodeStore);
 	EasyMock.reset(nodeStore);
 

@@ -21,6 +21,7 @@ package com.coroptis.jblinktree;
  */
 
 import com.coroptis.jblinktree.type.TypeDescriptor;
+import com.coroptis.jblinktree.type.TypeDescriptorInteger;
 
 /**
  * Provide fluent API for creating tree.
@@ -58,6 +59,7 @@ public final class TreeBuilder {
     }
 
     public <K, V> JbTree<K, V> build() {
+	final TypeDescriptor<Integer> linkTypeDescriptor = new TypeDescriptorInteger();
 	final IdGenerator idGenerator = new IdGeneratorImpl();
 	final NodeBuilder<K, V> nodeBuilder = new NodeBuilderImpl<K, V>(l,
 		(TypeDescriptor<K>) keyTypeDescriptor, (TypeDescriptor<V>) valueTypeDescriptor);
@@ -66,7 +68,8 @@ public final class TreeBuilder {
 		(TypeDescriptor<K>) keyTypeDescriptor, nodeBuilder);
 	final JbTreeService<K, V> treeService = new JbTreeServiceImpl<K, V>(nodeStore, jbTreeTool);
 	final JbTree<K, V> tree = new JbTreeImpl<K, V>(l, nodeStore, jbTreeTool, treeService,
-		(TypeDescriptor<K>) keyTypeDescriptor, (TypeDescriptor<V>) valueTypeDescriptor);
+		(TypeDescriptor<K>) keyTypeDescriptor, (TypeDescriptor<V>) valueTypeDescriptor,
+		linkTypeDescriptor);
 	return tree;
     }
 }

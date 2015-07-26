@@ -51,6 +51,7 @@ public class JbTreeServiceTest extends TestCase {
 
     private NodeImpl<Integer, Integer> n2;
 
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     @Test
     public void test_findLeafNodeId() throws Exception {
 	final Stack<Integer> stack = new Stack<Integer>();

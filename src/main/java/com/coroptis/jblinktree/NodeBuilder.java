@@ -38,4 +38,7 @@ public interface NodeBuilder<K, V> {
     Node<K, Integer> makeNonLeafNode(final int idNode, final Integer value1, final K key1,
 	    final Integer value2, final K key2);
 
+    Node<K, V> makeLeafNode(final int idNode, final V value1, final K key1, final V value2,
+	    final K key2);
+
 }

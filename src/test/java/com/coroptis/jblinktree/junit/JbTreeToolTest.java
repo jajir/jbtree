@@ -87,6 +87,7 @@ public class JbTreeToolTest extends TestCase {
 	EasyMock.verify(nodeStore, n1, n2);
     }
 
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     @Test
     public void test_moveRightNonLeafNode_move() throws Exception {
 	EasyMock.expect(n1.isLeafNode()).andReturn(false);
@@ -143,6 +144,7 @@ public class JbTreeToolTest extends TestCase {
 	EasyMock.verify(nodeStore, n1, n2);
     }
 
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     @Test
     public void test_moveRightLeafNode_move() throws Exception {
 	EasyMock.expect(n1.isLeafNode()).andReturn(true);

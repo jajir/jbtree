@@ -3,6 +3,8 @@ package com.coroptis.jblinktree;
 import java.io.File;
 import java.io.IOException;
 
+import com.coroptis.jblinktree.type.TypeDescriptor;
+import com.coroptis.jblinktree.type.TypeDescriptorInteger;
 import com.google.common.base.Charsets;
 import com.google.common.io.Files;
 
@@ -126,4 +128,23 @@ public class TreeUtil {
 	return buff.toString();
     }
 
+    /**
+     * Construct node and fill byte field.
+     * 
+     * @param l
+     *            required node parameter L
+     * @param nodeId
+     *            required node id, node will be referred with this id.
+     * @param field
+     *            required Integer array representing node content.
+     * @return created {@link NodeImpl}
+     */
+    public static NodeImpl<Integer, Integer> makeNodeFromIntegers(final int l,
+	    final Integer idNode, final Integer fieldInt[]) {
+	Field<Integer, Integer> f = FieldImpl.makeFromIntegerField(fieldInt);
+	TypeDescriptor<Integer> tdInt = new TypeDescriptorInteger();
+	NodeImpl<Integer, Integer> n = new NodeImpl<Integer, Integer>(l, idNode, f.getBytes(),
+		tdInt, tdInt);
+	return n;
+    }
 }

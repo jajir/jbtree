@@ -138,33 +138,6 @@ public class NodeImpl<K, V> implements Node<K, V> {
     }
 
     /**
-     * Construct node and fill byte field.
-     * 
-     * @param l
-     *            required node parameter L
-     * @param nodeId
-     *            required node id, node will be referred with this id.
-     * @param field
-     *            required Integer array representing node content.
-     * @return created {@link NodeImpl}
-     * @deprecated replace it with builder
-     */
-    public static NodeImpl<Integer, Integer> makeNodeFromIntegers(final int l,
-	    final Integer idNode, final boolean isLeafNode, final Integer fieldInt[]) {
-	if (isLeafNode && fieldInt[0] != M) {
-	    throw new JblinktreeException("leaf tree should have first int M.");
-	}
-	TypeDescriptor<Integer> tdInt = new TypeDescriptorInteger();
-	NodeImpl<Integer, Integer> n = new NodeImpl<Integer, Integer>(l, idNode, isLeafNode, tdInt,
-		tdInt);
-	n.field = FieldImpl.makeFromIntegerField(fieldInt);
-	if (isLeafNode) {
-	    n.field.setFlag(NodeImpl.M);
-	}
-	return n;
-    }
-
-    /**
      * TODO this should move to separate class. Functionality creating node from
      * byte field.
      * 
@@ -172,6 +145,7 @@ public class NodeImpl<K, V> implements Node<K, V> {
      * @param idNode
      * @param field
      * @return
+     * @deprecated it's type fixed
      */
     public static NodeImpl<Integer, Integer> makeNodeFromBytes(final int l, final int idNode,
 	    final byte field[]) {

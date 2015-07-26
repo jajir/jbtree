@@ -55,11 +55,11 @@ public class NodeBuilderImpl<K, V> implements NodeBuilder<K, V> {
 	}
     }
 
-@Override
+    @Override
     public Node<K, Integer> makeNonLeafNode(final int idNode, final Integer value1, final K key1,
 	    final Integer value2, final K key2) {
 	byte b[] = new byte[1 + keyTypeDescriptor.getMaxLength() * 2
-		+ valueTypeDescriptor.getMaxLength() * 2 + linkTypeDescriptor.getMaxLength()];
+		+ linkTypeDescriptor.getMaxLength() * 2 + linkTypeDescriptor.getMaxLength()];
 	b[0] = 0; // it's non-lef node.
 	int position = 1;
 	// pair 1
@@ -77,5 +77,29 @@ public class NodeBuilderImpl<K, V> implements NodeBuilder<K, V> {
 	linkTypeDescriptor.save(b, position, NodeImpl.EMPTY_INT);
 
 	return new NodeImpl<K, Integer>(l, idNode, b, keyTypeDescriptor, linkTypeDescriptor);
+    }
+
+    @Override
+    public Node<K, V> makeLeafNode(final int idNode, final V value1, final K key1, final V value2,
+	    final K key2) {
+	byte b[] = new byte[1 + keyTypeDescriptor.getMaxLength() * 2
+		+ valueTypeDescriptor.getMaxLength() * 2 + linkTypeDescriptor.getMaxLength()];
+	b[0] = Node.M; // it's non-lef node.
+	int position = 1;
+	// pair 1
+	valueTypeDescriptor.save(b, position, value1);
+	position += valueTypeDescriptor.getMaxLength();
+	keyTypeDescriptor.save(b, position, key1);
+	position += keyTypeDescriptor.getMaxLength();
+
+	// pair 2
+	valueTypeDescriptor.save(b, position, value2);
+	position += valueTypeDescriptor.getMaxLength();
+	keyTypeDescriptor.save(b, position, key2);
+	position += keyTypeDescriptor.getMaxLength();
+
+	linkTypeDescriptor.save(b, position, NodeImpl.EMPTY_INT);
+
+	return new NodeImpl<K, V>(l, idNode, b, keyTypeDescriptor, valueTypeDescriptor);
     }
 }
