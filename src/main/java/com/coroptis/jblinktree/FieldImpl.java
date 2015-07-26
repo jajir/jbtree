@@ -127,15 +127,11 @@ public class FieldImpl<K, V> implements Field<K, V> {
      */
     @Override
     public int getLength() {
-	int length = field.length - 4; // remove link length
-	int rest = length % (keyTypeDescriptor.getMaxLength() + valueTypeDescriptor.getMaxLength());
-	int out = length / (keyTypeDescriptor.getMaxLength() + valueTypeDescriptor.getMaxLength())
-		* 2;
-	if (rest == 0) {
-	    return out;
-	} else {
-	    return out + 1;
-	}
+	final int length = field.length - linkTypeDescriptor.getMaxLength() - 1;
+	final int recordLength = keyTypeDescriptor.getMaxLength()
+		+ valueTypeDescriptor.getMaxLength();
+	final int out = length / recordLength * 2;
+	return out + 1;
     }
 
     @Override

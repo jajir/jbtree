@@ -20,9 +20,12 @@ package com.coroptis.jblinktree.junit;
  * #L%
  */
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import org.easymock.EasyMock;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 
 import com.coroptis.jblinktree.JbTreeImpl;
@@ -31,8 +34,6 @@ import com.coroptis.jblinktree.JbTreeTool;
 import com.coroptis.jblinktree.Node;
 import com.coroptis.jblinktree.NodeImpl;
 import com.coroptis.jblinktree.NodeStore;
-import com.coroptis.jblinktree.type.TypeDescriptor;
-import com.coroptis.jblinktree.type.TypeDescriptorInteger;
 import com.coroptis.jblinktree.type.Types;
 
 /**
@@ -41,7 +42,7 @@ import com.coroptis.jblinktree.type.Types;
  * @author jajir
  * 
  */
-public class JbTreeTest extends TestCase {
+public class JbTreeTest {
 
     private JbTreeImpl<Integer, Integer> jbTree;
 
@@ -53,7 +54,7 @@ public class JbTreeTest extends TestCase {
 
     private Node<Integer, Integer> rootNode;
 
-    private TypeDescriptor<Integer> intDescriptor;
+    private Object[] mocks;
 
     @Test
     public void test_constructor() throws Exception {
@@ -64,7 +65,7 @@ public class JbTreeTest extends TestCase {
 
     @Test
     public void test_insert_null_key() throws Exception {
-	EasyMock.replay(nodeStore, rootNode);
+	EasyMock.replay(mocks);
 
 	try {
 	    jbTree.insert(null, 3);
@@ -73,12 +74,12 @@ public class JbTreeTest extends TestCase {
 	    assertTrue(true);
 	}
 
-	EasyMock.verify(nodeStore, rootNode);
+	EasyMock.verify(mocks);
     }
 
     @Test
     public void test_insert_null_value() throws Exception {
-	EasyMock.replay(nodeStore, rootNode);
+	EasyMock.replay(mocks);
 
 	try {
 	    jbTree.insert(3, null);
@@ -87,38 +88,35 @@ public class JbTreeTest extends TestCase {
 	    assertTrue(true);
 	}
 
-	EasyMock.verify(nodeStore, rootNode);
+	EasyMock.verify(mocks);
     }
 
     @SuppressWarnings("unchecked")
-    @Override
-    protected void setUp() throws Exception {
-	super.setUp();
-	intDescriptor = new TypeDescriptorInteger();
+    @Before
+    public void setUp() throws Exception {
 	nodeStore = EasyMock.createMock(NodeStore.class);
 	rootNode = EasyMock.createMock(NodeImpl.class);
 	jbTreeTool = EasyMock.createMock(JbTreeTool.class);
 	jbTreeService = EasyMock.createMock(JbTreeService.class);
-	EasyMock.expect(nodeStore.getNextId()).andReturn(0);
-	nodeStore
-		.writeNode(new NodeImpl<Integer, Integer>(3, 0, true, intDescriptor, intDescriptor));
-	EasyMock.replay(nodeStore);
+	mocks = new Object[] { nodeStore, rootNode, jbTreeTool, jbTreeService };
+
+	EasyMock.expect(jbTreeTool.createRootNode()).andReturn(1);
+	EasyMock.replay(mocks);
 	jbTree = new JbTreeImpl<Integer, Integer>(3, nodeStore, jbTreeTool, jbTreeService,
 		Types.integer(), Types.integer());
-	EasyMock.verify(nodeStore);
-	EasyMock.reset(nodeStore);
+	EasyMock.verify(mocks);
+	EasyMock.reset(mocks);
 
     }
 
-    @Override
-    protected void tearDown() throws Exception {
+    @After
+    public void tearDown() throws Exception {
 	rootNode = null;
 	jbTreeTool = null;
 	jbTree = null;
 	nodeStore = null;
 	jbTreeService = null;
-	intDescriptor = null;
-	super.tearDown();
+	mocks = null;
     }
 
 }
