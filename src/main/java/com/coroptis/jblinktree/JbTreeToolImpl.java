@@ -1,7 +1,5 @@
 package com.coroptis.jblinktree;
 
-import java.util.Stack;
-
 import com.coroptis.jblinktree.type.TypeDescriptor;
 import com.google.common.base.Preconditions;
 
@@ -33,7 +31,7 @@ import com.google.common.base.Preconditions;
  */
 public class JbTreeToolImpl<K, V> implements JbTreeTool<K, V> {
 
-    private final NodeStore<K, V> nodeStore;
+    private final NodeStore<K> nodeStore;
 
     private final TypeDescriptor<K> keyTypeDescriptor;
 
@@ -45,8 +43,8 @@ public class JbTreeToolImpl<K, V> implements JbTreeTool<K, V> {
      * @param nodeStore
      *            required node store service
      */
-    public JbTreeToolImpl(final NodeStore<K, V> nodeStore,
-	    final TypeDescriptor<K> keyTypeDescriptor, final NodeBuilder<K, V> nodeBuilder) {
+    public JbTreeToolImpl(final NodeStore<K> nodeStore, final TypeDescriptor<K> keyTypeDescriptor,
+	    final NodeBuilder<K, V> nodeBuilder) {
 	this.nodeStore = Preconditions.checkNotNull(nodeStore);
 	this.keyTypeDescriptor = Preconditions.checkNotNull(keyTypeDescriptor);
 	this.nodeBuilder = nodeBuilder;
@@ -124,13 +122,6 @@ public class JbTreeToolImpl<K, V> implements JbTreeTool<K, V> {
 	return newNode;
     }
 
-    @Override
-    public <S> void updateMaxValueWhenNecessary(final Node<K, S> currentNode, final K insertedKey,
-	    final Stack<Integer> stack) {
-	// if(currentNode.getmax)
-	// TODO finish implementation
-    }
-
     /**
      * 
      * @return new root id
@@ -154,5 +145,12 @@ public class JbTreeToolImpl<K, V> implements JbTreeTool<K, V> {
 	    parentNode.setMaxKey(childNode.getMaxKey());
 	    nodeStore.writeNode(parentNode);
 	}
+    }
+
+    @Override
+    public Integer createRootNode() {
+	Node<K, V> node = nodeBuilder.makeEmptyLeafNode(nodeStore.getNextId());
+	this.nodeStore.writeNode(node);
+	return node.getId();
     }
 }

@@ -30,21 +30,19 @@ import com.google.common.base.Preconditions;
  * @author jajir
  * 
  */
-public class JbTreeServiceImpl<K, V> implements JbTreeService<K, V> {
+public class JbTreeServiceImpl<K, V> implements JbTreeService<K> {
 
-    private final NodeStore<K, V> nodeStore;
+    private final NodeStore<K> nodeStore;
 
     private final JbTreeTool<K, V> tool;
 
-    public JbTreeServiceImpl(final NodeStore<K, V> nodeStore,
-	    final JbTreeTool<K, V> tool) {
+    public JbTreeServiceImpl(final NodeStore<K> nodeStore, final JbTreeTool<K, V> tool) {
 	this.nodeStore = Preconditions.checkNotNull(nodeStore);
 	this.tool = Preconditions.checkNotNull(tool);
     }
 
     @Override
-    public Integer findLeafNodeId(final K key, final Stack<Integer> stack,
-	    final Integer rootNodeId) {
+    public Integer findLeafNodeId(final K key, final Stack<Integer> stack, final Integer rootNodeId) {
 	Node<K, Integer> currentNode = nodeStore.get(rootNodeId);
 	while (!currentNode.isLeafNode()) {
 	    Integer nextNodeId = currentNode.getCorrespondingNodeId(key);
@@ -54,13 +52,10 @@ public class JbTreeServiceImpl<K, V> implements JbTreeService<K, V> {
 		 * use node id associated with bigger key.
 		 */
 		stack.push(currentNode.getId());
-		nextNodeId = currentNode.getCorrespondingNodeId(currentNode
-			.getMaxKey());
+		nextNodeId = currentNode.getCorrespondingNodeId(currentNode.getMaxKey());
 		if (NodeImpl.EMPTY_INT.equals(nextNodeId)) {
-		    throw new JblinktreeException(
-			    "There is no node id for max value '"
-				    + currentNode.getMaxKey() + "' in node "
-				    + currentNode.toString());
+		    throw new JblinktreeException("There is no node id for max value '"
+			    + currentNode.getMaxKey() + "' in node " + currentNode.toString());
 		}
 	    } else if (!nextNodeId.equals(currentNode.getLink())) {
 		/**
@@ -74,14 +69,13 @@ public class JbTreeServiceImpl<K, V> implements JbTreeService<K, V> {
     }
 
     @Override
-    public <S> Node<K, Integer> loadParentNode(final Node<K, S> currentNode,
-	    final K tmpKey, final Integer nextNodeId) {
+    public <S> Node<K, Integer> loadParentNode(final Node<K, S> currentNode, final K tmpKey,
+	    final Integer nextNodeId) {
 	Node<K, Integer> parentNode = nodeStore.getAndLock(nextNodeId);
 	// TODO link to current node which key should be updated can be in
 	// different node than tmpKey
 	parentNode = tool.moveRightNonLeafNode(parentNode, tmpKey);
-	if (parentNode.updateNodeValue(currentNode.getId(),
-		currentNode.getMaxKey())) {
+	if (parentNode.updateNodeValue(currentNode.getId(), currentNode.getMaxKey())) {
 	    nodeStore.writeNode(parentNode);
 	}
 	return parentNode;

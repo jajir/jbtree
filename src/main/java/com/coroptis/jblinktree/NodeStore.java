@@ -27,7 +27,7 @@ package com.coroptis.jblinktree;
  * @author jajir
  * 
  */
-public interface NodeStore<K, V> {
+public interface NodeStore<K> {
 
     void lockNode(Integer nodeId);
 

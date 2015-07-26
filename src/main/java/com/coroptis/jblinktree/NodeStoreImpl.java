@@ -32,19 +32,19 @@ import com.google.common.base.Preconditions;
  * @author jajir
  * 
  */
-public class NodeStoreImpl<K, V> implements NodeStore<K, V> {
+public class NodeStoreImpl<K, V> implements NodeStore<K> {
 
     private final Map<Integer, byte[]> nodes;
 
     private final NodeLocks nodeLocks;
 
+    private final NodeBuilder<K, V> nodeBuilder;
+
     private final IdGenerator idGenerator;
 
-    private final Integer l;
-
-    public NodeStoreImpl(final IdGenerator idGenerator, final Integer l) {
+    public NodeStoreImpl(final IdGenerator idGenerator, final NodeBuilder<K, V> nodeBuilder) {
 	this.idGenerator = Preconditions.checkNotNull(idGenerator);
-	this.l = Preconditions.checkNotNull(l);
+	this.nodeBuilder = Preconditions.checkNotNull(nodeBuilder);
 	nodes = new ConcurrentHashMap<Integer, byte[]>();
 	nodeLocks = new NodeLocks();
     }
@@ -65,11 +65,7 @@ public class NodeStoreImpl<K, V> implements NodeStore<K, V> {
 	if (field == null) {
 	    throw new JblinktreeException("There is no node with id '" + nodeId + "'");
 	}
-	/**
-	 * FIXME Creating of node instance should be extracted to separate class and typed
-	 */
-	
-	return (Node<K, S>)NodeImpl.makeNodeFromBytes(l, nodeId, Arrays.copyOf(field, field.length));
+	return nodeBuilder.makeNode(nodeId, Arrays.copyOf(field, field.length));
     }
 
     @Override

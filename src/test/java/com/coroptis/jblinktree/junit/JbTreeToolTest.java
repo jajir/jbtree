@@ -43,7 +43,7 @@ public class JbTreeToolTest extends TestCase {
 
     private JbTreeTool<Integer, Integer> jbTreeTool;
 
-    private NodeStore<Integer, Integer> nodeStore;
+    private NodeStore<Integer> nodeStore;
 
     private NodeImpl<Integer, Integer> n1;
 

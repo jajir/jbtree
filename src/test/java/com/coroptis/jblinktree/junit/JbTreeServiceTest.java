@@ -41,11 +41,11 @@ import com.coroptis.jblinktree.NodeStore;
  */
 public class JbTreeServiceTest extends TestCase {
 
-    private JbTreeService<Integer, Integer> treeService;
+    private JbTreeService<Integer> treeService;
 
     private JbTreeTool<Integer, Integer> treeTool;
 
-    private NodeStore<Integer, Integer> nodeStore;
+    private NodeStore<Integer> nodeStore;
 
     private NodeImpl<Integer, Integer> n1;
 

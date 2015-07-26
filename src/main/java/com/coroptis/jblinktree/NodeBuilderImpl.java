@@ -21,7 +21,7 @@ package com.coroptis.jblinktree;
  */
 
 import com.coroptis.jblinktree.type.TypeDescriptor;
-import com.coroptis.jblinktree.type.TypeDescriptorInteger;
+import com.google.common.base.Preconditions;
 
 public class NodeBuilderImpl<K, V> implements NodeBuilder<K, V> {
 
@@ -34,25 +34,36 @@ public class NodeBuilderImpl<K, V> implements NodeBuilder<K, V> {
     private final TypeDescriptor<Integer> linkTypeDescriptor;
 
     public NodeBuilderImpl(final int l, final TypeDescriptor<K> keyTypeDescriptor,
-	    final TypeDescriptor<V> valueTypeDescriptor) {
+	    final TypeDescriptor<V> valueTypeDescriptor,
+	    final TypeDescriptor<Integer> linkTypeDescriptor) {
 	this.l = l;
-	this.keyTypeDescriptor = keyTypeDescriptor;
-	this.valueTypeDescriptor = valueTypeDescriptor;
-	this.linkTypeDescriptor = new TypeDescriptorInteger();
+	this.keyTypeDescriptor = Preconditions.checkNotNull(keyTypeDescriptor);
+	this.valueTypeDescriptor = Preconditions.checkNotNull(valueTypeDescriptor);
+	this.linkTypeDescriptor = Preconditions.checkNotNull(linkTypeDescriptor);
     }
 
+    /**
+     * Implementations is not
+     */
+    @SuppressWarnings("unchecked")
     @Override
-    public <T> Node<K, T> makeNode(final int idNode, final byte field[],
-	    final TypeDescriptor<T> valueTypeDescriptor) {
+    public <T> Node<K, T> makeNode(final int idNode, final byte field[]) {
 	byte flag = field[0];
 	if (flag == Node.M) {
 	    // leaf node
-	    return new NodeImpl<K, T>(l, idNode, field, keyTypeDescriptor, valueTypeDescriptor);
+	    return (Node<K, T>) new NodeImpl<K, V>(l, idNode, field, keyTypeDescriptor,
+		    valueTypeDescriptor);
 	} else {
 	    // non-leaf node
 	    return (Node<K, T>) new NodeImpl<K, Integer>(l, idNode, field, keyTypeDescriptor,
-		    new TypeDescriptorInteger());
+		    linkTypeDescriptor);
 	}
+    }
+
+    @Override
+    public Node<K, V> makeEmptyLeafNode(final int idNode) {
+	Preconditions.checkNotNull(idNode);
+	return new NodeImpl<K, V>(l, idNode, true, keyTypeDescriptor, valueTypeDescriptor);
     }
 
     @Override

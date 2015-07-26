@@ -45,11 +45,11 @@ public class JbTreeTest extends TestCase {
 
     private JbTreeImpl<Integer, Integer> jbTree;
 
-    private NodeStore<Integer, Integer> nodeStore;
+    private NodeStore<Integer> nodeStore;
 
     private JbTreeTool<Integer, Integer> jbTreeTool;
 
-    private JbTreeService<Integer, Integer> jbTreeService;
+    private JbTreeService<Integer> jbTreeService;
 
     private Node<Integer, Integer> rootNode;
 
@@ -104,7 +104,7 @@ public class JbTreeTest extends TestCase {
 		.writeNode(new NodeImpl<Integer, Integer>(3, 0, true, intDescriptor, intDescriptor));
 	EasyMock.replay(nodeStore);
 	jbTree = new JbTreeImpl<Integer, Integer>(3, nodeStore, jbTreeTool, jbTreeService,
-		Types.integer(), Types.integer(), Types.integer());
+		Types.integer(), Types.integer());
 	EasyMock.verify(nodeStore);
 	EasyMock.reset(nodeStore);
 

@@ -28,7 +28,7 @@ import java.util.Stack;
  * @author jajir
  * 
  */
-public interface JbTreeService<K, V> {
+public interface JbTreeService<K> {
 
     /**
      * Non locking method that find leaf node id where should be given key

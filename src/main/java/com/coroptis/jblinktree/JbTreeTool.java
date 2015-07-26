@@ -1,7 +1,5 @@
 package com.coroptis.jblinktree;
 
-import java.util.Stack;
-
 import com.coroptis.jblinktree.type.TypeDescriptor;
 
 /*
@@ -94,9 +92,6 @@ public interface JbTreeTool<K, V> {
     <S> Node<K, S> split(Node<K, S> currentNode, K key, S value,
 	    TypeDescriptor<S> valueTypeDescriptor);
 
-    <S> void updateMaxValueWhenNecessary(Node<K, S> currentNode, K insertedKey,
-	    Stack<Integer> stack);
-
     /**
      * It get already existing node, new node a create new root node pointing on
      * this two nodes.
@@ -125,7 +120,13 @@ public interface JbTreeTool<K, V> {
      * @param childNode
      *            required child node
      */
-    <S> void updateMaxIfNecessary(final Node<K, Integer> parentNode,
-	    final Node<K, S> childNode);
+    <S> void updateMaxIfNecessary(final Node<K, Integer> parentNode, final Node<K, S> childNode);
+
+    /**
+     * When new tree is created this method create new empty leaf root node.
+     * 
+     * @return new root node id.
+     */
+    Integer createRootNode();
 
 }

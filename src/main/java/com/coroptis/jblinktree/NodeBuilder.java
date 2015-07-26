@@ -20,8 +20,6 @@ package com.coroptis.jblinktree;
  * #L%
  */
 
-import com.coroptis.jblinktree.type.TypeDescriptor;
-
 /**
  * Helps create modes.
  * 
@@ -32,8 +30,9 @@ import com.coroptis.jblinktree.type.TypeDescriptor;
  */
 public interface NodeBuilder<K, V> {
 
-    <T> Node<K, T> makeNode(final int idNode, final byte field[],
-	    final TypeDescriptor<T> valueTypeDescriptor);
+    Node<K, V> makeEmptyLeafNode(final int idNode);
+
+    <T> Node<K, T> makeNode(final int idNode, final byte field[]);
 
     Node<K, Integer> makeNonLeafNode(final int idNode, final Integer value1, final K key1,
 	    final Integer value2, final K key2);

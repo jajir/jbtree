@@ -47,13 +47,11 @@ public class JbTreeImpl<K, V> implements JbTree<K, V> {
 
     private Integer rootNodeId;
 
-    private final NodeStore<K, V> nodeStore;
+    private final NodeStore<K> nodeStore;
 
-    private final JbTreeTool<K, V> tool;
+    private final JbTreeTool<K, V> treeTool;
 
-    private final JbTreeService<K, V> treeService;
-
-    private final TypeDescriptor<K> keyTypeDescriptor;
+    private final JbTreeService<K> treeService;
 
     private final TypeDescriptor<V> valueTypeDescriptor;
 
@@ -67,24 +65,18 @@ public class JbTreeImpl<K, V> implements JbTree<K, V> {
      * @param nodeStore
      *            required node store object
      */
-    public JbTreeImpl(final int l, final NodeStore<K, V> nodeStore, final JbTreeTool<K, V> tool,
-	    final JbTreeService<K, V> jbTreeService, final TypeDescriptor<K> keyTypeDescriptor,
-	    final TypeDescriptor<V> valueTypeDescriptor,
+    public JbTreeImpl(final int l, final NodeStore<K> nodeStore, final JbTreeTool<K, V> treeTool,
+	    final JbTreeService<K> jbTreeService, final TypeDescriptor<V> valueTypeDescriptor,
 	    final TypeDescriptor<Integer> linkTypeDescriptor) {
 	this.l = l;
 	this.nodeStore = Preconditions.checkNotNull(nodeStore);
-	this.tool = Preconditions.checkNotNull(tool);
+	this.treeTool = Preconditions.checkNotNull(treeTool);
 	this.treeService = Preconditions.checkNotNull(jbTreeService);
-	this.keyTypeDescriptor = Preconditions.checkNotNull(keyTypeDescriptor,
-		"key TypeDescriptor is null, use .setKeyType in builder");
 	this.valueTypeDescriptor = Preconditions.checkNotNull(valueTypeDescriptor,
 		"value TypeDescriptor is null, use .setValueType in builder");
 	this.linkTypeDescriptor = Preconditions.checkNotNull(linkTypeDescriptor,
 		"link TypeDescriptor is null");
-	Node<K, V> node = new NodeImpl<K, V>(l, nodeStore.getNextId(), true, keyTypeDescriptor,
-		valueTypeDescriptor);
-	rootNodeId = node.getId();
-	this.nodeStore.writeNode(node);
+	rootNodeId = treeTool.createRootNode();
     }
 
     @Override
@@ -94,7 +86,7 @@ public class JbTreeImpl<K, V> implements JbTree<K, V> {
 	final Stack<Integer> stack = new Stack<Integer>();
 	Integer currentNodeId = treeService.findLeafNodeId(key, stack, rootNodeId);
 	Node<K, V> currentNode = nodeStore.getAndLock(currentNodeId);
-	currentNode = tool.moveRightLeafNode(currentNode, key);
+	currentNode = treeTool.moveRightLeafNode(currentNode, key);
 	if (currentNode.getValue(key) == null) {
 	    return insertToLeafNode(currentNode, key, value, stack);
 	} else {
@@ -113,7 +105,7 @@ public class JbTreeImpl<K, V> implements JbTree<K, V> {
 	    /**
 	     * There is no free space for key and value
 	     */
-	    final Node<K, V> newNode = tool.split(currentNode, key, value, valueTypeDescriptor);
+	    final Node<K, V> newNode = treeTool.split(currentNode, key, value, valueTypeDescriptor);
 	    nodeStore.writeNode(newNode);
 	    nodeStore.writeNode(currentNode);
 	    if (stack.empty()) {
@@ -155,7 +147,7 @@ public class JbTreeImpl<K, V> implements JbTree<K, V> {
 		/**
 		 * There is no free space for key and value
 		 */
-		final Node<K, Integer> newNode = tool.split(currentNode, tmpKey, tmpValue,
+		final Node<K, Integer> newNode = treeTool.split(currentNode, tmpKey, tmpValue,
 			linkTypeDescriptor);
 		nodeStore.writeNode(newNode);
 		nodeStore.writeNode(currentNode);
@@ -191,7 +183,7 @@ public class JbTreeImpl<K, V> implements JbTree<K, V> {
 	try {
 	    if (rootNodeId.equals(currentNode.getId())) {
 		Preconditions.checkArgument(rootNodeId.equals(currentNode.getId()));
-		rootNodeId = tool.splitRootNode(currentNode, newNode);
+		rootNodeId = treeTool.splitRootNode(currentNode, newNode);
 		nodeStore.unlockNode(currentNode.getId());
 	    } else {
 		nodeStore.unlockNode(currentNode.getId());
@@ -221,7 +213,7 @@ public class JbTreeImpl<K, V> implements JbTree<K, V> {
 	final Stack<Integer> stack = new Stack<Integer>();
 	Integer currentNodeId = treeService.findLeafNodeId(key, stack, rootNodeId);
 	Node<K, V> currentNode = nodeStore.getAndLock(currentNodeId);
-	currentNode = tool.moveRightLeafNode(currentNode, key);
+	currentNode = treeTool.moveRightLeafNode(currentNode, key);
 	if (currentNode.getValue(key) == null) {
 	    /**
 	     * Node doesn't contains key, there is nothing to delete
@@ -249,7 +241,7 @@ public class JbTreeImpl<K, V> implements JbTree<K, V> {
 	Preconditions.checkNotNull(key);
 	Integer idNode = treeService.findLeafNodeId(key, new Stack<Integer>(), rootNodeId);
 	Node<K, V> node = nodeStore.get(idNode);
-	return tool.moveRightLeafNodeWithoutLocking(node, key);
+	return treeTool.moveRightLeafNodeWithoutLocking(node, key);
     }
 
     @Override
@@ -293,6 +285,7 @@ public class JbTreeImpl<K, V> implements JbTree<K, V> {
      * Current implementation doesn't visit nodes that are available with link
      * pointer and don't have parent node.
      */
+    @SuppressWarnings("unchecked")
     @Override
     public void visit(final JbTreeVisitor<K, V> treeVisitor) {
 	Preconditions.checkNotNull(treeVisitor, "required JbTreeVisitor instance is null");

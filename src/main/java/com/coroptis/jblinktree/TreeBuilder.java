@@ -58,18 +58,19 @@ public final class TreeBuilder {
 	return this;
     }
 
+    @SuppressWarnings("unchecked")
     public <K, V> JbTree<K, V> build() {
 	final TypeDescriptor<Integer> linkTypeDescriptor = new TypeDescriptorInteger();
 	final IdGenerator idGenerator = new IdGeneratorImpl();
 	final NodeBuilder<K, V> nodeBuilder = new NodeBuilderImpl<K, V>(l,
-		(TypeDescriptor<K>) keyTypeDescriptor, (TypeDescriptor<V>) valueTypeDescriptor);
-	final NodeStoreImpl<K, V> nodeStore = new NodeStoreImpl<K, V>(idGenerator, l);
-	final JbTreeTool<K, V> jbTreeTool = new JbTreeToolImpl<K, V>(nodeStore,
-		(TypeDescriptor<K>) keyTypeDescriptor, nodeBuilder);
-	final JbTreeService<K, V> treeService = new JbTreeServiceImpl<K, V>(nodeStore, jbTreeTool);
-	final JbTree<K, V> tree = new JbTreeImpl<K, V>(l, nodeStore, jbTreeTool, treeService,
 		(TypeDescriptor<K>) keyTypeDescriptor, (TypeDescriptor<V>) valueTypeDescriptor,
 		linkTypeDescriptor);
+	final NodeStoreImpl<K, V> nodeStore = new NodeStoreImpl<K, V>(idGenerator, nodeBuilder);
+	final JbTreeTool<K, V> jbTreeTool = new JbTreeToolImpl<K, V>(nodeStore,
+		(TypeDescriptor<K>) keyTypeDescriptor, nodeBuilder);
+	final JbTreeService<K> treeService = new JbTreeServiceImpl<K, V>(nodeStore, jbTreeTool);
+	final JbTree<K, V> tree = new JbTreeImpl<K, V>(l, nodeStore, jbTreeTool, treeService,
+		(TypeDescriptor<V>) valueTypeDescriptor, linkTypeDescriptor);
 	return tree;
     }
 }
