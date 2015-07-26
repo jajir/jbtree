@@ -32,29 +32,32 @@ import org.junit.Test;
  */
 public class SpeedComparisonTest extends TestCase {
 
-    private final int cycleCount = 1000 * 1000 * 10;
+    private final int cycleCount = 1000 * 1000 * 1;
 
     private final int threadCount = 10;
 
     @Test
     public void test_jbTree() throws Exception {
-	testFunctionality(new FunctionalityJbTree(), "JbTree");
-	testFunctionality(new FunctionalitySynchronizedMap(), "synchronized map");
-	testFunctionality(new FunctionalityConcurrentHashMap(), "concurrent hash map");
-	testFunctionality(new FunctionalitySynchronizedTreeMap(), "synchronized tree map");
+	testFunctionality(new FunctionalityJbTree(cycleCount), "JbTree");
+//	testFunctionality(new FunctionalitySynchronizedMap(cycleCount), "synchronized map");
+//	testFunctionality(new FunctionalityConcurrentHashMap(cycleCount), "concurrent hash map");
+//	testFunctionality(new FunctionalitySynchronizedTreeMap(cycleCount), "synchronized tree map");
     }
 
     private void testFunctionality(final TestedTreeFunctionality functionality, final String name)
 	    throws Exception {
 	JbTreeTest tt1 = new JbTreeTest(functionality, cycleCount, threadCount);
+	System.gc();
 	final long freeMemory_t1 = Runtime.getRuntime().freeMemory();
 	final long t1 = System.nanoTime();
-	tt1.testForThreadClash();
+	Object tree = tt1.testForThreadClash();
+	assertNotNull(tree);
 	final long t2 = System.nanoTime();
-	final long freeMemory_t2 = Runtime.getRuntime().freeMemory();
 	System.gc();
+	final long freeMemory_t2 = Runtime.getRuntime().freeMemory();
 	printTime(t2 - t1, name);
 	printMemory(freeMemory_t1 - freeMemory_t2, name);
+	tree = null;
     }
 
     private void printTime(long t, final String name) {

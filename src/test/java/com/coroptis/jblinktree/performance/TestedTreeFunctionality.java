@@ -34,9 +34,9 @@ public interface TestedTreeFunctionality {
     void setUp();
 
     /**
-     * Clean data after test
+     * Clean data after test and return created tree object.
      */
-    void tearDown();
+    Object tearDown();
 
     /**
      * Perform inserting of one value.

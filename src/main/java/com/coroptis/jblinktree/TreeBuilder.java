@@ -22,6 +22,7 @@ package com.coroptis.jblinktree;
 
 import com.coroptis.jblinktree.type.TypeDescriptor;
 import com.coroptis.jblinktree.type.TypeDescriptorInteger;
+import com.google.common.base.Preconditions;
 
 /**
  * Provide fluent API for creating tree.
@@ -60,6 +61,10 @@ public final class TreeBuilder {
 
     @SuppressWarnings("unchecked")
     public <K, V> TreeMap<K, V> build() {
+	Preconditions.checkNotNull(keyTypeDescriptor,
+		"key TypeDescriptor is null, use .setKeyType in builder");
+	Preconditions.checkNotNull(valueTypeDescriptor,
+		"value TypeDescriptor is null, use .setValueType in builder");
 	final TypeDescriptor<Integer> linkTypeDescriptor = new TypeDescriptorInteger();
 	final IdGenerator idGenerator = new IdGeneratorImpl();
 	final NodeBuilder<K, V> nodeBuilder = new NodeBuilderImpl<K, V>(l,

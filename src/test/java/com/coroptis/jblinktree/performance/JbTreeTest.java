@@ -23,8 +23,6 @@ package com.coroptis.jblinktree.performance;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
-import org.junit.Test;
-
 import com.coroptis.jblinktree.Executer;
 import com.coroptis.jblinktree.JblinktreeException;
 import com.coroptis.jblinktree.Worker;
@@ -50,8 +48,7 @@ public class JbTreeTest {
 	this.threadCount = threadCount;
     }
 
-    @Test
-    public void testForThreadClash() throws Exception {
+    public Object testForThreadClash() throws Exception {
 	final CountDownLatch doneLatch = new CountDownLatch(cycleCount * threadCount);
 	final CountDownLatch startLatch = new CountDownLatch(1);
 
@@ -73,7 +70,7 @@ public class JbTreeTest {
 	if (0 != doneLatch.getCount()) {
 	    throw new JblinktreeException("Some thread didn't finished work");
 	}
-	functionality.tearDown();
+	return functionality.tearDown();
     }
 
 }

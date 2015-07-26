@@ -37,6 +37,12 @@ public class FunctionalityConcurrentHashMap implements TestedTreeFunctionality {
 
     private Random random;
 
+    private final int randomBaseNumber;
+
+    public FunctionalityConcurrentHashMap(final int randomBaseNumber) {
+	this.randomBaseNumber = randomBaseNumber;
+    }
+
     @Override
     public void setUp() {
 	tree = new ConcurrentHashMap<Integer, Integer>();
@@ -44,13 +50,13 @@ public class FunctionalityConcurrentHashMap implements TestedTreeFunctionality {
     }
 
     @Override
-    public void tearDown() {
-	tree = null;
+    public Object tearDown() {
+	return tree;
     }
 
     @Override
     public void doWork() {
-	Integer integer = random.nextInt(100) + 1;
+	Integer integer = random.nextInt(randomBaseNumber) + 1;
 	tree.put(integer, integer);
     }
 

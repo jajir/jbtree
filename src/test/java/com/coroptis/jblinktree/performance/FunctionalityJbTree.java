@@ -24,6 +24,7 @@ import java.util.Random;
 
 import com.coroptis.jblinktree.TreeBuilder;
 import com.coroptis.jblinktree.TreeMap;
+import com.coroptis.jblinktree.type.Types;
 
 /**
  * User JbTree as map.
@@ -37,21 +38,28 @@ public class FunctionalityJbTree implements TestedTreeFunctionality {
 
     private Random random;
 
+    private final int randomBaseNumber;
+
+    public FunctionalityJbTree(final int randomBaseNumber) {
+	this.randomBaseNumber = randomBaseNumber;
+    }
+
     @Override
     public void setUp() {
-	tree = TreeBuilder.builder().setL(10).build();
+	tree = TreeBuilder.builder().setL(10).setKeyType(Types.integer())
+		.setValueType(Types.integer()).build();
 	random = new Random();
     }
 
     @Override
-    public void tearDown() {
+    public Object tearDown() {
 	tree.verify();
-	tree = null;
+	return tree;
     }
 
     @Override
     public void doWork() {
-	Integer integer = random.nextInt(100) + 1;
+	Integer integer = random.nextInt(randomBaseNumber) + 1;
 	tree.put(integer, integer);
     }
 
