@@ -30,6 +30,7 @@ import org.slf4j.LoggerFactory;
 
 import com.coroptis.jblinktree.Field;
 import com.coroptis.jblinktree.FieldImpl;
+import com.coroptis.jblinktree.TreeUtil;
 import com.coroptis.jblinktree.type.TypeDescriptor;
 import com.coroptis.jblinktree.type.TypeDescriptorInteger;
 
@@ -54,15 +55,14 @@ public class FieldTest {
 
     @Test
     public void test_length_2() throws Exception {
-	Field<Integer, Integer> f = FieldImpl
-		.makeFromIntegerField(new Integer[] { 10, 1, 30 });
+	Field<Integer, Integer> f = TreeUtil.makeFromIntegerField(new Integer[] { 10, 1, 30 });
 
 	assertEquals(3, f.getLength());
     }
 
     @Test
     public void test_length_3() throws Exception {
-	Field<Integer, Integer> f = FieldImpl
+	Field<Integer, Integer> f = TreeUtil
 		.makeFromIntegerField(new Integer[] { 10, 1, 20, 2, 30 });
 
 	assertEquals(5, f.getLength());
@@ -70,7 +70,7 @@ public class FieldTest {
 
     @Test
     public void test_getKey() throws Exception {
-	Field<Integer, Integer> f = FieldImpl
+	Field<Integer, Integer> f = TreeUtil
 		.makeFromIntegerField(new Integer[] { 10, 1, 20, 2, 30 });
 
 	assertEquals(Integer.valueOf(2), f.getKey(3));
@@ -96,8 +96,7 @@ public class FieldTest {
     @Test
     public void test_toString() throws Exception {
 	logger.debug(field.toString());
-	assertEquals(
-		"Field{field=[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]}",
+	assertEquals("Field{field=[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]}",
 		field.toString());
     }
 
@@ -117,7 +116,7 @@ public class FieldTest {
     @Before
     public void setUp() throws Exception {
 	intDescriptor = new TypeDescriptorInteger();
-	field = new FieldImpl<Integer, Integer>(3, intDescriptor, intDescriptor);
+	field = new FieldImpl<Integer, Integer>(3, intDescriptor, intDescriptor, intDescriptor);
     }
 
     @After

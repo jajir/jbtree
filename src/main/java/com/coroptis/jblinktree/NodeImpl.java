@@ -25,7 +25,6 @@ import java.util.Arrays;
 import java.util.List;
 
 import com.coroptis.jblinktree.type.TypeDescriptor;
-import com.coroptis.jblinktree.type.TypeDescriptorInteger;
 import com.google.common.base.Preconditions;
 
 /**
@@ -99,6 +98,8 @@ public class NodeImpl<K, V> implements Node<K, V> {
 
     private final TypeDescriptor<V> valueTypeDescriptor;
 
+    private final TypeDescriptor<Integer> linkTypeDescriptor;
+
     private Field<K, V> field;
 
     /**
@@ -113,15 +114,17 @@ public class NodeImpl<K, V> implements Node<K, V> {
      *            node otherwise it's non-leaf node.
      */
     public NodeImpl(final int l, final Integer nodeId, final boolean isLeafNode,
-	    final TypeDescriptor<K> keyTypeDescriptor, final TypeDescriptor<V> valueTypeDescriptor) {
+	    final TypeDescriptor<K> keyTypeDescriptor, final TypeDescriptor<V> valueTypeDescriptor,
+	    final TypeDescriptor<Integer> linkTypeDescriptor) {
 	this.l = l;
 	this.id = nodeId;
 	this.keyTypeDescriptor = keyTypeDescriptor;
 	this.valueTypeDescriptor = valueTypeDescriptor;
+	this.linkTypeDescriptor = linkTypeDescriptor;
 	/**
 	 * There is three position even in empty node: P0, max key and link.
 	 */
-	field = new FieldImpl<K, V>(0, keyTypeDescriptor, valueTypeDescriptor);
+	field = new FieldImpl<K, V>(0, keyTypeDescriptor, valueTypeDescriptor, linkTypeDescriptor);
 	if (isLeafNode) {
 	    field.setFlag(M);
 	}
@@ -129,31 +132,15 @@ public class NodeImpl<K, V> implements Node<K, V> {
     }
 
     public NodeImpl(final int l, final Integer nodeId, final byte[] field,
-	    final TypeDescriptor<K> keyTypeDescriptor, final TypeDescriptor<V> valueTypeDescriptor) {
+	    final TypeDescriptor<K> keyTypeDescriptor, final TypeDescriptor<V> valueTypeDescriptor,
+	    final TypeDescriptor<Integer> linkTypeDescriptor) {
 	this.l = l;
 	this.id = nodeId;
 	this.keyTypeDescriptor = keyTypeDescriptor;
 	this.valueTypeDescriptor = valueTypeDescriptor;
-	this.field = new FieldImpl<K, V>(field, keyTypeDescriptor, valueTypeDescriptor);
-    }
-
-    /**
-     * TODO this should move to separate class. Functionality creating node from
-     * byte field.
-     * 
-     * @param l
-     * @param idNode
-     * @param field
-     * @return
-     * @deprecated it's type fixed
-     */
-    public static NodeImpl<Integer, Integer> makeNodeFromBytes(final int l, final int idNode,
-	    final byte field[]) {
-	NodeImpl<Integer, Integer> n = new NodeImpl<Integer, Integer>(l, idNode, field[0] == M,
-		new TypeDescriptorInteger(), new TypeDescriptorInteger());
-	n.field = new FieldImpl<Integer, Integer>(field, new TypeDescriptorInteger(),
-		new TypeDescriptorInteger());
-	return n;
+	this.linkTypeDescriptor = linkTypeDescriptor;
+	this.field = new FieldImpl<K, V>(field, keyTypeDescriptor, valueTypeDescriptor,
+		linkTypeDescriptor);
     }
 
     @Override
@@ -268,7 +255,7 @@ public class NodeImpl<K, V> implements Node<K, V> {
      */
     private void insertToPosition(final K key, final V value, final int targetIndex) {
 	Field<K, V> field2 = new FieldImpl<K, V>(field.getLength() + 1, keyTypeDescriptor,
-		valueTypeDescriptor);
+		valueTypeDescriptor, linkTypeDescriptor);
 	if (targetIndex > 0) {
 	    field2.copy(field, 0, 0, targetIndex);
 	}
@@ -338,7 +325,7 @@ public class NodeImpl<K, V> implements Node<K, V> {
      */
     private void removeFromPosition(final int position) {
 	Field<K, V> tmp = new FieldImpl<K, V>(field.getLength() - 3, keyTypeDescriptor,
-		valueTypeDescriptor);
+		valueTypeDescriptor, linkTypeDescriptor);
 	if (position > 0) {
 	    tmp.copy(field, 0, 0, position);
 	}
@@ -365,11 +352,13 @@ public class NodeImpl<K, V> implements Node<K, V> {
 	final int startIndex = startKeyNo * 2;
 	final int length = field.getLength() - startIndex;
 	// TODO create field in static factory
-	node.field = new FieldImpl<K, V>(length - 1, keyTypeDescriptor, valueTypeDescriptor);
+	node.field = new FieldImpl<K, V>(length - 1, keyTypeDescriptor, valueTypeDescriptor,
+		linkTypeDescriptor);
 	node.field.copy(field, startIndex, 0, length);
 
 	// remove copied data from this node
-	Field<K, V> field2 = new FieldImpl<K, V>(startIndex, keyTypeDescriptor, valueTypeDescriptor);
+	Field<K, V> field2 = new FieldImpl<K, V>(startIndex, keyTypeDescriptor,
+		valueTypeDescriptor, linkTypeDescriptor);
 	field2.copy(field, 0, 0, startIndex);
 	field = field2;
 	setLink(node.getId());

@@ -88,7 +88,7 @@ public class NodeStoreConcurrencyTest extends TestCase {
 	NodeBuilder<Integer, Integer> nodeBuilder = new NodeBuilderImpl<Integer, Integer>(2, td,
 		td, td);
 	nodeStore = new NodeStoreImpl<Integer, Integer>(new IdGeneratorImpl(), nodeBuilder);
-	NodeImpl<Integer, Integer> node = new NodeImpl<Integer, Integer>(2, 1, true, td, td);
+	NodeImpl<Integer, Integer> node = new NodeImpl<Integer, Integer>(2, 1, true, td, td, td);
 	nodeStore.writeNode(node);
     }
 

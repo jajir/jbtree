@@ -124,7 +124,7 @@ public class JbTreeImpl<K, V> implements JbTree<K, V> {
 		Node<K, Integer> previousNode = treeService.loadParentNode(currentNode, tmpKey,
 			stack.pop());
 		nodeStore.unlockNode(previousCurrentNodeId);
-		return insert(previousNode, tmpKey, tmpValue, stack);
+		return insertNonLeaf(previousNode, tmpKey, tmpValue, stack);
 	    }
 	} else {
 	    /**
@@ -135,7 +135,7 @@ public class JbTreeImpl<K, V> implements JbTree<K, V> {
 	}
     }
 
-    private V insert(Node<K, Integer> currentNode, final K key, final Integer value,
+    private V insertNonLeaf(Node<K, Integer> currentNode, final K key, final Integer value,
 	    final Stack<Integer> stack) {
 	/**
 	 * Key and value have to be inserted

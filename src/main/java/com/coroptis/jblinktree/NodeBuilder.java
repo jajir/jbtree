@@ -30,14 +30,14 @@ package com.coroptis.jblinktree;
  */
 public interface NodeBuilder<K, V> {
 
-    Node<K, V> makeEmptyLeafNode(final int idNode);
+    Node<K, V> makeEmptyLeafNode(int idNode);
 
-    <T> Node<K, T> makeNode(final int idNode, final byte field[]);
+    Node<K, Integer> makeEmptyNonLeafNode(int idNode);
 
-    Node<K, Integer> makeNonLeafNode(final int idNode, final Integer value1, final K key1,
-	    final Integer value2, final K key2);
+    <T> Node<K, T> makeNode(int idNode, byte field[]);
 
-    Node<K, V> makeLeafNode(final int idNode, final V value1, final K key1, final V value2,
-	    final K key2);
+    Node<K, Integer> makeNonLeafNode(int idNode, Integer value1, K key1, Integer value2, K key2);
+
+    Node<K, V> makeLeafNode(int idNode, V value1, K key1, V value2, K key2);
 
 }

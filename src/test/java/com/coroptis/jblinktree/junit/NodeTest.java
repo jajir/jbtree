@@ -294,7 +294,7 @@ public class NodeTest {
 	logger.debug("node1  " + node.toString());
 
 	NodeImpl<Integer, Integer> node2 = new NodeImpl<Integer, Integer>(2, 1, true,
-		intDescriptor, intDescriptor);
+		intDescriptor, intDescriptor, intDescriptor);
 	node.moveTopHalfOfDataTo(node2);
 
 	logger.debug("node1  " + node.toString());
@@ -323,7 +323,7 @@ public class NodeTest {
     @Test
     public void test_moveTopHalfOfDataTo_nothingToMove() throws Exception {
 	NodeImpl<Integer, Integer> node2 = new NodeImpl<Integer, Integer>(2, 11, true,
-		intDescriptor, intDescriptor);
+		intDescriptor, intDescriptor, intDescriptor);
 	try {
 	    node.moveTopHalfOfDataTo(node2);
 	    fail();
@@ -340,7 +340,7 @@ public class NodeTest {
 	assertEquals("key count is not correct", 3, n.getKeysCount());
 
 	NodeImpl<Integer, Integer> node2 = new NodeImpl<Integer, Integer>(2, 11, true,
-		intDescriptor, intDescriptor);
+		intDescriptor, intDescriptor, intDescriptor);
 	n.moveTopHalfOfDataTo(node2);
 
 	logger.debug("node  " + n.toString());
@@ -514,7 +514,7 @@ public class NodeTest {
     @Test
     public void test_getKeysCount_leaf_empty() throws Exception {
 	Node<Integer, Integer> n = new NodeImpl<Integer, Integer>(2, 10, true, intDescriptor,
-		intDescriptor);
+		intDescriptor, intDescriptor);
 
 	assertEquals(0, n.getKeysCount());
     }
@@ -537,7 +537,7 @@ public class NodeTest {
     @Test
     public void test_getKeysCount_nonLeaf_empty() throws Exception {
 	Node<Integer, Integer> n = new NodeImpl<Integer, Integer>(2, 10, false, intDescriptor,
-		intDescriptor);
+		intDescriptor, intDescriptor);
 
 	assertEquals(0, n.getKeysCount());
     }
@@ -556,7 +556,8 @@ public class NodeTest {
     @Before
     public void setUp() throws Exception {
 	intDescriptor = new TypeDescriptorInteger();
-	node = new NodeImpl<Integer, Integer>(2, 0, true, intDescriptor, intDescriptor);
+	node = new NodeImpl<Integer, Integer>(2, 0, true, intDescriptor, intDescriptor,
+		intDescriptor);
     }
 
     @After

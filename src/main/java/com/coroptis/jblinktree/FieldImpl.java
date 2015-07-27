@@ -1,7 +1,6 @@
 package com.coroptis.jblinktree;
 
 import com.coroptis.jblinktree.type.TypeDescriptor;
-import com.coroptis.jblinktree.type.TypeDescriptorInteger;
 
 /*
  * #%L
@@ -45,27 +44,19 @@ public class FieldImpl<K, V> implements Field<K, V> {
 
     private final TypeDescriptor<Integer> linkTypeDescriptor;
 
-    public static Field<Integer, Integer> makeFromIntegerField(final Integer[] fieldInt) {
-	TypeDescriptor<Integer> tdInt = new TypeDescriptorInteger();
-	byte fieldByte[] = new byte[fieldInt.length * 4 + 1];
-	for (int i = 0; i < fieldInt.length; i++) {
-	    tdInt.save(fieldByte, i * 4 + 1, fieldInt[i]);
-	}
-	return new FieldImpl<Integer, Integer>(fieldByte, tdInt, tdInt);
-    }
-
     public FieldImpl(final int numberOfField, final TypeDescriptor<K> keyTypeDescriptor,
-	    final TypeDescriptor<V> valueTypeDescriptor) {
-	// FIXME move it out side.
-	linkTypeDescriptor = new TypeDescriptorInteger();
+	    final TypeDescriptor<V> valueTypeDescriptor,
+	    final TypeDescriptor<Integer> linkTypeDescriptor) {
+	this.linkTypeDescriptor = linkTypeDescriptor;
 	this.keyTypeDescriptor = keyTypeDescriptor;
 	this.valueTypeDescriptor = valueTypeDescriptor;
 	this.field = new byte[getPosition(numberOfField) + linkTypeDescriptor.getMaxLength()];
     }
 
     public FieldImpl(final byte[] field, final TypeDescriptor<K> keyTypeDescriptor,
-	    final TypeDescriptor<V> valueTypeDescriptor) {
-	this(0, keyTypeDescriptor, valueTypeDescriptor);
+	    final TypeDescriptor<V> valueTypeDescriptor,
+	    final TypeDescriptor<Integer> linkTypeDescriptor) {
+	this(0, keyTypeDescriptor, valueTypeDescriptor, linkTypeDescriptor);
 	this.field = new byte[field.length];
 	System.arraycopy(field, 0, this.field, 0, this.field.length);
     }

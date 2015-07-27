@@ -1,6 +1,7 @@
 package com.coroptis.jblinktree;
 
 import com.coroptis.jblinktree.type.TypeDescriptor;
+import com.coroptis.jblinktree.type.TypeDescriptorInteger;
 import com.google.common.base.Preconditions;
 
 /*
@@ -111,8 +112,9 @@ public class JbTreeToolImpl<K, V> implements JbTreeTool<K, V> {
     @Override
     public <S> Node<K, S> split(final Node<K, S> currentNode, final K key, final S value,
 	    TypeDescriptor<S> valueTypeDescriptor) {
+	// FIXME create leaf and non leaf versions of this method and call proper node builder 
 	Node<K, S> newNode = new NodeImpl<K, S>(currentNode.getL(), nodeStore.getNextId(), true,
-		keyTypeDescriptor, valueTypeDescriptor);
+		keyTypeDescriptor, valueTypeDescriptor, new TypeDescriptorInteger());
 	currentNode.moveTopHalfOfDataTo(newNode);
 	if (keyTypeDescriptor.compare(currentNode.getMaxKey(), key) < 0) {
 	    newNode.insert(key, value);

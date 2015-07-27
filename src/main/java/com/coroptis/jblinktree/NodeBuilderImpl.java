@@ -52,18 +52,26 @@ public class NodeBuilderImpl<K, V> implements NodeBuilder<K, V> {
 	if (flag == Node.M) {
 	    // leaf node
 	    return (Node<K, T>) new NodeImpl<K, V>(l, idNode, field, keyTypeDescriptor,
-		    valueTypeDescriptor);
+		    valueTypeDescriptor, linkTypeDescriptor);
 	} else {
 	    // non-leaf node
 	    return (Node<K, T>) new NodeImpl<K, Integer>(l, idNode, field, keyTypeDescriptor,
-		    linkTypeDescriptor);
+		    linkTypeDescriptor, linkTypeDescriptor);
 	}
     }
 
     @Override
     public Node<K, V> makeEmptyLeafNode(final int idNode) {
 	Preconditions.checkNotNull(idNode);
-	return new NodeImpl<K, V>(l, idNode, true, keyTypeDescriptor, valueTypeDescriptor);
+	return new NodeImpl<K, V>(l, idNode, true, keyTypeDescriptor, valueTypeDescriptor,
+		linkTypeDescriptor);
+    }
+
+    @Override
+    public Node<K, Integer> makeEmptyNonLeafNode(final int idNode) {
+	Preconditions.checkNotNull(idNode);
+	return new NodeImpl<K, Integer>(l, idNode, true, keyTypeDescriptor, linkTypeDescriptor,
+		linkTypeDescriptor);
     }
 
     @Override
@@ -87,7 +95,8 @@ public class NodeBuilderImpl<K, V> implements NodeBuilder<K, V> {
 
 	linkTypeDescriptor.save(b, position, NodeImpl.EMPTY_INT);
 
-	return new NodeImpl<K, Integer>(l, idNode, b, keyTypeDescriptor, linkTypeDescriptor);
+	return new NodeImpl<K, Integer>(l, idNode, b, keyTypeDescriptor, linkTypeDescriptor,
+		linkTypeDescriptor);
     }
 
     @Override
@@ -111,6 +120,7 @@ public class NodeBuilderImpl<K, V> implements NodeBuilder<K, V> {
 
 	linkTypeDescriptor.save(b, position, NodeImpl.EMPTY_INT);
 
-	return new NodeImpl<K, V>(l, idNode, b, keyTypeDescriptor, valueTypeDescriptor);
+	return new NodeImpl<K, V>(l, idNode, b, keyTypeDescriptor, valueTypeDescriptor,
+		linkTypeDescriptor);
     }
 }

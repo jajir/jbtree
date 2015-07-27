@@ -141,10 +141,20 @@ public class TreeUtil {
      */
     public static NodeImpl<Integer, Integer> makeNodeFromIntegers(final int l,
 	    final Integer idNode, final Integer fieldInt[]) {
-	Field<Integer, Integer> f = FieldImpl.makeFromIntegerField(fieldInt);
+	Field<Integer, Integer> f = makeFromIntegerField(fieldInt);
 	TypeDescriptor<Integer> tdInt = new TypeDescriptorInteger();
 	NodeImpl<Integer, Integer> n = new NodeImpl<Integer, Integer>(l, idNode, f.getBytes(),
-		tdInt, tdInt);
+		tdInt, tdInt, tdInt);
 	return n;
     }
+
+    public static Field<Integer, Integer> makeFromIntegerField(final Integer[] fieldInt) {
+	TypeDescriptor<Integer> tdInt = new TypeDescriptorInteger();
+	byte fieldByte[] = new byte[fieldInt.length * 4 + 1];
+	for (int i = 0; i < fieldInt.length; i++) {
+	    tdInt.save(fieldByte, i * 4 + 1, fieldInt[i]);
+	}
+	return new FieldImpl<Integer, Integer>(fieldByte, tdInt, tdInt, tdInt);
+    }
+
 }
