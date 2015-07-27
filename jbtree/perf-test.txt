@@ -1,0 +1,53 @@
+————————————————————————————————————————————————————————————————————————
+round 1
+values inserted: 1 000 000
+threads count:
+random number base: <values inserted>
+
+m=0, s=56, mili=904, mikro=925, nano=0, original=56904925000, name= JbTree
+mb=15, kb=648, b=712, name= JbTree
+m=0, s=7, mili=468, mikro=647, nano=0, original=7468647000, name= synchronized map
+mb=65, kb=853, b=880, name= synchronized map
+m=0, s=8, mili=320, mikro=254, nano=0, original=8320254000, name= concurrent hash map
+mb=84, kb=282, b=144, name= concurrent hash map
+m=0, s=17, mili=950, mikro=809, nano=0, original=17950809000, name= synchronized tree map
+mb=83, kb=923, b=88, name= synchronized tree map
+————————————————————————————————————————————————————————————————————————
+
+————————————————————————————————————————————————————————————————————————
+round 2
+values inserted: 1 000 000
+threads count:
+random number base: <values inserted>
+
+m=0, s=58, mili=811, mikro=518, nano=0, original=58811518000, name= JbTree
+mb=18, kb=532, b=1000, name= JbTree
+m=0, s=8, mili=235, mikro=150, nano=0, original=8235150000, name= synchronized map
+mb=62, kb=961, b=152, name= synchronized map
+m=0, s=8, mili=586, mikro=448, nano=0, original=8586448000, name= concurrent hash map
+mb=84, kb=283, b=24, name= concurrent hash map
+m=0, s=17, mili=697, mikro=250, nano=0, original=17697250000, name= synchronized tree map
+mb=83, kb=923, b=400, name= synchronized tree map————————————————————————————————————————————————————————————————————————
+
+
+before speed optimalization
+
+
+————————————————————————————————————————————————————————————————————————
+round 
+values inserted: 1 000 000
+threads count:
+random number base: <values inserted>
+
+————————————————————————————————————————————————————————————————————————
+
+————————————————————————————————————————————————————————————————————————
+round 
+values inserted: 1 000 000
+threads count:
+random number base: <values inserted>
+
+————————————————————————————————————————————————————————————————————————
+
+- run it from console 
+Performance test
