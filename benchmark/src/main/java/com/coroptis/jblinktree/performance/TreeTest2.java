@@ -36,82 +36,73 @@ import java.util.concurrent.TimeUnit;
 
 import org.openjdk.jmh.annotations.Benchmark;
 import org.openjdk.jmh.annotations.BenchmarkMode;
-import org.openjdk.jmh.annotations.Group;
-import org.openjdk.jmh.annotations.GroupThreads;
 import org.openjdk.jmh.annotations.Mode;
 import org.openjdk.jmh.annotations.OutputTimeUnit;
 import org.openjdk.jmh.annotations.Scope;
 import org.openjdk.jmh.annotations.Setup;
 import org.openjdk.jmh.annotations.State;
 import org.openjdk.jmh.annotations.TearDown;
-import org.openjdk.jmh.annotations.Warmup;
 import org.openjdk.jmh.runner.Runner;
 import org.openjdk.jmh.runner.RunnerException;
 import org.openjdk.jmh.runner.options.Options;
 import org.openjdk.jmh.runner.options.OptionsBuilder;
-import org.openjdk.jmh.runner.options.WarmupMode;
 
 import com.coroptis.jblinktree.TreeBuilder;
 import com.coroptis.jblinktree.TreeMap;
 import com.coroptis.jblinktree.type.Types;
 
-@State(Scope.Group)
+@State(Scope.Benchmark)
 @BenchmarkMode(Mode.AverageTime)
-@OutputTimeUnit(TimeUnit.MILLISECONDS)
-public class TreeTest {
+@OutputTimeUnit(TimeUnit.SECONDS)
+public class TreeTest2 {
 
     private TreeMap<Integer, Integer> tree;
 
     private Random random;
 
-    private final static int base = 1000 * 1;
+    private final static int base = 1000 * 1000;
+
+    long t1;
+
+    private long getFreeMem() {
+	System.gc();
+	return Runtime.getRuntime().freeMemory();
+    }
 
     @Setup
     public void setUp() {
 	random = new Random();
 	tree = TreeBuilder.builder().setL(2).setKeyType(Types.integer())
 		.setValueType(Types.integer()).build();
-	System.out.println(tree);
+	t1 = getFreeMem();
+	System.out.println("setup tree: " + tree);
     }
 
     @TearDown
     public void tearDown() {
+	long t2 = getFreeMem();
+	printMemory(t1 - t2, "jblinktree");
 	tree = null;
     }
 
-    @Warmup
+    private void printMemory(long t, final String name) {
+	final long b = t % 1024;
+	final long kb = (t / (1024)) % 1024;
+	final long mb = (t / ((long) 1024 * 1024)) % 1024;
+	System.out.println("mb=" + mb + ", kb=" + kb + ", b=" + b + ", name= " + name);
+    }
+
     @Benchmark
-    @Group("insert_many_thread")
-    @GroupThreads(1)
-    public void warmUp() {
-	System.out.println("zahrivam ..." + tree.size());
-	for (int i = 0; i < 1000; i++) {
+    public void insert_performance() {
+	for (int i = 0; i < 100; i++) {
 	    Integer j = random.nextInt(base);
 	    tree.put(j, -j);
 	}
-	System.out.println("... zahrato" + tree.size());
-    }
-
-    @Benchmark
-    @Group("insert_many_thread")
-    @GroupThreads(100)
-    public void insertManyThreads() {
-	Integer i = random.nextInt(base);
-	tree.put(i, -i);
-    }
-
-    @Benchmark
-    @Group("insert_one_thread")
-    @GroupThreads(1)
-    public void insertOneThread() {
-	Integer i = random.nextInt(base);
-	tree.put(i, -i);
     }
 
     public static void main(String[] args) throws RunnerException {
-	Options opt = new OptionsBuilder().include(TreeTest.class.getSimpleName())
-		.warmupIterations(1).warmupMode(WarmupMode.BULK).measurementIterations(2).forks(1)
-		.build();
+	Options opt = new OptionsBuilder().include(TreeTest2.class.getSimpleName())
+		.warmupIterations(0).threads(100).measurementIterations(2).forks(1).build();
 	new Runner(opt).run();
     }
 

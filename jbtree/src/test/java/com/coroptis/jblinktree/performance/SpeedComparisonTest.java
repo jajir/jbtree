@@ -38,10 +38,10 @@ public class SpeedComparisonTest extends TestCase {
 
     @Test
     public void test_jbTree() throws Exception {
+	testFunctionality(new FunctionalitySynchronizedMap(cycleCount), "synchronized map");
+	testFunctionality(new FunctionalityConcurrentHashMap(cycleCount), "concurrent hash map");
+	testFunctionality(new FunctionalitySynchronizedTreeMap(cycleCount), "synchronized tree map");
 	testFunctionality(new FunctionalityJbTree(cycleCount), "JbTree");
-//	testFunctionality(new FunctionalitySynchronizedMap(cycleCount), "synchronized map");
-//	testFunctionality(new FunctionalityConcurrentHashMap(cycleCount), "concurrent hash map");
-//	testFunctionality(new FunctionalitySynchronizedTreeMap(cycleCount), "synchronized tree map");
     }
 
     private void testFunctionality(final TestedTreeFunctionality functionality, final String name)
