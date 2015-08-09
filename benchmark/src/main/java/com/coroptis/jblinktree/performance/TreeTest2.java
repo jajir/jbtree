@@ -76,6 +76,7 @@ public class TreeTest2 {
 		.setValueType(Types.integer()).build();
 	t1 = getFreeMem();
 	System.out.println("setup tree: " + tree);
+	printMemory(t1, "jblinktree");
     }
 
     @TearDown
@@ -94,10 +95,8 @@ public class TreeTest2 {
 
     @Benchmark
     public void insert_performance() {
-	for (int i = 0; i < 100; i++) {
-	    Integer j = random.nextInt(base);
-	    tree.put(j, -j);
-	}
+	Integer j = random.nextInt(base);
+	tree.put(j, -j);
     }
 
     public static void main(String[] args) throws RunnerException {
