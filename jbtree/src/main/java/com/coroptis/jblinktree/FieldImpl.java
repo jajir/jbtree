@@ -93,10 +93,10 @@ public class FieldImpl<K, V> implements Field<K, V> {
      * int, int, int)
      */
     @Override
-    public void copy(Field<K, V> src, int srcPos1, int destPos1, int length) {
-	int p = getPosition(srcPos1 + length) - getPosition(srcPos1);
-	int srcPos = getPosition(srcPos1);
-	int destPos = getPosition(destPos1);
+    public void copy(final Field<K, V> src, final int srcPos1, final int destPos1, final int length) {
+	final int srcPos = getPosition(srcPos1);
+	final int p = getPosition(srcPos1 + length) - srcPos;
+	final int destPos = getPosition(destPos1);
 	System.arraycopy(src.getBytes(), srcPos, field, destPos, p);
 	setFlag(src.getFlag());
     }
@@ -126,22 +126,22 @@ public class FieldImpl<K, V> implements Field<K, V> {
     }
 
     @Override
-    public K getKey(int position) {
+    public K getKey(final int position) {
 	return keyTypeDescriptor.load(field, getPosition(position));
     }
 
     @Override
-    public V getValue(int position) {
+    public V getValue(final int position) {
 	return valueTypeDescriptor.load(field, getPosition(position));
     }
 
     @Override
-    public void setKey(int position, K value) {
+    public void setKey(final int position, final K value) {
 	keyTypeDescriptor.save(field, getPosition(position), value);
     }
 
     @Override
-    public void setValue(int position, V value) {
+    public void setValue(final int position, final V value) {
 	valueTypeDescriptor.save(field, getPosition(position), value);
     }
 
