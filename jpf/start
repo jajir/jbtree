@@ -1,0 +1,4 @@
+#!/bin/sh
+java -Xmx1024m -jar /Users/jan/projects/jpf/jpf-core/build/RunJPF.jar \
++site=/Users/jan/.jpf/site.properties +shell.port=4242 \
+`pwd`/jpf_configuration.jpf 

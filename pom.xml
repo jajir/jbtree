@@ -15,6 +15,7 @@
 	<modules>
 		<module>jbtree</module>
 		<module>benchmark</module>
+		<module>jpf</module>
 	</modules>
 
 	<licenses>

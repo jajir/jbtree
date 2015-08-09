@@ -12,3 +12,5 @@ buildNumber.properties
 *~
 *.dot
 pok.png
+jpf/src/main/java/
+
