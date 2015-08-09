@@ -2,15 +2,18 @@ package com.coroptis.jblinktree.performance;
 
 import java.util.Collections;
 import java.util.HashMap;
-
-import org.openjdk.jmh.annotations.Setup;
+import java.util.Map;
 
 public class MapTestSynchronizedHashMap extends AbstractMapTest {
 
-    @Setup
-    public void setUp() {
-	tree = Collections.synchronizedMap(new HashMap<Integer, Integer>());
-	super.warmUp();
+    @Override
+    protected Map<Integer, Integer> initialize() {
+	return Collections.synchronizedMap(new HashMap<Integer, Integer>());
     }
 
+    @Override
+    protected String mapName() {
+	return "synchronized_hash_map";
+    }
+    
 }

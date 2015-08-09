@@ -33,7 +33,11 @@ public class JblinktreeException extends RuntimeException {
 	 */
     private static final long serialVersionUID = 1L;
 
-    public JblinktreeException(String message) {
+    public JblinktreeException(final String message) {
 	super(message);
+    }
+
+    public JblinktreeException(final String message, final Throwable e) {
+	super(message, e);
     }
 }
