@@ -254,14 +254,23 @@ public class NodeImpl<K, V> implements Node<K, V> {
      *            required target index in field
      */
     private void insertToPosition(final K key, final V value, final int targetIndex) {
+	/**
+	 * It's create new node with new key & value pair and than copy data
+	 * from current node. Finally switch new node to current on.
+	 */
 	Field<K, V> field2 = new FieldImpl<K, V>(field.getLength() + 1, keyTypeDescriptor,
 		valueTypeDescriptor, linkTypeDescriptor);
+	field2.setFlag(field.getFlag());
+	field2.setLink(field.getLink());
+	field2.setValue(targetIndex, value);
+	field2.setKey(targetIndex + 1, key);
+
 	if (targetIndex > 0) {
 	    field2.copy(field, 0, 0, targetIndex);
 	}
-	field2.setValue(targetIndex, value);
-	field2.setKey(targetIndex + 1, key);
-	field2.copy(field, targetIndex, targetIndex + 2, field.getLength() - targetIndex);
+	if (field.getLength() - targetIndex > 1) {
+	    field2.copy(field, targetIndex, targetIndex + 2, field.getLength() - targetIndex - 1);
+	}
 	field = field2;
     }
 
@@ -390,7 +399,7 @@ public class NodeImpl<K, V> implements Node<K, V> {
 	buff.append(", isLeafNode=");
 	buff.append(isLeafNode());
 	buff.append(", field=[");
-	for (int i = 0; i < field.getLength(); i++) {
+	for (int i = 0; i < field.getLength() - 1; i++) {
 	    if (i != 0) {
 		buff.append(", ");
 	    }
@@ -402,6 +411,8 @@ public class NodeImpl<K, V> implements Node<K, V> {
 	}
 	buff.append("], flag=");
 	buff.append(field.getFlag());
+	buff.append(", link=");
+	buff.append(getLink());
 	buff.append("}");
 	return buff.toString();
     }
