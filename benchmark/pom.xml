@@ -31,7 +31,7 @@
 	<artifactId>benchmark</artifactId>
 	<packaging>jar</packaging>
 
-	<name>JMH benchmark sample: Java</name>
+	<name>JMH benchmark</name>
 
 	<!-- This is the demo/sample template build script for building Java benchmarks 
 		with JMH. Edit as needed. -->

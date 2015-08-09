@@ -11,7 +11,7 @@
 		<version>1.0.0-SNAPSHOT</version>
 	</parent>
 	<artifactId>jpf</artifactId>
-	<name>jblinktree</name>
+	<name>JPF static code analysis</name>
 	<packaging>jar</packaging>
 
 	<dependencies>

@@ -10,7 +10,7 @@
 		<name>coroptis</name>
 	</organization>
 	<inceptionYear>2015</inceptionYear>
-	<name>root</name>
+	<name>root module</name>
 
 	<modules>
 		<module>jbtree</module>
