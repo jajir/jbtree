@@ -25,7 +25,7 @@ import java.util.List;
 /**
  * Tree node providing basic operations.
  * 
- * @author jan
+ * @author jajir
  * 
  * 
  * @param <K>

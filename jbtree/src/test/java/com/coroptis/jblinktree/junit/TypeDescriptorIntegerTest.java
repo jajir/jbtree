@@ -33,7 +33,7 @@ import com.coroptis.jblinktree.type.TypeDescriptorInteger;
 /**
  * Junit test for {@link TypeDescriptorInteger}.
  * 
- * @author jan
+ * @author jajir
  * 
  */
 public class TypeDescriptorIntegerTest {

@@ -33,7 +33,7 @@ import com.coroptis.jblinktree.type.TypeDescriptorString;
 /**
  * Junit test for {@link TypeDescriptorString}.
  * 
- * @author jan
+ * @author jajir
  * 
  */
 public class TypeDescriptorStringTest {
@@ -51,6 +51,7 @@ public class TypeDescriptorStringTest {
 	logger.debug("-->" + word + "<--");
 
 	assertEquals("Ahoj", word);
+	assertEquals(14, td.getMaxLength());
     }
 
     @Test
@@ -61,6 +62,7 @@ public class TypeDescriptorStringTest {
 	logger.debug(toString(b));
 
 	assertEquals("Ahoj lidi!", td.load(b, 10));
+	assertEquals(14, td.getMaxLength());
     }
 
     @Test
@@ -71,7 +73,8 @@ public class TypeDescriptorStringTest {
 	logger.debug(toString(b));
 
 	assertEquals("Ahoj lidi!", td.load(b, 10));
-    }
+	assertEquals(14, td.getMaxLength());
+   }
 
     private String toString(byte b[]) {
 	StringBuilder buff = new StringBuilder();

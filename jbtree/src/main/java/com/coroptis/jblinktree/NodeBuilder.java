@@ -21,9 +21,9 @@ package com.coroptis.jblinktree;
  */
 
 /**
- * Helps create modes.
+ * Helps create nodes.
  * 
- * @author jan
+ * @author jajir
  * 
  * @param <K>
  * @param <V>

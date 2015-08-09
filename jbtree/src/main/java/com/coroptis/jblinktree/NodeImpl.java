@@ -568,7 +568,6 @@ public class NodeImpl<K, V> implements Node<K, V> {
 	    return false;
 	}
 	NodeImpl<K, V> n = (NodeImpl<K, V>) obj;
-	// TODO delegate equals to field
 	if (equal(l, n.l) && equal(id, n.id) && equal(field.getLength(), n.field.getLength())) {
 	    byte b1[] = n.field.getBytes();
 	    byte b2[] = field.getBytes();

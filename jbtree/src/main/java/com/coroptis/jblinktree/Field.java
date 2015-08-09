@@ -35,22 +35,97 @@ package com.coroptis.jblinktree;
  */
 public interface Field<K, V> {
 
+    /**
+     * Get key from specific position.
+     * 
+     * @param position
+     *            required key position
+     * @return key
+     */
     public K getKey(int position);
 
+    /**
+     * Get value from specific position.
+     * 
+     * @param position
+     *            required value position
+     * @return value
+     */
     public V getValue(int position);
 
-    public void copy(Field<K, V> src, int srcPos1, int destPos1, int length);
+    /**
+     * Copy data from {@link Field} <code>src</code> parameter to this object.
+     * 
+     * @param src
+     *            required field from which are data copied
+     * @param srcPos
+     *            required from which position are data copied
+     * @param destPos
+     *            required from which position are data written
+     * @param length
+     *            required how many bytes will be copied
+     * @throws ArrayIndexOutOfBoundsException
+     *             when some positions are out of array limits
+     */
+    public void copy(Field<K, V> src, int srcPos, int destPos, int length);
 
+    /**
+     * Allows to set key at specific position.
+     * 
+     * @param position
+     *            required position
+     * @param value
+     *            required key
+     */
     public void setKey(int position, K value);
 
+    /**
+     * Allows to set value at specific position.
+     * 
+     * @param position
+     *            required position
+     * @param value
+     *            required value
+     */
     public void setValue(int position, V value);
 
+    /**
+     * Get byte array containing all field data including:
+     * <ul>
+     * <li>flag</li>
+     * <li>key & value pairs</li>
+     * <li>link</li>
+     * </ul>
+     * 
+     * @return field byte array
+     */
     public byte[] getBytes();
 
+    /**
+     * Get number of stored keys and values. Keys and values are counted
+     * separately.
+     * 
+     * FIXME now count form 1 change it to 0
+     * 
+     * TODO check if it's not better to count key,value pairs
+     * 
+     * @return number of stored keys and values
+     */
     public int getLength();
 
+    /**
+     * Get flag byte.
+     * 
+     * @return flab byte
+     */
     public byte getFlag();
 
+    /**
+     * Allow to set flab byte
+     * 
+     * @param b
+     *            required flag byte
+     */
     public void setFlag(byte b);
 
     /**

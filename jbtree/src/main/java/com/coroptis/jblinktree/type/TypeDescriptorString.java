@@ -26,7 +26,9 @@ import com.google.common.base.Preconditions;
  */
 
 /**
- * Integer type descriptor.
+ * {@link String} type descriptor.
+ * 
+ * FIXME current all chars are stored in 1 byte, it's not true in case UTF-8
  * 
  * @author jajir
  * 
