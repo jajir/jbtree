@@ -36,7 +36,7 @@ After that source code can be compiled in eclipse.
 
 4. Compile all sources with following command:
 ```text
-mvn test-compile
+mvn clean test-compile
 ```
 
 5. Execute test with command:
