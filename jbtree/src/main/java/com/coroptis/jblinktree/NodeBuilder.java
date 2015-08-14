@@ -26,18 +26,25 @@ package com.coroptis.jblinktree;
  * @author jajir
  * 
  * @param <K>
+ *            key type
  * @param <V>
+ *            value type
  */
 public interface NodeBuilder<K, V> {
 
+    //TODO javadoc
     Node<K, V> makeEmptyLeafNode(int idNode);
 
+    //TODO javadoc
     Node<K, Integer> makeEmptyNonLeafNode(int idNode);
 
+    //TODO javadoc
     <T> Node<K, T> makeNode(int idNode, byte field[]);
 
+    //TODO javadoc
     Node<K, Integer> makeNonLeafNode(int idNode, Integer value1, K key1, Integer value2, K key2);
 
+    //TODO javadoc
     Node<K, V> makeLeafNode(int idNode, V value1, K key1, V value2, K key2);
 
 }
