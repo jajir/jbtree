@@ -27,6 +27,17 @@ import java.util.Set;
 import com.coroptis.jblinktree.type.TypeDescriptor;
 import com.google.common.base.Preconditions;
 
+/**
+ * {@link Map} Implementation. Wrap JBtree map. Not all methods are fully
+ * implemented.
+ * 
+ * @author jajir
+ *
+ * @param <K>
+ *            key type
+ * @param <V>
+ *            value type
+ */
 public class TreeMapImpl<K, V> implements TreeMap<K, V> {
 
     private final JbTree<K, V> tree;
@@ -35,11 +46,13 @@ public class TreeMapImpl<K, V> implements TreeMap<K, V> {
 
     private final TypeDescriptor<V> valueTypeDescriptor;
 
-    TreeMapImpl(final JbTree<K, V> tree, final TypeDescriptor<K> keyTypeDescriptor,
+    TreeMapImpl(final JbTree<K, V> tree,
+	    final TypeDescriptor<K> keyTypeDescriptor,
 	    final TypeDescriptor<V> valueTypeDescriptor) {
 	this.tree = Preconditions.checkNotNull(tree);
 	this.keyTypeDescriptor = Preconditions.checkNotNull(keyTypeDescriptor);
-	this.valueTypeDescriptor = Preconditions.checkNotNull(valueTypeDescriptor);
+	this.valueTypeDescriptor = Preconditions
+		.checkNotNull(valueTypeDescriptor);
     }
 
     @SuppressWarnings("unchecked")

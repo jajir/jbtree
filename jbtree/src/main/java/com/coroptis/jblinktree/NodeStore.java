@@ -29,8 +29,20 @@ package com.coroptis.jblinktree;
  */
 public interface NodeStore<K> {
 
+    /**
+     * Lock given node.
+     * 
+     * @param nodeId
+     *            required node id
+     */
     void lockNode(Integer nodeId);
 
+    /**
+     * Allows to unlock node.
+     * 
+     * @param nodeId
+     *            required node id
+     */
     void unlockNode(Integer nodeId);
 
     /**
@@ -38,10 +50,17 @@ public interface NodeStore<K> {
      * 
      * @param nodeId
      *            required node id
-     * @return
+     * @return copy of node from store
      */
     <S> Node<K, S> get(Integer nodeId);
 
+    /**
+     * Return defensive copy of node instance and lock it.
+     * 
+     * @param nodeId
+     *            required node id
+     * @return copy of node from store
+     */
     <S> Node<K, S> getAndLock(Integer nodeId);
 
     /**
@@ -55,6 +74,12 @@ public interface NodeStore<K> {
      */
     <S> void writeNode(Node<K, S> node);
 
+    /**
+     * Allows to remove node from store.
+     * 
+     * @param idNode
+     *            required node id
+     */
     void deleteNode(Integer idNode);
 
     /**

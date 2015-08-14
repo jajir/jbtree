@@ -8,9 +8,9 @@ import org.openjdk.jmh.annotations.BenchmarkMode;
 import org.openjdk.jmh.annotations.Mode;
 import org.openjdk.jmh.annotations.OutputTimeUnit;
 import org.openjdk.jmh.annotations.Scope;
-import org.openjdk.jmh.annotations.Setup;
 import org.openjdk.jmh.annotations.State;
 import org.openjdk.jmh.annotations.TearDown;
+import org.openjdk.jmh.annotations.Warmup;
 
 import com.coroptis.jblinktree.performance.tool.NumberGeneratorFile;
 import com.google.common.base.Preconditions;
@@ -54,23 +54,24 @@ public abstract class AbstractMapTest {
 	return map.getClass().getSimpleName();
     }
 
-    @Setup
-    public void setUp() {
+    public AbstractMapTest() {
+	System.out.println("starting test");
 	numberGeneratorFile = new NumberGeneratorFile(RANDOM_DATA_FILE);
 	map = Preconditions.checkNotNull(initialize());
+	t1 = getFreeMem();
+	printMemory(t1, mapName());
 	warmUp();
+	System.out.println("test is ready, map size = " + map.size());
     }
 
     /**
      * At the begging are some random values inserted into tree.
      */
-    private void warmUp() {
+    public void warmUp() {
 	for (int i = 0; i < NUMBER_OF_WARM_UP_KEYS; i++) {
 	    final Integer j = numberGeneratorFile.nextInt();
 	    map.put(j, -j);
 	}
-	t1 = getFreeMem();
-	printMemory(t1, mapName());
     }
 
     protected long getFreeMem() {
@@ -82,18 +83,19 @@ public abstract class AbstractMapTest {
 	final long b = t % 1024;
 	final long kb = (t / (1024)) % 1024;
 	final long mb = (t / ((long) 1024 * 1024)) % 1024;
-	System.out.println("mb=" + mb + ", kb=" + kb + ", b=" + b + ", name= " + name);
+	System.out.println("mb=" + mb + ", kb=" + kb + ", b=" + b + ", name= "
+		+ name);
     }
 
     @TearDown
     public void tearDown() {
-	long t2 = getFreeMem();
-	printMemory(t1 - t2, mapName());
+	// printMemory(t1 - getFreeMem(), mapName());
 	System.out.println("count: " + map.size());
 	map = null;
     }
 
     @Benchmark
+    @Warmup(iterations = 1, batchSize = 1, time = 1)
     public void insert_performance() {
 	for (int i = 0; i < NUMBER_OF_INSERTS_IN_TEST; i++) {
 	    final Integer j = numberGeneratorFile.nextInt();

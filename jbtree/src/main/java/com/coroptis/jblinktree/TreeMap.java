@@ -22,8 +22,21 @@ package com.coroptis.jblinktree;
 
 import java.util.Map;
 
+/**
+ * {@link Map} extension add Jbtree specific features.
+ * 
+ * @author jajir
+ *
+ * @param <K>
+ *            key type
+ * @param <V>
+ *            value type
+ */
 public interface TreeMap<K, V> extends Map<K, V> {
 
+    /**
+     * verify tree consistency. It's for testing purposes.
+     */
     void verify();
 
     /**

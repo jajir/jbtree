@@ -84,7 +84,7 @@ public class JbTreeImpl<K, V> implements JbTree<K, V> {
 	Preconditions.checkNotNull(key);
 	Preconditions.checkNotNull(value);
 	final Stack<Integer> stack = new Stack<Integer>();
-	Integer currentNodeId = treeService.findLeafNodeId(key, stack, rootNodeId);
+	final Integer currentNodeId = treeService.findLeafNodeId(key, stack, rootNodeId);
 	Node<K, V> currentNode = nodeStore.getAndLock(currentNodeId);
 	currentNode = treeTool.moveRightLeafNode(currentNode, key);
 	if (currentNode.getValue(key) == null) {
