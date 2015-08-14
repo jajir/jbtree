@@ -18,15 +18,20 @@ Here is used [JPF - Java Path Finder](http://babelfish.arc.nasa.gov/trac/jpf/wik
 
 ## Executions steps
 
-1. Install JBree library into local maven repository. To do that perform in directory 'jbtree'
+### 1.
+Install JBree library into local maven repository. To do that perform in directory 'jbtree'
 ```text
 mvn clean install
 ``` 
-2. Copy JBtree source file of JBtree map from maven repository to jpf direcory. In 'jpf' directpry execute: 
+
+### 2.
+Copy JBtree source file of JBtree map from maven repository to jpf direcory. In 'jpf' directpry execute: 
 ```text
 mvn process-resources
-``` 
-3. It's optional step. When you want to edit test code or edit in eclipse than in direcory 'jpf' execute: 
+```
+
+### 3.
+It's optional step. When you want to edit test code or edit in eclipse than in direcory 'jpf' execute: 
 ```text
 mvn eclipse:clean eclipse:eclipse
 ```
@@ -34,12 +39,14 @@ After that add new project in eclipse 'jbtree-jpf'.
 Add to build path 'user library' 'jpf'. 
 After that source code can be compiled in eclipse.
 
-4. Compile all sources with following command:
+### 4.
+Compile all sources with following command:
 ```text
 mvn test-compile
 ```
 
-5. Execute test with command:
+### 5.
+Execute test with command:
 ```text
 ./start
 ```
