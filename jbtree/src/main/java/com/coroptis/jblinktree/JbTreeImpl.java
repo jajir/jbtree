@@ -48,6 +48,8 @@ public class JbTreeImpl<K, V> implements JbTree<K, V> {
 
     private final JbTreeLockingTool<K, V> treeLockingTool;
 
+    private final JbTreeService<K, V> treeService;
+
     /**
      * Create and initialize tree.
      * 
@@ -58,12 +60,13 @@ public class JbTreeImpl<K, V> implements JbTree<K, V> {
      */
     public JbTreeImpl(final NodeStore<K> nodeStore, final JbTreeTool<K, V> treeTool,
 	    final JbTreeHelper<K, V> jbTreeHelper, final JbTreeData<K, V> treeData,
-	    final JbTreeLockingTool<K, V> treeLockingTool) {
+	    final JbTreeLockingTool<K, V> treeLockingTool, final JbTreeService<K, V> treeService) {
 	this.nodeStore = Preconditions.checkNotNull(nodeStore);
 	this.treeTool = Preconditions.checkNotNull(treeTool);
 	this.jbTreeHelper = Preconditions.checkNotNull(jbTreeHelper);
 	this.treeData = Preconditions.checkNotNull(treeData);
 	this.treeLockingTool = Preconditions.checkNotNull(treeLockingTool);
+	this.treeService = Preconditions.checkNotNull(treeService);
     }
 
     @Override
@@ -81,7 +84,7 @@ public class JbTreeImpl<K, V> implements JbTree<K, V> {
 	     * Key already exists. Rewrite value.
 	     */
 	    V oldValue = currentNode.getValue(key);
-	    jbTreeHelper.storeValueIntoLeafNode(currentNode, key, value);
+	    treeService.storeValueIntoLeafNode(currentNode, key, value);
 	    return oldValue;
 	}
     }

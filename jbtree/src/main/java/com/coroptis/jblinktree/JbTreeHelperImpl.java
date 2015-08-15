@@ -1,10 +1,39 @@
 package com.coroptis.jblinktree;
 
+/*
+ * #%L
+ * jblinktree
+ * %%
+ * Copyright (C) 2015 coroptis
+ * %%
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * #L%
+ */
+
 import java.util.Stack;
 
 import com.coroptis.jblinktree.type.TypeDescriptor;
 import com.google.common.base.Preconditions;
 
+/**
+ * 
+ * @author jajir
+ * 
+ * @param <K>
+ *            key type
+ * @param <V>
+ *            value type
+ */
 public class JbTreeHelperImpl<K, V> implements JbTreeHelper<K, V> {
 
     /**
@@ -16,7 +45,7 @@ public class JbTreeHelperImpl<K, V> implements JbTreeHelper<K, V> {
 
     private final JbTreeTool<K, V> treeTool;
 
-    private final JbTreeService<K> treeService;
+    private final JbTreeService<K, V> treeService;
 
     private final TypeDescriptor<V> valueTypeDescriptor;
 
@@ -25,7 +54,7 @@ public class JbTreeHelperImpl<K, V> implements JbTreeHelper<K, V> {
     private final JbTreeData<K, V> treeData;
 
     JbTreeHelperImpl(final int l, final NodeStore<K> nodeStore, final JbTreeTool<K, V> treeTool,
-	    final JbTreeService<K> treeService, final JbTreeData<K, V> treeData,
+	    final JbTreeService<K, V> treeService, final JbTreeData<K, V> treeData,
 	    final TypeDescriptor<V> valueTypeDescriptor,
 	    final TypeDescriptor<Integer> linkTypeDescriptor) {
 	this.l = l;
@@ -80,7 +109,7 @@ public class JbTreeHelperImpl<K, V> implements JbTreeHelper<K, V> {
 	    /**
 	     * There is a free space for new key and value.
 	     */
-	    storeValueIntoLeafNode(currentNode, key, value);
+	    treeService.storeValueIntoLeafNode(currentNode, key, value);
 	    return null;
 	}
     }
@@ -121,24 +150,10 @@ public class JbTreeHelperImpl<K, V> implements JbTreeHelper<K, V> {
 		/**
 		 * There is a free space for new key and value.
 		 */
-		storeValueIntoNonLeafNode(currentNode, tmpKey, tmpValue);
+		treeService.storeValueIntoNonLeafNode(currentNode, tmpKey, tmpValue);
 		return null;
 	    }
 	}
-    }
-
-    @Override
-    public void storeValueIntoLeafNode(final Node<K, V> currentNode, final K key, final V value) {
-	currentNode.insert(key, value);
-	nodeStore.writeNode(currentNode);
-	nodeStore.unlockNode(currentNode.getId());
-    }
-
-    private void storeValueIntoNonLeafNode(final Node<K, Integer> currentNode, final K key,
-	    final Integer value) {
-	currentNode.insert(key, value);
-	nodeStore.writeNode(currentNode);
-	nodeStore.unlockNode(currentNode.getId());
     }
 
 }

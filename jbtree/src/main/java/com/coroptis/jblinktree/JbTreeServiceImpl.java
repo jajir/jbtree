@@ -28,7 +28,7 @@ import com.google.common.base.Preconditions;
  * @author jajir
  * 
  */
-public class JbTreeServiceImpl<K, V> implements JbTreeService<K> {
+public class JbTreeServiceImpl<K, V> implements JbTreeService<K, V> {
 
     private final NodeStore<K> nodeStore;
 
@@ -51,5 +51,20 @@ public class JbTreeServiceImpl<K, V> implements JbTreeService<K> {
 	    nodeStore.writeNode(parentNode);
 	}
 	return parentNode;
+    }
+
+    @Override
+    public void storeValueIntoLeafNode(final Node<K, V> currentNode, final K key, final V value) {
+	currentNode.insert(key, value);
+	nodeStore.writeNode(currentNode);
+	nodeStore.unlockNode(currentNode.getId());
+    }
+
+    @Override
+    public void storeValueIntoNonLeafNode(final Node<K, Integer> currentNode, final K key,
+	    final Integer value) {
+	currentNode.insert(key, value);
+	nodeStore.writeNode(currentNode);
+	nodeStore.unlockNode(currentNode.getId());
     }
 }
