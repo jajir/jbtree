@@ -4,12 +4,9 @@ import com.google.common.base.Preconditions;
 
 public class JbTreeLockingToolImpl<K, V> implements JbTreeLockingTool<K, V> {
 
-    private final NodeStore<K> nodeStore;
-
     private final JbTreeTool<K, V> treeTool;
 
-    public JbTreeLockingToolImpl(final NodeStore<K> nodeStore, final JbTreeTool<K, V> treeTool) {
-	this.nodeStore = Preconditions.checkNotNull(nodeStore);
+    public JbTreeLockingToolImpl(final JbTreeTool<K, V> treeTool) {
 	this.treeTool = Preconditions.checkNotNull(treeTool);
     }
 
