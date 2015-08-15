@@ -463,31 +463,6 @@ public class NodeImpl<K, V> implements Node<K, V> {
     /*
      * (non-Javadoc)
      * 
-     * @see
-     * com.coroptis.jblinktree.Node#getPreviousCorrespondingNode(java.lang.Integer
-     * )
-     */
-    @Override
-    public Integer getPreviousCorrespondingNode(final K key) {
-	if (isLeafNode()) {
-	    throw new JblinktreeException("Leaf node doesn't have any child nodes.");
-	}
-	for (int i = 1; i < field.getLength() - 1; i = i + 2) {
-	    if (keyTypeDescriptor.compare(key, field.getKey(i)) <= 0) {
-		if (i > 3) {
-		    // TODO re-typing should be implicit
-		    return (Integer) field.getKey(i - 3);
-		} else {
-		    return null;
-		}
-	    }
-	}
-	return null;
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
      * @see com.coroptis.jblinktree.Node#getValue(java.lang.Integer)
      */
     @Override

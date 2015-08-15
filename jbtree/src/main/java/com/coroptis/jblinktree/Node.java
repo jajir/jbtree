@@ -170,8 +170,6 @@ public interface Node<K, V> {
      */
     public Integer getCorrespondingNodeId(K key);
 
-    public Integer getPreviousCorrespondingNode(K key);
-
     /**
      * Find value for given key.
      * 

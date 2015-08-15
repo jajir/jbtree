@@ -139,17 +139,6 @@ public class JbTreeToolImpl<K, V> implements JbTreeTool<K, V> {
     }
 
     @Override
-    public <S> void updateMaxIfNecessary(final Node<K, Integer> parentNode,
-	    final Node<K, S> childNode) {
-	if (keyTypeDescriptor.compare(childNode.getMaxKey(), parentNode.getMaxKey()) > 0) {
-	    Preconditions.checkState(NodeImpl.EMPTY_INT.equals(parentNode.getLink()),
-		    "parent not rightemost node in tree");
-	    parentNode.setMaxKey(childNode.getMaxKey());
-	    nodeStore.writeNode(parentNode);
-	}
-    }
-
-    @Override
     public Integer createRootNode() {
 	Node<K, V> node = nodeBuilder.makeEmptyLeafNode(nodeStore.getNextId());
 	this.nodeStore.writeNode(node);
