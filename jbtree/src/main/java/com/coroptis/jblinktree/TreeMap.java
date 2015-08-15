@@ -26,7 +26,7 @@ import java.util.Map;
  * {@link Map} extension add Jbtree specific features.
  * 
  * @author jajir
- *
+ * 
  * @param <K>
  *            key type
  * @param <V>

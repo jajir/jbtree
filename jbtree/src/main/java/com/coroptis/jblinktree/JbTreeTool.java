@@ -1,5 +1,7 @@
 package com.coroptis.jblinktree;
 
+import java.util.Stack;
+
 import com.coroptis.jblinktree.type.TypeDescriptor;
 
 /*
@@ -33,21 +35,6 @@ public interface JbTreeTool<K, V> {
     /**
      * Move right in tree until suitable non-leaf node is found.
      * <p>
-     * When there is move right than current node is unlocked and new one is
-     * locked.
-     * </p>
-     * 
-     * @param current
-     *            required current node, this node should be locked
-     * @param key
-     *            required key
-     * @return moved right node
-     */
-    Node<K, V> moveRightLeafNode(Node<K, V> current, K key);
-
-    /**
-     * Move right in tree until suitable non-leaf node is found.
-     * <p>
      * Method doesn't work with locks.
      * </p>
      * 
@@ -58,21 +45,6 @@ public interface JbTreeTool<K, V> {
      * @return moved right node
      */
     Node<K, V> moveRightLeafNodeWithoutLocking(Node<K, V> current, K key);
-
-    /**
-     * Move right in tree until suitable leaf node is found.
-     * <p>
-     * When there is move right than current node is unlocked and new one is
-     * locked.
-     * </p>
-     * 
-     * @param current
-     *            required current node, this node should be locked
-     * @param key
-     *            required key
-     * @return moved right node
-     */
-    Node<K, Integer> moveRightNonLeafNode(Node<K, Integer> current, K key);
 
     /**
      * Split node into two nodes. It moved part of currentNode data into new one
@@ -113,5 +85,48 @@ public interface JbTreeTool<K, V> {
      * @return new root node id.
      */
     Integer createRootNode();
+
+    /**
+     * Non locking method that find leaf node id where should be given key
+     * placed. In Stock are stored passed nodes. Right moved in tree are not
+     * stored.
+     * <p>
+     * When it's necessary to move right in stack are stored just rightmost
+     * nodes id.
+     * </p>
+     * <p>
+     * Method doesn't lock any nodes.
+     * </p>
+     * 
+     * @param key
+     *            required key
+     * @param stack
+     *            required stack
+     * @param rootNodeId
+     *            required nodeId
+     * @return leaf node id where should be key found or stored, it's never
+     *         <code>null</code>
+     */
+    Integer findLeafNodeId(K key, Stack<Integer> stack, Integer rootNodeId);
+
+    /**
+     * 
+     * TODO comment
+     * 
+     * @param node
+     * @param key
+     * @return
+     */
+    boolean canMoveToNextNode(final Node<K, ?> node, final K key);
+
+    /**
+     * TODO comment
+     * 
+     * 
+     * @param currentNode
+     * @param nextNodeId
+     * @return
+     */
+    <S> Node<K, S> moveToNextNode(final Node<K, ?> currentNode, final Integer nextNodeId);
 
 }

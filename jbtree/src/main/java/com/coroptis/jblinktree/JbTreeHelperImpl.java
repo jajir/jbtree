@@ -22,10 +22,10 @@ public class JbTreeHelperImpl<K, V> implements JbTreeHelper<K, V> {
 
     private final TypeDescriptor<Integer> linkTypeDescriptor;
 
-    private final TreeData<K, V> treeData;
+    private final JbTreeData<K, V> treeData;
 
     JbTreeHelperImpl(final int l, final NodeStore<K> nodeStore, final JbTreeTool<K, V> treeTool,
-	    final JbTreeService<K> treeService, final TreeData<K, V> treeData,
+	    final JbTreeService<K> treeService, final JbTreeData<K, V> treeData,
 	    final TypeDescriptor<V> valueTypeDescriptor,
 	    final TypeDescriptor<Integer> linkTypeDescriptor) {
 	this.l = l;
@@ -42,7 +42,7 @@ public class JbTreeHelperImpl<K, V> implements JbTreeHelper<K, V> {
     @Override
     public Node<K, V> findAppropriateLeafNode(final K key) {
 	Preconditions.checkNotNull(key);
-	Integer idNode = treeService.findLeafNodeId(key, new Stack<Integer>(),
+	Integer idNode = treeTool.findLeafNodeId(key, new Stack<Integer>(),
 		treeData.getRootNodeId());
 	Node<K, V> node = nodeStore.get(idNode);
 	return treeTool.moveRightLeafNodeWithoutLocking(node, key);

@@ -4,7 +4,7 @@ import java.util.concurrent.locks.ReentrantLock;
 
 import com.google.common.base.Preconditions;
 
-public class TreeDataImpl<K, V> implements TreeData<K, V> {
+public class JbTreeDataImpl<K, V> implements JbTreeData<K, V> {
 
     private final NodeStore<K> nodeStore;
 
@@ -12,7 +12,7 @@ public class TreeDataImpl<K, V> implements TreeData<K, V> {
 
     private Integer rootNodeId;
 
-    TreeDataImpl(final NodeStore<K> nodeStore, final JbTreeTool<K, V> treeTool) {
+    JbTreeDataImpl(final NodeStore<K> nodeStore, final JbTreeTool<K, V> treeTool) {
 	this.nodeStore = Preconditions.checkNotNull(nodeStore);
 	this.treeTool = Preconditions.checkNotNull(treeTool);
 	rootNodeId = treeTool.createRootNode();

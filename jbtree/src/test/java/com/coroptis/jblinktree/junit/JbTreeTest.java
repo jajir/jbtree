@@ -35,7 +35,7 @@ import com.coroptis.jblinktree.JbTreeTool;
 import com.coroptis.jblinktree.Node;
 import com.coroptis.jblinktree.NodeImpl;
 import com.coroptis.jblinktree.NodeStore;
-import com.coroptis.jblinktree.TreeData;
+import com.coroptis.jblinktree.JbTreeData;
 
 /**
  * Junit test form {@link JbTreeImpl}.
@@ -57,7 +57,7 @@ public class JbTreeTest {
 
     private JbTreeHelper<Integer, Integer> treeHelper;
 
-    private TreeData<Integer, Integer> treeData;
+    private JbTreeData<Integer, Integer> treeData;
 
     private Object[] mocks;
 
@@ -104,7 +104,7 @@ public class JbTreeTest {
 	jbTreeTool = EasyMock.createMock(JbTreeTool.class);
 	jbTreeService = EasyMock.createMock(JbTreeService.class);
 	treeHelper = EasyMock.createMock(JbTreeHelper.class);
-	treeData = EasyMock.createMock(TreeData.class);
+	treeData = EasyMock.createMock(JbTreeData.class);
 	mocks = new Object[] { nodeStore, rootNode, jbTreeTool, jbTreeService };
 
 	EasyMock.expect(jbTreeTool.createRootNode()).andReturn(1);

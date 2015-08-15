@@ -1,7 +1,5 @@
 package com.coroptis.jblinktree;
 
-import java.util.Stack;
-
 /*
  * #%L
  * jblinktree
@@ -30,29 +28,6 @@ import java.util.Stack;
  */
 public interface JbTreeService<K> {
 
-    /**
-     * Non locking method that find leaf node id where should be given key
-     * placed. In Stock are stored passed nodes. Right moved in tree are not
-     * stored.
-     * <p>
-     * When it's necessary to move right in stack are stored just rightmost
-     * nodes id.
-     * </p>
-     * <p>
-     * Method doesn't lock any nodes.
-     * </p>
-     * 
-     * @param key
-     *            required key
-     * @param stack
-     *            required stack
-     * @param rootNodeId
-     *            required nodeId
-     * @return leaf node id where should be key found or stored, it's never
-     *         <code>null</code>
-     */
-    Integer findLeafNodeId(K key, Stack<Integer> stack, Integer rootNodeId);
+    <S> Node<K, Integer> loadParentNode(Node<K, S> currentNode, K tmpKey, Integer nextNodeId);
 
-    <S> Node<K, Integer> loadParentNode(Node<K, S> currentNode, K tmpKey,
-	    Integer nextNodeId);
 }

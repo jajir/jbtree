@@ -32,7 +32,7 @@ import com.google.common.base.Preconditions;
  * implemented.
  * 
  * @author jajir
- *
+ * 
  * @param <K>
  *            key type
  * @param <V>
@@ -46,13 +46,11 @@ public class TreeMapImpl<K, V> implements TreeMap<K, V> {
 
     private final TypeDescriptor<V> valueTypeDescriptor;
 
-    TreeMapImpl(final JbTree<K, V> tree,
-	    final TypeDescriptor<K> keyTypeDescriptor,
+    TreeMapImpl(final JbTree<K, V> tree, final TypeDescriptor<K> keyTypeDescriptor,
 	    final TypeDescriptor<V> valueTypeDescriptor) {
 	this.tree = Preconditions.checkNotNull(tree);
 	this.keyTypeDescriptor = Preconditions.checkNotNull(keyTypeDescriptor);
-	this.valueTypeDescriptor = Preconditions
-		.checkNotNull(valueTypeDescriptor);
+	this.valueTypeDescriptor = Preconditions.checkNotNull(valueTypeDescriptor);
     }
 
     @SuppressWarnings("unchecked")

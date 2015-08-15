@@ -73,12 +73,15 @@ public final class TreeBuilder {
 	final NodeStoreImpl<K, V> nodeStore = new NodeStoreImpl<K, V>(idGenerator, nodeBuilder);
 	final JbTreeTool<K, V> jbTreeTool = new JbTreeToolImpl<K, V>(nodeStore,
 		(TypeDescriptor<K>) keyTypeDescriptor, nodeBuilder);
-	final TreeData<K, V> treeData = new TreeDataImpl<K, V>(nodeStore, jbTreeTool);
-	final JbTreeService<K> treeService = new JbTreeServiceImpl<K, V>(nodeStore, jbTreeTool);
-	final JbTreeHelper<K, V> jbTreeHelper = new JbTreeHelperImpl<K, V>(l, nodeStore, jbTreeTool,
-		treeService, treeData, (TypeDescriptor<V>) valueTypeDescriptor, linkTypeDescriptor);
-	final JbTree<K, V> tree = new JbTreeImpl<K, V>(nodeStore, jbTreeTool, treeService,
-		jbTreeHelper, treeData);
+	final JbTreeData<K, V> treeData = new JbTreeDataImpl<K, V>(nodeStore, jbTreeTool);
+	final JbTreeLockingTool<K, V> treeLockingTool = new JbTreeLockingToolImpl<K, V>(nodeStore,
+		jbTreeTool);
+	final JbTreeService<K> treeService = new JbTreeServiceImpl<K, V>(nodeStore, treeLockingTool);
+	final JbTreeHelper<K, V> jbTreeHelper = new JbTreeHelperImpl<K, V>(l, nodeStore,
+		jbTreeTool, treeService, treeData, (TypeDescriptor<V>) valueTypeDescriptor,
+		linkTypeDescriptor);
+	final JbTree<K, V> tree = new JbTreeImpl<K, V>(nodeStore, jbTreeTool, jbTreeHelper,
+		treeData, treeLockingTool);
 
 	return new TreeMapImpl<K, V>(tree, (TypeDescriptor<K>) keyTypeDescriptor,
 		(TypeDescriptor<V>) valueTypeDescriptor);

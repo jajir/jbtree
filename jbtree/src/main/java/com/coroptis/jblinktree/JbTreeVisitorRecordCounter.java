@@ -24,7 +24,7 @@ package com.coroptis.jblinktree;
  * Tree visitor which count keys stored in tree.
  * 
  * @author jajir
- *
+ * 
  */
 class JbTreeVisitorRecordCounter<K, V> implements JbTreeVisitor<K, V> {
 

@@ -1,5 +1,7 @@
 package com.coroptis.jblinktree;
 
+import java.util.Stack;
+
 import com.coroptis.jblinktree.type.TypeDescriptor;
 import com.coroptis.jblinktree.type.TypeDescriptorInteger;
 import com.google.common.base.Preconditions;
@@ -52,22 +54,7 @@ public class JbTreeToolImpl<K, V> implements JbTreeTool<K, V> {
     }
 
     @Override
-    public Node<K, Integer> moveRightNonLeafNode(Node<K, Integer> current, final K key) {
-	Preconditions.checkNotNull(key);
-	Preconditions.checkNotNull(current);
-	if (current.isLeafNode()) {
-	    throw new JblinktreeException("method is for non-leaf nodes, but given node is leaf: "
-		    + current.toString());
-	}
-	Integer nextNodeId = current.getCorrespondingNodeId(key);
-	while (!NodeImpl.EMPTY_INT.equals(nextNodeId) && nextNodeId.equals(current.getLink())) {
-	    current = moveToNextNode(current, nextNodeId);
-	    nextNodeId = current.getCorrespondingNodeId(key);
-	}
-	return current;
-    }
-
-    private boolean canMoveToNextNode(final Node<K, ?> node, final K key) {
+    public boolean canMoveToNextNode(final Node<K, ?> node, final K key) {
 	if (NodeImpl.EMPTY_INT.equals(node.getLink())) {
 	    return false;
 	}
@@ -75,25 +62,6 @@ public class JbTreeToolImpl<K, V> implements JbTreeTool<K, V> {
 	    return true;
 	}
 	return (node.getMaxKey() != null && keyTypeDescriptor.compare(key, node.getMaxKey()) > 0);
-    }
-
-    @Override
-    public Node<K, V> moveRightLeafNode(Node<K, V> current, final K key) {
-	Preconditions.checkNotNull(key);
-	Preconditions.checkNotNull(current);
-	if (!current.isLeafNode()) {
-	    throw new JblinktreeException("method is for leaf nodes, but given node is non-leaf");
-	}
-	while (canMoveToNextNode(current, key)) {
-	    current = moveToNextNode(current, current.getLink());
-	}
-	return current;
-    }
-
-    private <S> Node<K, S> moveToNextNode(final Node<K, ?> currentNode, final Integer nextNodeId) {
-	final Node<K, S> n = nodeStore.getAndLock(nextNodeId);
-	nodeStore.unlockNode(currentNode.getId());
-	return n;
     }
 
     @Override
@@ -110,9 +78,37 @@ public class JbTreeToolImpl<K, V> implements JbTreeTool<K, V> {
     }
 
     @Override
+    public Integer findLeafNodeId(final K key, final Stack<Integer> stack, final Integer rootNodeId) {
+	Node<K, Integer> currentNode = nodeStore.get(rootNodeId);
+	while (!currentNode.isLeafNode()) {
+	    Integer nextNodeId = currentNode.getCorrespondingNodeId(key);
+	    if (NodeImpl.EMPTY_INT.equals(nextNodeId)) {
+		/**
+		 * This is rightmost node and next link is <code>null</code> so
+		 * use node id associated with bigger key.
+		 */
+		stack.push(currentNode.getId());
+		nextNodeId = currentNode.getCorrespondingNodeId(currentNode.getMaxKey());
+		if (NodeImpl.EMPTY_INT.equals(nextNodeId)) {
+		    throw new JblinktreeException("There is no node id for max value '"
+			    + currentNode.getMaxKey() + "' in node " + currentNode.toString());
+		}
+	    } else if (!nextNodeId.equals(currentNode.getLink())) {
+		/**
+		 * I don't want to store nodes when cursor is moved right.
+		 */
+		stack.push(currentNode.getId());
+	    }
+	    currentNode = nodeStore.get(nextNodeId);
+	}
+	return currentNode.getId();
+    }
+
+    @Override
     public <S> Node<K, S> split(final Node<K, S> currentNode, final K key, final S value,
 	    TypeDescriptor<S> valueTypeDescriptor) {
-	// FIXME create leaf and non leaf versions of this method and call proper node builder 
+	// FIXME create leaf and non leaf versions of this method and call
+	// proper node builder
 	Node<K, S> newNode = new NodeImpl<K, S>(currentNode.getL(), nodeStore.getNextId(), true,
 		keyTypeDescriptor, valueTypeDescriptor, new TypeDescriptorInteger());
 	currentNode.moveTopHalfOfDataTo(newNode);
@@ -143,5 +139,12 @@ public class JbTreeToolImpl<K, V> implements JbTreeTool<K, V> {
 	Node<K, V> node = nodeBuilder.makeEmptyLeafNode(nodeStore.getNextId());
 	this.nodeStore.writeNode(node);
 	return node.getId();
+    }
+
+    @Override
+    public <S> Node<K, S> moveToNextNode(final Node<K, ?> currentNode, final Integer nextNodeId) {
+	final Node<K, S> n = nodeStore.getAndLock(nextNodeId);
+	nodeStore.unlockNode(currentNode.getId());
+	return n;
     }
 }

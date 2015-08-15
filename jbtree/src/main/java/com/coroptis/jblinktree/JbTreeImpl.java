@@ -42,11 +42,11 @@ public class JbTreeImpl<K, V> implements JbTree<K, V> {
 
     private final JbTreeTool<K, V> treeTool;
 
-    private final JbTreeService<K> treeService;
-
     private final JbTreeHelper<K, V> jbTreeHelper;
 
-    private final TreeData<K, V> treeData;
+    private final JbTreeData<K, V> treeData;
+
+    private final JbTreeLockingTool<K, V> treeLockingTool;
 
     /**
      * Create and initialize tree.
@@ -57,13 +57,13 @@ public class JbTreeImpl<K, V> implements JbTree<K, V> {
      *            required node store object
      */
     public JbTreeImpl(final NodeStore<K> nodeStore, final JbTreeTool<K, V> treeTool,
-	    final JbTreeService<K> jbTreeService, final JbTreeHelper<K, V> jbTreeHelper,
-	    final TreeData<K, V> treeData) {
+	    final JbTreeHelper<K, V> jbTreeHelper, final JbTreeData<K, V> treeData,
+	    final JbTreeLockingTool<K, V> treeLockingTool) {
 	this.nodeStore = Preconditions.checkNotNull(nodeStore);
 	this.treeTool = Preconditions.checkNotNull(treeTool);
-	this.treeService = Preconditions.checkNotNull(jbTreeService);
 	this.jbTreeHelper = Preconditions.checkNotNull(jbTreeHelper);
 	this.treeData = Preconditions.checkNotNull(treeData);
+	this.treeLockingTool = Preconditions.checkNotNull(treeLockingTool);
     }
 
     @Override
@@ -71,10 +71,9 @@ public class JbTreeImpl<K, V> implements JbTree<K, V> {
 	Preconditions.checkNotNull(key);
 	Preconditions.checkNotNull(value);
 	final Stack<Integer> stack = new Stack<Integer>();
-	final Integer currentNodeId = treeService.findLeafNodeId(key, stack,
-		treeData.getRootNodeId());
+	final Integer currentNodeId = treeTool.findLeafNodeId(key, stack, treeData.getRootNodeId());
 	Node<K, V> currentNode = nodeStore.getAndLock(currentNodeId);
-	currentNode = treeTool.moveRightLeafNode(currentNode, key);
+	currentNode = treeLockingTool.moveRightLeafNode(currentNode, key);
 	if (currentNode.getValue(key) == null) {
 	    return jbTreeHelper.insertToLeafNode(currentNode, key, value, stack);
 	} else {
@@ -91,9 +90,9 @@ public class JbTreeImpl<K, V> implements JbTree<K, V> {
     public V remove(final K key) {
 	Preconditions.checkNotNull(key);
 	final Stack<Integer> stack = new Stack<Integer>();
-	Integer currentNodeId = treeService.findLeafNodeId(key, stack, treeData.getRootNodeId());
+	Integer currentNodeId = treeTool.findLeafNodeId(key, stack, treeData.getRootNodeId());
 	Node<K, V> currentNode = nodeStore.getAndLock(currentNodeId);
-	currentNode = treeTool.moveRightLeafNode(currentNode, key);
+	currentNode = treeLockingTool.moveRightLeafNode(currentNode, key);
 	if (currentNode.getValue(key) == null) {
 	    /**
 	     * Node doesn't contains key, there is nothing to delete

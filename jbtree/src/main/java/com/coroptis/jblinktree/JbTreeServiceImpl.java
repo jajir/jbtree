@@ -1,7 +1,5 @@
 package com.coroptis.jblinktree;
 
-import java.util.Stack;
-
 import com.google.common.base.Preconditions;
 
 /*
@@ -34,38 +32,12 @@ public class JbTreeServiceImpl<K, V> implements JbTreeService<K> {
 
     private final NodeStore<K> nodeStore;
 
-    private final JbTreeTool<K, V> tool;
+    private final JbTreeLockingTool<K, V> treeLockingTool;
 
-    public JbTreeServiceImpl(final NodeStore<K> nodeStore, final JbTreeTool<K, V> tool) {
+    public JbTreeServiceImpl(final NodeStore<K> nodeStore,
+	    final JbTreeLockingTool<K, V> treeLockingTool) {
 	this.nodeStore = Preconditions.checkNotNull(nodeStore);
-	this.tool = Preconditions.checkNotNull(tool);
-    }
-
-    @Override
-    public Integer findLeafNodeId(final K key, final Stack<Integer> stack, final Integer rootNodeId) {
-	Node<K, Integer> currentNode = nodeStore.get(rootNodeId);
-	while (!currentNode.isLeafNode()) {
-	    Integer nextNodeId = currentNode.getCorrespondingNodeId(key);
-	    if (NodeImpl.EMPTY_INT.equals(nextNodeId)) {
-		/**
-		 * This is rightmost node and next link is <code>null</code> so
-		 * use node id associated with bigger key.
-		 */
-		stack.push(currentNode.getId());
-		nextNodeId = currentNode.getCorrespondingNodeId(currentNode.getMaxKey());
-		if (NodeImpl.EMPTY_INT.equals(nextNodeId)) {
-		    throw new JblinktreeException("There is no node id for max value '"
-			    + currentNode.getMaxKey() + "' in node " + currentNode.toString());
-		}
-	    } else if (!nextNodeId.equals(currentNode.getLink())) {
-		/**
-		 * I don't want to store nodes when cursor is moved right.
-		 */
-		stack.push(currentNode.getId());
-	    }
-	    currentNode = nodeStore.get(nextNodeId);
-	}
-	return currentNode.getId();
+	this.treeLockingTool = Preconditions.checkNotNull(treeLockingTool);
     }
 
     @Override
@@ -74,11 +46,10 @@ public class JbTreeServiceImpl<K, V> implements JbTreeService<K> {
 	Node<K, Integer> parentNode = nodeStore.getAndLock(nextNodeId);
 	// TODO link to current node which key should be updated can be in
 	// different node than tmpKey
-	parentNode = tool.moveRightNonLeafNode(parentNode, tmpKey);
+	parentNode = treeLockingTool.moveRightNonLeafNode(parentNode, tmpKey);
 	if (parentNode.updateNodeValue(currentNode.getId(), currentNode.getMaxKey())) {
 	    nodeStore.writeNode(parentNode);
 	}
 	return parentNode;
     }
-
 }
