@@ -31,11 +31,11 @@ import com.google.common.base.Preconditions;
  * @param <V>
  *            value type
  */
-public class JbTreeLockingToolImpl<K, V> implements JbTreeLockingTool<K, V> {
+public class JbTreeTraversingServiceImpl<K, V> implements JbTreeTraversingService<K, V> {
 
     private final JbTreeTool<K, V> treeTool;
 
-    public JbTreeLockingToolImpl(final JbTreeTool<K, V> treeTool) {
+    public JbTreeTraversingServiceImpl(final JbTreeTool<K, V> treeTool) {
 	this.treeTool = Preconditions.checkNotNull(treeTool);
     }
 

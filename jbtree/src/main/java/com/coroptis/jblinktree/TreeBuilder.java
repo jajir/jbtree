@@ -74,7 +74,7 @@ public final class TreeBuilder {
 	final JbTreeTool<K, V> jbTreeTool = new JbTreeToolImpl<K, V>(nodeStore,
 		(TypeDescriptor<K>) keyTypeDescriptor, nodeBuilder);
 	final JbTreeData<K, V> treeData = new JbTreeDataImpl<K, V>(nodeStore, jbTreeTool);
-	final JbTreeLockingTool<K, V> treeLockingTool = new JbTreeLockingToolImpl<K, V>(jbTreeTool);
+	final JbTreeTraversingService<K, V> treeLockingTool = new JbTreeTraversingServiceImpl<K, V>(jbTreeTool);
 	final JbTreeService<K, V> treeService = new JbTreeServiceImpl<K, V>(nodeStore,
 		treeLockingTool);
 	final JbTreeHelper<K, V> jbTreeHelper = new JbTreeHelperImpl<K, V>(l, nodeStore,

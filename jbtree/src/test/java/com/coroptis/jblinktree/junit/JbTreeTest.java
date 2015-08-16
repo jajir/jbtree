@@ -28,14 +28,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.coroptis.jblinktree.JbTreeHelper;
 import com.coroptis.jblinktree.JbTreeImpl;
-import com.coroptis.jblinktree.JbTreeService;
-import com.coroptis.jblinktree.JbTreeTool;
-import com.coroptis.jblinktree.Node;
-import com.coroptis.jblinktree.NodeImpl;
-import com.coroptis.jblinktree.NodeStore;
-import com.coroptis.jblinktree.JbTreeData;
 
 /**
  * Junit test form {@link JbTreeImpl}.
@@ -43,30 +36,9 @@ import com.coroptis.jblinktree.JbTreeData;
  * @author jajir
  * 
  */
-public class JbTreeTest {
+public class JbTreeTest extends AbstractMockingTest {
 
     private JbTreeImpl<Integer, Integer> jbTree;
-
-    private NodeStore<Integer> nodeStore;
-
-    private JbTreeTool<Integer, Integer> jbTreeTool;
-
-    private JbTreeService<Integer> jbTreeService;
-
-    private Node<Integer, Integer> rootNode;
-
-    private JbTreeHelper<Integer, Integer> treeHelper;
-
-    private JbTreeData<Integer, Integer> treeData;
-
-    private Object[] mocks;
-
-    @Test
-    public void test_constructor() throws Exception {
-	/**
-	 * All tested functionality is done in setup.
-	 */
-    }
 
     @Test
     public void test_insert_null_key() throws Exception {
@@ -96,34 +68,17 @@ public class JbTreeTest {
 	EasyMock.verify(mocks);
     }
 
-    @SuppressWarnings("unchecked")
     @Before
     public void setUp() throws Exception {
-	nodeStore = EasyMock.createMock(NodeStore.class);
-	rootNode = EasyMock.createMock(NodeImpl.class);
-	jbTreeTool = EasyMock.createMock(JbTreeTool.class);
-	jbTreeService = EasyMock.createMock(JbTreeService.class);
-	treeHelper = EasyMock.createMock(JbTreeHelper.class);
-	treeData = EasyMock.createMock(JbTreeData.class);
-	mocks = new Object[] { nodeStore, rootNode, jbTreeTool, jbTreeService };
-
-	EasyMock.expect(jbTreeTool.createRootNode()).andReturn(1);
-	EasyMock.replay(mocks);
-	jbTree = new JbTreeImpl<Integer, Integer>(nodeStore, jbTreeTool, jbTreeService, treeHelper,
-		treeData);
-	EasyMock.verify(mocks);
-	EasyMock.reset(mocks);
-
+	super.setUp();
+	jbTree = new JbTreeImpl<Integer, Integer>(nodeStore, treeTool, treeHelper, treeData,
+		treeTraversingService, jbTreeService);
     }
 
     @After
     public void tearDown() throws Exception {
-	rootNode = null;
-	jbTreeTool = null;
 	jbTree = null;
-	nodeStore = null;
-	jbTreeService = null;
-	mocks = null;
+	super.tearDown();
     }
 
 }

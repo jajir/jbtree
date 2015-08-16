@@ -46,7 +46,7 @@ public class JbTreeImpl<K, V> implements JbTree<K, V> {
 
     private final JbTreeData<K, V> treeData;
 
-    private final JbTreeLockingTool<K, V> treeLockingTool;
+    private final JbTreeTraversingService<K, V> treeTraversingService;
 
     private final JbTreeService<K, V> treeService;
 
@@ -60,12 +60,12 @@ public class JbTreeImpl<K, V> implements JbTree<K, V> {
      */
     public JbTreeImpl(final NodeStore<K> nodeStore, final JbTreeTool<K, V> treeTool,
 	    final JbTreeHelper<K, V> jbTreeHelper, final JbTreeData<K, V> treeData,
-	    final JbTreeLockingTool<K, V> treeLockingTool, final JbTreeService<K, V> treeService) {
+	    final JbTreeTraversingService<K, V> treeTraversingService, final JbTreeService<K, V> treeService) {
 	this.nodeStore = Preconditions.checkNotNull(nodeStore);
 	this.treeTool = Preconditions.checkNotNull(treeTool);
 	this.jbTreeHelper = Preconditions.checkNotNull(jbTreeHelper);
 	this.treeData = Preconditions.checkNotNull(treeData);
-	this.treeLockingTool = Preconditions.checkNotNull(treeLockingTool);
+	this.treeTraversingService = Preconditions.checkNotNull(treeTraversingService);
 	this.treeService = Preconditions.checkNotNull(treeService);
     }
 
@@ -76,7 +76,7 @@ public class JbTreeImpl<K, V> implements JbTree<K, V> {
 	final Stack<Integer> stack = new Stack<Integer>();
 	final Integer currentNodeId = treeTool.findLeafNodeId(key, stack, treeData.getRootNodeId());
 	Node<K, V> currentNode = nodeStore.getAndLock(currentNodeId);
-	currentNode = treeLockingTool.moveRightLeafNode(currentNode, key);
+	currentNode = treeTraversingService.moveRightLeafNode(currentNode, key);
 	if (currentNode.getValue(key) == null) {
 	    return jbTreeHelper.insertToLeafNode(currentNode, key, value, stack);
 	} else {
@@ -95,7 +95,7 @@ public class JbTreeImpl<K, V> implements JbTree<K, V> {
 	final Stack<Integer> stack = new Stack<Integer>();
 	Integer currentNodeId = treeTool.findLeafNodeId(key, stack, treeData.getRootNodeId());
 	Node<K, V> currentNode = nodeStore.getAndLock(currentNodeId);
-	currentNode = treeLockingTool.moveRightLeafNode(currentNode, key);
+	currentNode = treeTraversingService.moveRightLeafNode(currentNode, key);
 	if (currentNode.getValue(key) == null) {
 	    /**
 	     * Node doesn't contains key, there is nothing to delete

@@ -32,12 +32,12 @@ public class JbTreeServiceImpl<K, V> implements JbTreeService<K, V> {
 
     private final NodeStore<K> nodeStore;
 
-    private final JbTreeLockingTool<K, V> treeLockingTool;
+    private final JbTreeTraversingService<K, V> treeTraversingService;
 
     public JbTreeServiceImpl(final NodeStore<K> nodeStore,
-	    final JbTreeLockingTool<K, V> treeLockingTool) {
+	    final JbTreeTraversingService<K, V> treeTraversingService) {
 	this.nodeStore = Preconditions.checkNotNull(nodeStore);
-	this.treeLockingTool = Preconditions.checkNotNull(treeLockingTool);
+	this.treeTraversingService = Preconditions.checkNotNull(treeTraversingService);
     }
 
     @Override
@@ -46,7 +46,7 @@ public class JbTreeServiceImpl<K, V> implements JbTreeService<K, V> {
 	Node<K, Integer> parentNode = nodeStore.getAndLock(nextNodeId);
 	// TODO link to current node which key should be updated can be in
 	// different node than tmpKey
-	parentNode = treeLockingTool.moveRightNonLeafNode(parentNode, tmpKey);
+	parentNode = treeTraversingService.moveRightNonLeafNode(parentNode, tmpKey);
 	if (parentNode.updateNodeValue(currentNode.getId(), currentNode.getMaxKey())) {
 	    nodeStore.writeNode(parentNode);
 	}

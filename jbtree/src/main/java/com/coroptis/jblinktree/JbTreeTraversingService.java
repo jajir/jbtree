@@ -29,7 +29,7 @@ package com.coroptis.jblinktree;
  * @param <V>
  *            value type
  */
-public interface JbTreeLockingTool<K, V> {
+public interface JbTreeTraversingService<K, V> {
 
     /**
      * Move right in tree until suitable leaf node is found.
