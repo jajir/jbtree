@@ -114,6 +114,7 @@ public class JbTreeHelperImpl<K, V> implements JbTreeHelper<K, V> {
 	}
     }
 
+    //TODO documentation
     private V insertNonLeaf(Node<K, Integer> currentNode, final K key, final Integer value,
 	    final Stack<Integer> stack) {
 	/**

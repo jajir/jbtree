@@ -215,8 +215,10 @@ public interface Node<K, V> {
      */
     public int getL();
 
+    //TODO documentation
     public void writeTo(StringBuilder buff, String intendation);
 
+    //TODO documentation
     public byte[] getFieldBytes();
 
 }

@@ -36,29 +36,35 @@ public final class TreeBuilder {
     private TypeDescriptor<?> keyTypeDescriptor;
     private TypeDescriptor<?> valueTypeDescriptor;
 
+    //TODO documentation
     public static TreeBuilder builder() {
 	return new TreeBuilder(5);
     }
 
+    //TODO documentation
     private TreeBuilder(final Integer default_l) {
 	this.l = default_l;
     }
 
+    //TODO documentation
     public TreeBuilder setL(final Integer l) {
 	this.l = l;
 	return this;
     }
 
+    //TODO documentation
     public TreeBuilder setKeyType(final TypeDescriptor<?> keyTypeDescriptor) {
 	this.keyTypeDescriptor = keyTypeDescriptor;
 	return this;
     }
 
+    //TODO documentation
     public TreeBuilder setValueType(final TypeDescriptor<?> valueTypeDescriptor) {
 	this.valueTypeDescriptor = valueTypeDescriptor;
 	return this;
     }
 
+    //TODO documentation
     @SuppressWarnings("unchecked")
     public <K, V> TreeMap<K, V> build() {
 	Preconditions.checkNotNull(keyTypeDescriptor,

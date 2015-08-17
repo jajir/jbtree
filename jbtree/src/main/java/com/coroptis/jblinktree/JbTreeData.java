@@ -32,8 +32,10 @@ package com.coroptis.jblinktree;
  */
 public interface JbTreeData<K, V> {
 
+    //TODO documentation
     Integer getRootNodeId();
 
+    //TODO documentation
     <S> Integer splitRootNode(final Node<K, S> currentNode, final Node<K, S> newNode);
 
 }

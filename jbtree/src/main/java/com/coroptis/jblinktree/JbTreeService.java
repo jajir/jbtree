@@ -28,9 +28,12 @@ package com.coroptis.jblinktree;
  */
 public interface JbTreeService<K, V> {
 
+    //TODO documentation
     <S> Node<K, Integer> loadParentNode(Node<K, S> currentNode, K tmpKey, Integer nextNodeId);
 
+    //TODO documentation
     void storeValueIntoLeafNode(Node<K, V> currentNode, K key, V value);
 
+    //TODO documentation
     void storeValueIntoNonLeafNode(Node<K, Integer> currentNode, K key, Integer value);
 }

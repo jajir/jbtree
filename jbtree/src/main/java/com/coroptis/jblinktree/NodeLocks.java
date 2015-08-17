@@ -42,16 +42,18 @@ import com.google.common.base.Preconditions;
  * 
  */
 public class NodeLocks {
-
+    
     /**
      * hash map contains map if node id and lock mapping.
      */
     private final Map<Integer, Lock> locks;
 
-    public NodeLocks() {
+    //TODO documentation
+   public NodeLocks() {
 	locks = new ConcurrentHashMap<Integer, Lock>();
     }
 
+    //TODO documentation
     public void lockNode(final Integer nodeId) {
 	Preconditions.checkNotNull(nodeId);
 	Lock lock = locks.get(nodeId);
@@ -71,7 +73,8 @@ public class NodeLocks {
 	lock.lock();
     }
 
-    public void unlockNode(final Integer nodeId) {
+    //TODO documentation
+   public void unlockNode(final Integer nodeId) {
 	Preconditions.checkNotNull(nodeId);
 	Lock lock = locks.get(nodeId);
 	if (lock == null) {
@@ -81,7 +84,8 @@ public class NodeLocks {
 	}
     }
 
-    public int countLockedThreads() {
+   //TODO documentation
+   public int countLockedThreads() {
 	int out = 0;
 	for (final Lock lock : locks.values()) {
 	    final ReentrantLock l = (ReentrantLock) lock;

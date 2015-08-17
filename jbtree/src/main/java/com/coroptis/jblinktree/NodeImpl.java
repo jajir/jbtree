@@ -131,6 +131,7 @@ public class NodeImpl<K, V> implements Node<K, V> {
 	setLink(EMPTY_INT);
     }
 
+    //TODO documentation
     public NodeImpl(final int l, final Integer nodeId, final byte[] field,
 	    final TypeDescriptor<K> keyTypeDescriptor, final TypeDescriptor<V> valueTypeDescriptor,
 	    final TypeDescriptor<Integer> linkTypeDescriptor) {
