@@ -44,7 +44,18 @@ public class FieldImpl<K, V> implements Field<K, V> {
 
     private final TypeDescriptor<Integer> linkTypeDescriptor;
 
-    //TODO documentation
+    /**
+     * Basic constructor.
+     * 
+     * @param numberOfField
+     *            required number of items that could be stored in field.
+     * @param keyTypeDescriptor
+     *            required key type descriptor
+     * @param valueTypeDescriptor
+     *            required value type descriptor
+     * @param linkTypeDescriptor
+     *            required link type descriptor
+     */
     public FieldImpl(final int numberOfField, final TypeDescriptor<K> keyTypeDescriptor,
 	    final TypeDescriptor<V> valueTypeDescriptor,
 	    final TypeDescriptor<Integer> linkTypeDescriptor) {
@@ -54,7 +65,18 @@ public class FieldImpl<K, V> implements Field<K, V> {
 	this.field = new byte[getPosition(numberOfField) + linkTypeDescriptor.getMaxLength()];
     }
 
-    //TODO documentation
+    /**
+     * Constructor create field from byte array.
+     * 
+     * @param field
+     *            required byte array
+     * @param keyTypeDescriptor
+     *            required key type descriptor
+     * @param valueTypeDescriptor
+     *            required value type descriptor
+     * @param linkTypeDescriptor
+     *            required link type descriptor
+     */
     public FieldImpl(final byte[] field, final TypeDescriptor<K> keyTypeDescriptor,
 	    final TypeDescriptor<V> valueTypeDescriptor,
 	    final TypeDescriptor<Integer> linkTypeDescriptor) {
@@ -63,7 +85,14 @@ public class FieldImpl<K, V> implements Field<K, V> {
 	System.arraycopy(field, 0, this.field, 0, this.field.length);
     }
 
-    //TODO documentation
+    /**
+     * Compute index in byte array where should be item at given position
+     * stored.
+     * 
+     * @param position
+     *            required position
+     * @return byte array position
+     */
     private int getPosition(int position) {
 	final int p1 = position >>> 1;
 	final int p2 = (position + 1) >>> 1;
