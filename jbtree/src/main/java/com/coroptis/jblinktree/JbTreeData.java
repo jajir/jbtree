@@ -21,7 +21,7 @@ package com.coroptis.jblinktree;
  */
 
 /**
- * Holds data specific for node.
+ * Holds data specific for tree.
  * 
  * @author jajir
  * 
@@ -32,10 +32,23 @@ package com.coroptis.jblinktree;
  */
 public interface JbTreeData<K, V> {
 
-    //TODO documentation
+    /**
+     * Holds root node id.
+     * 
+     * @return root node id
+     */
     Integer getRootNodeId();
 
-    //TODO documentation
-    <S> Integer splitRootNode(final Node<K, S> currentNode, final Node<K, S> newNode);
+    /**
+     * Split root node into two separate nodes.
+     * 
+     * @param currentNode
+     *            required current root node
+     * @param newNode
+     *            required new node
+     * @return id of new root node
+     */
+    <S> Integer splitRootNode(final Node<K, S> currentNode,
+	    final Node<K, S> newNode);
 
 }

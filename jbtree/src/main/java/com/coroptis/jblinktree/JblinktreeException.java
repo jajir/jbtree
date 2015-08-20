@@ -1,5 +1,7 @@
 package com.coroptis.jblinktree;
 
+import com.google.common.base.Preconditions;
+
 /*
  * #%L
  * jblinktree
@@ -29,17 +31,29 @@ package com.coroptis.jblinktree;
 public class JblinktreeException extends RuntimeException {
 
     /**
-	 * 
-	 */
+     * 
+     */
     private static final long serialVersionUID = 1L;
 
-    //TODO documentation
+    /**
+     * Create new exception instance.
+     * 
+     * @param message
+     *            required message
+     */
     public JblinktreeException(final String message) {
-	super(message);
+	super(Preconditions.checkNotNull(message));
     }
 
-    //TODO documentation
+    /**
+     * Create new exception instance.
+     * 
+     * @param message
+     *            required message
+     * @param e
+     *            required re-thrown exception
+     */
     public JblinktreeException(final String message, final Throwable e) {
-	super(message, e);
+	super(Preconditions.checkNotNull(message), e);
     }
 }

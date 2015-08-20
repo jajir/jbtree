@@ -110,23 +110,29 @@ public interface JbTreeTool<K, V> {
     Integer findLeafNodeId(K key, Stack<Integer> stack, Integer rootNodeId);
 
     /**
-     * 
-     * TODO comment
+     * During searching for proper place where to put key it's important to know
+     * if is possible to move to next node. Next node is find by link.
      * 
      * @param node
+     *            required node
      * @param key
-     * @return
+     *            required key
+     * @return <code>true</code> when it's possible to move to next node
+     *         otherwise return <code>false</code>
      */
     boolean canMoveToNextNode(final Node<K, ?> node, final K key);
 
     /**
-     * TODO comment
+     * Move to next node. Lock next node than unlock current node.
      * 
      * 
      * @param currentNode
+     *            required node
      * @param nextNodeId
-     * @return
+     *            required next node id
+     * @return locked new node instance
      */
-    <S> Node<K, S> moveToNextNode(final Node<K, ?> currentNode, final Integer nextNodeId);
+    <S> Node<K, S> moveToNextNode(final Node<K, ?> currentNode,
+	    final Integer nextNodeId);
 
 }

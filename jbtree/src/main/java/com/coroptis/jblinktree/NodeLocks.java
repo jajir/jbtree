@@ -42,18 +42,25 @@ import com.google.common.base.Preconditions;
  * 
  */
 public class NodeLocks {
-    
+
     /**
      * hash map contains map if node id and lock mapping.
      */
     private final Map<Integer, Lock> locks;
 
-    //TODO documentation
-   public NodeLocks() {
+    /**
+     * Create new node lock instance.
+     */
+    public NodeLocks() {
 	locks = new ConcurrentHashMap<Integer, Lock>();
     }
 
-    //TODO documentation
+    /**
+     * Lock node. It's thread safe method.
+     * 
+     * @param nodeId
+     *            required node id
+     */
     public void lockNode(final Integer nodeId) {
 	Preconditions.checkNotNull(nodeId);
 	Lock lock = locks.get(nodeId);
@@ -73,19 +80,29 @@ public class NodeLocks {
 	lock.lock();
     }
 
-    //TODO documentation
-   public void unlockNode(final Integer nodeId) {
+    /**
+     * Unlock node id. It's thread safe method.
+     * 
+     * @param nodeId
+     *            required node id
+     */
+    public void unlockNode(final Integer nodeId) {
 	Preconditions.checkNotNull(nodeId);
 	Lock lock = locks.get(nodeId);
 	if (lock == null) {
-	    throw new JblinktreeException("Attempt to unlock not locked node '" + nodeId + "'");
+	    throw new JblinktreeException("Attempt to unlock not locked node '"
+		    + nodeId + "'");
 	} else {
 	    lock.unlock();
 	}
     }
 
-   //TODO documentation
-   public int countLockedThreads() {
+    /**
+     * Count all locked nodes. It's useful for testing purposes.
+     * 
+     * @return number of locked threads
+     */
+    public int countLockedThreads() {
 	int out = 0;
 	for (final Lock lock : locks.values()) {
 	    final ReentrantLock l = (ReentrantLock) lock;

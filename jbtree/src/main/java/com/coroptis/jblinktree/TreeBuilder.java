@@ -20,12 +20,16 @@ package com.coroptis.jblinktree;
  * #L%
  */
 
+import java.util.Map;
+
 import com.coroptis.jblinktree.type.TypeDescriptor;
 import com.coroptis.jblinktree.type.TypeDescriptorInteger;
+import com.coroptis.jblinktree.type.Types;
 import com.google.common.base.Preconditions;
 
 /**
- * Provide fluent API for creating tree.
+ * Provide fluent API for creating tree. Default tree node parameter L is 5.
+ * It's maximum number of key,value pairs in node.
  * 
  * @author jajir
  * 
@@ -36,35 +40,69 @@ public final class TreeBuilder {
     private TypeDescriptor<?> keyTypeDescriptor;
     private TypeDescriptor<?> valueTypeDescriptor;
 
-    //TODO documentation
+    /**
+     * Create new instance of builder.
+     * 
+     * @return new builder instance.
+     */
     public static TreeBuilder builder() {
 	return new TreeBuilder(5);
     }
 
-    //TODO documentation
+    /**
+     * Private constructor for builder. Can't be called from outside.
+     * 
+     * @param default_l
+     *            default value of L node parameter.
+     */
     private TreeBuilder(final Integer default_l) {
 	this.l = default_l;
     }
 
-    //TODO documentation
+    /**
+     * Allow to set tree node parameter L. It's maximum number of key value
+     * pairs in node.
+     * 
+     * @param l
+     *            required L parameter value
+     * @return current tree builder instance
+     */
     public TreeBuilder setL(final Integer l) {
 	this.l = l;
 	return this;
     }
 
-    //TODO documentation
+    /**
+     * Allows to set key type descriptor. Choose them from {@link Types} static
+     * objects.
+     * 
+     * @param keyTypeDescriptor
+     *            required key type descriptor
+     * @return current tree builder instance
+     */
     public TreeBuilder setKeyType(final TypeDescriptor<?> keyTypeDescriptor) {
 	this.keyTypeDescriptor = keyTypeDescriptor;
 	return this;
     }
 
-    //TODO documentation
+    /**
+     * Allows to set value type descriptor. Choose them from {@link Types}
+     * static objects.
+     * 
+     * @param valueTypeDescriptor
+     *            required value type descriptor
+     * @return current tree builder instance
+     */
     public TreeBuilder setValueType(final TypeDescriptor<?> valueTypeDescriptor) {
 	this.valueTypeDescriptor = valueTypeDescriptor;
 	return this;
     }
 
-    //TODO documentation
+    /**
+     * Build {@link Map} instance with previously given parameters.
+     * 
+     * @return {@link TreeMap} instance
+     */
     @SuppressWarnings("unchecked")
     public <K, V> TreeMap<K, V> build() {
 	Preconditions.checkNotNull(keyTypeDescriptor,
@@ -74,22 +112,26 @@ public final class TreeBuilder {
 	final TypeDescriptor<Integer> linkTypeDescriptor = new TypeDescriptorInteger();
 	final IdGenerator idGenerator = new IdGeneratorImpl();
 	final NodeBuilder<K, V> nodeBuilder = new NodeBuilderImpl<K, V>(l,
-		(TypeDescriptor<K>) keyTypeDescriptor, (TypeDescriptor<V>) valueTypeDescriptor,
-		linkTypeDescriptor);
-	final NodeStoreImpl<K, V> nodeStore = new NodeStoreImpl<K, V>(idGenerator, nodeBuilder);
+		(TypeDescriptor<K>) keyTypeDescriptor,
+		(TypeDescriptor<V>) valueTypeDescriptor, linkTypeDescriptor);
+	final NodeStoreImpl<K, V> nodeStore = new NodeStoreImpl<K, V>(
+		idGenerator, nodeBuilder);
 	final JbTreeTool<K, V> jbTreeTool = new JbTreeToolImpl<K, V>(nodeStore,
 		(TypeDescriptor<K>) keyTypeDescriptor, nodeBuilder);
-	final JbTreeData<K, V> treeData = new JbTreeDataImpl<K, V>(nodeStore, jbTreeTool);
-	final JbTreeTraversingService<K, V> treeLockingTool = new JbTreeTraversingServiceImpl<K, V>(jbTreeTool);
-	final JbTreeService<K, V> treeService = new JbTreeServiceImpl<K, V>(nodeStore,
-		treeLockingTool);
-	final JbTreeHelper<K, V> jbTreeHelper = new JbTreeHelperImpl<K, V>(l, nodeStore,
-		jbTreeTool, treeService, treeData, (TypeDescriptor<V>) valueTypeDescriptor,
-		linkTypeDescriptor);
-	final JbTree<K, V> tree = new JbTreeImpl<K, V>(nodeStore, jbTreeTool, jbTreeHelper,
-		treeData, treeLockingTool, treeService);
+	final JbTreeData<K, V> treeData = new JbTreeDataImpl<K, V>(nodeStore,
+		jbTreeTool);
+	final JbTreeTraversingService<K, V> treeLockingTool = new JbTreeTraversingServiceImpl<K, V>(
+		jbTreeTool);
+	final JbTreeService<K, V> treeService = new JbTreeServiceImpl<K, V>(
+		nodeStore, treeLockingTool);
+	final JbTreeHelper<K, V> jbTreeHelper = new JbTreeHelperImpl<K, V>(l,
+		nodeStore, jbTreeTool, treeService, treeData,
+		(TypeDescriptor<V>) valueTypeDescriptor, linkTypeDescriptor);
+	final JbTree<K, V> tree = new JbTreeImpl<K, V>(nodeStore, jbTreeTool,
+		jbTreeHelper, treeData, treeLockingTool, treeService);
 
-	return new TreeMapImpl<K, V>(tree, (TypeDescriptor<K>) keyTypeDescriptor,
+	return new TreeMapImpl<K, V>(tree,
+		(TypeDescriptor<K>) keyTypeDescriptor,
 		(TypeDescriptor<V>) valueTypeDescriptor);
     }
 }

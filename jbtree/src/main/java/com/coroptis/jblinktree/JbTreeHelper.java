@@ -33,10 +33,28 @@ import java.util.Stack;
  */
 public interface JbTreeHelper<K, V> {
 
-    //TODO documentation
+    /**
+     * Find leaf node where given key belongs. Method doesn't lock and nodes.
+     * 
+     * @param key
+     *            required key
+     * @return appropriate leaf node
+     */
     Node<K, V> findAppropriateLeafNode(K key);
 
-    //TODO documentation
+    /**
+     * Write given key value pair into leaf node.
+     * 
+     * @param currentNode
+     *            required leaf node
+     * @param key
+     *            required key
+     * @param value
+     *            required value
+     * @param stack
+     *            required stack useful for back tracing through tree
+     * @return <code>null</code> when it's new key otherwise return old value
+     */
     V insertToLeafNode(Node<K, V> currentNode, final K key, final V value,
 	    final Stack<Integer> stack);
 

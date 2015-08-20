@@ -215,10 +215,21 @@ public interface Node<K, V> {
      */
     public int getL();
 
-    //TODO documentation
+    /**
+     * Write node content into {@link StringBuilder}.
+     * 
+     * @param buff
+     *            required {@link StringBuilder} instance
+     * @param intendation
+     *            how many white spaces should be added before each line.
+     */
     public void writeTo(StringBuilder buff, String intendation);
 
-    //TODO documentation
+    /**
+     * Get node content as byte array.
+     * 
+     * @return byte array
+     */
     public byte[] getFieldBytes();
 
 }

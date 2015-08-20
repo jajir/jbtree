@@ -28,12 +28,44 @@ package com.coroptis.jblinktree;
  */
 public interface JbTreeService<K, V> {
 
-    //TODO documentation
-    <S> Node<K, Integer> loadParentNode(Node<K, S> currentNode, K tmpKey, Integer nextNodeId);
+    /**
+     * Load parent node of given node containing given key. When it's necessary
+     * to move to next node than method move to next node. Method lock nodex in
+     * correct order.
+     * 
+     * @param currentNode
+     *            required current node
+     * @param key
+     *            required key
+     * @param nextNodeId
+     *            required next node id
+     * @return locked parent node instance
+     */
+    <S> Node<K, Integer> loadParentNode(Node<K, S> currentNode, K key,
+	    Integer nextNodeId);
 
-    //TODO documentation
-    void storeValueIntoLeafNode(Node<K, V> currentNode, K key, V value);
+    /**
+     * Store value in leaf node under the key.
+     * 
+     * @param node
+     *            required leaf node
+     * @param key
+     *            required key
+     * @param value
+     *            required value
+     */
+    void storeValueIntoLeafNode(Node<K, V> node, K key, V value);
 
-    //TODO documentation
-    void storeValueIntoNonLeafNode(Node<K, Integer> currentNode, K key, Integer value);
+    /**
+     * Store value in non-leaf node under the key.
+     * 
+     * @param node
+     *            required non-leaf node
+     * @param key
+     *            required key
+     * @param value
+     *            required value
+     */
+    void storeValueIntoNonLeafNode(Node<K, Integer> currentNode, K key,
+	    Integer value);
 }
