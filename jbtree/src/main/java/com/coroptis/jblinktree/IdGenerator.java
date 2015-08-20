@@ -39,4 +39,11 @@ public interface IdGenerator {
      */
     int getNextId();
 
+    /**
+     * Get previously assigned id.
+     * 
+     * @return previously assigned node id
+     */
+    int getPreviousId();
+
 }

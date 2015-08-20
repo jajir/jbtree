@@ -18,7 +18,7 @@ public class TreeTest {
 
     private static void test4() throws Exception {
 	Map<Integer, Integer> tree = TreeBuilder.builder().setL(2).setKeyType(Types.integer())
-		.setValueType(Types.integer()).build();
+		.setValueType(Types.integer()).setTreeWrapper("./pok.dot").build();
 	TreeThread tt1 = new TreeThread("tt1", tree, NUMBER_OF_CONCURRENT_INSERTS, true);
 	TreeThread tt2 = new TreeThread("tt2", tree, NUMBER_OF_CONCURRENT_INSERTS, false);
 	tt1.start();

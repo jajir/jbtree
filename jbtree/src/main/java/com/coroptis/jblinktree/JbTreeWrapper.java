@@ -1,5 +1,10 @@
 package com.coroptis.jblinktree;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.Writer;
+
 import com.google.common.base.Preconditions;
 
 /*
@@ -45,9 +50,16 @@ public class JbTreeWrapper<K, V> implements JbTree<K, V> {
 
     private final NodeStore<K> nodeStore;
 
-    JbTreeWrapper(final JbTree<K, V> tree, final NodeStore<K> nodeStore) {
+    private final IdGenerator idGenerator;
+
+    private final File file;
+
+    JbTreeWrapper(final JbTree<K, V> tree, final NodeStore<K> nodeStore,
+	    final IdGenerator idGenerator, final String fileName) {
 	this.tree = Preconditions.checkNotNull(tree);
 	this.nodeStore = Preconditions.checkNotNull(nodeStore);
+	this.idGenerator = Preconditions.checkNotNull(idGenerator);
+	this.file = new File(fileName);
     }
 
     @SuppressWarnings("unchecked")
@@ -143,12 +155,105 @@ public class JbTreeWrapper<K, V> implements JbTree<K, V> {
 	});
     }
 
+    /**
+     * Execute given {@link Execute} class instance. When operation fails with
+     * exception than tree content is written to file.
+     * 
+     * @param execute
+     *            required execute
+     * @return execution result
+     */
     private Object saveExecution(final Execute execute) {
 	try {
 	    return execute.execute();
-	} catch (JblinktreeException e) {
-
+	} catch (RuntimeException e) {
+	    printData();
 	    throw e;
+	}
+    }
+
+    private final String intendation = "    ";
+
+    @SuppressWarnings({ "unchecked", "rawtypes" })
+    private void printData() {
+	final StringBuilder buff = new StringBuilder();
+
+	buff.append("digraph graphname {\n");
+	buff.append(intendation);
+	buff.append("edge [label=0];\n");
+	buff.append(intendation);
+	buff.append("graph [ranksep=1];\n");
+	buff.append(intendation);
+	buff.append("node [shape=record]\n");
+
+	for (int i = 0; i < idGenerator.getPreviousId(); i++) {
+	    nodeStore.get(i).writeTo(buff, intendation);
+	}
+
+	for (int i = 0; i < idGenerator.getPreviousId(); i++) {
+	    Node n = (Node) nodeStore.get(i);
+	    addLink(n, buff);
+	    if (!n.isLeafNode()) {
+		addNextNodes(n, buff);
+	    }
+	}
+
+	buff.append("");
+	buff.append("}");
+
+	try {
+	    write(buff);
+	} catch (IOException e) {
+	    throw new JblinktreeException(e.getMessage());
+	}
+	buff.toString();
+    }
+
+    private void addNextNodes(final Node<Integer, Integer> node, final StringBuilder buff) {
+	for (final Object o : node.getNodeIds()) {
+	    Integer i = (Integer) o;
+	    buff.append(intendation);
+	    buff.append("\"node");
+	    buff.append(node.getId());
+	    buff.append("\":F");
+	    buff.append(i);
+	    buff.append(" -> ");
+	    buff.append("\"node");
+	    buff.append(i);
+	    buff.append("\" [label=\"");
+	    buff.append(i);
+	    buff.append("\"];");
+	    buff.append("\n");
+	}
+    }
+
+    private void addLink(final Node<Integer, Integer> node, final StringBuilder buff) {
+	if (node.getLink() != null) {
+	    buff.append(intendation);
+	    buff.append("\"node");
+	    buff.append(node.getId());
+	    buff.append("\":L");
+	    buff.append(node.getLink());
+	    buff.append(" -> ");
+	    buff.append("\"node");
+	    buff.append(node.getLink());
+	    buff.append("\" [constraint=false, label=\"");
+	    buff.append(node.getLink());
+	    buff.append("\"]");
+	    buff.append(";\n");
+	}
+    }
+
+    public void write(final StringBuilder buff) throws IOException {
+	Writer out = null;
+	try {
+	    out = new FileWriter(file);
+	    out.append(buff.toString());
+	    out.flush(); // https://code.google.com/p/guava-libraries/issues/detail?id=1330
+	} catch (IOException e) {
+	    throw e;
+	} finally {
+	    out.close();
 	}
     }
 
@@ -156,7 +261,7 @@ public class JbTreeWrapper<K, V> implements JbTree<K, V> {
      * Define class that will be executed in methods.
      * 
      * @author jajir
-     *
+     * 
      */
     interface Execute {
 

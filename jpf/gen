@@ -1,1 +1,1 @@
-dot -Tpng hlp.dot -o hlp.png
+dot -Tpng pok.dot -o pok.png
