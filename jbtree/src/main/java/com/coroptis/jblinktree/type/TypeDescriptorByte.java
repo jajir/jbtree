@@ -1,5 +1,7 @@
 package com.coroptis.jblinktree.type;
 
+import java.io.Serializable;
+
 import com.coroptis.jblinktree.JblinktreeException;
 import com.google.common.base.Preconditions;
 
@@ -29,7 +31,12 @@ import com.google.common.base.Preconditions;
  * @author jajir
  * 
  */
-public class TypeDescriptorByte implements TypeDescriptor<Byte> {
+public class TypeDescriptorByte implements Serializable, TypeDescriptor<Byte> {
+
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
 
     @Override
     public int getMaxLength() {
@@ -50,8 +57,8 @@ public class TypeDescriptorByte implements TypeDescriptor<Byte> {
     public void verifyType(final Object object) {
 	Preconditions.checkNotNull(object);
 	if (!(object instanceof Byte)) {
-	    throw new JblinktreeException("Object of wrong type (" + object.getClass().getName()
-		    + ")");
+	    throw new JblinktreeException("Object of wrong type ("
+		    + object.getClass().getName() + ")");
 	}
     }
 

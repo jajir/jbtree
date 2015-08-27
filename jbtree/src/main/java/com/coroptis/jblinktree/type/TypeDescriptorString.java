@@ -1,5 +1,6 @@
 package com.coroptis.jblinktree.type;
 
+import java.io.Serializable;
 import java.nio.charset.Charset;
 
 import com.coroptis.jblinktree.JblinktreeException;
@@ -33,7 +34,13 @@ import com.google.common.base.Preconditions;
  * @author jajir
  * 
  */
-public class TypeDescriptorString implements TypeDescriptor<String> {
+public class TypeDescriptorString implements Serializable,
+	TypeDescriptor<String> {
+
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
 
     private final int maxLength;
 
@@ -57,14 +64,16 @@ public class TypeDescriptorString implements TypeDescriptor<String> {
 	byte b[] = value.getBytes(charset);
 	final Integer currentLength = Math.min(b.length, maxLength);
 	typeDescriptorInteger.save(data, from, currentLength);
-	System.arraycopy(b, 0, data, from + typeDescriptorInteger.getMaxLength(), currentLength);
+	System.arraycopy(b, 0, data,
+		from + typeDescriptorInteger.getMaxLength(), currentLength);
     }
 
     @Override
     public String load(final byte[] data, final int from) {
 	final Integer currentLength = typeDescriptorInteger.load(data, from);
 	byte b[] = new byte[currentLength];
-	System.arraycopy(data, from + typeDescriptorInteger.getMaxLength(), b, 0, currentLength);
+	System.arraycopy(data, from + typeDescriptorInteger.getMaxLength(), b,
+		0, currentLength);
 	return new String(b, charset);
     }
 
@@ -72,8 +81,8 @@ public class TypeDescriptorString implements TypeDescriptor<String> {
     public void verifyType(final Object object) {
 	Preconditions.checkNotNull(object);
 	if (!(object instanceof String)) {
-	    throw new JblinktreeException("Object of wrong type (" + object.getClass().getName()
-		    + ")");
+	    throw new JblinktreeException("Object of wrong type ("
+		    + object.getClass().getName() + ")");
 	}
     }
 

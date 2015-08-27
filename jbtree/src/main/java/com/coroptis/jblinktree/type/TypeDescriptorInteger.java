@@ -1,5 +1,7 @@
 package com.coroptis.jblinktree.type;
 
+import java.io.Serializable;
+
 import com.coroptis.jblinktree.JblinktreeException;
 import com.google.common.base.Preconditions;
 
@@ -29,7 +31,12 @@ import com.google.common.base.Preconditions;
  * @author jajir
  * 
  */
-public class TypeDescriptorInteger implements TypeDescriptor<Integer> {
+public class TypeDescriptorInteger implements Serializable, TypeDescriptor<Integer> {
+
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
 
     @Override
     public int getMaxLength() {
