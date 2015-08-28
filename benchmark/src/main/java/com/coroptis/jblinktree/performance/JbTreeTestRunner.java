@@ -20,15 +20,8 @@ package com.coroptis.jblinktree.performance;
  * #L%
  */
 
-import java.io.IOException;
 import java.util.Map;
 import java.util.Random;
-
-import org.openjdk.jmh.runner.Runner;
-import org.openjdk.jmh.runner.RunnerException;
-import org.openjdk.jmh.runner.options.Options;
-import org.openjdk.jmh.runner.options.OptionsBuilder;
-import org.openjdk.jmh.runner.options.VerboseMode;
 
 import com.coroptis.jblinktree.TreeBuilder;
 import com.coroptis.jblinktree.type.Types;
@@ -38,30 +31,22 @@ import com.coroptis.jblinktree.type.Types;
  * monitoring.
  * 
  * @author jajir
- *
+ * 
  */
 public class JbTreeTestRunner {
 
     private static void test() {
 	final Random random = new Random();
-	final Map<Integer, Integer> map = TreeBuilder.builder().setL(2)
-		.setKeyType(Types.integer()).setValueType(Types.integer())
-		.build();
+	final Map<Integer, Integer> map = TreeBuilder.builder().setL(2).setKeyType(Types.integer())
+		.setValueType(Types.integer()).build();
 	for (int i = 0; i < 1000 * 1000 * 20; i++) {
 	    final int j = random.nextInt();
 	    map.put(j, -j);
 	}
     }
 
-    private static Options getOptions(final Class<?> clazz) {
-	return new OptionsBuilder().include(clazz.getSimpleName()).threads(100)
-		.measurementIterations(1000).verbosity(VerboseMode.NORMAL)
-		.forks(0).build();
-    }
-
-    public static void main(String[] args) throws RunnerException, IOException {
+    public static void main(String[] args) {
 	test();
-//	new Runner(getOptions(MapTestJbTreeMap.class)).run();
     }
 
 }
