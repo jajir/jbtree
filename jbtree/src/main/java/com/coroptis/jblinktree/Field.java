@@ -96,6 +96,9 @@ public interface Field<K, V> {
      * <li>key & value pairs</li>
      * <li>link</li>
      * </ul>
+     * <p>
+     * Method should return defensive copy.
+     * </p>
      * 
      * @return field byte array
      */

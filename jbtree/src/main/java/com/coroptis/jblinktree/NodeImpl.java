@@ -141,7 +141,7 @@ public class NodeImpl<K, V> implements Node<K, V> {
      * @param nodeId
      *            required node id
      * @param field
-     *            required node byte array with data
+     *            required field with node byte array with data
      * @param keyTypeDescriptor
      *            required key type descriptor
      * @param valueTypeDescriptor
@@ -149,7 +149,7 @@ public class NodeImpl<K, V> implements Node<K, V> {
      * @param linkTypeDescriptor
      *            required link type descriptor
      */
-    public NodeImpl(final int l, final Integer nodeId, final byte[] field,
+    public NodeImpl(final int l, final Integer nodeId, final Field<K, V> field,
 	    final TypeDescriptor<K> keyTypeDescriptor,
 	    final TypeDescriptor<V> valueTypeDescriptor,
 	    final TypeDescriptor<Integer> linkTypeDescriptor) {
@@ -158,8 +158,7 @@ public class NodeImpl<K, V> implements Node<K, V> {
 	this.keyTypeDescriptor = keyTypeDescriptor;
 	this.valueTypeDescriptor = valueTypeDescriptor;
 	this.linkTypeDescriptor = linkTypeDescriptor;
-	this.field = new FieldImpl<K, V>(field, keyTypeDescriptor,
-		valueTypeDescriptor, linkTypeDescriptor);
+	this.field = field;
     }
 
     @Override
@@ -186,53 +185,28 @@ public class NodeImpl<K, V> implements Node<K, V> {
     public void insert(final K key, final V value) {
 	Preconditions.checkNotNull(key);
 	Preconditions.checkNotNull(value);
-	if (isLeafNode()) {
-	    for (int i = 1; i < field.getLength() - 1; i = i + 2) {
-		if (key.equals(field.getKey(i))) {
-		    /**
-		     * Rewrite value.
-		     */
-		    field.setValue(i - 1, value);
-		    return;
-		} else if (keyTypeDescriptor.compare(field.getKey(i), key) > 0) {// field.get(i)
-										 // >
-										 // key
-		    couldInsertedKey();
-		    /**
-		     * given value should be inserted 1 before current index
-		     */
-		    insertToPosition(key, value, i - 1);
-		    return;
-		}
+	for (int i = 1; i < field.getLength() - 1; i = i + 2) {
+	    if (key.equals(field.getKey(i))) {
+		/**
+		 * Rewrite value.
+		 */
+		field.setValue(i - 1, value);
+		return;
+	    } else if (keyTypeDescriptor.compare(field.getKey(i), key) > 0) {
+		// field.get(i) > key
+		couldInsertedKey();
+		/**
+		 * given value should be inserted 1 before current index
+		 */
+		insertToPosition(key, value, i - 1);
+		return;
 	    }
-	    couldInsertedKey();
-	    /**
-	     * New key is bigger than all others so should be at the end.
-	     */
-	    insertToPosition(key, value, field.getLength() - 1);
-	} else {
-	    for (int i = 1; i < field.getLength() - 1; i = i + 2) {
-		if (key.equals(field.getKey(i))) {
-		    /**
-		     * Rewrite value.
-		     */
-		    field.setValue(i - 1, value);
-		    return;
-		} else if (keyTypeDescriptor.compare(field.getKey(i), key) > 0) {
-		    couldInsertedKey();
-		    /**
-		     * given value should be inserted 1 before current index
-		     */
-		    insertToPosition(key, value, i - 1);
-		    return;
-		}
-	    }
-	    couldInsertedKey();
-	    /**
-	     * New key is bigger than all others so should be at the end.
-	     */
-	    insertToPosition(key, value, field.getLength() - 1);
 	}
+	couldInsertedKey();
+	/**
+	 * New key is bigger than all others so should be at the end.
+	 */
+	insertToPosition(key, value, field.getLength() - 1);
     }
 
     /**
@@ -502,16 +476,8 @@ public class NodeImpl<K, V> implements Node<K, V> {
 	if (!(obj instanceof NodeImpl)) {
 	    return false;
 	}
-	NodeImpl<K, V> n = (NodeImpl<K, V>) obj;
-	if (equal(l, n.l) && equal(id, n.id)
-		&& equal(field.getLength(), n.field.getLength())) {
-	    byte b1[] = n.field.getBytes();
-	    byte b2[] = field.getBytes();
-	    for (int i = 0; i < b1.length; i++) {
-		if (b1[i] != b2[i]) {
-		    return false;
-		}
-	    }
+	final NodeImpl<K, V> n = (NodeImpl<K, V>) obj;
+	if (equal(l, n.l) && equal(id, n.id) && field.equals(n.field)) {
 	    return true;
 	} else {
 	    return false;

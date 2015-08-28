@@ -1,5 +1,7 @@
 package com.coroptis.jblinktree;
 
+import java.util.Arrays;
+
 import com.coroptis.jblinktree.type.TypeDescriptor;
 
 /*
@@ -56,13 +58,15 @@ public class FieldImpl<K, V> implements Field<K, V> {
      * @param linkTypeDescriptor
      *            required link type descriptor
      */
-    public FieldImpl(final int numberOfField, final TypeDescriptor<K> keyTypeDescriptor,
+    public FieldImpl(final int numberOfField,
+	    final TypeDescriptor<K> keyTypeDescriptor,
 	    final TypeDescriptor<V> valueTypeDescriptor,
 	    final TypeDescriptor<Integer> linkTypeDescriptor) {
 	this.linkTypeDescriptor = linkTypeDescriptor;
 	this.keyTypeDescriptor = keyTypeDescriptor;
 	this.valueTypeDescriptor = valueTypeDescriptor;
-	this.field = new byte[getPosition(numberOfField) + linkTypeDescriptor.getMaxLength()];
+	this.field = new byte[getPosition(numberOfField)
+		+ linkTypeDescriptor.getMaxLength()];
     }
 
     /**
@@ -77,7 +81,8 @@ public class FieldImpl<K, V> implements Field<K, V> {
      * @param linkTypeDescriptor
      *            required link type descriptor
      */
-    public FieldImpl(final byte[] field, final TypeDescriptor<K> keyTypeDescriptor,
+    public FieldImpl(final byte[] field,
+	    final TypeDescriptor<K> keyTypeDescriptor,
 	    final TypeDescriptor<V> valueTypeDescriptor,
 	    final TypeDescriptor<Integer> linkTypeDescriptor) {
 	this(0, keyTypeDescriptor, valueTypeDescriptor, linkTypeDescriptor);
@@ -96,7 +101,8 @@ public class FieldImpl<K, V> implements Field<K, V> {
     private int getPosition(int position) {
 	final int p1 = position >>> 1;
 	final int p2 = (position + 1) >>> 1;
-	return p1 * keyTypeDescriptor.getMaxLength() + p2 * valueTypeDescriptor.getMaxLength() + 1;
+	return p1 * keyTypeDescriptor.getMaxLength() + p2
+		* valueTypeDescriptor.getMaxLength() + 1;
     }
 
     /*
@@ -125,11 +131,13 @@ public class FieldImpl<K, V> implements Field<K, V> {
      * int, int, int)
      */
     @Override
-    public void copy(final Field<K, V> src, final int srcPos1, final int destPos1, final int length) {
+    public void copy(final Field<K, V> src, final int srcPos1,
+	    final int destPos1, final int length) {
 	final int srcPos = getPosition(srcPos1);
 	final int p = getPosition(srcPos1 + length) - srcPos;
 	final int destPos = getPosition(destPos1);
-	System.arraycopy(src.getBytes(), srcPos, field, destPos, p);
+	final FieldImpl<K, V> f = (FieldImpl<K, V>) src;
+	System.arraycopy(f.field, srcPos, field, destPos, p);
 	setFlag(src.getFlag());
     }
 
@@ -140,7 +148,39 @@ public class FieldImpl<K, V> implements Field<K, V> {
      */
     @Override
     public byte[] getBytes() {
-	return field;
+	final byte out[] = new byte[field.length];
+	System.arraycopy(field, 0, out, 0, field.length);
+	return out;
+    }
+
+    /**
+     * Equals two fields objects. Juswt byte field is counted.
+     */
+    @Override
+    @SuppressWarnings("unchecked")
+    public boolean equals(final Object obj) {
+	if (obj == null) {
+	    return false;
+	}
+	if (!(obj instanceof FieldImpl)) {
+	    return false;
+	}
+	final FieldImpl<K, V> n = (FieldImpl<K, V>) obj;
+	if (field.length == n.field.length) {
+	    for (int i = 0; i < field.length; i++) {
+		if (field[i] != n.field[i]) {
+		    return false;
+		}
+	    }
+	    return true;
+	} else {
+	    return false;
+	}
+    }
+
+    @Override
+    public int hashCode() {
+	return Arrays.hashCode(field);
     }
 
     /*

@@ -20,7 +20,7 @@ package com.coroptis.jblinktree.junit;
  * #L%
  */
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 
 import org.junit.After;
 import org.junit.Before;
@@ -55,7 +55,8 @@ public class FieldTest {
 
     @Test
     public void test_length_2() throws Exception {
-	Field<Integer, Integer> f = TreeUtil.makeFromIntegerField(new Integer[] { 10, 1, 30 });
+	Field<Integer, Integer> f = TreeUtil
+		.makeFromIntegerField(new Integer[] { 10, 1, 30 });
 
 	assertEquals(3, f.getLength());
     }
@@ -96,7 +97,8 @@ public class FieldTest {
     @Test
     public void test_toString() throws Exception {
 	logger.debug(field.toString());
-	assertEquals("Field{field=[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]}",
+	assertEquals(
+		"Field{field=[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]}",
 		field.toString());
     }
 
@@ -113,10 +115,42 @@ public class FieldTest {
 	field.setLink(null);
     }
 
+    @Test
+    public void test_equals_null() throws Exception {
+	assertFalse(field.equals(null));
+    }
+
+    @Test
+    public void test_equals_different() throws Exception {
+	Field<Integer, Integer> f = new FieldImpl<Integer, Integer>(3,
+		intDescriptor, intDescriptor, intDescriptor);
+	f.setKey(1, -1);
+	assertFalse(field.equals(f));
+    }
+
+    @Test
+    public void test_equals_equals() throws Exception {
+	final Field<Integer, Integer> f1 = new FieldImpl<Integer, Integer>(3,
+		intDescriptor, intDescriptor, intDescriptor);
+	f1.setKey(1, -1);
+
+	final Field<Integer, Integer> f2 = new FieldImpl<Integer, Integer>(3,
+		intDescriptor, intDescriptor, intDescriptor);
+	f2.setKey(1, -1);
+
+	assertTrue(f1.equals(f2));
+    }
+
+    @Test
+    public void test_equals_same() throws Exception {
+	assertTrue(field.equals(field));
+    }
+
     @Before
     public void setUp() throws Exception {
 	intDescriptor = new TypeDescriptorInteger();
-	field = new FieldImpl<Integer, Integer>(3, intDescriptor, intDescriptor, intDescriptor);
+	field = new FieldImpl<Integer, Integer>(3, intDescriptor,
+		intDescriptor, intDescriptor);
     }
 
     @After

@@ -14,7 +14,7 @@
 		<name>coroptis</name>
 	</organization>
 	<inceptionYear>2015</inceptionYear>
-	<name>jblinktree map implementation</name>
+	<name>jblinktree - java.util.Map implementation</name>
 	<licenses>
 		<license>
 			<name>Apache License, Version 2.0</name>

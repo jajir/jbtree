@@ -1,8 +1,10 @@
 package com.coroptis.jblinktree;
 
+import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileWriter;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.io.Writer;
 
 import com.google.common.base.Preconditions;
@@ -172,7 +174,7 @@ public class JbTreeWrapper<K, V> implements JbTree<K, V> {
 	}
     }
 
-    private final String intendation = "    ";
+    private final static String intendation = "    ";
 
     @SuppressWarnings({ "unchecked", "rawtypes" })
     private void printData() {
@@ -209,7 +211,8 @@ public class JbTreeWrapper<K, V> implements JbTree<K, V> {
 	buff.toString();
     }
 
-    private void addNextNodes(final Node<Integer, Integer> node, final StringBuilder buff) {
+    private void addNextNodes(final Node<Integer, Integer> node,
+	    final StringBuilder buff) {
 	for (final Object o : node.getNodeIds()) {
 	    Integer i = (Integer) o;
 	    buff.append(intendation);
@@ -227,7 +230,8 @@ public class JbTreeWrapper<K, V> implements JbTree<K, V> {
 	}
     }
 
-    private void addLink(final Node<Integer, Integer> node, final StringBuilder buff) {
+    private void addLink(final Node<Integer, Integer> node,
+	    final StringBuilder buff) {
 	if (node.getLink() != null) {
 	    buff.append(intendation);
 	    buff.append("\"node");
@@ -247,13 +251,16 @@ public class JbTreeWrapper<K, V> implements JbTree<K, V> {
     public void write(final StringBuilder buff) throws IOException {
 	Writer out = null;
 	try {
-	    out = new FileWriter(file);
-	    out.append(buff.toString());
-	    out.flush(); // https://code.google.com/p/guava-libraries/issues/detail?id=1330
+	    out = new BufferedWriter(new OutputStreamWriter(
+		    new FileOutputStream(file), "UTF-8"));
+	    out.write(buff.toString());
+	    out.flush();
 	} catch (IOException e) {
 	    throw e;
 	} finally {
-	    out.close();
+	    if (out != null) {
+		out.close();
+	    }
 	}
     }
 

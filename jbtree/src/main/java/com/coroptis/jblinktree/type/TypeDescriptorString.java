@@ -44,7 +44,7 @@ public class TypeDescriptorString implements Serializable,
 
     private final int maxLength;
 
-    private final Charset charset;
+    private transient final Charset charset;
 
     private final TypeDescriptorInteger typeDescriptorInteger;
 
