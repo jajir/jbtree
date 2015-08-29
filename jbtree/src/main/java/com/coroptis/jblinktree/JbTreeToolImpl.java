@@ -1,9 +1,8 @@
 package com.coroptis.jblinktree;
 
-import java.util.Stack;
-
 import com.coroptis.jblinktree.type.TypeDescriptor;
 import com.coroptis.jblinktree.type.TypeDescriptorInteger;
+import com.coroptis.jblinktree.util.JbStack;
 import com.google.common.base.Preconditions;
 
 /*
@@ -78,7 +77,7 @@ public class JbTreeToolImpl<K, V> implements JbTreeTool<K, V> {
     }
 
     @Override
-    public Integer findLeafNodeId(final K key, final Stack<Integer> stack, final Integer rootNodeId) {
+    public Integer findLeafNodeId(final K key, final JbStack stack, final Integer rootNodeId) {
 	Node<K, Integer> currentNode = nodeStore.get(rootNodeId);
 	while (!currentNode.isLeafNode()) {
 	    Integer nextNodeId = currentNode.getCorrespondingNodeId(key);

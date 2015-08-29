@@ -1,8 +1,7 @@
 package com.coroptis.jblinktree;
 
-import java.util.Stack;
-
 import com.coroptis.jblinktree.type.TypeDescriptor;
+import com.coroptis.jblinktree.util.JbStack;
 
 /*
  * #%L
@@ -107,7 +106,7 @@ public interface JbTreeTool<K, V> {
      * @return leaf node id where should be key found or stored, it's never
      *         <code>null</code>
      */
-    Integer findLeafNodeId(K key, Stack<Integer> stack, Integer rootNodeId);
+    Integer findLeafNodeId(K key, JbStack stack, Integer rootNodeId);
 
     /**
      * During searching for proper place where to put key it's important to know
@@ -132,7 +131,6 @@ public interface JbTreeTool<K, V> {
      *            required next node id
      * @return locked new node instance
      */
-    <S> Node<K, S> moveToNextNode(final Node<K, ?> currentNode,
-	    final Integer nextNodeId);
+    <S> Node<K, S> moveToNextNode(final Node<K, ?> currentNode, final Integer nextNodeId);
 
 }

@@ -19,9 +19,9 @@ package com.coroptis.jblinktree.junit;
  * limitations under the License.
  * #L%
  */
-import static org.junit.Assert.*;
-
-import java.util.Stack;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import org.easymock.EasyMock;
 import org.junit.After;
@@ -33,6 +33,8 @@ import com.coroptis.jblinktree.JbTreeToolImpl;
 import com.coroptis.jblinktree.Node;
 import com.coroptis.jblinktree.NodeImpl;
 import com.coroptis.jblinktree.type.TypeDescriptorInteger;
+import com.coroptis.jblinktree.util.JbStack;
+import com.coroptis.jblinktree.util.JbStackArrayDeque;
 
 /**
  * Tests for {@link JbTreeTool}
@@ -76,11 +78,11 @@ public class JbTreeToolTest extends AbstractMockingTest {
 	EasyMock.verify(mocks);
 	assertTrue(ret);
     }
-    
+
     @SuppressWarnings({ "unchecked", "rawtypes" })
     @Test
     public void test_findLeafNodeId() throws Exception {
-	final Stack<Integer> stack = new Stack<Integer>();
+	final JbStack stack = new JbStackArrayDeque();
 	EasyMock.expect(nodeStore.get(2)).andReturn((Node) n1);
 	EasyMock.expect(n1.getId()).andReturn(2);
 	EasyMock.expect(n1.isLeafNode()).andReturn(false);
@@ -98,7 +100,6 @@ public class JbTreeToolTest extends AbstractMockingTest {
 	assertEquals(Integer.valueOf(62), ret);
 	EasyMock.verify(nodeStore, treeTool, n1, n2);
     }
-
 
     @Before
     public void setUp() throws Exception {

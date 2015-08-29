@@ -1,6 +1,6 @@
 package com.coroptis.jblinktree;
 
-import java.util.Stack;
+import com.coroptis.jblinktree.util.JbStack;
 
 /*
  * #%L
@@ -55,7 +55,6 @@ public interface JbTreeHelper<K, V> {
      *            required stack useful for back tracing through tree
      * @return <code>null</code> when it's new key otherwise return old value
      */
-    V insertToLeafNode(Node<K, V> currentNode, final K key, final V value,
-	    final Stack<Integer> stack);
+    V insertToLeafNode(Node<K, V> currentNode, K key, V value, JbStack stack);
 
 }

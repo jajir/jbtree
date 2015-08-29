@@ -20,9 +20,9 @@ package com.coroptis.jblinktree;
  * #L%
  */
 
-import java.util.Stack;
-
 import com.coroptis.jblinktree.type.TypeDescriptor;
+import com.coroptis.jblinktree.util.JbStack;
+import com.coroptis.jblinktree.util.JbStackArrayDeque;
 import com.google.common.base.Preconditions;
 
 /**
@@ -53,10 +53,8 @@ public class JbTreeHelperImpl<K, V> implements JbTreeHelper<K, V> {
 
     private final JbTreeData<K, V> treeData;
 
-    JbTreeHelperImpl(final int l, final NodeStore<K> nodeStore,
-	    final JbTreeTool<K, V> treeTool,
-	    final JbTreeService<K, V> treeService,
-	    final JbTreeData<K, V> treeData,
+    JbTreeHelperImpl(final int l, final NodeStore<K> nodeStore, final JbTreeTool<K, V> treeTool,
+	    final JbTreeService<K, V> treeService, final JbTreeData<K, V> treeData,
 	    final TypeDescriptor<V> valueTypeDescriptor,
 	    final TypeDescriptor<Integer> linkTypeDescriptor) {
 	this.l = l;
@@ -64,34 +62,32 @@ public class JbTreeHelperImpl<K, V> implements JbTreeHelper<K, V> {
 	this.treeTool = Preconditions.checkNotNull(treeTool);
 	this.treeService = Preconditions.checkNotNull(treeService);
 	this.treeData = Preconditions.checkNotNull(treeData);
-	this.valueTypeDescriptor = Preconditions.checkNotNull(
-		valueTypeDescriptor,
+	this.valueTypeDescriptor = Preconditions.checkNotNull(valueTypeDescriptor,
 		"value TypeDescriptor is null, use .setValueType in builder");
-	this.linkTypeDescriptor = Preconditions.checkNotNull(
-		linkTypeDescriptor, "link TypeDescriptor is null");
+	this.linkTypeDescriptor = Preconditions.checkNotNull(linkTypeDescriptor,
+		"link TypeDescriptor is null");
     }
 
     @Override
     public Node<K, V> findAppropriateLeafNode(final K key) {
 	Preconditions.checkNotNull(key);
-	Integer idNode = treeTool.findLeafNodeId(key, new Stack<Integer>(),
+	Integer idNode = treeTool.findLeafNodeId(key, new JbStackArrayDeque(),
 		treeData.getRootNodeId());
 	Node<K, V> node = nodeStore.get(idNode);
 	return treeTool.moveRightLeafNodeWithoutLocking(node, key);
     }
 
     @Override
-    public V insertToLeafNode(Node<K, V> currentNode, final K key,
-	    final V value, final Stack<Integer> stack) {
+    public V insertToLeafNode(Node<K, V> currentNode, final K key, final V value,
+	    final JbStack stack) {
 	if (currentNode.getKeysCount() >= l) {
 	    /**
 	     * There is no free space for key and value
 	     */
-	    final Node<K, V> newNode = treeTool.split(currentNode, key, value,
-		    valueTypeDescriptor);
+	    final Node<K, V> newNode = treeTool.split(currentNode, key, value, valueTypeDescriptor);
 	    nodeStore.writeNode(newNode);
 	    nodeStore.writeNode(currentNode);
-	    if (stack.empty()) {
+	    if (stack.isEmpty()) {
 		/**
 		 * There is no previous node, it's root node.
 		 */
@@ -104,8 +100,8 @@ public class JbTreeHelperImpl<K, V> implements JbTreeHelper<K, V> {
 		Integer tmpValue = newNode.getId();
 		K tmpKey = newNode.getMaxKey();
 		final Integer previousCurrentNodeId = currentNode.getId();
-		Node<K, Integer> previousNode = treeService.loadParentNode(
-			currentNode, tmpKey, stack.pop());
+		Node<K, Integer> previousNode = treeService.loadParentNode(currentNode, tmpKey,
+			stack.pop());
 		nodeStore.unlockNode(previousCurrentNodeId);
 		return insertNonLeaf(previousNode, tmpKey, tmpValue, stack);
 	    }
@@ -131,8 +127,8 @@ public class JbTreeHelperImpl<K, V> implements JbTreeHelper<K, V> {
      *            required stack useful for back tracing through tree
      * @return <code>null</code> when it's new key otherwise return old value
      */
-    private V insertNonLeaf(Node<K, Integer> currentNode, final K key,
-	    final Integer value, final Stack<Integer> stack) {
+    private V insertNonLeaf(Node<K, Integer> currentNode, final K key, final Integer value,
+	    final JbStack stack) {
 	/**
 	 * Key and value have to be inserted
 	 */
@@ -143,11 +139,11 @@ public class JbTreeHelperImpl<K, V> implements JbTreeHelper<K, V> {
 		/**
 		 * There is no free space for key and value
 		 */
-		final Node<K, Integer> newNode = treeTool.split(currentNode,
-			tmpKey, tmpValue, linkTypeDescriptor);
+		final Node<K, Integer> newNode = treeTool.split(currentNode, tmpKey, tmpValue,
+			linkTypeDescriptor);
 		nodeStore.writeNode(newNode);
 		nodeStore.writeNode(currentNode);
-		if (stack.empty()) {
+		if (stack.isEmpty()) {
 		    /**
 		     * There is no previous node, it's root node.
 		     */
@@ -160,16 +156,14 @@ public class JbTreeHelperImpl<K, V> implements JbTreeHelper<K, V> {
 		    tmpValue = newNode.getId();
 		    tmpKey = newNode.getMaxKey();
 		    final Integer previousCurrentNodeId = currentNode.getId();
-		    currentNode = treeService.loadParentNode(currentNode,
-			    tmpKey, stack.pop());
+		    currentNode = treeService.loadParentNode(currentNode, tmpKey, stack.pop());
 		    nodeStore.unlockNode(previousCurrentNodeId);
 		}
 	    } else {
 		/**
 		 * There is a free space for new key and value.
 		 */
-		treeService.storeValueIntoNonLeafNode(currentNode, tmpKey,
-			tmpValue);
+		treeService.storeValueIntoNonLeafNode(currentNode, tmpKey, tmpValue);
 		return null;
 	    }
 	}

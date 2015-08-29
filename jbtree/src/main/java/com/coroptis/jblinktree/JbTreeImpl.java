@@ -20,8 +20,8 @@ package com.coroptis.jblinktree;
  * #L%
  */
 
-import java.util.Stack;
-
+import com.coroptis.jblinktree.util.JbStack;
+import com.coroptis.jblinktree.util.JbStackArrayDeque;
 import com.google.common.base.Preconditions;
 
 /**
@@ -73,7 +73,7 @@ public class JbTreeImpl<K, V> implements JbTree<K, V> {
     public V insert(final K key, final V value) {
 	Preconditions.checkNotNull(key);
 	Preconditions.checkNotNull(value);
-	final Stack<Integer> stack = new Stack<Integer>();
+	final JbStack stack = new JbStackArrayDeque();
 	final Integer currentNodeId = treeTool.findLeafNodeId(key, stack, treeData.getRootNodeId());
 	Node<K, V> currentNode = nodeStore.getAndLock(currentNodeId);
 	currentNode = treeTraversingService.moveRightLeafNode(currentNode, key);
@@ -92,7 +92,7 @@ public class JbTreeImpl<K, V> implements JbTree<K, V> {
     @Override
     public V remove(final K key) {
 	Preconditions.checkNotNull(key);
-	final Stack<Integer> stack = new Stack<Integer>();
+	final JbStack stack = new JbStackArrayDeque();
 	Integer currentNodeId = treeTool.findLeafNodeId(key, stack, treeData.getRootNodeId());
 	Node<K, V> currentNode = nodeStore.getAndLock(currentNodeId);
 	currentNode = treeTraversingService.moveRightLeafNode(currentNode, key);
@@ -164,7 +164,7 @@ public class JbTreeImpl<K, V> implements JbTree<K, V> {
     @Override
     public void visit(final JbTreeVisitor<K, V> treeVisitor) {
 	Preconditions.checkNotNull(treeVisitor, "required JbTreeVisitor instance is null");
-	final Stack<Integer> stack = new Stack<Integer>();
+	final JbStack stack = new JbStackArrayDeque();
 	stack.push(treeData.getRootNodeId());
 	while (!stack.isEmpty()) {
 	    final Integer nodeId = stack.pop();
