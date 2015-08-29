@@ -51,10 +51,10 @@ public class JbTreeHelperImpl<K, V> implements JbTreeHelper<K, V> {
 
     private final TypeDescriptor<Integer> linkTypeDescriptor;
 
-    private final JbTreeData<K, V> treeData;
+    private final JbTreeData<K> treeData;
 
     JbTreeHelperImpl(final int l, final NodeStore<K> nodeStore, final JbTreeTool<K, V> treeTool,
-	    final JbTreeService<K, V> treeService, final JbTreeData<K, V> treeData,
+	    final JbTreeService<K, V> treeService, final JbTreeData<K> treeData,
 	    final TypeDescriptor<V> valueTypeDescriptor,
 	    final TypeDescriptor<Integer> linkTypeDescriptor) {
 	this.l = l;

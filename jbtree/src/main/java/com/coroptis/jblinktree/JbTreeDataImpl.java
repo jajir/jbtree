@@ -33,7 +33,7 @@ import com.google.common.base.Preconditions;
  * @param <V>
  *            value type
  */
-public class JbTreeDataImpl<K, V> implements JbTreeData<K, V> {
+public class JbTreeDataImpl<K, V> implements JbTreeData<K> {
 
     private final NodeStore<K> nodeStore;
 
