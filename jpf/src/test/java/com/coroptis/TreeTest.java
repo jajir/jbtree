@@ -7,7 +7,7 @@ import com.coroptis.jblinktree.type.Types;
 
 public class TreeTest {
 
-    private final static int NUMBER_OF_CONCURRENT_INSERTS = 5;
+    private final static int NUMBER_OF_CONCURRENT_INSERTS = 6;
 
     /**
      * @param args
