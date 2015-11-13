@@ -45,7 +45,7 @@ import com.coroptis.jblinktree.type.TypeDescriptorInteger;
  * controlled by locks.
  * <p>
  * If it's work correctly than in logs are messages node is locked/unlocked in
- * pairs. Please note that two messages in one milisecond could be switched.
+ * pairs. Please note that two messages in one millisecond could be switched.
  * </p>
  * 
  * @author jajir

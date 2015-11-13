@@ -77,26 +77,17 @@ public class JbTreeHelperImpl<K, V> implements JbTreeHelper<K, V> {
 	return treeTool.moveRightLeafNodeWithoutLocking(node, key);
     }
 
+    // TODO following methods should be refactored
+
     @Override
     public V insertToLeafNode(Node<K, V> currentNode, final K key, final V value,
 	    final JbStack stack) {
 	if (currentNode.getKeysCount() >= l) {
-	    /**
-	     * There is no free space for key and value
-	     */
-	    final Node<K, V> newNode = treeTool.split(currentNode, key, value, valueTypeDescriptor);
-	    nodeStore.writeNode(newNode);
-	    nodeStore.writeNode(currentNode);
+	    final Node<K, V> newNode = storeSplit(currentNode, key, value, valueTypeDescriptor);
 	    if (stack.isEmpty()) {
-		/**
-		 * There is no previous node, it's root node.
-		 */
 		treeData.splitRootNode(currentNode, newNode);
 		return null;
 	    } else {
-		/**
-		 * There is a previous node, so move there.
-		 */
 		Integer tmpValue = newNode.getId();
 		K tmpKey = newNode.getMaxKey();
 		final Integer previousCurrentNodeId = currentNode.getId();
@@ -106,9 +97,6 @@ public class JbTreeHelperImpl<K, V> implements JbTreeHelper<K, V> {
 		return insertNonLeaf(previousNode, tmpKey, tmpValue, stack);
 	    }
 	} else {
-	    /**
-	     * There is a free space for new key and value.
-	     */
 	    treeService.storeValueIntoLeafNode(currentNode, key, value);
 	    return null;
 	}
@@ -136,23 +124,12 @@ public class JbTreeHelperImpl<K, V> implements JbTreeHelper<K, V> {
 	K tmpKey = key;
 	while (true) {
 	    if (currentNode.getKeysCount() >= l) {
-		/**
-		 * There is no free space for key and value
-		 */
-		final Node<K, Integer> newNode = treeTool.split(currentNode, tmpKey, tmpValue,
+		final Node<K, Integer> newNode = storeSplit(currentNode, tmpKey, tmpValue,
 			linkTypeDescriptor);
-		nodeStore.writeNode(newNode);
-		nodeStore.writeNode(currentNode);
 		if (stack.isEmpty()) {
-		    /**
-		     * There is no previous node, it's root node.
-		     */
 		    treeData.splitRootNode(currentNode, newNode);
 		    return null;
 		} else {
-		    /**
-		     * There is a previous node, so move there.
-		     */
 		    tmpValue = newNode.getId();
 		    tmpKey = newNode.getMaxKey();
 		    final Integer previousCurrentNodeId = currentNode.getId();
@@ -160,13 +137,27 @@ public class JbTreeHelperImpl<K, V> implements JbTreeHelper<K, V> {
 		    nodeStore.unlockNode(previousCurrentNodeId);
 		}
 	    } else {
-		/**
-		 * There is a free space for new key and value.
-		 */
 		treeService.storeValueIntoNonLeafNode(currentNode, tmpKey, tmpValue);
 		return null;
 	    }
 	}
+    }
+
+    /**
+     * Split node and store new and old node.
+     * 
+     * @param currentNode
+     * @param key
+     * @param value
+     * @param valueTypeDescriptor
+     * @return new {@link Node}
+     */
+    private <S> Node<K, S> storeSplit(final Node<K, S> currentNode, final K key, final S value,
+	    final TypeDescriptor<S> valueTypeDescriptor) {
+	final Node<K, S> newNode = treeTool.split(currentNode, key, value, valueTypeDescriptor);
+	nodeStore.writeNode(newNode);
+	nodeStore.writeNode(currentNode);
+	return newNode;
     }
 
 }
