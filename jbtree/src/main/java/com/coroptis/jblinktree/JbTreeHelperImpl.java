@@ -20,7 +20,8 @@ package com.coroptis.jblinktree;
  * #L%
  */
 
-import com.coroptis.jblinktree.type.TypeDescriptor;
+import java.util.concurrent.locks.ReentrantLock;
+
 import com.coroptis.jblinktree.util.JbStack;
 import com.coroptis.jblinktree.util.JbStackArrayDeque;
 import com.google.common.base.Preconditions;
@@ -47,25 +48,15 @@ public class JbTreeHelperImpl<K, V> implements JbTreeHelper<K, V> {
 
     private final JbTreeService<K, V> treeService;
 
-    private final TypeDescriptor<V> valueTypeDescriptor;
-
-    private final TypeDescriptor<Integer> linkTypeDescriptor;
-
-    private final JbTreeData<K> treeData;
+    private final JbTreeData treeData;
 
     JbTreeHelperImpl(final int l, final NodeStore<K> nodeStore, final JbTreeTool<K, V> treeTool,
-	    final JbTreeService<K, V> treeService, final JbTreeData<K> treeData,
-	    final TypeDescriptor<V> valueTypeDescriptor,
-	    final TypeDescriptor<Integer> linkTypeDescriptor) {
+	    final JbTreeService<K, V> treeService, final JbTreeData treeData) {
 	this.l = l;
 	this.nodeStore = Preconditions.checkNotNull(nodeStore);
 	this.treeTool = Preconditions.checkNotNull(treeTool);
 	this.treeService = Preconditions.checkNotNull(treeService);
 	this.treeData = Preconditions.checkNotNull(treeData);
-	this.valueTypeDescriptor = Preconditions.checkNotNull(valueTypeDescriptor,
-		"value TypeDescriptor is null, use .setValueType in builder");
-	this.linkTypeDescriptor = Preconditions.checkNotNull(linkTypeDescriptor,
-		"link TypeDescriptor is null");
     }
 
     @Override
@@ -83,9 +74,9 @@ public class JbTreeHelperImpl<K, V> implements JbTreeHelper<K, V> {
     public V insertToLeafNode(Node<K, V> currentNode, final K key, final V value,
 	    final JbStack stack) {
 	if (currentNode.getKeysCount() >= l) {
-	    final Node<K, V> newNode = storeSplit(currentNode, key, value, valueTypeDescriptor);
+	    final Node<K, V> newNode = storeSplitLeafNode(currentNode, key, value);
 	    if (stack.isEmpty()) {
-		treeData.splitRootNode(currentNode, newNode);
+		splitRootLeafNode(currentNode, newNode);
 		return null;
 	    } else {
 		Integer tmpValue = newNode.getId();
@@ -124,10 +115,10 @@ public class JbTreeHelperImpl<K, V> implements JbTreeHelper<K, V> {
 	K tmpKey = key;
 	while (true) {
 	    if (currentNode.getKeysCount() >= l) {
-		final Node<K, Integer> newNode = storeSplit(currentNode, tmpKey, tmpValue,
-			linkTypeDescriptor);
+		final Node<K, Integer> newNode = storeSplitNonLeafNode(currentNode, tmpKey,
+			tmpValue);
 		if (stack.isEmpty()) {
-		    treeData.splitRootNode(currentNode, newNode);
+		    splitRootNonLeafNode(currentNode, newNode);
 		    return null;
 		} else {
 		    tmpValue = newNode.getId();
@@ -152,12 +143,62 @@ public class JbTreeHelperImpl<K, V> implements JbTreeHelper<K, V> {
      * @param valueTypeDescriptor
      * @return new {@link Node}
      */
-    private <S> Node<K, S> storeSplit(final Node<K, S> currentNode, final K key, final S value,
-	    final TypeDescriptor<S> valueTypeDescriptor) {
-	final Node<K, S> newNode = treeTool.split(currentNode, key, value, valueTypeDescriptor);
+    private Node<K, V> storeSplitLeafNode(final Node<K, V> currentNode, final K key, final V value) {
+	final Node<K, V> newNode = treeTool.splitLeafNode(currentNode, key, value);
 	nodeStore.writeNode(newNode);
 	nodeStore.writeNode(currentNode);
 	return newNode;
+    }
+
+    /**
+     * Split node and store new and old node.
+     * 
+     * @param currentNode
+     * @param key
+     * @param value
+     * @param valueTypeDescriptor
+     * @return new {@link Node}
+     */
+    private Node<K, Integer> storeSplitNonLeafNode(final Node<K, Integer> currentNode, final K key,
+	    final Integer value) {
+	final Node<K, Integer> newNode = treeTool.splitNonLeafNode(currentNode, key, value);
+	nodeStore.writeNode(newNode);
+	nodeStore.writeNode(currentNode);
+	return newNode;
+    }
+
+    private Integer splitRootLeafNode(final Node<K, V> currentNode, final Node<K, V> newNode) {
+	ReentrantLock lock = new ReentrantLock(false);
+	lock.lock();
+	try {
+	    if (treeData.getRootNodeId().equals(currentNode.getId())) {
+		Preconditions.checkArgument(treeData.getRootNodeId().equals(currentNode.getId()));
+		treeData.setRootNodeId(treeTool.splitRootNode(currentNode, newNode));
+		nodeStore.unlockNode(currentNode.getId());
+	    } else {
+		nodeStore.unlockNode(currentNode.getId());
+	    }
+	} finally {
+	    lock.unlock();
+	}
+	return treeData.getRootNodeId();
+    }
+
+    private Integer splitRootNonLeafNode(final Node<K, Integer> currentNode, final Node<K, Integer> newNode) {
+	ReentrantLock lock = new ReentrantLock(false);
+	lock.lock();
+	try {
+	    if (treeData.getRootNodeId().equals(currentNode.getId())) {
+		Preconditions.checkArgument(treeData.getRootNodeId().equals(currentNode.getId()));
+		treeData.setRootNodeId(treeTool.splitRootNode(currentNode, newNode));
+		nodeStore.unlockNode(currentNode.getId());
+	    } else {
+		nodeStore.unlockNode(currentNode.getId());
+	    }
+	} finally {
+	    lock.unlock();
+	}
+	return treeData.getRootNodeId();
     }
 
 }

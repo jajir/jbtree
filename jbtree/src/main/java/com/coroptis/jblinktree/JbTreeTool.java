@@ -1,6 +1,5 @@
 package com.coroptis.jblinktree;
 
-import com.coroptis.jblinktree.type.TypeDescriptor;
 import com.coroptis.jblinktree.util.JbStack;
 
 /*
@@ -46,8 +45,8 @@ public interface JbTreeTool<K, V> {
     Node<K, V> moveRightLeafNodeWithoutLocking(Node<K, V> current, K key);
 
     /**
-     * Split node into two nodes. It moved part of currentNode data into new one
-     * which will be returned.
+     * Split leaf node into two nodes. It moved part of currentNode data into
+     * new one which will be returned.
      * <p>
      * Method doesn't work with locks. New node is not locked.
      * </p>
@@ -60,8 +59,25 @@ public interface JbTreeTool<K, V> {
      *            required inserted value
      * @return newly created node, this node contains higher part of keys.
      */
-    <S> Node<K, S> split(Node<K, S> currentNode, K key, S value,
-	    TypeDescriptor<S> valueTypeDescriptor);
+    Node<K, V> splitLeafNode(Node<K, V> currentNode, K key, V value);
+
+    /**
+     * Split non-leaf node into two nodes. It moved part of currentNode data
+     * into new one which will be returned.
+     * <p>
+     * Method doesn't work with locks. New node is not locked.
+     * </p>
+     * 
+     * @param currentNode
+     *            required node which will be split
+     * @param key
+     *            required inserted key
+     * @param value
+     *            required inserted value
+     * @return newly created node, this node contains higher part of keys.
+     */
+    Node<K, Integer> splitNonLeafNode(final Node<K, Integer> currentNode, final K key,
+	    final Integer value);
 
     /**
      * It get already existing node, new node a create new root node pointing on

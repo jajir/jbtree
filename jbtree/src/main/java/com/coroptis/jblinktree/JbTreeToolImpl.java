@@ -1,7 +1,6 @@
 package com.coroptis.jblinktree;
 
 import com.coroptis.jblinktree.type.TypeDescriptor;
-import com.coroptis.jblinktree.type.TypeDescriptorInteger;
 import com.coroptis.jblinktree.util.JbStack;
 import com.google.common.base.Preconditions;
 
@@ -104,12 +103,21 @@ public class JbTreeToolImpl<K, V> implements JbTreeTool<K, V> {
     }
 
     @Override
-    public <S> Node<K, S> split(final Node<K, S> currentNode, final K key, final S value,
-	    TypeDescriptor<S> valueTypeDescriptor) {
-	// FIXME create leaf and non leaf versions of this method and call
-	// proper node builder
-	Node<K, S> newNode = new NodeImpl<K, S>(currentNode.getL(), nodeStore.getNextId(), true,
-		keyTypeDescriptor, valueTypeDescriptor, new TypeDescriptorInteger());
+    public Node<K, V> splitLeafNode(final Node<K, V> currentNode, final K key, final V value) {
+	final Node<K, V> newNode = nodeBuilder.makeEmptyLeafNode(nodeStore.getNextId());
+	currentNode.moveTopHalfOfDataTo(newNode);
+	if (keyTypeDescriptor.compare(currentNode.getMaxKey(), key) < 0) {
+	    newNode.insert(key, value);
+	} else {
+	    currentNode.insert(key, value);
+	}
+	return newNode;
+    }
+
+    @Override
+    public Node<K, Integer> splitNonLeafNode(final Node<K, Integer> currentNode, final K key,
+	    final Integer value) {
+	final Node<K, Integer> newNode = nodeBuilder.makeEmptyNonLeafNode(nodeStore.getNextId());
 	currentNode.moveTopHalfOfDataTo(newNode);
 	if (keyTypeDescriptor.compare(currentNode.getMaxKey(), key) < 0) {
 	    newNode.insert(key, value);

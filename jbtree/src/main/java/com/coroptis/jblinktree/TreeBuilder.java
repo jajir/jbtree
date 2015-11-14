@@ -132,14 +132,13 @@ public final class TreeBuilder {
 	final NodeStoreImpl<K, V> nodeStore = new NodeStoreImpl<K, V>(idGenerator, nodeBuilder);
 	final JbTreeTool<K, V> jbTreeTool = new JbTreeToolImpl<K, V>(nodeStore,
 		(TypeDescriptor<K>) keyTypeDescriptor, nodeBuilder);
-	final JbTreeData<K> treeData = new JbTreeDataImpl<K, V>(nodeStore, jbTreeTool);
+	final JbTreeData treeData = new JbTreeDataImpl<K, V>(jbTreeTool);
 	final JbTreeTraversingService<K, V> treeLockingTool = new JbTreeTraversingServiceImpl<K, V>(
 		jbTreeTool);
 	final JbTreeService<K, V> treeService = new JbTreeServiceImpl<K, V>(nodeStore,
 		treeLockingTool);
 	final JbTreeHelper<K, V> jbTreeHelper = new JbTreeHelperImpl<K, V>(l, nodeStore,
-		jbTreeTool, treeService, treeData, (TypeDescriptor<V>) valueTypeDescriptor,
-		linkTypeDescriptor);
+		jbTreeTool, treeService, treeData);
 	final JbTree<K, V> tree = new JbTreeImpl<K, V>(nodeStore, jbTreeTool, jbTreeHelper,
 		treeData, treeLockingTool, treeService);
 	if (treeWrapperFileName == null) {

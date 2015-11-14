@@ -44,7 +44,7 @@ public class JbTreeImpl<K, V> implements JbTree<K, V> {
 
     private final JbTreeHelper<K, V> jbTreeHelper;
 
-    private final JbTreeData<K> treeData;
+    private final JbTreeData treeData;
 
     private final JbTreeTraversingService<K, V> treeTraversingService;
 
@@ -59,7 +59,7 @@ public class JbTreeImpl<K, V> implements JbTree<K, V> {
      *            required node store object
      */
     public JbTreeImpl(final NodeStore<K> nodeStore, final JbTreeTool<K, V> treeTool,
-	    final JbTreeHelper<K, V> jbTreeHelper, final JbTreeData<K> treeData,
+	    final JbTreeHelper<K, V> jbTreeHelper, final JbTreeData treeData,
 	    final JbTreeTraversingService<K, V> treeTraversingService,
 	    final JbTreeService<K, V> treeService) {
 	this.nodeStore = Preconditions.checkNotNull(nodeStore);

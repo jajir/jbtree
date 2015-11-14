@@ -30,7 +30,7 @@ package com.coroptis.jblinktree;
  * @param <V>
  *            value type
  */
-public interface JbTreeData<K> {
+public interface JbTreeData {
 
     /**
      * Holds root node id.
@@ -38,6 +38,14 @@ public interface JbTreeData<K> {
      * @return root node id
      */
     Integer getRootNodeId();
+
+    /**
+     * Allows to set root node id.
+     * 
+     * @param rootNodeId
+     *            required root node id
+     */
+    void setRootNodeId(Integer rootNodeId);
 
     /**
      * Split root node into two separate nodes.
@@ -48,6 +56,7 @@ public interface JbTreeData<K> {
      *            required new node
      * @return id of new root node
      */
-    <S> Integer splitRootNode(final Node<K, S> currentNode, final Node<K, S> newNode);
+    // <S> Integer splitRootNode(final Node<K, S> currentNode, final Node<K, S>
+    // newNode);
 
 }

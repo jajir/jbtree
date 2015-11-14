@@ -84,6 +84,12 @@ public class NodeBuilderImpl<K, V> implements NodeBuilder<K, V> {
 	return new NodeImpl<K, V>(l, idNode, true, keyTypeDescriptor,
 		valueTypeDescriptor, linkTypeDescriptor);
     }
+    @Override
+    public Node<K, Integer> makeEmptyNonLeafNode(final int idNode) {
+	Preconditions.checkNotNull(idNode);
+	return new NodeImpl<K, Integer>(l, idNode, false, keyTypeDescriptor, linkTypeDescriptor,
+		linkTypeDescriptor);
+    }
 
     @Override
     public Node<K, Integer> makeNonLeafNode(final int idNode,

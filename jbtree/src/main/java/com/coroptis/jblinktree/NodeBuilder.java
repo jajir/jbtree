@@ -42,6 +42,15 @@ public interface NodeBuilder<K, V> {
     Node<K, V> makeEmptyLeafNode(int idNode);
 
     /**
+     * Create empty non-leaf node.
+     * 
+     * @param idNode
+     *            required node id
+     * @return created empty node
+     */
+    Node<K, Integer> makeEmptyNonLeafNode(final int idNode);
+
+    /**
      * Create new node by copying array to new node.
      * 
      * @param idNode
