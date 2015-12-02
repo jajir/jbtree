@@ -93,7 +93,7 @@ public interface Field<K, V> {
      * Get byte array containing all field data including:
      * <ul>
      * <li>flag</li>
-     * <li>key & value pairs</li>
+     * <li>key &amp; value pairs</li>
      * <li>link</li>
      * </ul>
      * <p>

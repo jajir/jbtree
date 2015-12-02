@@ -21,7 +21,7 @@ package com.coroptis.jblinktree;
  */
 
 /**
- * Allows to read & write nodes. Main methods are thread safe. Get method
+ * Allows to read &amp; write nodes. Main methods are thread safe. Get method
  * returns always new node instance with same data.
  * 
  * @author jajir
@@ -48,6 +48,8 @@ public interface NodeStore<K> {
     /**
      * Return defensive copy of node instance.
      * 
+     * @param <S>
+     *            node value type
      * @param nodeId
      *            required node id
      * @return copy of node from store
@@ -57,6 +59,8 @@ public interface NodeStore<K> {
     /**
      * Return defensive copy of node instance and lock it.
      * 
+     * @param <S>
+     *            node value type
      * @param nodeId
      *            required node id
      * @return copy of node from store
@@ -69,6 +73,8 @@ public interface NodeStore<K> {
      * Method doens't work with locks.
      * </p>
      * 
+     * @param <S>
+     *            node value type
      * @param node
      *            required {@link Node}
      */

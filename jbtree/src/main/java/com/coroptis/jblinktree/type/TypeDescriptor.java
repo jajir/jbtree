@@ -32,7 +32,7 @@ import com.coroptis.jblinktree.JblinktreeException;
  *            type that will be described
  * 
  */
-public interface TypeDescriptor<T> extends Comparator<T>{
+public interface TypeDescriptor<T> extends Comparator<T> {
 
     /**
      * Get maximum length of field when it's stored in bytes.
@@ -69,7 +69,7 @@ public interface TypeDescriptor<T> extends Comparator<T>{
     /**
      * Verify that given type is same as described.
      * 
-     * @param o
+     * @param object
      *            required verified object
      * @throws NullPointerException
      *             when object is <code>null</code>

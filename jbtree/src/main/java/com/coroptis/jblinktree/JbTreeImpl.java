@@ -53,10 +53,18 @@ public class JbTreeImpl<K, V> implements JbTree<K, V> {
     /**
      * Create and initialize tree.
      * 
-     * @param l
-     *            requited tree L parameter.
      * @param nodeStore
-     *            required node store object
+     *            required {@link NodeStore} object
+     * @param treeTool
+     *            required {@link JbTreeTool} object
+     * @param jbTreeHelper
+     *            required {@link JbTreeHelper} object
+     * @param treeData
+     *            required {@link JbTreeData} object
+     * @param treeTraversingService
+     *            required {@link JbTreeTraversingService} object
+     * @param treeService
+     *            required {@link JbTreeService} object
      */
     public JbTreeImpl(final NodeStore<K> nodeStore, final JbTreeTool<K, V> treeTool,
 	    final JbTreeHelper<K, V> jbTreeHelper, final JbTreeData treeData,

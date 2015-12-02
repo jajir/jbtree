@@ -71,6 +71,8 @@ public interface JbTree<K, V> {
     /**
      * Inform about presence of key in tree.
      * 
+     * @param key
+     *            required key
      * @return if key is in tree return <code>true</code> otherwise return
      *         <code>false</code>.
      */

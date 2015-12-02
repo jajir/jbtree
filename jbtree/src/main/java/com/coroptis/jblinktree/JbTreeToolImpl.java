@@ -43,6 +43,10 @@ public class JbTreeToolImpl<K, V> implements JbTreeTool<K, V> {
      * 
      * @param nodeStore
      *            required node store service
+     * @param keyTypeDescriptor
+     *            required
+     * @param nodeBuilder
+     *            required
      */
     public JbTreeToolImpl(final NodeStore<K> nodeStore, final TypeDescriptor<K> keyTypeDescriptor,
 	    final NodeBuilder<K, V> nodeBuilder) {

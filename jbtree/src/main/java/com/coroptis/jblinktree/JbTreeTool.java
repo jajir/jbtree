@@ -86,6 +86,8 @@ public interface JbTreeTool<K, V> {
      * Method doesn't work with locks.
      * </p>
      * 
+     * @param <S>
+     *            node value type
      * @param currentRootNode
      *            required currently exiting root node
      * @param newNode
@@ -140,13 +142,15 @@ public interface JbTreeTool<K, V> {
     /**
      * Move to next node. Lock next node than unlock current node.
      * 
-     * 
+     * @param <S>
+     *            node value type
      * @param currentNode
      *            required node
      * @param nextNodeId
      *            required next node id
      * @return locked new node instance
      */
+
     <S> Node<K, S> moveToNextNode(final Node<K, ?> currentNode, final Integer nextNodeId);
 
 }

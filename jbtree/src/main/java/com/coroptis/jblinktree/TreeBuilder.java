@@ -116,6 +116,10 @@ public final class TreeBuilder {
     /**
      * Build {@link Map} instance with previously given parameters.
      * 
+     * @param <K>
+     *            key type
+     * @param <V>
+     *            value type
      * @return {@link TreeMap} instance
      */
     @SuppressWarnings("unchecked")
@@ -137,17 +141,17 @@ public final class TreeBuilder {
 		jbTreeTool);
 	final JbTreeService<K, V> treeService = new JbTreeServiceImpl<K, V>(nodeStore,
 		treeLockingTool);
-	final JbTreeHelper<K, V> jbTreeHelper = new JbTreeHelperImpl<K, V>(l, nodeStore,
-		jbTreeTool, treeService, treeData);
+	final JbTreeHelper<K, V> jbTreeHelper = new JbTreeHelperImpl<K, V>(l, nodeStore, jbTreeTool,
+		treeService, treeData);
 	final JbTree<K, V> tree = new JbTreeImpl<K, V>(nodeStore, jbTreeTool, jbTreeHelper,
 		treeData, treeLockingTool, treeService);
 	if (treeWrapperFileName == null) {
 	    return new TreeMapImpl<K, V>(tree, (TypeDescriptor<K>) keyTypeDescriptor,
 		    (TypeDescriptor<V>) valueTypeDescriptor);
 	} else {
-	    return new TreeMapImpl<K, V>(new JbTreeWrapper<K, V>(tree, nodeStore, idGenerator,
-		    treeWrapperFileName), (TypeDescriptor<K>) keyTypeDescriptor,
-		    (TypeDescriptor<V>) valueTypeDescriptor);
+	    return new TreeMapImpl<K, V>(
+		    new JbTreeWrapper<K, V>(tree, nodeStore, idGenerator, treeWrapperFileName),
+		    (TypeDescriptor<K>) keyTypeDescriptor, (TypeDescriptor<V>) valueTypeDescriptor);
 
 	}
     }

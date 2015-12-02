@@ -112,6 +112,12 @@ public class NodeImpl<K, V> implements Node<K, V> {
      * @param isLeafNode
      *            required value, when it's <code>true</code> than it's leaf
      *            node otherwise it's non-leaf node.
+     * @param keyTypeDescriptor
+     *            required
+     * @param valueTypeDescriptor
+     *            required
+     * @param linkTypeDescriptor
+     *            required
      */
     public NodeImpl(final int l, final Integer nodeId, final boolean isLeafNode,
 	    final TypeDescriptor<K> keyTypeDescriptor, final TypeDescriptor<V> valueTypeDescriptor,
@@ -211,8 +217,8 @@ public class NodeImpl<K, V> implements Node<K, V> {
      */
     private void couldInsertedKey() {
 	if (getKeysCount() >= l) {
-	    throw new JblinktreeException("Leaf (" + id
-		    + ") is full another value can't be inserted.");
+	    throw new JblinktreeException(
+		    "Leaf (" + id + ") is full another value can't be inserted.");
 	}
     }
 
@@ -321,8 +327,8 @@ public class NodeImpl<K, V> implements Node<K, V> {
 	node.field.copy(field, startIndex, 0, length);
 
 	// remove copied data from this node
-	Field<K, V> field2 = new FieldImpl<K, V>(startIndex, keyTypeDescriptor,
-		valueTypeDescriptor, linkTypeDescriptor);
+	Field<K, V> field2 = new FieldImpl<K, V>(startIndex, keyTypeDescriptor, valueTypeDescriptor,
+		linkTypeDescriptor);
 	field2.copy(field, 0, 0, startIndex);
 	field = field2;
 	setLink(node.getId());
@@ -435,8 +441,8 @@ public class NodeImpl<K, V> implements Node<K, V> {
     @Override
     public boolean verify() {
 	if ((field.getLength()) % 2 == 0) {
-	    throw new JblinktreeException("node " + id
-		    + " have inforrect number of items in field: " + toString() + "");
+	    throw new JblinktreeException(
+		    "node " + id + " have inforrect number of items in field: " + toString() + "");
 	}
 	if (!isLeafNode()) {
 	    for (int i = 0; i < field.getLength() - 1; i = i + 2) {

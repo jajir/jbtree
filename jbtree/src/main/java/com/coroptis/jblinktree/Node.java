@@ -53,7 +53,7 @@ public interface Node<K, V> {
     public Integer getLink();
 
     /**
-     * Allows to set link value. Delegate to {@link Field#setLink()}
+     * Allows to set link value. Delegate to {@link Field#setLink(Integer)}
      * 
      * @param link
      *            link value, could be {@link Node#EMPTY_INT}
@@ -128,7 +128,7 @@ public interface Node<K, V> {
     /**
      * Return max key, that could be use for representing this node.
      * 
-     * @return
+     * @return max key 
      */
     public K getMaxKey();
 

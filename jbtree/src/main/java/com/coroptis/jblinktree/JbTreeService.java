@@ -33,6 +33,8 @@ public interface JbTreeService<K, V> {
      * to move to next node than method move to next node. Method lock nodex in
      * correct order.
      * 
+     * @param <S>
+     *            node value type
      * @param currentNode
      *            required current node
      * @param key
@@ -59,7 +61,7 @@ public interface JbTreeService<K, V> {
     /**
      * Store value in non-leaf node under the key.
      * 
-     * @param node
+     * @param currentNode
      *            required non-leaf node
      * @param key
      *            required key
