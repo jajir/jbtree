@@ -133,9 +133,9 @@ public class TreeUtil {
      * 
      * @param l
      *            required node parameter L
-     * @param nodeId
+     * @param idNode
      *            required node id, node will be referred with this id.
-     * @param field
+     * @param fieldInt
      *            required Integer array representing node content.
      * @return created {@link NodeImpl}
      */
