@@ -53,6 +53,8 @@ public interface NodeBuilder<K, V> {
     /**
      * Create new node by copying array to new node.
      * 
+     * @param <T>
+     *            node value type
      * @param idNode
      *            required node id
      * @param field

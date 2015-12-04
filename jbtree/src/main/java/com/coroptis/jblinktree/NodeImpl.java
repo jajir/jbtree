@@ -31,13 +31,15 @@ import com.google.common.base.Preconditions;
  * <p>
  * Generally in tree are inserted keys and values (K,V). There are two kind of
  * nodes:
+ * </p>
  * <ul>
  * <li>leaf node - contains keys and values pairs</li>
  * <li>non-leaf node - contains keys and pointers to another nodes</li>
  * </ul>
- * </p>
+ * <p>
  * Node contains data stored in a following field:
- * <table border="1" style="border-collapse: collapse">
+ * </p>
+ * <table border="1" style="border-collapse:collapse" summary="keys and values meaning in node">
  * <tr>
  * <td>value</td>
  * <td>P(0)</td>
@@ -84,6 +86,10 @@ import com.google.common.base.Preconditions;
  * 
  * @author jajir
  * 
+ * @param <K>
+ *            key type
+ * @param <V>
+ *            value type
  */
 public class NodeImpl<K, V> implements Node<K, V> {
 

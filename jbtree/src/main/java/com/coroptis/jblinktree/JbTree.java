@@ -38,6 +38,8 @@ public interface JbTree<K, V> {
      * 
      * @param key
      *            required parameter key
+     * @param value
+     *            required value
      * @return previously associated value with given key.
      */
     V insert(K key, V value);
