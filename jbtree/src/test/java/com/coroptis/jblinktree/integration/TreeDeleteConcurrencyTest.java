@@ -24,8 +24,6 @@ import java.util.Random;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
-import junit.framework.TestCase;
-
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,6 +33,8 @@ import com.coroptis.jblinktree.TreeBuilder;
 import com.coroptis.jblinktree.TreeMap;
 import com.coroptis.jblinktree.Worker;
 import com.coroptis.jblinktree.type.Types;
+
+import junit.framework.TestCase;
 
 /**
  * test verify that add and remove operations works in thread environment.
@@ -90,8 +90,8 @@ public class TreeDeleteConcurrencyTest extends TestCase {
     }
 
     void doWorkNow() {
-	Integer integer = random.nextInt(100) + 1;
-	Integer operation = random.nextInt(100) + 1;
+	final Integer integer = random.nextInt(100) + 1;
+	final Integer operation = random.nextInt(100) + 1;
 	if (operation % 2 == 0) {
 	    logger.debug("inserting :" + integer);
 	    tree.put(integer, integer);
