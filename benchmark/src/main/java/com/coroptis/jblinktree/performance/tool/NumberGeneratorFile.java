@@ -62,7 +62,7 @@ public class NumberGeneratorFile {
 	    lock.lock();
 	    final String line = bufferedReader.readLine();
 	    if (line == null) {
-		throw new JblinktreeException("file is already closed.");
+		throw new JblinktreeException("You reach end of file.");
 	    } else {
 		return Integer.valueOf(line);
 	    }

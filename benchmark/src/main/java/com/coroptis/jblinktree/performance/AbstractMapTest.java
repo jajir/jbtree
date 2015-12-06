@@ -28,9 +28,9 @@ import org.openjdk.jmh.annotations.BenchmarkMode;
 import org.openjdk.jmh.annotations.Mode;
 import org.openjdk.jmh.annotations.OutputTimeUnit;
 import org.openjdk.jmh.annotations.Scope;
+import org.openjdk.jmh.annotations.Setup;
 import org.openjdk.jmh.annotations.State;
 import org.openjdk.jmh.annotations.TearDown;
-import org.openjdk.jmh.annotations.Warmup;
 
 import com.coroptis.jblinktree.performance.tool.NumberGeneratorFile;
 import com.google.common.base.Preconditions;
@@ -42,15 +42,11 @@ import com.google.common.base.Preconditions;
  * 
  */
 @State(Scope.Benchmark)
-@BenchmarkMode(Mode.AverageTime)
+@BenchmarkMode(Mode.SingleShotTime)
 @OutputTimeUnit(TimeUnit.MILLISECONDS)
 public abstract class AbstractMapTest {
 
     private final static String RANDOM_DATA_FILE = "src/data/numbers1.txt";
-
-    private final static int NUMBER_OF_WARM_UP_KEYS = 1000 * 100;
-
-    private final static int NUMBER_OF_INSERTS_IN_TEST = 1;
 
     private NumberGeneratorFile numberGeneratorFile;
 
@@ -78,20 +74,6 @@ public abstract class AbstractMapTest {
 	System.out.println("starting test");
 	numberGeneratorFile = new NumberGeneratorFile(RANDOM_DATA_FILE);
 	map = Preconditions.checkNotNull(initialize());
-	t1 = getFreeMem();
-	printMemory(t1, mapName());
-	warmUp();
-	System.out.println("test is ready, map size = " + map.size());
-    }
-
-    /**
-     * At the begging are some random values inserted into tree.
-     */
-    public void warmUp() {
-	for (int i = 0; i < NUMBER_OF_WARM_UP_KEYS; i++) {
-	    final Integer j = numberGeneratorFile.nextInt();
-	    map.put(j, -j);
-	}
     }
 
     protected long getFreeMem() {
@@ -103,24 +85,24 @@ public abstract class AbstractMapTest {
 	final long b = t % 1024;
 	final long kb = (t / (1024)) % 1024;
 	final long mb = (t / ((long) 1024 * 1024)) % 1024;
-	System.out.println("mb=" + mb + ", kb=" + kb + ", b=" + b + ", name= "
-		+ name);
+	System.out.println("mb=" + mb + ", kb=" + kb + ", b=" + b + ", name= " + name);
+    }
+
+    @Setup
+    public void setup() {
+	System.out.println("setup count: " + map.size());
     }
 
     @TearDown
     public void tearDown() {
-	// printMemory(t1 - getFreeMem(), mapName());
-	System.out.println("count: " + map.size());
+	System.out.println("tear down count: " + map.size());
 	map = null;
     }
 
     @Benchmark
-    @Warmup(iterations = 1, batchSize = 1, time = 1)
     public void insert_performance() {
-	for (int i = 0; i < NUMBER_OF_INSERTS_IN_TEST; i++) {
-	    final Integer j = numberGeneratorFile.nextInt();
-	    map.put(j, -j);
-	}
+	final Integer j = numberGeneratorFile.nextInt();
+	map.put(j, -j);
     }
 
 }
