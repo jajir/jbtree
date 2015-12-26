@@ -131,7 +131,7 @@ public class JbTreeImpl<K, V> implements JbTree<K, V> {
     @Override
     public int countValues() {
 	JbTreeVisitorRecordCounter<K, V> counter = new JbTreeVisitorRecordCounter<K, V>();
-	visit(counter);
+	visitLeafNodes(counter);
 	return counter.getCount();
     }
 
@@ -168,6 +168,7 @@ public class JbTreeImpl<K, V> implements JbTree<K, V> {
     /**
      * Current implementation doesn't visit nodes that are available with link
      * pointer and don't have parent node.
+     * 
      */
     @SuppressWarnings("unchecked")
     @Override
@@ -193,6 +194,36 @@ public class JbTreeImpl<K, V> implements JbTree<K, V> {
 			stack.push(i);
 		    }
 		}
+	    }
+	}
+    }
+
+    /**
+     */
+    @Override
+    public void visitLeafNodes(final JbTreeVisitor<K, V> treeVisitor) {
+	Preconditions.checkNotNull(treeVisitor, "required JbTreeVisitor instance is null");
+	// find smaller node.
+	Node<K, V> leafNode = null;
+	Integer nodeId = treeData.getRootNodeId();
+	while (leafNode == null) {
+	    final Node<K, V> node = nodeStore.get(nodeId);
+	    if (node.isLeafNode()) {
+		leafNode = node;
+	    } else {
+		// move to the next smaller node.
+		nodeId = node.getNodeIds().get(0);
+	    }
+	}
+	// iterate all leaf nodes until last one.
+	while (leafNode != null) {
+	    if (!treeVisitor.visitedLeaf(leafNode)) {
+		return;
+	    }
+	    if (leafNode.getLink() < 0) {
+		return;
+	    } else {
+		leafNode = nodeStore.get(leafNode.getLink());
 	    }
 	}
     }

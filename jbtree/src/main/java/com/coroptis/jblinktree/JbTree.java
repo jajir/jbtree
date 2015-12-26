@@ -102,9 +102,27 @@ public interface JbTree<K, V> {
 
     /**
      * Traverse through entire tree and visit all nodes.
+     * <p>
+     * This implementation doesn't visits nodes accessible only via next link.
+     * </p>
+     * <p>
+     * Method doesn't use node locking. It's not necessary.
+     * </p>
      * 
      * @param treeVisitor
-     *            required visitor implementation
+     *            required  {@link JbTreeVisitor} implementation.
      */
     void visit(JbTreeVisitor<K, V> treeVisitor);
+
+    /**
+     * Find smaller leaf node and then visits all leaf nodes up to node with
+     * bigger key.
+     * <p>
+     * Method doesn't use node locking. It's not necessary.
+     * </p>
+     * 
+     * @param treeVisitor
+     *            required {@link JbTreeVisitor} implementation.
+     */
+    void visitLeafNodes(JbTreeVisitor<K, V> treeVisitor);
 }

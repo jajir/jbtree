@@ -157,6 +157,18 @@ public class JbTreeWrapper<K, V> implements JbTree<K, V> {
 	});
     }
 
+    @Override
+    public void visitLeafNodes(final JbTreeVisitor<K, V> treeVisitor) {
+	saveExecution(new Execute() {
+
+	    @Override
+	    public Object execute() {
+		tree.visitLeafNodes(treeVisitor);
+		return null;
+	    }
+	});
+    }
+
     /**
      * Execute given {@link Execute} class instance. When operation fails with
      * exception than tree content is written to file.
