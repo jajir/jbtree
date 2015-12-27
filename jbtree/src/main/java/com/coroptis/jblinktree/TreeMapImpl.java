@@ -46,11 +46,10 @@ public class TreeMapImpl<K, V> implements TreeMap<K, V> {
 
     private final TypeDescriptor<V> valueTypeDescriptor;
 
-    TreeMapImpl(final JbTree<K, V> tree, final TypeDescriptor<K> keyTypeDescriptor,
-	    final TypeDescriptor<V> valueTypeDescriptor) {
+    TreeMapImpl(final JbTree<K, V> tree, final JbTreeData<K, V> treeData) {
 	this.tree = Preconditions.checkNotNull(tree);
-	this.keyTypeDescriptor = Preconditions.checkNotNull(keyTypeDescriptor);
-	this.valueTypeDescriptor = Preconditions.checkNotNull(valueTypeDescriptor);
+	this.keyTypeDescriptor = Preconditions.checkNotNull(treeData.getKeyTypeDescriptor());
+	this.valueTypeDescriptor = Preconditions.checkNotNull(treeData.getValueTypeDescriptor());
     }
 
     @SuppressWarnings("unchecked")

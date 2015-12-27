@@ -43,16 +43,11 @@ public class NodeBuilderImpl<K, V> implements NodeBuilder<K, V> {
 
     private final TypeDescriptor<Integer> linkTypeDescriptor;
 
-    public NodeBuilderImpl(final int l,
-	    final TypeDescriptor<K> keyTypeDescriptor,
-	    final TypeDescriptor<V> valueTypeDescriptor,
-	    final TypeDescriptor<Integer> linkTypeDescriptor) {
-	this.l = l;
-	this.keyTypeDescriptor = Preconditions.checkNotNull(keyTypeDescriptor);
-	this.valueTypeDescriptor = Preconditions
-		.checkNotNull(valueTypeDescriptor);
-	this.linkTypeDescriptor = Preconditions
-		.checkNotNull(linkTypeDescriptor);
+    public NodeBuilderImpl(final JbTreeData<K, V> treeData) {
+	this.l = treeData.getL();
+	this.keyTypeDescriptor = treeData.getKeyTypeDescriptor();
+	this.valueTypeDescriptor = treeData.getValueTypeDescriptor();
+	this.linkTypeDescriptor = treeData.getLinkTypeDescriptor();
     }
 
     /**
@@ -65,25 +60,26 @@ public class NodeBuilderImpl<K, V> implements NodeBuilder<K, V> {
 	byte flag = field[0];
 	if (flag == Node.M) {
 	    // leaf node
-	    Field<K, T> f = new FieldImpl(field, keyTypeDescriptor,
-		    valueTypeDescriptor, linkTypeDescriptor);
-	    return (Node<K, T>) new NodeImpl(l, idNode, f, keyTypeDescriptor,
-		    valueTypeDescriptor, linkTypeDescriptor);
+	    Field<K, T> f = new FieldImpl(field, keyTypeDescriptor, valueTypeDescriptor,
+		    linkTypeDescriptor);
+	    return (Node<K, T>) new NodeImpl(l, idNode, f, keyTypeDescriptor, valueTypeDescriptor,
+		    linkTypeDescriptor);
 	} else {
 	    // non-leaf node
-	    Field<K, T> f = new FieldImpl(field, keyTypeDescriptor,
-		    linkTypeDescriptor, linkTypeDescriptor);
-	    return (Node<K, T>) new NodeImpl(l, idNode, f, keyTypeDescriptor,
-		    linkTypeDescriptor, linkTypeDescriptor);
+	    Field<K, T> f = new FieldImpl(field, keyTypeDescriptor, linkTypeDescriptor,
+		    linkTypeDescriptor);
+	    return (Node<K, T>) new NodeImpl(l, idNode, f, keyTypeDescriptor, linkTypeDescriptor,
+		    linkTypeDescriptor);
 	}
     }
 
     @Override
     public Node<K, V> makeEmptyLeafNode(final int idNode) {
 	Preconditions.checkNotNull(idNode);
-	return new NodeImpl<K, V>(l, idNode, true, keyTypeDescriptor,
-		valueTypeDescriptor, linkTypeDescriptor);
+	return new NodeImpl<K, V>(l, idNode, true, keyTypeDescriptor, valueTypeDescriptor,
+		linkTypeDescriptor);
     }
+
     @Override
     public Node<K, Integer> makeEmptyNonLeafNode(final int idNode) {
 	Preconditions.checkNotNull(idNode);
@@ -92,12 +88,10 @@ public class NodeBuilderImpl<K, V> implements NodeBuilder<K, V> {
     }
 
     @Override
-    public Node<K, Integer> makeNonLeafNode(final int idNode,
-	    final Integer value1, final K key1, final Integer value2,
-	    final K key2) {
+    public Node<K, Integer> makeNonLeafNode(final int idNode, final Integer value1, final K key1,
+	    final Integer value2, final K key2) {
 	byte b[] = new byte[1 + keyTypeDescriptor.getMaxLength() * 2
-		+ linkTypeDescriptor.getMaxLength() * 2
-		+ linkTypeDescriptor.getMaxLength()];
+		+ linkTypeDescriptor.getMaxLength() * 2 + linkTypeDescriptor.getMaxLength()];
 	b[0] = 0; // it's non-lef node.
 	int position = 1;
 	// pair 1
@@ -114,9 +108,9 @@ public class NodeBuilderImpl<K, V> implements NodeBuilder<K, V> {
 
 	linkTypeDescriptor.save(b, position, NodeImpl.EMPTY_INT);
 
-	Field<K, Integer> f = new FieldImpl<K, Integer>(b, keyTypeDescriptor,
-		linkTypeDescriptor, linkTypeDescriptor);
-	return new NodeImpl<K, Integer>(l, idNode, f, keyTypeDescriptor,
-		linkTypeDescriptor, linkTypeDescriptor);
+	Field<K, Integer> f = new FieldImpl<K, Integer>(b, keyTypeDescriptor, linkTypeDescriptor,
+		linkTypeDescriptor);
+	return new NodeImpl<K, Integer>(l, idNode, f, keyTypeDescriptor, linkTypeDescriptor,
+		linkTypeDescriptor);
     }
 }

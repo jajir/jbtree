@@ -1,5 +1,7 @@
 package com.coroptis.jblinktree;
 
+import com.coroptis.jblinktree.type.TypeDescriptor;
+
 /*
  * #%L
  * jblinktree
@@ -24,8 +26,13 @@ package com.coroptis.jblinktree;
  * Holds data specific for tree.
  * 
  * @author jajir
+ * 
+ * @param <K>
+ *            key type
+ * @param <V>
+ *            value type
  */
-public interface JbTreeData {
+public interface JbTreeData<K, V> {
 
     /**
      * Holds root node id.
@@ -41,5 +48,33 @@ public interface JbTreeData {
      *            required root node id
      */
     void setRootNodeId(Integer rootNodeId);
+
+    /**
+     * Get max number of key value pairs in tree node.
+     * 
+     * @return L parameter
+     */
+    int getL();
+
+    /**
+     * Return key type descriptor.
+     * 
+     * @return key type descriptor
+     */
+    TypeDescriptor<K> getKeyTypeDescriptor();
+
+    /**
+     * Return value type descriptor.
+     * 
+     * @return value type descriptor
+     */
+    TypeDescriptor<V> getValueTypeDescriptor();
+
+    /**
+     * Return next link type descriptor.
+     * 
+     * @return next link type descriptor
+     */
+    TypeDescriptor<Integer> getLinkTypeDescriptor();
 
 }

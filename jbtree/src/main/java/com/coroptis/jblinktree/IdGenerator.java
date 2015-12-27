@@ -29,6 +29,11 @@ package com.coroptis.jblinktree;
 public interface IdGenerator {
 
     /**
+     * When new tree is created than first node have this id.
+     */
+    final static int FIRST_NODE_ID = 0;
+
+    /**
      * When new node should be created than this method generate new node id.
      * Each method call return different id.
      * <p>

@@ -27,6 +27,11 @@ import com.coroptis.jblinktree.util.JbStack;
  * 
  * @author jajir
  * 
+ * @param <K>
+ *            key type
+ * @param <V>
+ *            value type
+ * 
  */
 public interface JbTreeTool<K, V> {
 

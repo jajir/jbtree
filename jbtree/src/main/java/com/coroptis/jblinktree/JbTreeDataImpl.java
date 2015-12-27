@@ -1,5 +1,8 @@
 package com.coroptis.jblinktree;
 
+import com.coroptis.jblinktree.type.TypeDescriptor;
+import com.google.common.base.Preconditions;
+
 /*
  * #%L
  * jblinktree
@@ -29,12 +32,26 @@ package com.coroptis.jblinktree;
  * @param <V>
  *            value type
  */
-public class JbTreeDataImpl<K, V> implements JbTreeData {
+public class JbTreeDataImpl<K, V> implements JbTreeData<K, V> {
 
     private Integer rootNodeId;
 
-    JbTreeDataImpl(final JbTreeTool<K, V> treeTool) {
-	rootNodeId = treeTool.createRootNode();
+    private final int l;
+
+    private final TypeDescriptor<K> keyTypeDescriptor;
+
+    private final TypeDescriptor<V> valueTypeDescriptor;
+
+    private final TypeDescriptor<Integer> linkTypeDescriptor;
+
+    public JbTreeDataImpl(final Integer startNodeId, final int l,
+	    final TypeDescriptor<K> keyTypeDescriptor, final TypeDescriptor<V> valueTypeDescriptor,
+	    final TypeDescriptor<Integer> linkTypeDescriptor) {
+	this.rootNodeId = startNodeId;
+	this.l = l;
+	this.keyTypeDescriptor = Preconditions.checkNotNull(keyTypeDescriptor);
+	this.valueTypeDescriptor = Preconditions.checkNotNull(valueTypeDescriptor);
+	this.linkTypeDescriptor = Preconditions.checkNotNull(linkTypeDescriptor);
     }
 
     @Override
@@ -49,6 +66,38 @@ public class JbTreeDataImpl<K, V> implements JbTreeData {
     @Override
     public void setRootNodeId(Integer rootNodeId) {
 	this.rootNodeId = rootNodeId;
+    }
+
+    /**
+     * @return the l
+     */
+    @Override
+    public int getL() {
+	return l;
+    }
+
+    /**
+     * @return the keyTypeDescriptor
+     */
+    @Override
+    public TypeDescriptor<K> getKeyTypeDescriptor() {
+	return keyTypeDescriptor;
+    }
+
+    /**
+     * @return the valueTypeDescriptor
+     */
+    @Override
+    public TypeDescriptor<V> getValueTypeDescriptor() {
+	return valueTypeDescriptor;
+    }
+
+    /**
+     * @return the linkTypeDescriptor
+     */
+    @Override
+    public TypeDescriptor<Integer> getLinkTypeDescriptor() {
+	return linkTypeDescriptor;
     }
 
 }

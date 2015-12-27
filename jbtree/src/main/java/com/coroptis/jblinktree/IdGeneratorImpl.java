@@ -35,7 +35,7 @@ public class IdGeneratorImpl implements IdGenerator {
     private final ReentrantLock lock = new ReentrantLock(false);
 
     public IdGeneratorImpl() {
-	nextId = 0;
+	nextId = FIRST_NODE_ID;
     }
 
     @Override

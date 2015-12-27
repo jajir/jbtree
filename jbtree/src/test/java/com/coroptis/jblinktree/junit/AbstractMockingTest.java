@@ -50,7 +50,7 @@ public abstract class AbstractMockingTest {
 
     protected JbTreeHelper<Integer, Integer> treeHelper;
 
-    protected JbTreeData treeData;
+    protected JbTreeData<Integer, Integer> treeData;
 
     protected NodeBuilder<Integer, Integer> nodeBuilder;
 

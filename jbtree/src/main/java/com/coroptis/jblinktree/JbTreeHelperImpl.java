@@ -48,10 +48,10 @@ public class JbTreeHelperImpl<K, V> implements JbTreeHelper<K, V> {
 
     private final JbTreeService<K, V> treeService;
 
-    private final JbTreeData treeData;
+    private final JbTreeData<K, V> treeData;
 
     JbTreeHelperImpl(final int l, final NodeStore<K> nodeStore, final JbTreeTool<K, V> treeTool,
-	    final JbTreeService<K, V> treeService, final JbTreeData treeData) {
+	    final JbTreeService<K, V> treeService, final JbTreeData<K, V> treeData) {
 	this.l = l;
 	this.nodeStore = Preconditions.checkNotNull(nodeStore);
 	this.treeTool = Preconditions.checkNotNull(treeTool);
@@ -135,7 +135,7 @@ public class JbTreeHelperImpl<K, V> implements JbTreeHelper<K, V> {
     }
 
     // FIXME pair methods move to separate typed class
-    
+
     /**
      * Split node and store new and old node.
      * 
@@ -145,7 +145,8 @@ public class JbTreeHelperImpl<K, V> implements JbTreeHelper<K, V> {
      * @param valueTypeDescriptor
      * @return new {@link Node}
      */
-    private Node<K, V> storeSplitLeafNode(final Node<K, V> currentNode, final K key, final V value) {
+    private Node<K, V> storeSplitLeafNode(final Node<K, V> currentNode, final K key,
+	    final V value) {
 	final Node<K, V> newNode = treeTool.splitLeafNode(currentNode, key, value);
 	nodeStore.writeNode(newNode);
 	nodeStore.writeNode(currentNode);
@@ -186,7 +187,8 @@ public class JbTreeHelperImpl<K, V> implements JbTreeHelper<K, V> {
 	return treeData.getRootNodeId();
     }
 
-    private Integer splitRootNonLeafNode(final Node<K, Integer> currentNode, final Node<K, Integer> newNode) {
+    private Integer splitRootNonLeafNode(final Node<K, Integer> currentNode,
+	    final Node<K, Integer> newNode) {
 	ReentrantLock lock = new ReentrantLock(false);
 	lock.lock();
 	try {

@@ -39,7 +39,8 @@ import com.google.common.base.Preconditions;
  * <p>
  * Node contains data stored in a following field:
  * </p>
- * <table border="1" style="border-collapse:collapse" summary="keys and values meaning in node">
+ * <table border="1" style="border-collapse:collapse" summary=
+ * "keys and values meaning in node">
  * <tr>
  * <td>value</td>
  * <td>P(0)</td>
@@ -512,30 +513,15 @@ public class NodeImpl<K, V> implements Node<K, V> {
 	buff.append("|");
 	buff.append(getId());
 	buff.append("}");
-	if (isLeafNode()) {
-	    for (int i = 0; i < field.getLength() - 1; i = i + 2) {
-		buff.append(" | {");
-		buff.append("");
-		buff.append(field.getKey(i + 1));
-		buff.append("| <F");
-		buff.append(field.getValue(i));
-		buff.append("> ");
-		buff.append(field.getValue(i));
-		buff.append("}");
-
-	    }
-	} else {
-	    for (int i = 0; i < field.getLength() - 1; i = i + 2) {
-		buff.append(" | {");
-		buff.append("");
-		buff.append(field.getKey(i + 1));
-		buff.append("| <F");
-		buff.append(field.getValue(i));
-		buff.append("> ");
-		buff.append(field.getValue(i));
-		buff.append("}");
-
-	    }
+	for (int i = 0; i < field.getLength() - 1; i = i + 2) {
+	    buff.append(" | {");
+	    buff.append("");
+	    buff.append(field.getKey(i + 1));
+	    buff.append("| <F");
+	    buff.append(field.getValue(i));
+	    buff.append("> ");
+	    buff.append(field.getValue(i));
+	    buff.append("}");
 	}
 	buff.append(" | ");
 	if (getLink() != null) {
