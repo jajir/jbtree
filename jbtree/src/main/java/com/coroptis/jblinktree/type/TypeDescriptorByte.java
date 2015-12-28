@@ -3,7 +3,6 @@ package com.coroptis.jblinktree.type;
 import java.io.Serializable;
 
 import com.coroptis.jblinktree.JblinktreeException;
-import com.google.common.base.Preconditions;
 
 /*
  * #%L
@@ -55,7 +54,6 @@ public class TypeDescriptorByte implements Serializable, TypeDescriptor<Byte> {
 
     @Override
     public void verifyType(final Object object) {
-	Preconditions.checkNotNull(object);
 	if (!(object instanceof Byte)) {
 	    throw new JblinktreeException("Object of wrong type ("
 		    + object.getClass().getName() + ")");
@@ -64,7 +62,7 @@ public class TypeDescriptorByte implements Serializable, TypeDescriptor<Byte> {
 
     @Override
     public int compare(final Byte value1, final Byte value2) {
-	return value1 - value2;
+	return value1.compareTo(value2);
     }
 
 }

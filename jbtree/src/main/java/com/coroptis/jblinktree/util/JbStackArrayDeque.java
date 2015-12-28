@@ -29,6 +29,8 @@ import java.util.ArrayDeque;
  * It's not thread safe.
  * </p>
  * 
+ * TODO JH - piece of shit - slow, field, linked list
+ * 
  * @author jajir
  * 
  */

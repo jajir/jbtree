@@ -73,7 +73,8 @@ public class FieldImpl<K, V> implements Field<K, V> {
      * Constructor create field from byte array.
      * 
      * @param field
-     *            required byte array
+     *            required byte array, method create defensive copy of this
+     *            array
      * @param keyTypeDescriptor
      *            required key type descriptor
      * @param valueTypeDescriptor
@@ -85,7 +86,9 @@ public class FieldImpl<K, V> implements Field<K, V> {
 	    final TypeDescriptor<K> keyTypeDescriptor,
 	    final TypeDescriptor<V> valueTypeDescriptor,
 	    final TypeDescriptor<Integer> linkTypeDescriptor) {
-	this(0, keyTypeDescriptor, valueTypeDescriptor, linkTypeDescriptor);
+	this.linkTypeDescriptor = linkTypeDescriptor;
+	this.keyTypeDescriptor = keyTypeDescriptor;
+	this.valueTypeDescriptor = valueTypeDescriptor;
 	this.field = new byte[field.length];
 	System.arraycopy(field, 0, this.field, 0, this.field.length);
     }
@@ -101,8 +104,8 @@ public class FieldImpl<K, V> implements Field<K, V> {
     private int getPosition(int position) {
 	final int p1 = position >>> 1;
 	final int p2 = (position + 1) >>> 1;
-	return p1 * keyTypeDescriptor.getMaxLength() + p2
-		* valueTypeDescriptor.getMaxLength() + 1;
+	return p1 * keyTypeDescriptor.getMaxLength()
+		+ p2 * valueTypeDescriptor.getMaxLength() + 1;
     }
 
     /*
