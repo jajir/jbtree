@@ -3,7 +3,6 @@ package com.coroptis.jblinktree.type;
 import java.io.Serializable;
 
 import com.coroptis.jblinktree.JblinktreeException;
-import com.google.common.base.Preconditions;
 
 /*
  * #%L
@@ -31,7 +30,8 @@ import com.google.common.base.Preconditions;
  * @author jajir
  * 
  */
-public class TypeDescriptorInteger implements Serializable, TypeDescriptor<Integer> {
+public class TypeDescriptorInteger
+	implements Serializable, TypeDescriptor<Integer> {
 
     /**
      * 
@@ -45,6 +45,9 @@ public class TypeDescriptorInteger implements Serializable, TypeDescriptor<Integ
 
     @Override
     public void save(final byte[] data, final int from, final Integer value) {
+	/**
+	 * TODO JH - + replace with ++, replace order & and >>>
+	 */
 	int v = value.intValue();
 	data[from] = (byte) ((v >>> 24) & 0xFF);
 	data[from + 1] = (byte) ((v >>> 16) & 0xFF);
@@ -54,22 +57,21 @@ public class TypeDescriptorInteger implements Serializable, TypeDescriptor<Integ
 
     @Override
     public Integer load(final byte[] data, final int from) {
-	return data[from] << 24 | (data[from + 1] & 0xFF) << 16 | (data[from + 2] & 0xFF) << 8
-		| (data[from + 3] & 0xFF);
+	return data[from] << 24 | (data[from + 1] & 0xFF) << 16
+		| (data[from + 2] & 0xFF) << 8 | (data[from + 3] & 0xFF);
     }
 
     @Override
     public void verifyType(final Object object) {
-	Preconditions.checkNotNull(object);
 	if (!(object instanceof Integer)) {
-	    throw new JblinktreeException("Object of wrong type (" + object.getClass().getName()
-		    + ")");
+	    throw new JblinktreeException("Object of wrong type ("
+		    + object.getClass().getName() + ")");
 	}
     }
 
     @Override
     public int compare(final Integer value1, final Integer value2) {
-	return value1 - value2;
+	return value1.compareTo(value2);
     }
 
 }

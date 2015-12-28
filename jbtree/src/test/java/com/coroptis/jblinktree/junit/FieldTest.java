@@ -146,11 +146,31 @@ public class FieldTest {
 	assertTrue(field.equals(field));
     }
 
+    @Test
+    public void test_constructor_field_defensive_copy() throws Exception {
+	byte[] field = new byte[] { 10, 1, 20, 2, 30 };
+
+	Field<Integer, Integer> f = new FieldImpl<Integer, Integer>(field,
+		intDescriptor, intDescriptor, intDescriptor);
+
+	field[0] = -1;
+	field[1] = -1;
+	field[2] = -1;
+	field[3] = -1;
+	field[4] = -1;
+
+	assertEquals(10, f.getBytes()[0]);
+	assertEquals(1, f.getBytes()[1]);
+	assertEquals(20, f.getBytes()[2]);
+	assertEquals(2, f.getBytes()[3]);
+	assertEquals(30, f.getBytes()[4]);
+    }
+
     @Before
     public void setUp() throws Exception {
 	intDescriptor = new TypeDescriptorInteger();
-	field = new FieldImpl<Integer, Integer>(3, intDescriptor,
-		intDescriptor, intDescriptor);
+	field = new FieldImpl<Integer, Integer>(3, intDescriptor, intDescriptor,
+		intDescriptor);
     }
 
     @After

@@ -90,7 +90,7 @@ public class NodeBuilderImpl<K, V> implements NodeBuilder<K, V> {
     @Override
     public Node<K, Integer> makeNonLeafNode(final int idNode, final Integer value1, final K key1,
 	    final Integer value2, final K key2) {
-	byte b[] = new byte[1 + keyTypeDescriptor.getMaxLength() * 2
+	final byte b[] = new byte[1 + keyTypeDescriptor.getMaxLength() * 2
 		+ linkTypeDescriptor.getMaxLength() * 2 + linkTypeDescriptor.getMaxLength()];
 	b[0] = 0; // it's non-lef node.
 	int position = 1;
@@ -108,7 +108,7 @@ public class NodeBuilderImpl<K, V> implements NodeBuilder<K, V> {
 
 	linkTypeDescriptor.save(b, position, NodeImpl.EMPTY_INT);
 
-	Field<K, Integer> f = new FieldImpl<K, Integer>(b, keyTypeDescriptor, linkTypeDescriptor,
+	final Field<K, Integer> f = new FieldImpl<K, Integer>(b, keyTypeDescriptor, linkTypeDescriptor,
 		linkTypeDescriptor);
 	return new NodeImpl<K, Integer>(l, idNode, f, keyTypeDescriptor, linkTypeDescriptor,
 		linkTypeDescriptor);

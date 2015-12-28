@@ -74,7 +74,7 @@ public class TreeConcurrencyTest extends TestCase {
 	}
 
 	startLatch.countDown();
-	doneLatch.await(100, TimeUnit.MINUTES);
+	doneLatch.await(20, TimeUnit.SECONDS);
 	assertEquals("Some thread didn't finished work", 0, doneLatch.getCount());
 	assertEquals("Some locks wasn't unlocked", 0, tree.countLockedNodes());
 	tree.verify();
