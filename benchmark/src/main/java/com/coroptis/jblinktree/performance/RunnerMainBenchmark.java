@@ -22,6 +22,7 @@ package com.coroptis.jblinktree.performance;
 
 import java.io.IOException;
 import java.util.Collection;
+import java.util.Map;
 
 import org.openjdk.jmh.annotations.Mode;
 import org.openjdk.jmh.results.BenchmarkResult;
@@ -40,7 +41,12 @@ import org.openjdk.jmh.util.Statistics;
 import com.coroptis.jblinktree.performance.tool.MergeTestResults;
 
 /**
- * Class run all micro benchmarks scope tests.
+ * Class ran performance tests for {@link Map#put(Object, Object)} operation on
+ * multiple {@link java.util.Map} implementations.
+ * <p>
+ * Test use random unique numbers stored in file
+ * {@link AbstractMapTest#RANDOM_DATA_FILE}.
+ * </p>
  * 
  * @author jajir
  *
@@ -49,11 +55,28 @@ public class RunnerMainBenchmark {
 
     private final static int THREADS = 10;
 
+    /**
+     * How many numbers is inserted before starting measuring.
+     */
     private final static int WARMUP_OPERATIONS = 1000 * 1000;
 
-    private final static int MEASURE_OPERATIONS_PER_ITERATION = 10 * 1000;
+    /**
+     * How many {@link Map#put(Object, Object)} operations is executed during
+     * one measured iteration.
+     */
+    private final static int MEASURE_OPERATIONS_PER_ITERATION = 1000 * 1000;
 
+    /**
+     * How many times is separate measuring executed.
+     */
     private final static int MEASURE_ITERATIONS = 10;
+    
+    /**
+     * How many times is new JVM forked from main test process. Whole test is
+     * executed in each fork.
+     */
+    private final static int JVM_FORKS = 2;
+    
 
     private static Options getOptions(final Class<?> clazz) {
 	return new OptionsBuilder()
@@ -65,7 +88,7 @@ public class RunnerMainBenchmark {
 		.warmupTime(TimeValue.NONE)
 		.threads(THREADS)
 		.verbosity(VerboseMode.NORMAL)
-		.forks(1)
+		.forks(JVM_FORKS)	
 		.measurementIterations(MEASURE_ITERATIONS)
 		.measurementBatchSize(MEASURE_OPERATIONS_PER_ITERATION / THREADS)
 		.measurementTime(TimeValue.NONE)

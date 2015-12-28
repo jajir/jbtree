@@ -46,7 +46,7 @@ import com.google.common.base.Preconditions;
 @OutputTimeUnit(TimeUnit.MILLISECONDS)
 public abstract class AbstractMapTest {
 
-    private final static String RANDOM_DATA_FILE = "src/data/numbers1.txt";
+    public final static String RANDOM_DATA_FILE = "src/data/numbers1.txt";
 
     private NumberGeneratorFile numberGeneratorFile;
 
