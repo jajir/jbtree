@@ -1,4 +1,4 @@
-package com.coroptis.jblinktree.performance;
+package com.coroptis.jblinktree.performance.locking;
 
 /*
  * #%L
@@ -21,13 +21,9 @@ package com.coroptis.jblinktree.performance;
  */
 
 import java.io.IOException;
-import java.util.Collection;
 import java.util.Map;
 
 import org.openjdk.jmh.annotations.Mode;
-import org.openjdk.jmh.results.BenchmarkResult;
-import org.openjdk.jmh.results.Result;
-import org.openjdk.jmh.results.RunResult;
 import org.openjdk.jmh.results.format.ResultFormatType;
 import org.openjdk.jmh.runner.Runner;
 import org.openjdk.jmh.runner.RunnerException;
@@ -36,22 +32,10 @@ import org.openjdk.jmh.runner.options.OptionsBuilder;
 import org.openjdk.jmh.runner.options.TimeValue;
 import org.openjdk.jmh.runner.options.VerboseMode;
 import org.openjdk.jmh.runner.options.WarmupMode;
-import org.openjdk.jmh.util.Statistics;
 
 import com.coroptis.jblinktree.performance.tool.MergeTestResults;
 
-/**
- * Class ran performance tests for {@link Map#put(Object, Object)} operation on
- * multiple {@link java.util.Map} implementations.
- * <p>
- * Test use random unique numbers stored in file
- * {@link AbstractMapTest#RANDOM_DATA_FILE}.
- * </p>
- * 
- * @author jajir
- *
- */
-public class RunnerMainBenchmark {
+public class BenchmarkRunner {
 
     private final static int THREADS = 100;
 
@@ -64,7 +48,7 @@ public class RunnerMainBenchmark {
      * How many {@link Map#put(Object, Object)} operations is executed during
      * one measured iteration.
      */
-    private final static int MEASURE_OPERATIONS_PER_ITERATION = 100 * 1000;
+    private final static int MEASURE_OPERATIONS_PER_ITERATION = 1000 * 1000;
 
     /**
      * How many times is separate measuring executed.
@@ -94,31 +78,12 @@ public class RunnerMainBenchmark {
 		.measurementTime(TimeValue.NONE)
 		.result("./target/result-" + clazz.getSimpleName() + ".csv")
 		.resultFormat(ResultFormatType.CSV)
-		.jvmArgsAppend("-server", "-XX:+AggressiveOpts", "-dsa", "-Xbatch", "-Xmx1024m")
+		.jvmArgsAppend("-server","-dsa", "-Xbatch", "-Xmx1024m")
 		.build();
     }
 
-    private static void showResults(final Collection<RunResult> runResults) {
-	System.out.println("");
-	System.out.println("------------------------------------------------------------");
-	System.out.println("");
-	for (final RunResult runResult : runResults) {
-	    Result<?> result = runResult.getPrimaryResult();
-	    Statistics stats = result.getStatistics();
-	    System.out.println(stats.toString());
-	    BenchmarkResult benchmarkResult = runResult.getAggregatedResult();
-	    System.out.println(benchmarkResult);
-	    System.out.println("expected total number of numbers: "
-		    + (WARMUP_OPERATIONS + MEASURE_OPERATIONS_PER_ITERATION * MEASURE_ITERATIONS));
-	}
-    }
-
     public static void main(String[] args) throws RunnerException, IOException {
-	showResults(new Runner(getOptions(MapTestJbTreeMap.class)).run());
-	showResults(new Runner(getOptions(MapTestConcurrentHashMap.class)).run());
-	showResults(new Runner(getOptions(MapTestSynchronizedHashMap.class)).run());
-	showResults(new Runner(getOptions(MapTestSynchronizedTreeMap.class)).run());
+	new Runner(getOptions(IdGeneratorTest.class)).run();
 	new MergeTestResults("./target/").merge();
     }
-
 }

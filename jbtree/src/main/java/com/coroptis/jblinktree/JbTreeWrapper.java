@@ -52,15 +52,11 @@ public class JbTreeWrapper<K, V> implements JbTree<K, V> {
 
     private final NodeStore<K> nodeStore;
 
-    private final IdGenerator idGenerator;
-
     private final File file;
 
-    JbTreeWrapper(final JbTree<K, V> tree, final NodeStore<K> nodeStore,
-	    final IdGenerator idGenerator, final String fileName) {
+    JbTreeWrapper(final JbTree<K, V> tree, final NodeStore<K> nodeStore, final String fileName) {
 	this.tree = Preconditions.checkNotNull(tree);
 	this.nodeStore = Preconditions.checkNotNull(nodeStore);
-	this.idGenerator = Preconditions.checkNotNull(idGenerator);
 	this.file = new File(fileName);
     }
 
@@ -200,11 +196,11 @@ public class JbTreeWrapper<K, V> implements JbTree<K, V> {
 	buff.append(intendation);
 	buff.append("node [shape=record]\n");
 
-	for (int i = 0; i < idGenerator.getPreviousId(); i++) {
+	for (int i = 0; i < nodeStore.getMaxNodeId(); i++) {
 	    nodeStore.get(i).writeTo(buff, intendation);
 	}
 
-	for (int i = 0; i < idGenerator.getPreviousId(); i++) {
+	for (int i = 0; i < nodeStore.getMaxNodeId(); i++) {
 	    Node n = (Node) nodeStore.get(i);
 	    addLink(n, buff);
 	    if (!n.isLeafNode()) {
@@ -223,8 +219,7 @@ public class JbTreeWrapper<K, V> implements JbTree<K, V> {
 	buff.toString();
     }
 
-    private void addNextNodes(final Node<Integer, Integer> node,
-	    final StringBuilder buff) {
+    private void addNextNodes(final Node<Integer, Integer> node, final StringBuilder buff) {
 	for (final Object o : node.getNodeIds()) {
 	    Integer i = (Integer) o;
 	    buff.append(intendation);
@@ -242,8 +237,7 @@ public class JbTreeWrapper<K, V> implements JbTree<K, V> {
 	}
     }
 
-    private void addLink(final Node<Integer, Integer> node,
-	    final StringBuilder buff) {
+    private void addLink(final Node<Integer, Integer> node, final StringBuilder buff) {
 	if (node.getLink() != null) {
 	    buff.append(intendation);
 	    buff.append("\"node");
@@ -263,8 +257,7 @@ public class JbTreeWrapper<K, V> implements JbTree<K, V> {
     public void write(final StringBuilder buff) throws IOException {
 	Writer out = null;
 	try {
-	    out = new BufferedWriter(new OutputStreamWriter(
-		    new FileOutputStream(file), "UTF-8"));
+	    out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file), "UTF-8"));
 	    out.write(buff.toString());
 	    out.flush();
 	} catch (IOException e) {

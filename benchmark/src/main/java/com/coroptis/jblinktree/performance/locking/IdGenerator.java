@@ -1,11 +1,4 @@
-package com.coroptis.jblinktree.junit;
-
-import junit.framework.TestCase;
-
-import org.junit.Test;
-
-import com.coroptis.jblinktree.IdGenerator;
-import com.coroptis.jblinktree.IdGeneratorImpl;
+package com.coroptis.jblinktree.performance.locking;
 
 /*
  * #%L
@@ -28,18 +21,34 @@ import com.coroptis.jblinktree.IdGeneratorImpl;
  */
 
 /**
- * Junit test of {@link IdGenerator}.
+ * Class provide new node identification numbers.
  * 
  * @author jajir
  * 
  */
-public class IdGeneratorTest extends TestCase {
+public interface IdGenerator {
 
-    @Test
-    public void test_basic() throws Exception {
-	IdGenerator idGenerator = new IdGeneratorImpl();
+    /**
+     * When new tree is created than first node have this id.
+     */
+    final static int FIRST_NODE_ID = 0;
 
-	assertEquals(0, idGenerator.getNextId());
-    }
+    /**
+     * When new node should be created than this method generate new node id.
+     * Each method call return different id.
+     * <p>
+     * Method is thread safe.
+     * </p>
+     * 
+     * @return new node id
+     */
+    int getNextId();
+
+    /**
+     * Get previously assigned id.
+     * 
+     * @return previously assigned node id
+     */
+    int getPreviousId();
 
 }

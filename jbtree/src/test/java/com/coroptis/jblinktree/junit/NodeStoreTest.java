@@ -49,7 +49,7 @@ public class NodeStoreTest extends AbstractMockingTest {
     @Before
     public void setUp() throws Exception {
 	super.setUp();
-	tested = new NodeStoreImpl<Integer, Integer>(idGenerator, nodeBuilder);
+	tested = new NodeStoreImpl<Integer, Integer>(nodeBuilder);
     }
 
     @After

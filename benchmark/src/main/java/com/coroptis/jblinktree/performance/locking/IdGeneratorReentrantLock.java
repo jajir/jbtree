@@ -1,4 +1,4 @@
-package com.coroptis.jblinktree;
+package com.coroptis.jblinktree.performance.locking;
 
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -28,13 +28,13 @@ import java.util.concurrent.locks.ReentrantLock;
  * @author jajir
  * 
  */
-public class IdGeneratorImpl implements IdGenerator {
+public class IdGeneratorReentrantLock implements IdGenerator {
 
     private int nextId;
 
     private final ReentrantLock lock = new ReentrantLock(false);
 
-    public IdGeneratorImpl() {
+    public IdGeneratorReentrantLock() {
 	nextId = FIRST_NODE_ID;
     }
 

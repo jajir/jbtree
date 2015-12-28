@@ -129,13 +129,12 @@ public final class TreeBuilder {
 	Preconditions.checkNotNull(valueTypeDescriptor,
 		"value TypeDescriptor is null, use .setValueType in builder");
 	final TypeDescriptor<Integer> linkTypeDescriptor = new TypeDescriptorInteger();
-	final JbTreeData<K, V> treeData = new JbTreeDataImpl<K, V>(IdGenerator.FIRST_NODE_ID, l,
+	final JbTreeData<K, V> treeData = new JbTreeDataImpl<K, V>(NodeStore.FIRST_NODE_ID, l,
 		(TypeDescriptor<K>) keyTypeDescriptor, (TypeDescriptor<V>) valueTypeDescriptor,
 		linkTypeDescriptor);
 
-	final IdGenerator idGenerator = new IdGeneratorImpl();
 	final NodeBuilder<K, V> nodeBuilder = new NodeBuilderImpl<K, V>(treeData);
-	final NodeStoreImpl<K, V> nodeStore = new NodeStoreImpl<K, V>(idGenerator, nodeBuilder);
+	final NodeStoreImpl<K, V> nodeStore = new NodeStoreImpl<K, V>(nodeBuilder);
 	final JbTreeTool<K, V> jbTreeTool = new JbTreeToolImpl<K, V>(nodeStore,
 		(TypeDescriptor<K>) keyTypeDescriptor, nodeBuilder);
 	final JbTreeTraversingService<K, V> treeLockingTool = new JbTreeTraversingServiceImpl<K, V>(
@@ -156,8 +155,7 @@ public final class TreeBuilder {
 	    return new TreeMapImpl<K, V>(tree, treeData);
 	} else {
 	    return new TreeMapImpl<K, V>(
-		    new JbTreeWrapper<K, V>(tree, nodeStore, idGenerator, treeWrapperFileName),
-		    treeData);
+		    new JbTreeWrapper<K, V>(tree, nodeStore, treeWrapperFileName), treeData);
 
 	}
     }

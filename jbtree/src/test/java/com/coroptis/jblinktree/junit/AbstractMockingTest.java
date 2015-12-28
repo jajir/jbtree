@@ -22,7 +22,6 @@ package com.coroptis.jblinktree.junit;
 
 import org.easymock.EasyMock;
 
-import com.coroptis.jblinktree.IdGenerator;
 import com.coroptis.jblinktree.JbTreeData;
 import com.coroptis.jblinktree.JbTreeHelper;
 import com.coroptis.jblinktree.JbTreeService;
@@ -54,8 +53,6 @@ public abstract class AbstractMockingTest {
 
     protected NodeBuilder<Integer, Integer> nodeBuilder;
 
-    protected IdGenerator idGenerator;
-
     protected NodeImpl<Integer, Integer> n1, n2, n3, n4;
 
     protected NodeBuilder<Integer, Integer> builder;
@@ -67,7 +64,6 @@ public abstract class AbstractMockingTest {
 	nodeStore = EasyMock.createMock(NodeStore.class);
 	nodeBuilder = EasyMock.createMock(NodeBuilder.class);
 	treeTool = EasyMock.createMock(JbTreeTool.class);
-	idGenerator = EasyMock.createMock(IdGenerator.class);
 	n1 = EasyMock.createMock(NodeImpl.class);
 	n2 = EasyMock.createMock(NodeImpl.class);
 	n3 = EasyMock.createMock(NodeImpl.class);
@@ -77,12 +73,11 @@ public abstract class AbstractMockingTest {
 	treeHelper = EasyMock.createMock(JbTreeHelper.class);
 	treeData = EasyMock.createMock(JbTreeData.class);
 	treeTraversingService = EasyMock.createMock(JbTreeTraversingService.class);
-	mocks = new Object[] { nodeStore, nodeBuilder, treeTool, idGenerator, n1, n2, n3, n4,
-		builder, jbTreeService, treeHelper, treeData, treeTraversingService };
+	mocks = new Object[] { nodeStore, nodeBuilder, treeTool, n1, n2, n3, n4, builder,
+		jbTreeService, treeHelper, treeData, treeTraversingService };
     }
 
     protected void tearDown() throws Exception {
-	idGenerator = null;
 	n1 = null;
 	n2 = null;
 	n3 = null;

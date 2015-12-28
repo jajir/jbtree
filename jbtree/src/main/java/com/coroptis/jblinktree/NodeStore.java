@@ -30,6 +30,11 @@ package com.coroptis.jblinktree;
 public interface NodeStore<K> {
 
     /**
+     * When new tree is created than first node have this id.
+     */
+    final static int FIRST_NODE_ID = 0;
+
+    /**
      * Lock given node.
      * 
      * @param nodeId
@@ -97,11 +102,15 @@ public interface NodeStore<K> {
 
     /**
      * Method provide new node id.
-     * <p>
-     * Method just delegate to {@link IdGenerator#getNextId()}.
-     * </p>
      * 
      * @return new node id
      */
     Integer getNextId();
+
+    /**
+     * Get maximal node id.
+     * 
+     * @return maximal node id
+     */
+    int getMaxNodeId();
 }

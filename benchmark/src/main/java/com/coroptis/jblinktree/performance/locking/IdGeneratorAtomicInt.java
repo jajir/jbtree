@@ -1,4 +1,6 @@
-package com.coroptis.jblinktree;
+package com.coroptis.jblinktree.performance.locking;
+
+import java.util.concurrent.locks.ReentrantLock;
 
 /*
  * #%L
@@ -21,34 +23,35 @@ package com.coroptis.jblinktree;
  */
 
 /**
- * Class provide new node identification numbers.
+ * Implementation of {@link IdGenerator}.
  * 
  * @author jajir
  * 
  */
-public interface IdGenerator {
+public class IdGeneratorAtomicInt implements IdGenerator {
 
-    /**
-     * When new tree is created than first node have this id.
-     */
-    final static int FIRST_NODE_ID = 0;
+    private int nextId;
 
-    /**
-     * When new node should be created than this method generate new node id.
-     * Each method call return different id.
-     * <p>
-     * Method is thread safe.
-     * </p>
-     * 
-     * @return new node id
-     */
-    int getNextId();
+    private final ReentrantLock lock = new ReentrantLock(false);
 
-    /**
-     * Get previously assigned id.
-     * 
-     * @return previously assigned node id
-     */
-    int getPreviousId();
+    public IdGeneratorAtomicInt() {
+	nextId = FIRST_NODE_ID;
+    }
+
+    @Override
+    public int getNextId() {
+	lock.lock();
+	try {
+	    int out = nextId++;
+	    return out;
+	} finally {
+	    lock.unlock();
+	}
+    }
+
+    @Override
+    public int getPreviousId() {
+	return nextId;
+    }
 
 }
