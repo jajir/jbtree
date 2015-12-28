@@ -60,13 +60,13 @@ public class NodeBuilderImpl<K, V> implements NodeBuilder<K, V> {
 	byte flag = field[0];
 	if (flag == Node.M) {
 	    // leaf node
-	    Field<K, T> f = new FieldImpl(field, keyTypeDescriptor, valueTypeDescriptor,
+	   final Field<K, T> f = new FieldImpl(field, keyTypeDescriptor, valueTypeDescriptor,
 		    linkTypeDescriptor);
 	    return (Node<K, T>) new NodeImpl(l, idNode, f, keyTypeDescriptor, valueTypeDescriptor,
 		    linkTypeDescriptor);
 	} else {
 	    // non-leaf node
-	    Field<K, T> f = new FieldImpl(field, keyTypeDescriptor, linkTypeDescriptor,
+	    final Field<K, T> f = new FieldImpl(field, keyTypeDescriptor, linkTypeDescriptor,
 		    linkTypeDescriptor);
 	    return (Node<K, T>) new NodeImpl(l, idNode, f, keyTypeDescriptor, linkTypeDescriptor,
 		    linkTypeDescriptor);
@@ -92,7 +92,7 @@ public class NodeBuilderImpl<K, V> implements NodeBuilder<K, V> {
 	    final Integer value2, final K key2) {
 	final byte b[] = new byte[1 + keyTypeDescriptor.getMaxLength() * 2
 		+ linkTypeDescriptor.getMaxLength() * 2 + linkTypeDescriptor.getMaxLength()];
-	b[0] = 0; // it's non-lef node.
+	b[0] = 0; // it's non-leaf node.
 	int position = 1;
 	// pair 1
 	linkTypeDescriptor.save(b, position, value1);

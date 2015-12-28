@@ -40,6 +40,11 @@ public class FieldImpl<K, V> implements Field<K, V> {
 
     private byte[] field;
 
+    /**
+     * Object doesn't support length changes.
+     */
+    private final int size;
+
     private final TypeDescriptor<K> keyTypeDescriptor;
 
     private final TypeDescriptor<V> valueTypeDescriptor;
@@ -58,15 +63,14 @@ public class FieldImpl<K, V> implements Field<K, V> {
      * @param linkTypeDescriptor
      *            required link type descriptor
      */
-    public FieldImpl(final int numberOfField,
-	    final TypeDescriptor<K> keyTypeDescriptor,
+    public FieldImpl(final int numberOfField, final TypeDescriptor<K> keyTypeDescriptor,
 	    final TypeDescriptor<V> valueTypeDescriptor,
 	    final TypeDescriptor<Integer> linkTypeDescriptor) {
 	this.linkTypeDescriptor = linkTypeDescriptor;
 	this.keyTypeDescriptor = keyTypeDescriptor;
 	this.valueTypeDescriptor = valueTypeDescriptor;
-	this.field = new byte[getPosition(numberOfField)
-		+ linkTypeDescriptor.getMaxLength()];
+	this.field = new byte[getPosition(numberOfField) + linkTypeDescriptor.getMaxLength()];
+	size = computeLength();
     }
 
     /**
@@ -82,8 +86,7 @@ public class FieldImpl<K, V> implements Field<K, V> {
      * @param linkTypeDescriptor
      *            required link type descriptor
      */
-    public FieldImpl(final byte[] field,
-	    final TypeDescriptor<K> keyTypeDescriptor,
+    public FieldImpl(final byte[] field, final TypeDescriptor<K> keyTypeDescriptor,
 	    final TypeDescriptor<V> valueTypeDescriptor,
 	    final TypeDescriptor<Integer> linkTypeDescriptor) {
 	this.linkTypeDescriptor = linkTypeDescriptor;
@@ -91,6 +94,7 @@ public class FieldImpl<K, V> implements Field<K, V> {
 	this.valueTypeDescriptor = valueTypeDescriptor;
 	this.field = new byte[field.length];
 	System.arraycopy(field, 0, this.field, 0, this.field.length);
+	size = computeLength();
     }
 
     /**
@@ -104,8 +108,7 @@ public class FieldImpl<K, V> implements Field<K, V> {
     private int getPosition(int position) {
 	final int p1 = position >>> 1;
 	final int p2 = (position + 1) >>> 1;
-	return p1 * keyTypeDescriptor.getMaxLength()
-		+ p2 * valueTypeDescriptor.getMaxLength() + 1;
+	return p1 * keyTypeDescriptor.getMaxLength() + p2 * valueTypeDescriptor.getMaxLength() + 1;
     }
 
     /*
@@ -134,8 +137,8 @@ public class FieldImpl<K, V> implements Field<K, V> {
      * int, int, int)
      */
     @Override
-    public void copy(final Field<K, V> src, final int srcPos1,
-	    final int destPos1, final int length) {
+    public void copy(final Field<K, V> src, final int srcPos1, final int destPos1,
+	    final int length) {
 	final int srcPos = getPosition(srcPos1);
 	final int p = getPosition(srcPos1 + length) - srcPos;
 	final int destPos = getPosition(destPos1);
@@ -186,18 +189,17 @@ public class FieldImpl<K, V> implements Field<K, V> {
 	return Arrays.hashCode(field);
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.coroptis.jblinktree.Filed#getLength()
-     */
-    @Override
-    public int getLength() {
+    private int computeLength() {
 	final int length = field.length - linkTypeDescriptor.getMaxLength() - 1;
 	final int recordLength = keyTypeDescriptor.getMaxLength()
 		+ valueTypeDescriptor.getMaxLength();
 	final int out = length / recordLength * 2;
 	return out + 1;
+    }
+
+    @Override
+    public int getLength() {
+	return size;
     }
 
     @Override

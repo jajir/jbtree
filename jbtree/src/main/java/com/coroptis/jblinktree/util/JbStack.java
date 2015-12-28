@@ -29,9 +29,26 @@ package com.coroptis.jblinktree.util;
  */
 public interface JbStack {
 
+    /**
+     * Get last value from stack and remove it.
+     * 
+     * @return last value
+     */
     public Integer pop();
 
+    /**
+     * Insert value on the top of the stack.
+     * 
+     * @param item
+     *            optional item value
+     */
     public void push(Integer item);
 
+    /**
+     * Is stack empty.
+     * 
+     * @return return <code>true</code> stack is empty otherwise
+     *         <code>false</code>
+     */
     public boolean isEmpty();
 }

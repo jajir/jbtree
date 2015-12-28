@@ -20,41 +20,51 @@ package com.coroptis.jblinktree.util;
  * #L%
  */
 
-import java.util.ArrayDeque;
+import java.util.Arrays;
+import java.util.EmptyStackException;
 
 /**
- * This is simplest {@link JbStack} implementation based on {@link ArrayDeque}
- * class.
- * <p>
- * It's not thread safe.
- * </p>
- * 
- * TODO JH - piece of shit - slow, field, linked list
+ * Simple implementations using field size. When field filled with values than
+ * filed size is increased.
  * 
  * @author jajir
- * 
+ *
  */
-public class JbStackArrayDeque implements JbStack {
+public class JbStackArrayList implements JbStack {
 
-    private final ArrayDeque<Integer> deque;
+    public final static int INITIAL_FIELD_CAPACITY = 20;
 
-    public JbStackArrayDeque() {
-	deque = new ArrayDeque<Integer>();
+    private final static int FIELD_GROW_SIZE = 5;
+
+    private Integer[] field;
+
+    private int lastOne;
+
+    public JbStackArrayList() {
+	field = new Integer[INITIAL_FIELD_CAPACITY];
+	lastOne = 0;
     }
 
     @Override
     public Integer pop() {
-	return deque.pop();
+	if (isEmpty()) {
+	    throw new EmptyStackException();
+	} else {
+	    return field[--lastOne];
+	}
     }
 
     @Override
     public void push(final Integer item) {
-	deque.push(item);
+	if (field.length <= lastOne) {
+	    field = Arrays.copyOf(field, field.length + FIELD_GROW_SIZE);
+	}
+	field[lastOne++] = item;
     }
 
     @Override
     public boolean isEmpty() {
-	return deque.isEmpty();
+	return lastOne == 0;
     }
 
 }

@@ -23,7 +23,7 @@ package com.coroptis.jblinktree;
 import java.util.concurrent.locks.ReentrantLock;
 
 import com.coroptis.jblinktree.util.JbStack;
-import com.coroptis.jblinktree.util.JbStackArrayDeque;
+import com.coroptis.jblinktree.util.JbStackArrayList;
 import com.google.common.base.Preconditions;
 
 /**
@@ -62,7 +62,7 @@ public class JbTreeHelperImpl<K, V> implements JbTreeHelper<K, V> {
     @Override
     public Node<K, V> findAppropriateLeafNode(final K key) {
 	Preconditions.checkNotNull(key);
-	Integer idNode = treeTool.findLeafNodeId(key, new JbStackArrayDeque(),
+	Integer idNode = treeTool.findLeafNodeId(key, new JbStackArrayList(),
 		treeData.getRootNodeId());
 	Node<K, V> node = nodeStore.get(idNode);
 	return treeTool.moveRightLeafNodeWithoutLocking(node, key);

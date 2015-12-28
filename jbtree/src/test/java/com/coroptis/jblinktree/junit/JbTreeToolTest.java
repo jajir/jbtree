@@ -34,7 +34,7 @@ import com.coroptis.jblinktree.Node;
 import com.coroptis.jblinktree.NodeImpl;
 import com.coroptis.jblinktree.type.TypeDescriptorInteger;
 import com.coroptis.jblinktree.util.JbStack;
-import com.coroptis.jblinktree.util.JbStackArrayDeque;
+import com.coroptis.jblinktree.util.JbStackArrayList;
 
 /**
  * Tests for {@link JbTreeTool}
@@ -82,7 +82,7 @@ public class JbTreeToolTest extends AbstractMockingTest {
     @SuppressWarnings({ "unchecked", "rawtypes" })
     @Test
     public void test_findLeafNodeId() throws Exception {
-	final JbStack stack = new JbStackArrayDeque();
+	final JbStack stack = new JbStackArrayList();
 	EasyMock.expect(nodeStore.get(2)).andReturn((Node) n1);
 	EasyMock.expect(n1.getId()).andReturn(2);
 	EasyMock.expect(n1.isLeafNode()).andReturn(false);
