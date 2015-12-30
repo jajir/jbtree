@@ -39,7 +39,7 @@ public interface NodeBuilder<K, V> {
      *            required node id
      * @return created empty node
      */
-    Node<K, V> makeEmptyLeafNode(int idNode);
+    Node<K, V> makeEmptyLeafNode(Integer idNode);
 
     /**
      * Create empty non-leaf node.
@@ -48,7 +48,7 @@ public interface NodeBuilder<K, V> {
      *            required node id
      * @return created empty node
      */
-    Node<K, Integer> makeEmptyNonLeafNode(final int idNode);
+    Node<K, Integer> makeEmptyNonLeafNode(final Integer idNode);
 
     /**
      * Create new node by copying array to new node.
@@ -61,7 +61,7 @@ public interface NodeBuilder<K, V> {
      *            required byte array
      * @return newly created node
      */
-    <T> Node<K, T> makeNode(int idNode, byte field[]);
+    <T> Node<K, T> makeNode(Integer idNode, byte field[]);
 
     /**
      * Create non-leaf node. Method allows insert two key value pairs
@@ -78,6 +78,6 @@ public interface NodeBuilder<K, V> {
      *            required key 2
      * @return newly created non-leaf node
      */
-    Node<K, Integer> makeNonLeafNode(int idNode, Integer value1, K key1, Integer value2, K key2);
+    Node<K, Integer> makeNonLeafNode(Integer idNode, Integer value1, K key1, Integer value2, K key2);
 
 }

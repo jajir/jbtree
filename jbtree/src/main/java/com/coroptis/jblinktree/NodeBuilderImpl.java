@@ -56,7 +56,7 @@ public class NodeBuilderImpl<K, V> implements NodeBuilder<K, V> {
 
     @SuppressWarnings({ "rawtypes", "unchecked" })
     @Override
-    public <T> Node<K, T> makeNode(final int idNode, final byte field[]) {
+    public <T> Node<K, T> makeNode(final Integer idNode, final byte field[]) {
 	byte flag = field[0];
 	if (flag == Node.M) {
 	    // leaf node
@@ -74,21 +74,21 @@ public class NodeBuilderImpl<K, V> implements NodeBuilder<K, V> {
     }
 
     @Override
-    public Node<K, V> makeEmptyLeafNode(final int idNode) {
+    public Node<K, V> makeEmptyLeafNode(final Integer idNode) {
 	Preconditions.checkNotNull(idNode);
 	return new NodeImpl<K, V>(l, idNode, true, keyTypeDescriptor, valueTypeDescriptor,
 		linkTypeDescriptor);
     }
 
     @Override
-    public Node<K, Integer> makeEmptyNonLeafNode(final int idNode) {
+    public Node<K, Integer> makeEmptyNonLeafNode(final Integer idNode) {
 	Preconditions.checkNotNull(idNode);
 	return new NodeImpl<K, Integer>(l, idNode, false, keyTypeDescriptor, linkTypeDescriptor,
 		linkTypeDescriptor);
     }
 
     @Override
-    public Node<K, Integer> makeNonLeafNode(final int idNode, final Integer value1, final K key1,
+    public Node<K, Integer> makeNonLeafNode(final Integer idNode, final Integer value1, final K key1,
 	    final Integer value2, final K key2) {
 	final byte b[] = new byte[1 + keyTypeDescriptor.getMaxLength() * 2
 		+ linkTypeDescriptor.getMaxLength() * 2 + linkTypeDescriptor.getMaxLength()];
