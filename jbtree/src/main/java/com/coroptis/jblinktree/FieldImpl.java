@@ -154,9 +154,7 @@ public class FieldImpl<K, V> implements Field<K, V> {
      */
     @Override
     public byte[] getBytes() {
-	final byte out[] = new byte[field.length];
-	System.arraycopy(field, 0, out, 0, field.length);
-	return out;
+	return field;
     }
 
     /**
