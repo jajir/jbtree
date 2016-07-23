@@ -101,6 +101,7 @@ public class JbTreeToolTest extends AbstractMockingTest {
 	EasyMock.verify(nodeStore, treeTool, n1, n2);
     }
 
+    @Override
     @Before
     public void setUp() throws Exception {
 	super.setUp();
@@ -108,6 +109,7 @@ public class JbTreeToolTest extends AbstractMockingTest {
 		builder);
     }
 
+    @Override
     @After
     public void tearDown() throws Exception {
 	tested = null;

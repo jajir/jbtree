@@ -81,11 +81,6 @@ public interface JbTree<K, V> {
     boolean containsKey(K key);
 
     /**
-     * Override {@link System#toString()} method.
-     */
-    String toString();
-
-    /**
      * Verify that tree is consistent.
      */
     void verify();

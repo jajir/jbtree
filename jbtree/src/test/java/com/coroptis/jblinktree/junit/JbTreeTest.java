@@ -68,6 +68,7 @@ public class JbTreeTest extends AbstractMockingTest {
 	EasyMock.verify(mocks);
     }
 
+    @Override
     @Before
     public void setUp() throws Exception {
 	super.setUp();
@@ -75,6 +76,7 @@ public class JbTreeTest extends AbstractMockingTest {
 		treeTraversingService, jbTreeService);
     }
 
+    @Override
     @After
     public void tearDown() throws Exception {
 	jbTree = null;

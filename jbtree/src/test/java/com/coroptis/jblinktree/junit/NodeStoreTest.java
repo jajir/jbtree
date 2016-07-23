@@ -46,12 +46,14 @@ public class NodeStoreTest extends AbstractMockingTest {
 
     }
 
+    @Override
     @Before
     public void setUp() throws Exception {
 	super.setUp();
 	tested = new NodeStoreImpl<Integer, Integer>(nodeBuilder);
     }
 
+    @Override
     @After
     public void tearDown() throws Exception {
 	tested = null;

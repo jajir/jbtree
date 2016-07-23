@@ -29,7 +29,7 @@ public class MapTestJbTreeMap extends AbstractMapTest {
 
     @Override
     protected Map<Integer, Integer> initialize() {
-	return TreeBuilder.builder().setL(10).setKeyType(Types.integer())
+	return TreeBuilder.builder().setL(100).setKeyType(Types.integer())
 		.setValueType(Types.integer()).build();
     }
 
