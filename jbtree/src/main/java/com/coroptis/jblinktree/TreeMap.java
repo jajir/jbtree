@@ -40,12 +40,20 @@ public interface TreeMap<K, V> extends Map<K, V> {
     void verify();
 
     /**
+     * TODO don't expose outside of implementation
      * Traverse through entire tree and visit all nodes.
      * 
      * @param treeVisitor
      *            required visitor implementation
      */
     void visit(JbTreeVisitor<K, V> treeVisitor);
+
+    /**
+     * Traverse through all tree key value pairs in tree.
+     * 
+     * @param dataVisitor
+     */
+    void visit(JbDataVisitor<K, V> dataVisitor);
 
     /**
      * return number of nodes that are currently locked.

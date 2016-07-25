@@ -211,6 +211,7 @@ public interface Node<K, V> {
     public boolean verify();
 
     /**
+     * TODO describe what is it.
      * @return the l
      */
     public int getL();

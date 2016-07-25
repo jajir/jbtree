@@ -1,4 +1,4 @@
-package com.coroptis.jblinktree;
+package com.coroptis.jblinktree.store;
 
 /*
  * #%L
@@ -24,6 +24,11 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import com.coroptis.jblinktree.JblinktreeException;
+import com.coroptis.jblinktree.Node;
+import com.coroptis.jblinktree.NodeBuilder;
+import com.coroptis.jblinktree.NodeLocks;
+import com.coroptis.jblinktree.NodeStore;
 import com.google.common.base.Preconditions;
 
 /**
@@ -32,7 +37,7 @@ import com.google.common.base.Preconditions;
  * @author jajir
  * 
  */
-public class NodeStoreImpl<K, V> implements NodeStore<K> {
+public class NodeStoreInMem<K, V> implements NodeStore<K> {
 
     private final Map<Integer, byte[]> nodes;
 
@@ -42,7 +47,7 @@ public class NodeStoreImpl<K, V> implements NodeStore<K> {
 
     private final AtomicInteger nextId;
 
-    public NodeStoreImpl(final NodeBuilder<K, V> nodeBuilder) {
+    public NodeStoreInMem(final NodeBuilder<K, V> nodeBuilder) {
 	this.nextId = new AtomicInteger(FIRST_NODE_ID);
 	this.nodeBuilder = Preconditions.checkNotNull(nodeBuilder);
 	nodes = new ConcurrentHashMap<Integer, byte[]>();

@@ -22,6 +22,8 @@ package com.coroptis.jblinktree;
 
 import java.util.Map;
 
+import com.coroptis.jblinktree.store.NodeStoreInFile;
+import com.coroptis.jblinktree.store.NodeStoreInMem;
 import com.coroptis.jblinktree.type.TypeDescriptor;
 import com.coroptis.jblinktree.type.TypeDescriptorInteger;
 import com.coroptis.jblinktree.type.Types;
@@ -40,6 +42,43 @@ public final class TreeBuilder {
     private TypeDescriptor<?> keyTypeDescriptor;
     private TypeDescriptor<?> valueTypeDescriptor;
     private String treeWrapperFileName;
+    private NodeStoreInFileBuilder nodeStoreInFileBuilder;
+
+    public static class NodeStoreInFileBuilder {
+
+	private String fileName;
+
+	private int noOfCachedNodes;
+
+	public NodeStoreInFileBuilder setFileName(final String fileName) {
+	    this.fileName = Preconditions.checkNotNull(fileName);
+	    return this;
+	}
+
+	public NodeStoreInFileBuilder setNoOfCachedNodes(final int noOfCachedNodes) {
+	    this.noOfCachedNodes = Preconditions.checkNotNull(noOfCachedNodes);
+	    return this;
+	}
+
+	/**
+	 * @return the fileName
+	 */
+	public String getFileName() {
+	    return fileName;
+	}
+
+	/**
+	 * @return the noOfCachedNodes
+	 */
+	public int getNoOfCachedNodes() {
+	    return noOfCachedNodes;
+	}
+
+    }
+
+    public static NodeStoreInFileBuilder getNodeStoreInFileBuilder() {
+	return new TreeBuilder.NodeStoreInFileBuilder();
+    }
 
     /**
      * Create new instance of builder.
@@ -70,6 +109,9 @@ public final class TreeBuilder {
      * @return current tree builder instance
      */
     public TreeBuilder setL(final Integer l) {
+	if (l < 2) {
+	    throw new JblinktreeException("Value of L parameter should higher that 1.");
+	}
 	this.l = l;
 	return this;
     }
@@ -84,6 +126,18 @@ public final class TreeBuilder {
      */
     public TreeBuilder setTreeWrapper(final String treeWrapperFileName) {
 	this.treeWrapperFileName = Preconditions.checkNotNull(treeWrapperFileName);
+	return this;
+    }
+
+    /**
+     * Allows to set node store.
+     * 
+     * @param nodeStore
+     * @return current tree builder instance
+     */
+    public TreeBuilder setNodeStoreInFileBuilder(
+	    final NodeStoreInFileBuilder nodeStoreFileBuilder) {
+	this.nodeStoreInFileBuilder = Preconditions.checkNotNull(nodeStoreFileBuilder);
 	return this;
     }
 
@@ -134,7 +188,15 @@ public final class TreeBuilder {
 		linkTypeDescriptor);
 
 	final NodeBuilder<K, V> nodeBuilder = new NodeBuilderImpl<K, V>(treeData);
-	final NodeStoreImpl<K, V> nodeStore = new NodeStoreImpl<K, V>(nodeBuilder);
+
+	final NodeStore<K> nodeStore;
+	if (nodeStoreInFileBuilder == null) {
+	    nodeStore = new NodeStoreInMem<K, V>(nodeBuilder);
+	} else {
+	    nodeStore = new NodeStoreInFile<K, V>(treeData, nodeBuilder,
+		    nodeStoreInFileBuilder.getFileName(),
+		    nodeStoreInFileBuilder.getNoOfCachedNodes());
+	}
 	final JbTreeTool<K, V> jbTreeTool = new JbTreeToolImpl<K, V>(nodeStore,
 		(TypeDescriptor<K>) keyTypeDescriptor, nodeBuilder);
 	final JbTreeTraversingService<K, V> treeLockingTool = new JbTreeTraversingServiceImpl<K, V>(
