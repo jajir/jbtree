@@ -48,7 +48,6 @@ final public class Executer implements Runnable {
 	this.cycleCount = cycleCount;
     }
 
-    @Override
     public final void run() {
 	try {
 	    startSignal.await();
