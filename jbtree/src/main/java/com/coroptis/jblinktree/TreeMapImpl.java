@@ -132,6 +132,7 @@ public class TreeMapImpl<K, V> implements TreeMap<K, V> {
     }
 
     @Override
+    @Deprecated
     public void visit(final JbTreeVisitor<K, V> treeVisitor) {
 	tree.visit(treeVisitor);
     }

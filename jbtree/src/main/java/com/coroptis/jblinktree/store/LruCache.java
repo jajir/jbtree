@@ -49,7 +49,7 @@ public class LruCache<K, V> {
     void put(final Node<K, V> node) {
 	setLastUsed(node.getId());
 	cache.put(node.getId(), node.getFieldBytes());
-	if (cache.size() >= numberOfNodesCacheSize) {
+	if (cache.size() > numberOfNodesCacheSize) {
 	    Integer nodeId = lastRecentUsedIds.removeLast();
 	    final byte[] field = cache.remove(nodeId);
 	    onEvict.evict((Node<K, V>) nodeBuilder.makeNode(nodeId, field));

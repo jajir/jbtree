@@ -25,7 +25,37 @@ import com.coroptis.jblinktree.type.TypeDescriptor;
  */
 
 /**
- * Holds node data. Data are stored as v1,k1,v2,k2 ...
+ * Holds node data. Data are stored as v1,k1,v2,k2 ...For example:
+ * <ul>
+ * <li>key length - kl bytes</li>
+ * <li>value length is fixed- 4 bytes</li>
+ * <li>filed length - length</li>
+ * </ul>
+ * <table border="1" style="border-collapse:collapse" summary="keys and values meaning in node">
+ * <tr>
+ * <td>Meaning</td>
+ * <td>flags</td>
+ * <td>P(0)</td>
+ * <td>K(0)</td>
+ * <td>P(1)</td>
+ * <td>K(1)</td>
+ * <td>&nbsp;...&nbsp;</td>
+ * <td colspan="4">link</td>
+ * </tr>
+ * <tr>
+ * <td>byte index</td>
+ * <td>0</td>
+ * <td>1</td>
+ * <td>5</td>
+ * <td>5 + kl</td>
+ * <td>9 + kl</td>
+ * <td>&nbsp;...&nbsp;</td>
+ * <td>length - 4</td>
+ * <td>length - 3</td>
+ * <td>length - 2</td>
+ * <td>length - 1</td>
+ * </tr>
+ * </table>
  * 
  * @author jajir
  * 
