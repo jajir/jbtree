@@ -23,7 +23,9 @@ package com.coroptis.jblinktree.store;
 import com.coroptis.jblinktree.Node;
 
 public interface OnEvict<K, V> {
-    
+
     void evict(Node<K, V> node);
+
+    Node<K, V> load(Integer nodeId);
 
 }

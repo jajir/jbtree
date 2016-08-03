@@ -128,7 +128,7 @@ public interface Node<K, V> {
     /**
      * Return max key, that could be use for representing this node.
      * 
-     * @return max key 
+     * @return max key
      */
     public K getMaxKey();
 
@@ -212,8 +212,11 @@ public interface Node<K, V> {
 
     /**
      * TODO describe what is it.
+     * 
      * @return the l
+     * @deprecated replace with {@link JbTreeData}
      */
+    @Deprecated
     public int getL();
 
     /**

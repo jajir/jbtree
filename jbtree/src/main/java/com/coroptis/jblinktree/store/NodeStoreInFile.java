@@ -24,7 +24,9 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.RandomAccessFile;
+import java.util.Arrays;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.logging.Logger;
 
 import com.coroptis.jblinktree.JbTreeData;
 import com.coroptis.jblinktree.JblinktreeException;
@@ -44,48 +46,29 @@ public class NodeStoreInFile<K, V> implements NodeStore<K> {
 
     private final NodeLocks nodeLocks;
 
-    private final NodeBuilder<K, V> nodeBuilder;
-
     private final AtomicInteger nextId;
 
     private final LruCache<K, V> nodeCache;
 
-    private final String fileName;
-
-    private final RandomAccessFile raf;
-
-    private final int maxNodeSize;
+    private final FileStorage<K, V> fileStorage;
 
     public NodeStoreInFile(final JbTreeData<K, V> treeData, final NodeBuilder<K, V> nodeBuilder,
 	    String fileName, int numberOfNodesCacheSize) {
 	this.nextId = new AtomicInteger(FIRST_NODE_ID);
-	this.nodeBuilder = Preconditions.checkNotNull(nodeBuilder);
-	this.fileName = fileName;
-	maxNodeSize = treeData.getL() * (treeData.getKeyTypeDescriptor().getMaxLength()
-		+ treeData.getValueTypeDescriptor().getMaxLength()) + 4;
+	fileStorage = new FileStorageImpl<K,V>(treeData, nodeBuilder, fileName);
 	nodeLocks = new NodeLocks();
 	nodeCache = new LruCache<K, V>(nodeBuilder, numberOfNodesCacheSize, new OnEvict<K, V>() {
 
 	    @Override
 	    public void evict(Node<K, V> node) {
-		evicted(node);
+		fileStorage.store(node);
+	    }
+
+	    @Override
+	    public Node<K, V> load(Integer nodeId) {
+		return fileStorage.load(nodeId);
 	    }
 	});
-	try {
-	    raf = new RandomAccessFile(new File(fileName), "rw");
-	} catch (FileNotFoundException e) {
-	    throw new JblinktreeException(e.getMessage(), e);
-	}
-    }
-
-    private void evicted(Node<K, V> node) {
-	final int position = maxNodeSize * node.getId();
-	try {
-	    raf.seek(position);
-	    raf.write(node.getFieldBytes(), 0, node.getFieldBytes().length);
-	} catch (IOException e) {
-	    throw new JblinktreeException(e.getMessage(), e);
-	}
     }
 
     @Override

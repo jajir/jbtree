@@ -3,6 +3,7 @@ package com.coroptis.jblinktree.type;
 import java.io.Serializable;
 
 import com.coroptis.jblinktree.JblinktreeException;
+import com.google.common.base.MoreObjects;
 
 /*
  * #%L
@@ -72,6 +73,12 @@ public class TypeDescriptorInteger
     @Override
     public int compare(final Integer value1, final Integer value2) {
 	return value1.compareTo(value2);
+    }
+
+    @Override
+    public String toString() {
+	return MoreObjects.toStringHelper(TypeDescriptorInteger.class).add("maxLength", getMaxLength())
+		.toString();
     }
 
 }

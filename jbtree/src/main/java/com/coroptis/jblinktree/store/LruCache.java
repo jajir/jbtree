@@ -27,6 +27,15 @@ import java.util.Map;
 import com.coroptis.jblinktree.Node;
 import com.coroptis.jblinktree.NodeBuilder;
 
+
+/**
+ * Implementation of Last Recent Used (LRU) cache.
+ * 
+ * @author jan
+ *
+ * @param <K>
+ * @param <V>
+ */
 public class LruCache<K, V> {
 
     final NodeBuilder<K, V> nodeBuilder;
@@ -49,6 +58,10 @@ public class LruCache<K, V> {
     void put(final Node<K, V> node) {
 	setLastUsed(node.getId());
 	cache.put(node.getId(), node.getFieldBytes());
+	checkCacheSize();
+    }
+
+    private void checkCacheSize() {
 	if (cache.size() > numberOfNodesCacheSize) {
 	    Integer nodeId = lastRecentUsedIds.removeLast();
 	    final byte[] field = cache.remove(nodeId);
@@ -63,8 +76,14 @@ public class LruCache<K, V> {
     }
 
     Node<K, V> get(final Integer idNode) {
-	setLastUsed(idNode);
-	return nodeBuilder.makeNode(idNode, cache.get(idNode));
+	if (cache.containsKey(idNode)) {
+	    setLastUsed(idNode);
+	    return nodeBuilder.makeNode(idNode, cache.get(idNode));
+	} else {
+	    Node<K, V> node = onEvict.load(idNode);
+	    put(node);
+	    return node;
+	}
     }
 
     private void setLastUsed(final Integer idNode) {

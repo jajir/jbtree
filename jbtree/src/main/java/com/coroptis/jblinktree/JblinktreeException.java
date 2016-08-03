@@ -1,7 +1,5 @@
 package com.coroptis.jblinktree;
 
-import com.google.common.base.Preconditions;
-
 /*
  * #%L
  * jblinktree
@@ -42,7 +40,7 @@ public class JblinktreeException extends RuntimeException {
      *            required message
      */
     public JblinktreeException(final String message) {
-	super(Preconditions.checkNotNull(message));
+	super(message);
     }
 
     /**
@@ -54,6 +52,6 @@ public class JblinktreeException extends RuntimeException {
      *            required re-thrown exception
      */
     public JblinktreeException(final String message, final Throwable e) {
-	super(Preconditions.checkNotNull(message), e);
+	super(message, e);
     }
 }
