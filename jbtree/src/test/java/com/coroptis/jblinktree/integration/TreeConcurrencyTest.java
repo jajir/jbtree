@@ -57,8 +57,8 @@ public class TreeConcurrencyTest extends TestCase {
 
     @Test
     public void testForThreadClash() throws Exception {
-	final int cycleCount = 1000*1000;
-	final int threadCount = 500;
+	final int cycleCount = 1000*100;
+	final int threadCount = 50;
 	final CountDownLatch doneLatch = new CountDownLatch(cycleCount * threadCount);
 	final CountDownLatch startLatch = new CountDownLatch(1);
 
@@ -74,7 +74,7 @@ public class TreeConcurrencyTest extends TestCase {
 	}
 
 	startLatch.countDown();
-	doneLatch.await(20, TimeUnit.HOURS);
+	doneLatch.await(20, TimeUnit.SECONDS);
 	assertEquals("Some thread didn't finished work", 0, doneLatch.getCount());
 	assertEquals("Some locks wasn't unlocked", 0, tree.countLockedNodes());
 	tree.verify();
