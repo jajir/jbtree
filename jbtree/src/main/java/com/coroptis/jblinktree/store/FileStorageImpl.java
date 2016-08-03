@@ -5,7 +5,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.util.Arrays;
-import java.util.logging.Logger;
 
 import com.coroptis.jblinktree.JbTreeData;
 import com.coroptis.jblinktree.JblinktreeException;
@@ -14,8 +13,6 @@ import com.coroptis.jblinktree.NodeBuilder;
 import com.google.common.base.Preconditions;
 
 public class FileStorageImpl<K, V> implements FileStorage<K, V> {
-
-    private static final Logger LOGGER = Logger.getLogger(NodeStoreInFile.class.getName());
 
     private final NodeBuilder<K, V> nodeBuilder;
 
@@ -50,7 +47,6 @@ public class FileStorageImpl<K, V> implements FileStorage<K, V> {
     @Override
     public void store(Node<K, V> node) {
 	try {
-	    LOGGER.info("writing nodeId " + node.getId() + " at " + getPosition(node.getId()));
 	    raf.seek(getPosition(node.getId()));
 	    raf.writeByte(node.getKeysCount());
 	    byte bytes[] = node.getFieldBytes();
@@ -67,7 +63,6 @@ public class FileStorageImpl<K, V> implements FileStorage<K, V> {
     @Override
     public Node<K, V> load(Integer nodeId) {
 	try {
-	    LOGGER.info("reading nodeId " + nodeId + " at " + getPosition(nodeId));
 	    raf.seek(getPosition(nodeId));
 	    byte keys = raf.readByte();
 	    // TODO following code is related to filed implementation, should be
