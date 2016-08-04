@@ -60,6 +60,7 @@ public class TreeDeleteConcurrencyTest extends TestCase {
 	for (int i = 0; i < threadCount; ++i) {
 	    Runnable runner = new Executer(new Worker() {
 
+		@Override
 		public void doWork() {
 		    doWorkNow();
 		}

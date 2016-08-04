@@ -57,11 +57,13 @@ public class TreeUtil {
 
 	jbTree.visit(new JbTreeVisitor<Integer, Integer>() {
 
+	    @Override
 	    public boolean visitedLeaf(final Node<Integer, Integer> node) {
 		node.writeTo(buff, intendation);
 		return true;
 	    }
 
+	    @Override
 	    public boolean visitedNonLeaf(final Node<Integer, Integer> node) {
 		node.writeTo(buff, intendation);
 		return true;
@@ -87,11 +89,13 @@ public class TreeUtil {
 		}
 	    }
 
+	    @Override
 	    public boolean visitedLeaf(final Node<Integer, Integer> node) {
 		addLink(node);
 		return true;
 	    }
 
+	    @Override
 	    public boolean visitedNonLeaf(final Node<Integer, Integer> node) {
 		addLink(node);
 		for (final Object o : node.getNodeIds()) {
