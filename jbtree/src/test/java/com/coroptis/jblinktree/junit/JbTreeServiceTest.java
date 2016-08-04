@@ -72,12 +72,14 @@ public class JbTreeServiceTest extends AbstractMockingTest {
 	EasyMock.verify(mocks);
     }
 
+    @Override
     @Before
     public void setUp() throws Exception {
 	super.setUp();
 	tested = new JbTreeServiceImpl<Integer, Integer>(nodeStore, treeTraversingService);
     }
 
+    @Override
     @After
     public void tearDown() throws Exception {
 	tested = null;

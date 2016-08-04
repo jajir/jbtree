@@ -1,4 +1,4 @@
-package com.coroptis.jblinktree.performance;
+package com.coroptis.jblinktree.store;
 
 /*
  * #%L
@@ -20,17 +20,22 @@ package com.coroptis.jblinktree.performance;
  * #L%
  */
 
-import java.util.Map;
+import com.coroptis.jblinktree.Node;
 
-import com.coroptis.jblinktree.TreeBuilder;
-import com.coroptis.jblinktree.type.Types;
+/**
+ * Simple storing nodes to file and reding from file.
+ * 
+ * @author jan
+ *
+ * @param <K>
+ * @param <V>
+ */
+public interface FileStorage<K, V> {
 
-public class MapTestJbTreeMap extends AbstractMapTest {
+    void store(Node<K, V> node);
 
-    @Override
-    protected Map<Integer, Integer> initialize() {
-	return TreeBuilder.builder().setL(100).setKeyType(Types.integer())
-		.setValueType(Types.integer()).build();
-    }
+    Node<K, V> load(Integer nodeId);
+    
+    void close();
 
 }

@@ -21,37 +21,23 @@ package com.coroptis.jblinktree;
  */
 
 /**
- * Generic exception thrown by tree.
+ * Interface used for traversing through tree data. Visiting process is not
+ * thread safe.
  * 
  * @author jajir
  * 
  */
-public class JblinktreeException extends RuntimeException {
+public interface JbDataVisitor<K, V> {
 
     /**
      * 
+     * @param key
+     *            required key
+     * @param value
+     *            required value
+     * @return when it's <code>true</code> traversing will try to find next
+     *         node, when it's <code>false</code> traversing immediately stops.
      */
-    private static final long serialVersionUID = 1L;
+    boolean visited(K key, V value);
 
-    /**
-     * Create new exception instance.
-     * 
-     * @param message
-     *            required message
-     */
-    public JblinktreeException(final String message) {
-	super(message);
-    }
-
-    /**
-     * Create new exception instance.
-     * 
-     * @param message
-     *            required message
-     * @param e
-     *            required re-thrown exception
-     */
-    public JblinktreeException(final String message, final Throwable e) {
-	super(message, e);
-    }
 }

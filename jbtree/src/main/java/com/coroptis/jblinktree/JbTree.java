@@ -21,6 +21,8 @@ package com.coroptis.jblinktree;
  */
 
 /**
+ * TODO rename or remove, it's confusing with TreeMap which should be used by end user.
+ * 
  * Provide operations with tree. In tree could be stored key,value pairs.
  * 
  * @author jajir
@@ -79,11 +81,6 @@ public interface JbTree<K, V> {
      *         <code>false</code>.
      */
     boolean containsKey(K key);
-
-    /**
-     * Override {@link System#toString()} method.
-     */
-    String toString();
 
     /**
      * Verify that tree is consistent.

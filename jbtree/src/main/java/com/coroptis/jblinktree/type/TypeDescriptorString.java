@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.nio.charset.Charset;
 
 import com.coroptis.jblinktree.JblinktreeException;
+import com.google.common.base.MoreObjects;
 import com.google.common.base.Preconditions;
 
 /*
@@ -89,6 +90,12 @@ public class TypeDescriptorString implements Serializable,
     @Override
     public int compare(final String value1, final String value2) {
 	return value1.compareTo(value2);
+    }
+
+    @Override
+    public String toString() {
+	return MoreObjects.toStringHelper(TypeDescriptorString.class).add("maxLength", getMaxLength())
+		.toString();
     }
 
 }

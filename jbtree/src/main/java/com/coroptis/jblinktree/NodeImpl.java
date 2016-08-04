@@ -97,6 +97,7 @@ public class NodeImpl<K, V> implements Node<K, V> {
     /**
      * Main node parameter, it's number of nodes.
      */
+    //TODO it's main tree parameter referr to JbTreeData  
     private final int l;
 
     private final Integer id;

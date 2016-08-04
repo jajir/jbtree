@@ -75,7 +75,7 @@ public class RunnerMainBenchmark {
      * How many times is new JVM forked from main test process. Whole test is
      * executed in each fork.
      */
-    private final static int JVM_FORKS = 5;
+    private final static int JVM_FORKS = 10;
     
 
     private static Options getOptions(final Class<?> clazz) {

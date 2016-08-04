@@ -132,8 +132,32 @@ public class TreeMapImpl<K, V> implements TreeMap<K, V> {
     }
 
     @Override
-    public void visit(JbTreeVisitor<K, V> treeVisitor) {
+    @Deprecated
+    public void visit(final JbTreeVisitor<K, V> treeVisitor) {
 	tree.visit(treeVisitor);
+    }
+
+    @Override
+    public void visit(final JbDataVisitor<K, V> dataVisitor) {
+	//FIXME this does't provide ordered output.
+	tree.visit(new JbTreeVisitor<K, V>() {
+
+	    @Override
+	    public boolean visitedLeaf(final Node<K, V> node) {
+		for (final K key : node.getKeys()) {
+		    V value = node.getValue(key);
+		    if (!dataVisitor.visited(key, value)) {
+			return false;
+		    }
+		}
+		return true;
+	    }
+
+	    @Override
+	    public boolean visitedNonLeaf(final Node<K, Integer> node) {
+		return true;
+	    }
+	});
     }
 
     @Override

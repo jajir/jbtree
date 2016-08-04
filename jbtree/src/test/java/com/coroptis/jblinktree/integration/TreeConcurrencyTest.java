@@ -57,8 +57,8 @@ public class TreeConcurrencyTest extends TestCase {
 
     @Test
     public void testForThreadClash() throws Exception {
-	final int cycleCount = 100;
-	final int threadCount = 500;
+	final int cycleCount = 1000*100;
+	final int threadCount = 50;
 	final CountDownLatch doneLatch = new CountDownLatch(cycleCount * threadCount);
 	final CountDownLatch startLatch = new CountDownLatch(1);
 
@@ -84,7 +84,7 @@ public class TreeConcurrencyTest extends TestCase {
     @Override
     protected void setUp() throws Exception {
 	super.setUp();
-	tree = TreeBuilder.builder().setL(2).setKeyType(Types.integer())
+	tree = TreeBuilder.builder().setL(10).setKeyType(Types.integer())
 		.setValueType(Types.integer()).build();
 	treeUtil = new TreeUtil(tree);
 	random = new Random();

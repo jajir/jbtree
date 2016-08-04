@@ -25,15 +25,15 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.coroptis.jblinktree.NodeStore;
-import com.coroptis.jblinktree.NodeStoreImpl;
+import com.coroptis.jblinktree.store.NodeStoreInMem;
 
 /**
- * Tests for {@link NodeStoreImpl}.
+ * Tests for {@link NodeStoreInMem}.
  * 
  * @author jajir
  * 
  */
-public class NodeStoreTest extends AbstractMockingTest {
+public class NodeStoreInMemTest extends AbstractMockingTest {
 
     private NodeStore<Integer> tested;
 
@@ -46,12 +46,14 @@ public class NodeStoreTest extends AbstractMockingTest {
 
     }
 
+    @Override
     @Before
     public void setUp() throws Exception {
 	super.setUp();
-	tested = new NodeStoreImpl<Integer, Integer>(nodeBuilder);
+	tested = new NodeStoreInMem<Integer, Integer>(nodeBuilder);
     }
 
+    @Override
     @After
     public void tearDown() throws Exception {
 	tested = null;
