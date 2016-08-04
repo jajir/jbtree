@@ -29,8 +29,7 @@ import com.coroptis.jblinktree.Worker;
  */
 public class FileStoreConcurrencyTest {
 
-    private final Logger logger = LoggerFactory
-	    .getLogger(FileStoreConcurrencyTest.class);
+    private final Logger logger = LoggerFactory.getLogger(FileStoreConcurrencyTest.class);
 
     private final Integer L = 5;
 
@@ -41,10 +40,9 @@ public class FileStoreConcurrencyTest {
 
     @Test
     public void testForThreadClash() throws Exception {
-	final int cycleCount = 1000 * 1;
-	final int threadCount = 50;
-	final CountDownLatch doneLatch = new CountDownLatch(
-		cycleCount * threadCount);
+	final int cycleCount = 1000 * 10;
+	final int threadCount = 100;
+	final CountDownLatch doneLatch = new CountDownLatch(cycleCount * threadCount);
 	final CountDownLatch startLatch = new CountDownLatch(1);
 
 	for (int i = 0; i < threadCount; ++i) {
@@ -60,8 +58,7 @@ public class FileStoreConcurrencyTest {
 
 	startLatch.countDown();
 	doneLatch.await(20, TimeUnit.SECONDS);
-	assertEquals("Some thread didn't finished work", 0,
-		doneLatch.getCount());
+	assertEquals("Some thread didn't finished work", 0, doneLatch.getCount());
 	logger.debug("I'm done!");
     }
 
@@ -79,12 +76,11 @@ public class FileStoreConcurrencyTest {
     }
 
     void doWorkNow() {
-	Integer integer = random.nextInt(100) + 1;
+	Integer integer = random.nextInt(100);
 	boolean read = random.nextBoolean();
 	try {
 	    if (read) {
-		Node<Integer, Integer> node = fsRule.getFileStorage()
-			.load(integer);
+		Node<Integer, Integer> node = fsRule.getFileStorage().load(integer);
 		assertEquals(1, node.getKeysCount());
 	    } else {
 		fsRule.getFileStorage().store(getNode(integer));
@@ -98,9 +94,8 @@ public class FileStoreConcurrencyTest {
     }
 
     private Node<Integer, Integer> getNode(final Integer nodeId) {
-	final Node<Integer, Integer> node = new NodeImpl<Integer, Integer>(L,
-		nodeId, false, fsRule.getIntDescriptor(),
-		fsRule.getIntDescriptor(), fsRule.getIntDescriptor());
+	final Node<Integer, Integer> node = new NodeImpl<Integer, Integer>(L, nodeId, false,
+		fsRule.getIntDescriptor(), fsRule.getIntDescriptor(), fsRule.getIntDescriptor());
 	node.insert(nodeId, nodeId);
 	return node;
     }

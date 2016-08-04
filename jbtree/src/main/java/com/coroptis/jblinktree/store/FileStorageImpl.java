@@ -25,6 +25,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.util.Arrays;
+import java.util.concurrent.locks.ReentrantLock;
 
 import com.coroptis.jblinktree.JbTreeData;
 import com.coroptis.jblinktree.JblinktreeException;
@@ -32,6 +33,14 @@ import com.coroptis.jblinktree.Node;
 import com.coroptis.jblinktree.NodeBuilder;
 import com.google.common.base.Preconditions;
 
+/**
+ * Simple thread safe node storage.
+ * 
+ * @author jan
+ *
+ * @param <K>
+ * @param <V>
+ */
 public class FileStorageImpl<K, V> implements FileStorage<K, V> {
 
     private final NodeBuilder<K, V> nodeBuilder;
@@ -43,6 +52,8 @@ public class FileStorageImpl<K, V> implements FileStorage<K, V> {
     private final int maxNodeSize;
 
     private final JbTreeData<K, V> treeData;
+
+    private final ReentrantLock lock = new ReentrantLock(false);
 
     public FileStorageImpl(final JbTreeData<K, V> treeData, final NodeBuilder<K, V> nodeBuilder,
 	    String fileName) {
@@ -66,6 +77,7 @@ public class FileStorageImpl<K, V> implements FileStorage<K, V> {
 
     @Override
     public void store(Node<K, V> node) {
+	lock.lock();
 	try {
 	    raf.seek(getPosition(node.getId()));
 	    raf.writeByte(node.getKeysCount());
@@ -77,11 +89,14 @@ public class FileStorageImpl<K, V> implements FileStorage<K, V> {
 	    raf.write(bytes);
 	} catch (IOException e) {
 	    throw new JblinktreeException(e.getMessage(), e);
+	} finally {
+	    lock.unlock();
 	}
     }
 
     @Override
     public Node<K, V> load(Integer nodeId) {
+	lock.lock();
 	try {
 	    raf.seek(getPosition(nodeId));
 	    byte keys = raf.readByte();
@@ -101,6 +116,8 @@ public class FileStorageImpl<K, V> implements FileStorage<K, V> {
 			+ fileName;
 	    }
 	    throw new JblinktreeException(msg, e);
+	} finally {
+	    lock.unlock();
 	}
     }
 
