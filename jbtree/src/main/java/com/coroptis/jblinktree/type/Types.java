@@ -38,4 +38,8 @@ public class Types {
 	return new TypeDescriptorString(10, Charset.forName("ISO_8859_1"));
     }
 
+    public static TypeDescriptor<Byte> byteType() {
+	return new TypeDescriptorByte();
+    }
+
 }
