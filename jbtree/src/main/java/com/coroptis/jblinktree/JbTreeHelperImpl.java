@@ -37,11 +37,6 @@ import com.google.common.base.Preconditions;
  */
 public class JbTreeHelperImpl<K, V> implements JbTreeHelper<K, V> {
 
-    /**
-     * Main node parameter, it's number of nodes.
-     */
-    private final int l;
-
     private final NodeStore<K> nodeStore;
 
     private final JbTreeTool<K, V> treeTool;
@@ -50,9 +45,8 @@ public class JbTreeHelperImpl<K, V> implements JbTreeHelper<K, V> {
 
     private final JbTreeData<K, V> treeData;
 
-    JbTreeHelperImpl(final int l, final NodeStore<K> nodeStore, final JbTreeTool<K, V> treeTool,
+    JbTreeHelperImpl(final NodeStore<K> nodeStore, final JbTreeTool<K, V> treeTool,
 	    final JbTreeService<K, V> treeService, final JbTreeData<K, V> treeData) {
-	this.l = l;
 	this.nodeStore = Preconditions.checkNotNull(nodeStore);
 	this.treeTool = Preconditions.checkNotNull(treeTool);
 	this.treeService = Preconditions.checkNotNull(treeService);
@@ -73,7 +67,7 @@ public class JbTreeHelperImpl<K, V> implements JbTreeHelper<K, V> {
     @Override
     public V insertToLeafNode(Node<K, V> currentNode, final K key, final V value,
 	    final JbStack stack) {
-	if (currentNode.getKeysCount() >= l) {
+	if (currentNode.getKeysCount() >= treeData.getL()) {
 	    final Node<K, V> newNode = storeSplitLeafNode(currentNode, key, value);
 	    if (stack.isEmpty()) {
 		splitRootLeafNode(currentNode, newNode);
@@ -114,7 +108,7 @@ public class JbTreeHelperImpl<K, V> implements JbTreeHelper<K, V> {
 	Integer tmpValue = value;
 	K tmpKey = key;
 	while (true) {
-	    if (currentNode.getKeysCount() >= l) {
+	    if (currentNode.getKeysCount() >= treeData.getL()) {
 		final Node<K, Integer> newNode = storeSplitNonLeafNode(currentNode, tmpKey,
 			tmpValue);
 		if (stack.isEmpty()) {
