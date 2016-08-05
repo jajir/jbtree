@@ -40,8 +40,8 @@ public interface TreeMap<K, V> extends Map<K, V> {
     void verify();
 
     /**
-     * TODO don't expose outside of implementation
-     * Traverse through entire tree and visit all nodes.
+     * TODO don't expose outside of implementation Traverse through entire tree
+     * and visit all nodes.
      * 
      * @param treeVisitor
      *            required visitor implementation
@@ -52,6 +52,7 @@ public interface TreeMap<K, V> extends Map<K, V> {
      * Traverse through all tree key value pairs in tree.
      * 
      * @param dataVisitor
+     *            required data visitor
      */
     void visit(JbDataVisitor<K, V> dataVisitor);
 

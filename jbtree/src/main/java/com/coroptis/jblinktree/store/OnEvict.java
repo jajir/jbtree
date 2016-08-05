@@ -21,7 +21,15 @@ package com.coroptis.jblinktree.store;
  */
 
 import com.coroptis.jblinktree.Node;
-
+/**
+ * 
+ * @author jajir
+ *
+ * @param <K>
+ *            key type
+ * @param <V>
+ *            value type
+ */
 public interface OnEvict<K, V> {
 
     void evict(Node<K, V> node);

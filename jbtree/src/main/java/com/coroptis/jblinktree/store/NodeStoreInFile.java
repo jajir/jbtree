@@ -41,6 +41,10 @@ import com.google.common.base.Preconditions;
  * 
  * @author jajir
  * 
+ * @param <K>
+ *            key type
+ * @param <V>
+ *            value type
  */
 public class NodeStoreInFile<K, V> implements NodeStore<K> {
 

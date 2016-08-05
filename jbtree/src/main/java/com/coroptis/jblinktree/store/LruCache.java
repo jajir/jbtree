@@ -34,7 +34,9 @@ import com.coroptis.jblinktree.NodeBuilder;
  * @author jan
  *
  * @param <K>
+ *            key type
  * @param <V>
+ *            value type
  */
 public class LruCache<K, V> {
 

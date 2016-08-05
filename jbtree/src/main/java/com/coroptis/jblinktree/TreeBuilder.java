@@ -55,7 +55,8 @@ public final class TreeBuilder {
 	    return this;
 	}
 
-	public NodeStoreInFileBuilder setNoOfCachedNodes(final int noOfCachedNodes) {
+	public NodeStoreInFileBuilder setNoOfCachedNodes(
+		final int noOfCachedNodes) {
 	    this.noOfCachedNodes = Preconditions.checkNotNull(noOfCachedNodes);
 	    return this;
 	}
@@ -110,7 +111,8 @@ public final class TreeBuilder {
      */
     public TreeBuilder setL(final Integer l) {
 	if (l < 2) {
-	    throw new JblinktreeException("Value of L parameter should higher that 1.");
+	    throw new JblinktreeException(
+		    "Value of L parameter should higher that 1.");
 	}
 	this.l = l;
 	return this;
@@ -125,19 +127,22 @@ public final class TreeBuilder {
      * @return current tree builder instance
      */
     public TreeBuilder setTreeWrapper(final String treeWrapperFileName) {
-	this.treeWrapperFileName = Preconditions.checkNotNull(treeWrapperFileName);
+	this.treeWrapperFileName = Preconditions
+		.checkNotNull(treeWrapperFileName);
 	return this;
     }
 
     /**
      * Allows to set node store.
      * 
-     * @param nodeStore
+     * @param nodeStoreFileBuilder
+     *            required special builder instance
      * @return current tree builder instance
      */
     public TreeBuilder setNodeStoreInFileBuilder(
 	    final NodeStoreInFileBuilder nodeStoreFileBuilder) {
-	this.nodeStoreInFileBuilder = Preconditions.checkNotNull(nodeStoreFileBuilder);
+	this.nodeStoreInFileBuilder = Preconditions
+		.checkNotNull(nodeStoreFileBuilder);
 	return this;
     }
 
@@ -162,7 +167,8 @@ public final class TreeBuilder {
      *            required value type descriptor
      * @return current tree builder instance
      */
-    public TreeBuilder setValueType(final TypeDescriptor<?> valueTypeDescriptor) {
+    public TreeBuilder setValueType(
+	    final TypeDescriptor<?> valueTypeDescriptor) {
 	this.valueTypeDescriptor = valueTypeDescriptor;
 	return this;
     }
@@ -183,11 +189,13 @@ public final class TreeBuilder {
 	Preconditions.checkNotNull(valueTypeDescriptor,
 		"value TypeDescriptor is null, use .setValueType in builder");
 	final TypeDescriptor<Integer> linkTypeDescriptor = new TypeDescriptorInteger();
-	final JbTreeData<K, V> treeData = new JbTreeDataImpl<K, V>(NodeStore.FIRST_NODE_ID, l,
-		(TypeDescriptor<K>) keyTypeDescriptor, (TypeDescriptor<V>) valueTypeDescriptor,
-		linkTypeDescriptor);
+	final JbTreeData<K, V> treeData = new JbTreeDataImpl<K, V>(
+		NodeStore.FIRST_NODE_ID, l,
+		(TypeDescriptor<K>) keyTypeDescriptor,
+		(TypeDescriptor<V>) valueTypeDescriptor, linkTypeDescriptor);
 
-	final NodeBuilder<K, V> nodeBuilder = new NodeBuilderImpl<K, V>(treeData);
+	final NodeBuilder<K, V> nodeBuilder = new NodeBuilderImpl<K, V>(
+		treeData);
 
 	final NodeStore<K> nodeStore;
 	if (nodeStoreInFileBuilder == null) {
@@ -201,12 +209,12 @@ public final class TreeBuilder {
 		(TypeDescriptor<K>) keyTypeDescriptor, nodeBuilder);
 	final JbTreeTraversingService<K, V> treeLockingTool = new JbTreeTraversingServiceImpl<K, V>(
 		jbTreeTool);
-	final JbTreeService<K, V> treeService = new JbTreeServiceImpl<K, V>(nodeStore,
-		treeLockingTool);
-	final JbTreeHelper<K, V> jbTreeHelper = new JbTreeHelperImpl<K, V>(l, nodeStore, jbTreeTool,
-		treeService, treeData);
-	final JbTree<K, V> tree = new JbTreeImpl<K, V>(nodeStore, jbTreeTool, jbTreeHelper,
-		treeData, treeLockingTool, treeService);
+	final JbTreeService<K, V> treeService = new JbTreeServiceImpl<K, V>(
+		nodeStore, treeLockingTool);
+	final JbTreeHelper<K, V> jbTreeHelper = new JbTreeHelperImpl<K, V>(l,
+		nodeStore, jbTreeTool, treeService, treeData);
+	final JbTree<K, V> tree = new JbTreeImpl<K, V>(nodeStore, jbTreeTool,
+		jbTreeHelper, treeData, treeLockingTool, treeService);
 
 	/**
 	 * Initialize tree, create first node.
@@ -216,8 +224,8 @@ public final class TreeBuilder {
 	if (treeWrapperFileName == null) {
 	    return new TreeMapImpl<K, V>(tree, treeData);
 	} else {
-	    return new TreeMapImpl<K, V>(
-		    new JbTreeWrapper<K, V>(tree, nodeStore, treeWrapperFileName), treeData);
+	    return new TreeMapImpl<K, V>(new JbTreeWrapper<K, V>(tree,
+		    nodeStore, treeWrapperFileName), treeData);
 
 	}
     }

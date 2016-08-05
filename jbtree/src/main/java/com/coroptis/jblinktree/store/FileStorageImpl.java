@@ -39,7 +39,9 @@ import com.google.common.base.Preconditions;
  * @author jan
  *
  * @param <K>
+ *            key type
  * @param <V>
+ *            value type
  */
 public class FileStorageImpl<K, V> implements FileStorage<K, V> {
 

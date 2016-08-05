@@ -28,7 +28,9 @@ import com.coroptis.jblinktree.Node;
  * @author jan
  *
  * @param <K>
+ *            key type
  * @param <V>
+ *            value type
  */
 public interface FileStorage<K, V> {
 
