@@ -81,12 +81,8 @@ public class FieldImpl<K, V> implements Field<K, V> {
      * 
      * @param numberOfField
      *            required number of items that could be stored in field.
-     * @param keyTypeDescriptor
-     *            required key type descriptor
-     * @param valueTypeDescriptor
-     *            required value type descriptor
-     * @param linkTypeDescriptor
-     *            required link type descriptor
+     * @param treeData
+     *            required tree definition
      */
     public FieldImpl(final int numberOfField, final JbTreeData<K, V> treeData) {
 	this.treeData = treeData;
@@ -101,12 +97,8 @@ public class FieldImpl<K, V> implements Field<K, V> {
      * @param field
      *            required byte array, method create defensive copy of this
      *            array
-     * @param keyTypeDescriptor
-     *            required key type descriptor
-     * @param valueTypeDescriptor
-     *            required value type descriptor
-     * @param linkTypeDescriptor
-     *            required link type descriptor
+     * @param treeData
+     *            required tree definition
      */
     public FieldImpl(final byte[] field,final JbTreeData<K, V> treeData) {
 	this.treeData = treeData;

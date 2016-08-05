@@ -106,19 +106,13 @@ public class NodeImpl<K, V> implements Node<K, V> {
     /**
      * Create and initialize node.
      * 
-     * @param l
-     *            required node parameter L
      * @param nodeId
      *            required node id, node will be referred with this id.
      * @param isLeafNode
      *            required value, when it's <code>true</code> than it's leaf
      *            node otherwise it's non-leaf node.
-     * @param keyTypeDescriptor
-     *            required
-     * @param valueTypeDescriptor
-     *            required
-     * @param linkTypeDescriptor
-     *            required
+     * @param treeData
+     *            required tree definition
      */
     public NodeImpl(final Integer nodeId, final boolean isLeafNode,
 	    final JbTreeData<K, V> treeData) {
@@ -136,18 +130,12 @@ public class NodeImpl<K, V> implements Node<K, V> {
 
     /**
      * 
-     * @param l
-     *            require maximal number of key,value pairs in node
      * @param nodeId
      *            required node id
      * @param field
      *            required field with node byte array with data
-     * @param keyTypeDescriptor
-     *            required key type descriptor
-     * @param valueTypeDescriptor
-     *            required value type descriptor
-     * @param linkTypeDescriptor
-     *            required link type descriptor
+     * @param treeData
+     *            required tree definition
      */
     public NodeImpl(final Integer nodeId, final Field<K, V> field,
 	    final JbTreeData<K, V> treeData) {
