@@ -42,7 +42,7 @@ public interface Field<K, V> {
      *            required key position
      * @return key
      */
-    public K getKey(int position);
+    K getKey(int position);
 
     /**
      * Get value from specific position.
@@ -51,7 +51,7 @@ public interface Field<K, V> {
      *            required value position
      * @return value
      */
-    public V getValue(int position);
+    V getValue(int position);
 
     /**
      * Copy data from {@link Field} <code>src</code> parameter to this object.
@@ -67,7 +67,7 @@ public interface Field<K, V> {
      * @throws ArrayIndexOutOfBoundsException
      *             when some positions are out of array limits
      */
-    public void copy(Field<K, V> src, int srcPos, int destPos, int length);
+    void copy(Field<K, V> src, int srcPos, int destPos, int length);
 
     /**
      * Allows to set key at specific position.
@@ -77,7 +77,7 @@ public interface Field<K, V> {
      * @param value
      *            required key
      */
-    public void setKey(int position, K value);
+    void setKey(int position, K value);
 
     /**
      * Allows to set value at specific position.
@@ -87,7 +87,7 @@ public interface Field<K, V> {
      * @param value
      *            required value
      */
-    public void setValue(int position, V value);
+    void setValue(int position, V value);
 
     /**
      * Get byte array containing all field data including:
@@ -102,7 +102,7 @@ public interface Field<K, V> {
      * 
      * @return field byte array
      */
-    public byte[] getBytes();
+    byte[] getBytes();
 
     /**
      * Get number of stored keys and values. Keys and values are counted
@@ -114,14 +114,14 @@ public interface Field<K, V> {
      * 
      * @return number of stored keys and values
      */
-    public int getLength();
+    int getLength();
 
     /**
      * Get flag byte.
      * 
      * @return flab byte
      */
-    public byte getFlag();
+    byte getFlag();
 
     /**
      * Allow to set flab byte
@@ -129,14 +129,14 @@ public interface Field<K, V> {
      * @param b
      *            required flag byte
      */
-    public void setFlag(byte b);
+    void setFlag(byte b);
 
     /**
      * Get link value.
      * 
      * @return link value, could be {@link Node#EMPTY_INT}
      */
-    public Integer getLink();
+    Integer getLink();
 
     /**
      * Allows to set link value.
@@ -146,5 +146,5 @@ public interface Field<K, V> {
      * @throws NullPointerException
      *             when link is <code>null</code>
      */
-    public void setLink(Integer link);
+    void setLink(Integer link);
 }

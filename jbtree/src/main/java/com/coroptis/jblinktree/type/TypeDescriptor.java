@@ -39,7 +39,7 @@ public interface TypeDescriptor<T> extends Comparator<T> {
      * 
      * @return maximum length of type.
      */
-    public int getMaxLength();
+    int getMaxLength();
 
     /**
      * Write given value to byte array.

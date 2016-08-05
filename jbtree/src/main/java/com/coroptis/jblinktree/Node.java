@@ -50,7 +50,7 @@ public interface Node<K, V> {
      * 
      * @return link value, could be {@link Node#EMPTY_INT}
      */
-    public Integer getLink();
+    Integer getLink();
 
     /**
      * Allows to set link value. Delegate to {@link Field#setLink(Integer)}
@@ -60,7 +60,7 @@ public interface Node<K, V> {
      * @throws NullPointerException
      *             when link is <code>null</code>
      */
-    public void setLink(Integer link);
+    void setLink(Integer link);
 
     /**
      * Return true when node is empty. Empty means there are no keys in node. In
@@ -69,14 +69,14 @@ public interface Node<K, V> {
      * @return return <code>true</code> when node is empty otherwise return
      *         <code>false</code>
      */
-    public boolean isEmpty();
+    boolean isEmpty();
 
     /**
      * Get number of keys stored in node.
      * 
      * @return number of stored keys.
      */
-    public int getKeysCount();
+    int getKeysCount();
 
     /**
      * Insert or override some value in node.
@@ -88,7 +88,7 @@ public interface Node<K, V> {
      * @throws NullPointerException
      *             when key or value is null
      */
-    public void insert(K key, V value);
+    void insert(K key, V value);
 
     /**
      * Remove key and associated value from node.
@@ -100,7 +100,7 @@ public interface Node<K, V> {
      * @throws NullPointerException
      *             when key or value is null
      */
-    public V remove(K key);
+    V remove(K key);
 
     /**
      * For non-leaf tree it update value of some tree.
@@ -112,7 +112,7 @@ public interface Node<K, V> {
      * @return return <code>true</code> when node max value was really updated
      *         otherwise return <code>false</code>
      */
-    public boolean updateNodeValue(Integer nodeIdToUpdate, K nodeMaxValue);
+    boolean updateNodeValue(Integer nodeIdToUpdate, K nodeMaxValue);
 
     /**
      * About half of keys will be copied to <code>node</code>.
@@ -123,21 +123,21 @@ public interface Node<K, V> {
      * @param node
      *            required empty node
      */
-    public void moveTopHalfOfDataTo(Node<K, V> node);
+    void moveTopHalfOfDataTo(Node<K, V> node);
 
     /**
      * Return max key, that could be use for representing this node.
      * 
      * @return max key
      */
-    public K getMaxKey();
+    K getMaxKey();
 
     /**
      * Return node id.
      * 
      * @return the id
      */
-    public Integer getId();
+    Integer getId();
 
     /**
      * Inform id it's leaf node or non-leaf node.
@@ -145,7 +145,7 @@ public interface Node<K, V> {
      * @return return <code>true</code> when it's leaf node otherwise return
      *         <code>false</code>
      */
-    public boolean isLeafNode();
+    boolean isLeafNode();
 
     /**
      * When it's non-leaf node it return pointer to next node where should be
@@ -168,7 +168,7 @@ public interface Node<K, V> {
      * @return node id, in case of rightmost node it returns <code>null</code>
      *         because link is empty
      */
-    public Integer getCorrespondingNodeId(K key);
+    Integer getCorrespondingNodeId(K key);
 
     /**
      * Find value for given key.
@@ -178,21 +178,21 @@ public interface Node<K, V> {
      * @return found value if there is any, when value is <code>null</code> or
      *         there is no such key <code>null</code> is returned.
      */
-    public V getValue(K key);
+    V getValue(K key);
 
     /**
      * Get list of all node id stored in this node.
      * 
      * @return list of id
      */
-    public List<Integer> getNodeIds();
+    List<Integer> getNodeIds();
 
     /**
      * Get list of keys stored in node.
      * 
      * @return list of keys.
      */
-    public List<K> getKeys();
+    List<K> getKeys();
 
     /**
      * Allows to set max key value.
@@ -200,7 +200,7 @@ public interface Node<K, V> {
      * @param maxKey
      *            max key value, could be <code>null</code>
      */
-    public void setMaxKey(K maxKey);
+    void setMaxKey(K maxKey);
 
     /**
      * Verify that node is consistent.
@@ -208,7 +208,7 @@ public interface Node<K, V> {
      * @return <code>true</code> when node is consistent otherwise return
      *         <code>false</code>
      */
-    public boolean verify();
+    boolean verify();
 
     /**
      * TODO describe what is it.
@@ -217,7 +217,7 @@ public interface Node<K, V> {
      * @deprecated replace with {@link JbTreeData}
      */
     @Deprecated
-    public int getL();
+    int getL();
 
     /**
      * Write node content into {@link StringBuilder}.
@@ -227,13 +227,13 @@ public interface Node<K, V> {
      * @param intendation
      *            how many white spaces should be added before each line.
      */
-    public void writeTo(StringBuilder buff, String intendation);
+    void writeTo(StringBuilder buff, String intendation);
 
     /**
      * Get node content as byte array.
      * 
      * @return byte array
      */
-    public byte[] getFieldBytes();
+    byte[] getFieldBytes();
 
 }

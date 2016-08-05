@@ -34,7 +34,7 @@ public interface JbStack {
      * 
      * @return last value
      */
-    public Integer pop();
+    Integer pop();
 
     /**
      * Insert value on the top of the stack.
@@ -42,7 +42,7 @@ public interface JbStack {
      * @param item
      *            optional item value
      */
-    public void push(Integer item);
+    void push(Integer item);
 
     /**
      * Is stack empty.
@@ -50,5 +50,5 @@ public interface JbStack {
      * @return return <code>true</code> stack is empty otherwise
      *         <code>false</code>
      */
-    public boolean isEmpty();
+    boolean isEmpty();
 }
