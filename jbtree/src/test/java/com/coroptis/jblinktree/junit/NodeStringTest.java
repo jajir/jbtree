@@ -32,6 +32,8 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.coroptis.jblinktree.JbTreeData;
+import com.coroptis.jblinktree.JbTreeDataImpl;
 import com.coroptis.jblinktree.Node;
 import com.coroptis.jblinktree.NodeImpl;
 import com.coroptis.jblinktree.type.TypeDescriptor;
@@ -58,7 +60,8 @@ public class NodeStringTest {
     public void test_insert_leaf_one() throws Exception {
 	node.insert("ahoj", "lidi");
 
-	verifyNode(node, new String[][] { { "ahoj", "lidi" } }, true, Node.EMPTY_INT);
+	verifyNode(node, new String[][] { { "ahoj", "lidi" } }, true,
+		Node.EMPTY_INT);
     }
 
     @Test
@@ -66,8 +69,9 @@ public class NodeStringTest {
 	node.insert("ahoj", "lidi");
 	node.insert("flying", "pig");
 
-	verifyNode(node, new String[][] { { "ahoj", "lidi" }, { "flying", "pig" } }, true,
-		Node.EMPTY_INT);
+	verifyNode(node,
+		new String[][] { { "ahoj", "lidi" }, { "flying", "pig" } },
+		true, Node.EMPTY_INT);
     }
 
     @Test
@@ -75,8 +79,8 @@ public class NodeStringTest {
 	node.insert("ahoj", "lidi");
 	node.insert("aaa taxi", "is fast");
 
-	verifyNode(node, new String[][] { { "aaa taxi", "is fast" }, { "ahoj", "lidi" } }, true,
-		Node.EMPTY_INT);
+	verifyNode(node, new String[][] { { "aaa taxi", "is fast" },
+		{ "ahoj", "lidi" } }, true, Node.EMPTY_INT);
     }
 
     /**
@@ -96,17 +100,20 @@ public class NodeStringTest {
      * @param expectedNodeLink
      *            required value of expectect link
      */
-    private void verifyNode(final Node<String, String> n, final String[][] pairs,
-	    final boolean isLeafNode, final Integer expectedNodeLink) {
+    private void verifyNode(final Node<String, String> n,
+	    final String[][] pairs, final boolean isLeafNode,
+	    final Integer expectedNodeLink) {
 	logger.debug(n.toString());
 
-	assertEquals("Expected number of key is invalid", pairs.length, n.getKeysCount());
+	assertEquals("Expected number of key is invalid", pairs.length,
+		n.getKeysCount());
 	assertEquals("isLeafNode value is invalid", isLeafNode, n.isLeafNode());
 	List<String> keys = n.getKeys();
 	for (String[] pair : pairs) {
 	    final String key = pair[0];
 	    final String value = pair[1];
-	    assertTrue("keys should contains key " + pair[0], keys.contains(pair[0]));
+	    assertTrue("keys should contains key " + pair[0],
+		    keys.contains(pair[0]));
 	    if (isLeafNode) {
 		assertEquals(value, n.getValue(key));
 	    } else {
@@ -116,16 +123,19 @@ public class NodeStringTest {
 	assertEquals("Node link is invalid", expectedNodeLink, n.getLink());
 	if (pairs.length > 0) {
 	    final String expectedMaxKey = pairs[pairs.length - 1][0];
-	    assertEquals("Max key value is invalid", expectedMaxKey, n.getMaxKey());
+	    assertEquals("Max key value is invalid", expectedMaxKey,
+		    n.getMaxKey());
 	}
     }
 
     @Before
     public void setUp() throws Exception {
-	stringDescriptor = new TypeDescriptorString(10, Charset.forName("UTF-8"));
+	stringDescriptor = new TypeDescriptorString(10,
+		Charset.forName("UTF-8"));
 	intDescriptor = new TypeDescriptorInteger();
-	node = new NodeImpl<String, String>(5, 0, true, stringDescriptor, stringDescriptor,
-		intDescriptor);
+	JbTreeData<String, String> td = new JbTreeDataImpl<String, String>(0, 5,
+		stringDescriptor, stringDescriptor, intDescriptor);
+	node = new NodeImpl<String, String>(0, true, td);
     }
 
     @After

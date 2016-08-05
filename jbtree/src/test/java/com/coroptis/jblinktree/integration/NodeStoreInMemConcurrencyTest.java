@@ -54,7 +54,8 @@ import junit.framework.TestCase;
  */
 public class NodeStoreInMemConcurrencyTest extends TestCase {
 
-    private final Logger logger = LoggerFactory.getLogger(NodeStoreInMemConcurrencyTest.class);
+    private final Logger logger = LoggerFactory
+	    .getLogger(NodeStoreInMemConcurrencyTest.class);
 
     private NodeStore<Integer> nodeStore;
 
@@ -62,7 +63,8 @@ public class NodeStoreInMemConcurrencyTest extends TestCase {
     public void testForThreadClash() throws Exception {
 	final int cycleCount = 10;
 	final int threadCount = 10;
-	final CountDownLatch doneLatch = new CountDownLatch(cycleCount * threadCount);
+	final CountDownLatch doneLatch = new CountDownLatch(
+		cycleCount * threadCount);
 	final CountDownLatch startLatch = new CountDownLatch(1);
 
 	for (int i = 0; i < threadCount; ++i) {
@@ -88,9 +90,11 @@ public class NodeStoreInMemConcurrencyTest extends TestCase {
 	TypeDescriptor<Integer> td = new TypeDescriptorInteger();
 	JbTreeData<Integer, Integer> treeData = new JbTreeDataImpl<Integer, Integer>(
 		NodeStore.FIRST_NODE_ID, 2, td, td, td);
-	NodeBuilder<Integer, Integer> nodeBuilder = new NodeBuilderImpl<Integer, Integer>(treeData);
+	NodeBuilder<Integer, Integer> nodeBuilder = new NodeBuilderImpl<Integer, Integer>(
+		treeData);
 	nodeStore = new NodeStoreInMem<Integer, Integer>(nodeBuilder);
-	NodeImpl<Integer, Integer> node = new NodeImpl<Integer, Integer>(2, 1, true, td, td, td);
+	NodeImpl<Integer, Integer> node = new NodeImpl<Integer, Integer>(1,
+		true, treeData);
 	nodeStore.writeNode(node);
     }
 

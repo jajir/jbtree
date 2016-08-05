@@ -28,6 +28,8 @@ import org.junit.Rule;
 import org.junit.Test;
 
 import com.coroptis.jblinktree.FileStorageRule;
+import com.coroptis.jblinktree.JbTreeData;
+import com.coroptis.jblinktree.JbTreeDataImpl;
 import com.coroptis.jblinktree.Node;
 import com.coroptis.jblinktree.NodeImpl;
 
@@ -60,8 +62,10 @@ public class FileStorageTest {
 
     @Before
     public void setup() {
-	node = new NodeImpl<Integer, Integer>(5, 14, false, fsRule.getIntDescriptor(),
-		fsRule.getIntDescriptor(), fsRule.getIntDescriptor());
+	JbTreeData<Integer, Integer> treeData = new JbTreeDataImpl<Integer, Integer>(
+		1, 5, fsRule.getIntDescriptor(), fsRule.getIntDescriptor(),
+		fsRule.getIntDescriptor());
+	node = new NodeImpl<Integer, Integer>(14, false, treeData);
 	node.insert(3, 23);
     }
 

@@ -24,7 +24,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import com.coroptis.jblinktree.type.TypeDescriptor;
 import com.google.common.base.Preconditions;
 
 /**
@@ -128,8 +127,7 @@ public class NodeImpl<K, V> implements Node<K, V> {
 	/**
 	 * There is three position even in empty node: P0, max key and link.
 	 */
-	field = new FieldImpl<K, V>(0, keyTypeDescriptor, valueTypeDescriptor,
-		linkTypeDescriptor);
+	field = new FieldImpl<K, V>(0, treeData);
 	if (isLeafNode) {
 	    field.setFlag(M);
 	}
@@ -151,7 +149,7 @@ public class NodeImpl<K, V> implements Node<K, V> {
      * @param linkTypeDescriptor
      *            required link type descriptor
      */
-    public NodeImpl( final Integer nodeId, final Field<K, V> field,
+    public NodeImpl(final Integer nodeId, final Field<K, V> field,
 	    final JbTreeData<K, V> treeData) {
 	this.id = nodeId;
 	this.treeData = treeData;
@@ -189,7 +187,8 @@ public class NodeImpl<K, V> implements Node<K, V> {
 		 */
 		field.setValue(i - 1, value);
 		return;
-	    } else if (keyTypeDescriptor.compare(field.getKey(i), key) > 0) {
+	    } else if (treeData.getKeyTypeDescriptor().compare(field.getKey(i),
+		    key) > 0) {
 		// field.get(i) > key
 		couldInsertedKey();
 		/**
@@ -211,7 +210,7 @@ public class NodeImpl<K, V> implements Node<K, V> {
      * {@link JblinktreeException}.
      */
     private void couldInsertedKey() {
-	if (getKeysCount() >= l) {
+	if (getKeysCount() >= treeData.getL()) {
 	    throw new JblinktreeException("Leaf (" + id
 		    + ") is full another value can't be inserted.");
 	}
@@ -234,7 +233,7 @@ public class NodeImpl<K, V> implements Node<K, V> {
 	 * from current node. Finally switch new node to current on.
 	 */
 	Field<K, V> field2 = new FieldImpl<K, V>(field.getLength() + 1,
-		keyTypeDescriptor, valueTypeDescriptor, linkTypeDescriptor);
+		treeData);
 	field2.setFlag(field.getFlag());
 	field2.setLink(field.getLink());
 	field2.setValue(targetIndex, value);
@@ -261,7 +260,8 @@ public class NodeImpl<K, V> implements Node<K, V> {
 		final V oldValue = field.getValue(i - 1);
 		removeFromPosition(i - 1);
 		return oldValue;
-	    } else if (keyTypeDescriptor.compare(field.getKey(i), key) > 0) {
+	    } else if (treeData.getKeyTypeDescriptor().compare(field.getKey(i),
+		    key) > 0) {
 		/**
 		 * if key in node is bigger than given key than node doesn't
 		 * contains key to delete.
@@ -300,8 +300,7 @@ public class NodeImpl<K, V> implements Node<K, V> {
      *            required position
      */
     private void removeFromPosition(final int position) {
-	Field<K, V> tmp = new FieldImpl<K, V>(field.getLength() - 3,
-		keyTypeDescriptor, valueTypeDescriptor, linkTypeDescriptor);
+	Field<K, V> tmp = new FieldImpl<K, V>(field.getLength() - 3, treeData);
 	if (position > 0) {
 	    tmp.copy(field, 0, 0, position);
 	}
@@ -323,13 +322,11 @@ public class NodeImpl<K, V> implements Node<K, V> {
 	final int startIndex = startKeyNo * 2;
 	final int length = field.getLength() - startIndex;
 	// TODO create field in static factory
-	node.field = new FieldImpl<K, V>(length - 1, keyTypeDescriptor,
-		valueTypeDescriptor, linkTypeDescriptor);
+	node.field = new FieldImpl<K, V>(length - 1, treeData);
 	node.field.copy(field, startIndex, 0, length);
 
 	// remove copied data from this node
-	Field<K, V> field2 = new FieldImpl<K, V>(startIndex, keyTypeDescriptor,
-		valueTypeDescriptor, linkTypeDescriptor);
+	Field<K, V> field2 = new FieldImpl<K, V>(startIndex, treeData);
 	field2.copy(field, 0, 0, startIndex);
 	field = field2;
 	setLink(node.getId());
@@ -394,7 +391,8 @@ public class NodeImpl<K, V> implements Node<K, V> {
 	    return getLink();
 	}
 	for (int i = 1; i < field.getLength() - 1; i = i + 2) {
-	    if (keyTypeDescriptor.compare(key, field.getKey(i)) <= 0) {
+	    if (treeData.getKeyTypeDescriptor().compare(key,
+		    field.getKey(i)) <= 0) {
 		// TODO re-typing should be implicit
 		return (Integer) field.getValue(i - 1);
 	    }
@@ -461,7 +459,7 @@ public class NodeImpl<K, V> implements Node<K, V> {
 
     @Override
     public int hashCode() {
-	return Arrays.hashCode(new Object[] { l, id, field });
+	return Arrays.hashCode(new Object[] { id, field });
     }
 
     @SuppressWarnings("unchecked")
@@ -474,7 +472,7 @@ public class NodeImpl<K, V> implements Node<K, V> {
 	    return false;
 	}
 	final NodeImpl<K, V> n = (NodeImpl<K, V>) obj;
-	if (equal(l, n.l) && equal(id, n.id) && field.equals(n.field)) {
+	if (equal(id, n.id) && field.equals(n.field)) {
 	    return true;
 	} else {
 	    return false;
@@ -493,8 +491,9 @@ public class NodeImpl<K, V> implements Node<K, V> {
     }
 
     @Override
+    @Deprecated
     public int getL() {
-	return l;
+	return treeData.getL();
     }
 
     @Override

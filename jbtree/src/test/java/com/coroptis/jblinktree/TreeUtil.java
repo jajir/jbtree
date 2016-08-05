@@ -3,8 +3,6 @@ package com.coroptis.jblinktree;
 import java.io.File;
 import java.io.IOException;
 
-import com.coroptis.jblinktree.type.TypeDescriptor;
-import com.coroptis.jblinktree.type.TypeDescriptorInteger;
 import com.google.common.base.Charsets;
 import com.google.common.io.Files;
 
@@ -126,36 +124,6 @@ public class TreeUtil {
 	    throw new JblinktreeException(e.getMessage());
 	}
 	return buff.toString();
-    }
-
-    /**
-     * Construct node and fill byte field.
-     * 
-     * @param l
-     *            required node parameter L
-     * @param idNode
-     *            required node id, node will be referred with this id.
-     * @param fieldInt
-     *            required Integer array representing node content.
-     * @return created {@link NodeImpl}
-     */
-    public static NodeImpl<Integer, Integer> makeNodeFromIntegers(final int l,
-	    final Integer idNode, final Integer fieldInt[]) {
-	FieldImpl<Integer, Integer> f = makeFromIntegerField(fieldInt);
-	TypeDescriptor<Integer> tdInt = new TypeDescriptorInteger();
-	NodeImpl<Integer, Integer> n = new NodeImpl<Integer, Integer>(l,
-		idNode, f, tdInt, tdInt, tdInt);
-	return n;
-    }
-
-    public static FieldImpl<Integer, Integer> makeFromIntegerField(
-	    final Integer[] fieldInt) {
-	TypeDescriptor<Integer> tdInt = new TypeDescriptorInteger();
-	byte fieldByte[] = new byte[fieldInt.length * 4 + 1];
-	for (int i = 0; i < fieldInt.length; i++) {
-	    tdInt.save(fieldByte, i * 4 + 1, fieldInt[i]);
-	}
-	return new FieldImpl<Integer, Integer>(fieldByte, tdInt, tdInt, tdInt);
     }
 
 }

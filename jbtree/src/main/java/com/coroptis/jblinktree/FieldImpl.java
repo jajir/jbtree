@@ -2,8 +2,6 @@ package com.coroptis.jblinktree;
 
 import java.util.Arrays;
 
-import com.coroptis.jblinktree.type.TypeDescriptor;
-
 /*
  * #%L
  * jblinktree
@@ -31,7 +29,8 @@ import com.coroptis.jblinktree.type.TypeDescriptor;
  * <li>value length is fixed- 4 bytes</li>
  * <li>filed length - length</li>
  * </ul>
- * <table border="1" style="border-collapse:collapse" summary="keys and values meaning in node">
+ * <table border="1" style="border-collapse:collapse" summary=
+ * "keys and values meaning in node">
  * <tr>
  * <td>Meaning</td>
  * <td>flags</td>
@@ -75,11 +74,7 @@ public class FieldImpl<K, V> implements Field<K, V> {
      */
     private final int size;
 
-    private final TypeDescriptor<K> keyTypeDescriptor;
-
-    private final TypeDescriptor<V> valueTypeDescriptor;
-
-    private final TypeDescriptor<Integer> linkTypeDescriptor;
+    private final JbTreeData<K, V> treeData;
 
     /**
      * Basic constructor.
@@ -93,13 +88,10 @@ public class FieldImpl<K, V> implements Field<K, V> {
      * @param linkTypeDescriptor
      *            required link type descriptor
      */
-    public FieldImpl(final int numberOfField, final TypeDescriptor<K> keyTypeDescriptor,
-	    final TypeDescriptor<V> valueTypeDescriptor,
-	    final TypeDescriptor<Integer> linkTypeDescriptor) {
-	this.linkTypeDescriptor = linkTypeDescriptor;
-	this.keyTypeDescriptor = keyTypeDescriptor;
-	this.valueTypeDescriptor = valueTypeDescriptor;
-	this.field = new byte[getPosition(numberOfField) + linkTypeDescriptor.getMaxLength()];
+    public FieldImpl(final int numberOfField, final JbTreeData<K, V> treeData) {
+	this.treeData = treeData;
+	this.field = new byte[getPosition(numberOfField)
+		+ treeData.getLinkTypeDescriptor().getMaxLength()];
 	size = computeLength();
     }
 
@@ -116,12 +108,8 @@ public class FieldImpl<K, V> implements Field<K, V> {
      * @param linkTypeDescriptor
      *            required link type descriptor
      */
-    public FieldImpl(final byte[] field, final TypeDescriptor<K> keyTypeDescriptor,
-	    final TypeDescriptor<V> valueTypeDescriptor,
-	    final TypeDescriptor<Integer> linkTypeDescriptor) {
-	this.linkTypeDescriptor = linkTypeDescriptor;
-	this.keyTypeDescriptor = keyTypeDescriptor;
-	this.valueTypeDescriptor = valueTypeDescriptor;
+    public FieldImpl(final byte[] field,final JbTreeData<K, V> treeData) {
+	this.treeData = treeData;
 	this.field = new byte[field.length];
 	System.arraycopy(field, 0, this.field, 0, this.field.length);
 	size = computeLength();
@@ -138,7 +126,8 @@ public class FieldImpl<K, V> implements Field<K, V> {
     private int getPosition(int position) {
 	final int p1 = position >>> 1;
 	final int p2 = (position + 1) >>> 1;
-	return p1 * keyTypeDescriptor.getMaxLength() + p2 * valueTypeDescriptor.getMaxLength() + 1;
+	return p1 * treeData.getKeyTypeDescriptor().getMaxLength()
+		+ p2 * treeData.getValueTypeDescriptor().getMaxLength() + 1;
     }
 
     /*
@@ -167,8 +156,8 @@ public class FieldImpl<K, V> implements Field<K, V> {
      * int, int, int)
      */
     @Override
-    public void copy(final Field<K, V> src, final int srcPos1, final int destPos1,
-	    final int length) {
+    public void copy(final Field<K, V> src, final int srcPos1,
+	    final int destPos1, final int length) {
 	final int srcPos = getPosition(srcPos1);
 	final int p = getPosition(srcPos1 + length) - srcPos;
 	final int destPos = getPosition(destPos1);
@@ -218,9 +207,9 @@ public class FieldImpl<K, V> implements Field<K, V> {
     }
 
     private int computeLength() {
-	final int length = field.length - linkTypeDescriptor.getMaxLength() - 1;
-	final int recordLength = keyTypeDescriptor.getMaxLength()
-		+ valueTypeDescriptor.getMaxLength();
+	final int length = field.length - treeData.getLinkTypeDescriptor().getMaxLength() - 1;
+	final int recordLength = treeData.getKeyTypeDescriptor().getMaxLength()
+		+ treeData.getValueTypeDescriptor().getMaxLength();
 	final int out = length / recordLength * 2;
 	return out + 1;
     }
@@ -232,22 +221,22 @@ public class FieldImpl<K, V> implements Field<K, V> {
 
     @Override
     public K getKey(final int position) {
-	return keyTypeDescriptor.load(field, getPosition(position));
+	return treeData.getKeyTypeDescriptor().load(field, getPosition(position));
     }
 
     @Override
     public V getValue(final int position) {
-	return valueTypeDescriptor.load(field, getPosition(position));
+	return treeData.getValueTypeDescriptor().load(field, getPosition(position));
     }
 
     @Override
     public void setKey(final int position, final K value) {
-	keyTypeDescriptor.save(field, getPosition(position), value);
+	treeData.getKeyTypeDescriptor().save(field, getPosition(position), value);
     }
 
     @Override
     public void setValue(final int position, final V value) {
-	valueTypeDescriptor.save(field, getPosition(position), value);
+	treeData.getValueTypeDescriptor().save(field, getPosition(position), value);
     }
 
     @Override
@@ -262,12 +251,12 @@ public class FieldImpl<K, V> implements Field<K, V> {
 
     @Override
     public Integer getLink() {
-	return linkTypeDescriptor.load(field, field.length - 4);
+	return treeData.getLinkTypeDescriptor().load(field, field.length - 4);
     }
 
     @Override
     public void setLink(final Integer link) {
-	linkTypeDescriptor.save(field, field.length - 4, link);
+	treeData.getLinkTypeDescriptor().save(field, field.length - 4, link);
     }
 
 }

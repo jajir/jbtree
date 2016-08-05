@@ -19,13 +19,18 @@ package com.coroptis.jblinktree.junit;
  * limitations under the License.
  * #L%
  */
-
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.util.List;
 
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,9 +38,7 @@ import org.slf4j.LoggerFactory;
 import com.coroptis.jblinktree.JblinktreeException;
 import com.coroptis.jblinktree.Node;
 import com.coroptis.jblinktree.NodeImpl;
-import com.coroptis.jblinktree.TreeUtil;
-import com.coroptis.jblinktree.type.TypeDescriptor;
-import com.coroptis.jblinktree.type.TypeDescriptorInteger;
+import com.coroptis.jblinktree.NodeRule;
 
 /**
  * Junit test for {@link NodeImpl}.
@@ -47,21 +50,24 @@ public class NodeTest {
 
     private Logger logger = LoggerFactory.getLogger(NodeTest.class);
 
-    private Node<Integer, Integer> node;
+    @Rule
+    public NodeRule nr = new NodeRule(2);
 
-    private TypeDescriptor<Integer> intDescriptor;
+    private Node<Integer, Integer> node;
 
     @Test
     public void test_toString() throws Exception {
 	logger.debug(node.toString());
 
-	assertEquals("Node{id=0, isLeafNode=true, field=[], flag=-77, link=-1}", node.toString());
+	assertEquals("Node{id=0, isLeafNode=true, field=[], flag=-77, link=-1}",
+		node.toString());
 
-	Node<Integer, Integer> n = TreeUtil.makeNodeFromIntegers(2, 0, new Integer[] { 0, 1, 1, 3,
-		-40, 4, 98 });
+	Node<Integer, Integer> n = nr.makeNodeFromIntegers(0,
+		new Integer[] { 0, 1, 1, 3, -40, 4, 98 });
 
 	logger.debug(n.toString());
-	assertEquals("Node{id=0, isLeafNode=false, field=[0, 1, 1, 3, -40, 4], flag=0, link=98}",
+	assertEquals(
+		"Node{id=0, isLeafNode=false, field=[0, 1, 1, 3, -40, 4], flag=0, link=98}",
 		n.toString());
 
     }
@@ -119,8 +125,8 @@ public class NodeTest {
 
     @Test
     public void test_insert_nonLeaf() throws Exception {
-	Node<Integer, Integer> n = TreeUtil.makeNodeFromIntegers(3, 0, new Integer[] { 0, 1, 1, 3,
-		98 });
+	Node<Integer, Integer> n = nr.makeNodeFromIntegers(3, 0,
+		new Integer[] { 0, 1, 1, 3, 98 });
 	n.insert(4, -40);
 
 	logger.debug(n.toString());
@@ -131,8 +137,8 @@ public class NodeTest {
 	assertTrue(keys.contains(1));
 	assertTrue(keys.contains(4));
 	assertEquals(Integer.valueOf(98), n.getLink());
-	assertEquals("non-leaf nodes should preserver it's max key", Integer.valueOf(4),
-		n.getMaxKey());
+	assertEquals("non-leaf nodes should preserver it's max key",
+		Integer.valueOf(4), n.getMaxKey());
 	assertEquals(Integer.valueOf(0), n.getCorrespondingNodeId(1));
 	assertEquals(Integer.valueOf(1), n.getCorrespondingNodeId(3));
 	assertEquals(Integer.valueOf(-40), n.getCorrespondingNodeId(4));
@@ -141,8 +147,8 @@ public class NodeTest {
 
     @Test
     public void test_insert_nonLeaf_maxKey() throws Exception {
-	Node<Integer, Integer> n = TreeUtil.makeNodeFromIntegers(3, 0, new Integer[] { 0, 1, 1, 2,
-		-1 });
+	Node<Integer, Integer> n = nr.makeNodeFromIntegers(3, 0,
+		new Integer[] { 0, 1, 1, 2, -1 });
 	n.insert(4, 3);
 
 	logger.debug(n.toString());
@@ -161,7 +167,8 @@ public class NodeTest {
 
     @Test
     public void test_insert_nonLeaf_loverKey() throws Exception {
-	Node<Integer, Integer> n = TreeUtil.makeNodeFromIntegers(2, 4, new Integer[] { 0, 4, 0 });
+	Node<Integer, Integer> n = nr.makeNodeFromIntegers(4,
+		new Integer[] { 0, 4, 0 });
 	n.insert(3, -30);
 
 	logger.debug(n.toString());
@@ -210,8 +217,8 @@ public class NodeTest {
 
     @Test
     public void test_remove_nonLeaf_last() throws Exception {
-	Node<Integer, Integer> n = TreeUtil.makeNodeFromIntegers(2, 22, new Integer[] { 13, 7, 16,
-		8, 21, 9, -1 });
+	Node<Integer, Integer> n = nr.makeNodeFromIntegers(22,
+		new Integer[] { 13, 7, 16, 8, 21, 9, -1 });
 	Integer ret = n.remove(9);
 
 	logger.debug(n.toString());
@@ -242,7 +249,7 @@ public class NodeTest {
 
     @Test
     public void test_remove_nonLeaf_P0_one() throws Exception {
-	node = TreeUtil.makeNodeFromIntegers(3, 2, new Integer[] { 0, 1, 1, 3, 999 });
+	node = nr.makeNodeFromIntegers(2, new Integer[] { 0, 1, 1, 3, 999 });
 	logger.debug(node.toString());
 	Integer ret = node.remove(1);
 
@@ -253,7 +260,7 @@ public class NodeTest {
 
     @Test
     public void test_remove_nonLeaf_P0_zero() throws Exception {
-	node = TreeUtil.makeNodeFromIntegers(3, 2, new Integer[] { 1, 2, 888 });
+	node = nr.makeNodeFromIntegers(2, new Integer[] { 1, 2, 888 });
 	logger.debug(node.toString());
 	Integer ret = node.remove(2);
 
@@ -288,8 +295,8 @@ public class NodeTest {
 	node.setLink(100);
 	logger.debug("node1  " + node.toString());
 
-	NodeImpl<Integer, Integer> node2 = new NodeImpl<Integer, Integer>(2, 1, true,
-		intDescriptor, intDescriptor, intDescriptor);
+	NodeImpl<Integer, Integer> node2 = new NodeImpl<Integer, Integer>(1,
+		true, nr.getTreeData());
 	node.moveTopHalfOfDataTo(node2);
 
 	logger.debug("node1  " + node.toString());
@@ -312,13 +319,14 @@ public class NodeTest {
 	assertTrue(keys.contains(2));
 	assertTrue("target node should be leaf", node2.isLeafNode());
 	assertEquals(Integer.valueOf(100), node2.getLink());
-	assertEquals("Invalid getMaxKey", Integer.valueOf(2), node2.getMaxKey());
+	assertEquals("Invalid getMaxKey", Integer.valueOf(2),
+		node2.getMaxKey());
     }
 
     @Test
     public void test_moveTopHalfOfDataTo_nothingToMove() throws Exception {
-	NodeImpl<Integer, Integer> node2 = new NodeImpl<Integer, Integer>(2, 11, true,
-		intDescriptor, intDescriptor, intDescriptor);
+	NodeImpl<Integer, Integer> node2 = new NodeImpl<Integer, Integer>(11,
+		true, nr.getTreeData());
 	try {
 	    node.moveTopHalfOfDataTo(node2);
 	    fail();
@@ -329,13 +337,13 @@ public class NodeTest {
 
     @Test
     public void test_moveTopHalfOfDataTo_node() throws Exception {
-	Node<Integer, Integer> n = TreeUtil.makeNodeFromIntegers(2, 10, new Integer[] { 0, 1, 1, 2,
-		5, 9, -1 });
+	Node<Integer, Integer> n = nr.makeNodeFromIntegers(10,
+		new Integer[] { 0, 1, 1, 2, 5, 9, -1 });
 	logger.debug("node  " + n.toString());
 	assertEquals("key count is not correct", 3, n.getKeysCount());
 
-	NodeImpl<Integer, Integer> node2 = new NodeImpl<Integer, Integer>(2, 11, true,
-		intDescriptor, intDescriptor, intDescriptor);
+	NodeImpl<Integer, Integer> node2 = new NodeImpl<Integer, Integer>(11,
+		true, nr.getTreeData());
 	n.moveTopHalfOfDataTo(node2);
 
 	logger.debug("node  " + n.toString());
@@ -357,8 +365,10 @@ public class NodeTest {
 	keys = node2.getKeys();
 	assertTrue(keys.contains(2));
 	assertFalse(node2.isLeafNode());
-	assertEquals("ln in new node should be null", Integer.valueOf(-1), node2.getLink());
-	assertEquals("Invalid getMaxKey", Integer.valueOf(9), node2.getMaxKey());
+	assertEquals("ln in new node should be null", Integer.valueOf(-1),
+		node2.getLink());
+	assertEquals("Invalid getMaxKey", Integer.valueOf(9),
+		node2.getMaxKey());
     }
 
     @Test
@@ -403,21 +413,22 @@ public class NodeTest {
 
     @Test
     public void test_getCorrespondingNodeId_return_link() throws Exception {
-	Node<Integer, Integer> n = TreeUtil.makeNodeFromIntegers(2, 2, new Integer[] { 0, 1, 2, 3,
-		33 });
+	Node<Integer, Integer> n = nr.makeNodeFromIntegers(2,
+		new Integer[] { 0, 1, 2, 3, 33 });
 
 	logger.debug(n.toString());
 
 	Integer nodeId = n.getCorrespondingNodeId(4);
 
 	assertNotNull("node id can't be null", nodeId);
-	assertEquals("node id should be different", Integer.valueOf(33), nodeId);
+	assertEquals("node id should be different", Integer.valueOf(33),
+		nodeId);
     }
 
     @Test
     public void test_getCorrespondingNodeId_simple() throws Exception {
-	Node<Integer, Integer> n = TreeUtil.makeNodeFromIntegers(2, 2, new Integer[] { 0, 2, 1, 3,
-		23 });
+	Node<Integer, Integer> n = nr.makeNodeFromIntegers(2,
+		new Integer[] { 0, 2, 1, 3, 23 });
 
 	logger.debug(n.toString());
 
@@ -429,8 +440,8 @@ public class NodeTest {
 
     @Test
     public void test_updateNodeValue_value_was_updated() throws Exception {
-	Node<Integer, Integer> n = TreeUtil.makeNodeFromIntegers(2, 2, new Integer[] { 0, 2, 1, 3,
-		23 });
+	Node<Integer, Integer> n = nr.makeNodeFromIntegers(2,
+		new Integer[] { 0, 2, 1, 3, 23 });
 
 	boolean ret = n.updateNodeValue(0, 3);
 
@@ -439,8 +450,8 @@ public class NodeTest {
 
     @Test
     public void test_updateNodeValue_value_was_not_updated() throws Exception {
-	Node<Integer, Integer> n = TreeUtil.makeNodeFromIntegers(2, 2, new Integer[] { 0, 2, 1, 3,
-		23 });
+	Node<Integer, Integer> n = nr.makeNodeFromIntegers(2,
+		new Integer[] { 0, 2, 1, 3, 23 });
 
 	boolean ret = n.updateNodeValue(0, 2);
 
@@ -449,8 +460,8 @@ public class NodeTest {
 
     @Test
     public void test_updateNodeValue_missing_node_id() throws Exception {
-	Node<Integer, Integer> n = TreeUtil.makeNodeFromIntegers(2, 2, new Integer[] { 0, 2, 1, 3,
-		23 });
+	Node<Integer, Integer> n = nr.makeNodeFromIntegers(2,
+		new Integer[] { 0, 2, 1, 3, 23 });
 
 	boolean ret = n.updateNodeValue(10, 2);
 
@@ -476,17 +487,20 @@ public class NodeTest {
      * @param expectedNodeLink
      *            required value of expectect link
      */
-    private void verifyNode(final Node<Integer, Integer> n, final Integer[][] pairs,
-	    final boolean isLeafNode, final Integer expectedNodeLink) {
+    private void verifyNode(final Node<Integer, Integer> n,
+	    final Integer[][] pairs, final boolean isLeafNode,
+	    final Integer expectedNodeLink) {
 	logger.debug(n.toString());
 
-	assertEquals("Expected number of key is invalid", pairs.length, n.getKeysCount());
+	assertEquals("Expected number of key is invalid", pairs.length,
+		n.getKeysCount());
 	assertEquals("isLeafNode value is invalid", isLeafNode, n.isLeafNode());
 	List<Integer> keys = n.getKeys();
 	for (Integer[] pair : pairs) {
 	    final Integer key = pair[0];
 	    final Integer value = pair[1];
-	    assertTrue("keys should contains key " + pair[0], keys.contains(pair[0]));
+	    assertTrue("keys should contains key " + pair[0],
+		    keys.contains(pair[0]));
 	    if (isLeafNode) {
 		assertEquals(value, n.getValue(key));
 	    } else {
@@ -496,60 +510,62 @@ public class NodeTest {
 	assertEquals("Node link is invalid", expectedNodeLink, n.getLink());
 	if (pairs.length > 0) {
 	    final Integer expectedMaxKey = pairs[pairs.length - 1][0];
-	    assertEquals("Max key value is invalid", expectedMaxKey, n.getMaxKey());
+	    assertEquals("Max key value is invalid", expectedMaxKey,
+		    n.getMaxKey());
 	}
     }
 
     @Test
     public void test_getKeysCount_leaf() throws Exception {
-	Node<Integer, Integer> n = TreeUtil.makeNodeFromIntegers(2, 2, new Integer[] { -77, 10, 1,
-		10, -1 });
+	Node<Integer, Integer> n = nr.makeNodeFromIntegers(2,
+		new Integer[] { -77, 10, 1, 10, -1 });
 
 	assertEquals(2, n.getKeysCount());
     }
 
     @Test
     public void test_getKeysCount_leaf_empty() throws Exception {
-	Node<Integer, Integer> n = new NodeImpl<Integer, Integer>(2, 10, true, intDescriptor,
-		intDescriptor, intDescriptor);
+	Node<Integer, Integer> n = new NodeImpl<Integer, Integer>(10, true,
+		nr.getTreeData());
 
 	assertEquals(0, n.getKeysCount());
     }
 
     @Test
     public void test_getKeysCount_nonLeaf() throws Exception {
-	Node<Integer, Integer> n = TreeUtil.makeNodeFromIntegers(2, 2, new Integer[] { 0, 2, 1, 3,
-		23 });
+	Node<Integer, Integer> n = nr.makeNodeFromIntegers(2,
+		new Integer[] { 0, 2, 1, 3, 23 });
 
 	assertEquals(2, n.getKeysCount());
     }
 
     @Test
     public void test_getKeysCount_nonLeaf_1() throws Exception {
-	Node<Integer, Integer> n = TreeUtil.makeNodeFromIntegers(2, 2, new Integer[] { 0, 2, 23 });
+	Node<Integer, Integer> n = nr.makeNodeFromIntegers(2,
+		new Integer[] { 0, 2, 23 });
 
 	assertEquals(1, n.getKeysCount());
     }
 
     @Test
     public void test_getKeysCount_nonLeaf_empty() throws Exception {
-	Node<Integer, Integer> n = new NodeImpl<Integer, Integer>(2, 10, false, intDescriptor,
-		intDescriptor, intDescriptor);
+	Node<Integer, Integer> n = new NodeImpl<Integer, Integer>(10, false,
+		nr.getTreeData());
 
 	assertEquals(0, n.getKeysCount());
     }
 
     @Test
     public void test_writeTo() throws Exception {
-	Node<Integer, Integer> n = TreeUtil.makeNodeFromIntegers(2, 2, new Integer[] { 0, 2, 1, 3,
-		23 });
+	Node<Integer, Integer> n = nr.makeNodeFromIntegers(2,
+		new Integer[] { 0, 2, 1, 3, 23 });
 
 	StringBuilder buff = new StringBuilder();
 	n.writeTo(buff, "    ");
 	assertNotNull(buff);
 	logger.debug(buff.toString());
     }
-    
+
     @Test
     public void test_equals_same() throws Exception {
 	assertTrue(node.equals(node));
@@ -557,14 +573,11 @@ public class NodeTest {
 
     @Before
     public void setUp() throws Exception {
-	intDescriptor = new TypeDescriptorInteger();
-	node = new NodeImpl<Integer, Integer>(2, 0, true, intDescriptor, intDescriptor,
-		intDescriptor);
+	node = new NodeImpl<Integer, Integer>(0, true, nr.getTreeData());
     }
 
     @After
     public void tearDown() throws Exception {
 	node = null;
-	intDescriptor = null;
     }
 }

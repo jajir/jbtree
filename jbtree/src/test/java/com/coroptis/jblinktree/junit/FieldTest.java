@@ -19,20 +19,20 @@ package com.coroptis.jblinktree.junit;
  * limitations under the License.
  * #L%
  */
-
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.coroptis.jblinktree.Field;
 import com.coroptis.jblinktree.FieldImpl;
-import com.coroptis.jblinktree.TreeUtil;
-import com.coroptis.jblinktree.type.TypeDescriptor;
-import com.coroptis.jblinktree.type.TypeDescriptorInteger;
+import com.coroptis.jblinktree.NodeRule;
 
 /**
  * Junit test for {@link FieldImpl}.
@@ -44,9 +44,10 @@ public class FieldTest {
 
     private final Logger logger = LoggerFactory.getLogger(FieldTest.class);
 
-    private Field<Integer, Integer> field;
+    @Rule
+    public NodeRule nr = new NodeRule(3);
 
-    private TypeDescriptor<Integer> intDescriptor;
+    private Field<Integer, Integer> field;
 
     @Test
     public void test_default_field_value_0() throws Exception {
@@ -55,24 +56,24 @@ public class FieldTest {
 
     @Test
     public void test_length_2() throws Exception {
-	Field<Integer, Integer> f = TreeUtil
-		.makeFromIntegerField(new Integer[] { 10, 1, 30 });
+	Field<Integer, Integer> f = nr
+		.makeFieldFromArray(new Integer[] { 10, 1, 30 });
 
 	assertEquals(3, f.getLength());
     }
 
     @Test
     public void test_length_3() throws Exception {
-	Field<Integer, Integer> f = TreeUtil
-		.makeFromIntegerField(new Integer[] { 10, 1, 20, 2, 30 });
+	Field<Integer, Integer> f = nr
+		.makeFieldFromArray(new Integer[] { 10, 1, 20, 2, 30 });
 
 	assertEquals(5, f.getLength());
     }
 
     @Test
     public void test_getKey() throws Exception {
-	Field<Integer, Integer> f = TreeUtil
-		.makeFromIntegerField(new Integer[] { 10, 1, 20, 2, 30 });
+	Field<Integer, Integer> f = nr
+		.makeFieldFromArray(new Integer[] { 10, 1, 20, 2, 30 });
 
 	assertEquals(Integer.valueOf(2), f.getKey(3));
     }
@@ -122,20 +123,20 @@ public class FieldTest {
 
     @Test
     public void test_equals_different() throws Exception {
-	Field<Integer, Integer> f = new FieldImpl<Integer, Integer>(3,
-		intDescriptor, intDescriptor, intDescriptor);
+	Field<Integer, Integer> f = new FieldImpl<Integer, Integer>(nr.getL(),
+		nr.getTreeData());
 	f.setKey(1, -1);
 	assertFalse(field.equals(f));
     }
 
     @Test
     public void test_equals_equals() throws Exception {
-	final Field<Integer, Integer> f1 = new FieldImpl<Integer, Integer>(3,
-		intDescriptor, intDescriptor, intDescriptor);
+	final Field<Integer, Integer> f1 = new FieldImpl<Integer, Integer>(
+		nr.getL(), nr.getTreeData());
 	f1.setKey(1, -1);
 
-	final Field<Integer, Integer> f2 = new FieldImpl<Integer, Integer>(3,
-		intDescriptor, intDescriptor, intDescriptor);
+	final Field<Integer, Integer> f2 = new FieldImpl<Integer, Integer>(
+		nr.getL(), nr.getTreeData());
 	f2.setKey(1, -1);
 
 	assertTrue(f1.equals(f2));
@@ -151,7 +152,7 @@ public class FieldTest {
 	byte[] field = new byte[] { 10, 1, 20, 2, 30 };
 
 	Field<Integer, Integer> f = new FieldImpl<Integer, Integer>(field,
-		intDescriptor, intDescriptor, intDescriptor);
+		nr.getTreeData());
 
 	field[0] = -1;
 	field[1] = -1;
@@ -168,14 +169,11 @@ public class FieldTest {
 
     @Before
     public void setUp() throws Exception {
-	intDescriptor = new TypeDescriptorInteger();
-	field = new FieldImpl<Integer, Integer>(3, intDescriptor, intDescriptor,
-		intDescriptor);
+	field = new FieldImpl<Integer, Integer>(nr.getL(), nr.getTreeData());
     }
 
     @After
     public void tearDown() throws Exception {
-	intDescriptor = null;
 	field = null;
     }
 
