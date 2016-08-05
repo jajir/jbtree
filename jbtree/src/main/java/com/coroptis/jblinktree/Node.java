@@ -195,29 +195,12 @@ public interface Node<K, V> {
     List<K> getKeys();
 
     /**
-     * Allows to set max key value.
-     * 
-     * @param maxKey
-     *            max key value, could be <code>null</code>
-     */
-    void setMaxKey(K maxKey);
-
-    /**
      * Verify that node is consistent.
      * 
      * @return <code>true</code> when node is consistent otherwise return
      *         <code>false</code>
      */
     boolean verify();
-
-    /**
-     * TODO describe what is it.
-     * 
-     * @return the l
-     * @deprecated replace with {@link JbTreeData}
-     */
-    @Deprecated
-    int getL();
 
     /**
      * Write node content into {@link StringBuilder}.

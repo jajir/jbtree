@@ -254,7 +254,7 @@ public class JbTreeWrapper<K, V> implements JbTree<K, V> {
 	}
     }
 
-    public void write(final StringBuilder buff) throws IOException {
+    private void write(final StringBuilder buff) throws IOException {
 	Writer out = null;
 	try {
 	    out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file), "UTF-8"));

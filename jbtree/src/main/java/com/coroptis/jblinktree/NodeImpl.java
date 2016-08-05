@@ -435,11 +435,6 @@ public class NodeImpl<K, V> implements Node<K, V> {
     }
 
     @Override
-    public void setMaxKey(final K maxKey) {
-	field.setKey(field.getLength() - 2, maxKey);
-    }
-
-    @Override
     public boolean verify() {
 	if ((field.getLength()) % 2 == 0) {
 	    throw new JblinktreeException(
@@ -488,12 +483,6 @@ public class NodeImpl<K, V> implements Node<K, V> {
      */
     private boolean equal(Object a, Object b) {
 	return a == b || (a != null && a.equals(b));
-    }
-
-    @Override
-    @Deprecated
-    public int getL() {
-	return treeData.getL();
     }
 
     @Override
