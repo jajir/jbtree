@@ -52,8 +52,8 @@ public class NodeRule implements TestRule {
 
     private void setup() {
 	intDescriptor = new TypeDescriptorInteger();
-	treeData = new JbTreeDataImpl<Integer, Integer>(0, l, intDescriptor,
-		intDescriptor, intDescriptor);
+	treeData = new JbTreeDataImpl<Integer, Integer>(0, l, intDescriptor, intDescriptor,
+		intDescriptor);
     }
 
     private void tearDown() {
@@ -69,13 +69,16 @@ public class NodeRule implements TestRule {
 	return new FieldImpl<Integer, Integer>(l, treeData);
     }
 
-    public FieldImpl<Integer, Integer> makeFieldFromArray(
-	    final Integer[] fieldInt) {
+    private byte[] convert(final Integer[] fieldInt) {
 	byte fieldByte[] = new byte[fieldInt.length * 4 + 1];
 	for (int i = 0; i < fieldInt.length; i++) {
 	    intDescriptor.save(fieldByte, i * 4 + 1, fieldInt[i]);
 	}
-	return new FieldImpl<Integer, Integer>(fieldByte, treeData);
+	return fieldByte;
+    }
+
+    public FieldImpl<Integer, Integer> makeFieldFromArray(final Integer[] fieldInt) {
+	return new FieldImpl<Integer, Integer>(convert(fieldInt), treeData);
     }
 
     /**
@@ -92,18 +95,16 @@ public class NodeRule implements TestRule {
     public NodeImpl<Integer, Integer> makeNodeFromIntegers(final Integer idNode,
 	    final Integer fieldInt[]) {
 	FieldImpl<Integer, Integer> f = makeFieldFromArray(fieldInt);
-	NodeImpl<Integer, Integer> n = new NodeImpl<Integer, Integer>(idNode, f,
-		treeData);
+	NodeImpl<Integer, Integer> n = new NodeImpl<Integer, Integer>(idNode, f);
 	return n;
     }
 
-    public NodeImpl<Integer, Integer> makeNodeFromIntegers(final Integer ll,
-	    final Integer idNode, final Integer fieldInt[]) {
-	JbTreeDataImpl<Integer, Integer> td = new JbTreeDataImpl<Integer, Integer>(
-		0, ll, intDescriptor, intDescriptor, intDescriptor);
-	FieldImpl<Integer, Integer> f = makeFieldFromArray(fieldInt);
-	NodeImpl<Integer, Integer> n = new NodeImpl<Integer, Integer>(idNode, f,
-		td);
+    public NodeImpl<Integer, Integer> makeNodeFromIntegers(final Integer ll, final Integer idNode,
+	    final Integer fieldInt[]) {
+	JbNodeDef<Integer, Integer> td = new JbNodeDefImpl<Integer, Integer>(ll, intDescriptor,
+		intDescriptor, intDescriptor);
+	FieldImpl<Integer, Integer> f = new FieldImpl<Integer, Integer>(convert(fieldInt), td);
+	NodeImpl<Integer, Integer> n = new NodeImpl<Integer, Integer>(idNode, f);
 	return n;
     }
 

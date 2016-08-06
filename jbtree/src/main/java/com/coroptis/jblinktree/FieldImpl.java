@@ -85,20 +85,20 @@ public class FieldImpl<K, V> implements Field<K, V> {
      */
     private final int size;
 
-    private final JbNodeDef<K, V> treeData;
+    private final JbNodeDef<K, V> nodeDef;
 
     /**
      * Basic constructor.
      * 
      * @param numberOfField
      *            required number of items that could be stored in field.
-     * @param treeData
+     * @param nodeDef
      *            required tree definition
      */
-    public FieldImpl(final int numberOfField, final JbNodeDef<K, V> treeData) {
-	this.treeData = treeData;
+    public FieldImpl(final int numberOfField, final JbNodeDef<K, V> nodeDef) {
+	this.nodeDef = nodeDef;
 	this.field = new byte[getPosition(numberOfField)
-		+ treeData.getLinkTypeDescriptor().getMaxLength()];
+		+ nodeDef.getLinkTypeDescriptor().getMaxLength()];
 	size = computeLength();
     }
 
@@ -112,10 +112,15 @@ public class FieldImpl<K, V> implements Field<K, V> {
      *            required tree definition
      */
     public FieldImpl(final byte[] field, final JbNodeDef<K, V> treeData) {
-	this.treeData = treeData;
+	this.nodeDef = treeData;
 	this.field = new byte[field.length];
 	System.arraycopy(field, 0, this.field, 0, this.field.length);
 	size = computeLength();
+	if (getFlag() != Node.M
+		&& !(nodeDef.getValueTypeDescriptor() instanceof TypeDescriptorInteger)) {
+	    throw new JblinktreeException("Non-leaf node doesn't have value of type integer, it's "
+		    + nodeDef.getValueTypeDescriptor().getClass().getName());
+	}
     }
 
     /**
@@ -129,8 +134,8 @@ public class FieldImpl<K, V> implements Field<K, V> {
     private int getPosition(int position) {
 	final int p1 = position >>> 1;
 	final int p2 = (position + 1) >>> 1;
-	return p1 * treeData.getKeyTypeDescriptor().getMaxLength()
-		+ p2 * treeData.getValueTypeDescriptor().getMaxLength() + 1;
+	return p1 * nodeDef.getKeyTypeDescriptor().getMaxLength()
+		+ p2 * nodeDef.getValueTypeDescriptor().getMaxLength() + 1;
     }
 
     /*
@@ -210,9 +215,9 @@ public class FieldImpl<K, V> implements Field<K, V> {
     }
 
     private int computeLength() {
-	final int length = field.length - treeData.getLinkTypeDescriptor().getMaxLength() - 1;
-	final int recordLength = treeData.getKeyTypeDescriptor().getMaxLength()
-		+ treeData.getValueTypeDescriptor().getMaxLength();
+	final int length = field.length - nodeDef.getLinkTypeDescriptor().getMaxLength() - 1;
+	final int recordLength = nodeDef.getKeyTypeDescriptor().getMaxLength()
+		+ nodeDef.getValueTypeDescriptor().getMaxLength();
 	final int out = length / recordLength * 2;
 	return out + 1;
     }
@@ -224,22 +229,22 @@ public class FieldImpl<K, V> implements Field<K, V> {
 
     @Override
     public K getKey(final int position) {
-	return treeData.getKeyTypeDescriptor().load(field, getPosition(position));
+	return nodeDef.getKeyTypeDescriptor().load(field, getPosition(position));
     }
 
     @Override
     public V getValue(final int position) {
-	return treeData.getValueTypeDescriptor().load(field, getPosition(position));
+	return nodeDef.getValueTypeDescriptor().load(field, getPosition(position));
     }
 
     @Override
     public void setKey(final int position, final K value) {
-	treeData.getKeyTypeDescriptor().save(field, getPosition(position), value);
+	nodeDef.getKeyTypeDescriptor().save(field, getPosition(position), value);
     }
 
     @Override
     public void setValue(final int position, final V value) {
-	treeData.getValueTypeDescriptor().save(field, getPosition(position), value);
+	nodeDef.getValueTypeDescriptor().save(field, getPosition(position), value);
     }
 
     @Override
@@ -254,12 +259,20 @@ public class FieldImpl<K, V> implements Field<K, V> {
 
     @Override
     public Integer getLink() {
-	return treeData.getLinkTypeDescriptor().load(field, field.length - 4);
+	return nodeDef.getLinkTypeDescriptor().load(field, field.length - 4);
     }
 
     @Override
     public void setLink(final Integer link) {
-	treeData.getLinkTypeDescriptor().save(field, field.length - 4, link);
+	nodeDef.getLinkTypeDescriptor().save(field, field.length - 4, link);
+    }
+
+    /**
+     * @return the nodeDef
+     */
+    @Override
+    public JbNodeDef<K, V> getNodeDef() {
+	return nodeDef;
     }
 
 }

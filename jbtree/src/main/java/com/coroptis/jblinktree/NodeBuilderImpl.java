@@ -51,11 +51,11 @@ public class NodeBuilderImpl<K, V> implements NodeBuilder<K, V> {
 	if (flag == Node.M) {
 	    // leaf node
 	    final Field<K, T> f = new FieldImpl(field, treeData.getLeafNodeDescriptor());
-	    return (Node<K, T>) new NodeImpl(idNode, f, treeData.getLeafNodeDescriptor());
+	    return (Node<K, T>) new NodeImpl(idNode, f);
 	} else {
 	    // non-leaf node
 	    final Field<K, T> f = new FieldImpl(field, treeData.getNonLeafNodeDescriptor());
-	    return (Node<K, T>) new NodeImpl(idNode, f, treeData.getNonLeafNodeDescriptor());
+	    return (Node<K, T>) new NodeImpl(idNode, f);
 	}
     }
 
@@ -68,16 +68,13 @@ public class NodeBuilderImpl<K, V> implements NodeBuilder<K, V> {
     @Override
     public Node<K, Integer> makeEmptyNonLeafNode(final Integer idNode) {
 	Preconditions.checkNotNull(idNode);
-	return new NodeImpl<K, Integer>(idNode, false,
-		(JbTreeData<K, Integer>) treeData);
+	return new NodeImpl<K, Integer>(idNode, false, (JbTreeData<K, Integer>) treeData);
     }
 
     @Override
-    public Node<K, Integer> makeNonLeafNode(final Integer idNode,
-	    final Integer value1, final K key1, final Integer value2,
-	    final K key2) {
-	final byte b[] = new byte[1
-		+ treeData.getKeyTypeDescriptor().getMaxLength() * 2
+    public Node<K, Integer> makeNonLeafNode(final Integer idNode, final Integer value1,
+	    final K key1, final Integer value2, final K key2) {
+	final byte b[] = new byte[1 + treeData.getKeyTypeDescriptor().getMaxLength() * 2
 		+ treeData.getLinkTypeDescriptor().getMaxLength() * 2
 		+ treeData.getLinkTypeDescriptor().getMaxLength()];
 	b[0] = 0; // it's non-leaf node.
@@ -96,9 +93,7 @@ public class NodeBuilderImpl<K, V> implements NodeBuilder<K, V> {
 
 	treeData.getLinkTypeDescriptor().save(b, position, NodeImpl.EMPTY_INT);
 
-	final Field<K, Integer> f = new FieldImpl<K, Integer>(b,
-		(JbTreeData<K, Integer>) treeData);
-	return new NodeImpl<K, Integer>(idNode, f,
-		(JbTreeData<K, Integer>) treeData);
+	final Field<K, Integer> f = new FieldImpl<K, Integer>(b, (JbTreeData<K, Integer>) treeData);
+	return new NodeImpl<K, Integer>(idNode, f);
     }
 }

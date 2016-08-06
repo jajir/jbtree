@@ -147,4 +147,6 @@ public interface Field<K, V> {
      *             when link is <code>null</code>
      */
     void setLink(Integer link);
+    
+    JbNodeDef<K, V> getNodeDef();
 }
