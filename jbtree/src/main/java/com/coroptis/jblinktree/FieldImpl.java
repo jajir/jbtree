@@ -2,6 +2,8 @@ package com.coroptis.jblinktree;
 
 import java.util.Arrays;
 
+import com.coroptis.jblinktree.type.TypeDescriptorInteger;
+
 /*
  * #%L
  * jblinktree
@@ -55,7 +57,14 @@ import java.util.Arrays;
  * <td>length - 1</td>
  * </tr>
  * </table>
- * 
+ * <p>
+ * Filed required data type descriptor for:
+ * <ul>
+ * <li>key</li>
+ * <li>value - if it's non leaf node than this is {@link TypeDescriptorInteger}</li>
+ * <li>link - always {@link TypeDescriptorInteger}</li>
+ * </ul>
+ * </p>
  * @author jajir
  * 
  * 
