@@ -33,7 +33,7 @@ import com.coroptis.jblinktree.JbTreeDataImpl;
 import com.coroptis.jblinktree.Node;
 import com.coroptis.jblinktree.NodeImpl;
 
-public class FileStorageTest {
+public class FileStorageWriteTest {
 
     @Rule
     public FileStorageRule fsRule = new FileStorageRule();
@@ -65,7 +65,7 @@ public class FileStorageTest {
 	JbTreeData<Integer, Integer> treeData = new JbTreeDataImpl<Integer, Integer>(
 		1, 5, fsRule.getIntDescriptor(), fsRule.getIntDescriptor(),
 		fsRule.getIntDescriptor());
-	node = new NodeImpl<Integer, Integer>(14, false, treeData);
+	node = new NodeImpl<Integer, Integer>(14, false, treeData.getLeafNodeDescriptor());
 	node.insert(3, 23);
     }
 

@@ -1,11 +1,5 @@
 package com.coroptis.jblinktree;
 
-import java.io.File;
-import java.io.IOException;
-
-import com.google.common.base.Charsets;
-import com.google.common.io.Files;
-
 /*
  * #%L
  * jblinktree
@@ -25,6 +19,12 @@ import com.google.common.io.Files;
  * limitations under the License.
  * #L%
  */
+
+import java.io.File;
+import java.io.IOException;
+
+import com.google.common.base.Charsets;
+import com.google.common.io.Files;
 
 /**
  * Provide printing of dot files.

@@ -135,7 +135,7 @@ public class NodeStringTest {
 	intDescriptor = new TypeDescriptorInteger();
 	JbTreeData<String, String> td = new JbTreeDataImpl<String, String>(0, 5,
 		stringDescriptor, stringDescriptor, intDescriptor);
-	node = new NodeImpl<String, String>(0, true, td);
+	node = new NodeImpl<String, String>(0, true, td.getLeafNodeDescriptor());
     }
 
     @After

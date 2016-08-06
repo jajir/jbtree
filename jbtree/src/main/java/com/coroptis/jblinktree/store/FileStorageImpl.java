@@ -68,8 +68,9 @@ public class FileStorageImpl<K, V> implements FileStorage<K, V> {
 	 */
 	// TODO following code is related to filed implementation, should be
 	// there.
-	maxNodeSize = 1 + treeData.getL() * (treeData.getKeyTypeDescriptor().getMaxLength()
-		+ treeData.getValueTypeDescriptor().getMaxLength()) + 4;
+	//FIXME following code sucks, node could be non leaf ;-)
+	maxNodeSize = 1 + treeData.getL() * (treeData.getLeafNodeDescriptor().getKeyTypeDescriptor().getMaxLength()
+		+ treeData.getLeafNodeDescriptor().getValueTypeDescriptor().getMaxLength()) + 4;
 	try {
 	    raf = new RandomAccessFile(new File(fileName), "rw");
 	} catch (FileNotFoundException e) {
@@ -104,8 +105,8 @@ public class FileStorageImpl<K, V> implements FileStorage<K, V> {
 	    byte keys = raf.readByte();
 	    // TODO following code is related to filed implementation, should be
 	    // there.
-	    int fieldSize = 1 + keys * (treeData.getKeyTypeDescriptor().getMaxLength()
-		    + treeData.getValueTypeDescriptor().getMaxLength()) + 4;
+	    int fieldSize = 1 + keys * (treeData.getLeafNodeDescriptor().getKeyTypeDescriptor().getMaxLength()
+		    + treeData.getLeafNodeDescriptor().getValueTypeDescriptor().getMaxLength()) + 4;
 	    byte[] bytes = new byte[fieldSize];
 	    raf.readFully(bytes);
 	    return nodeBuilder.makeNode(nodeId, bytes);

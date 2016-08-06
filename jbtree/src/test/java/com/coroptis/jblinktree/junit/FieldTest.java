@@ -124,7 +124,7 @@ public class FieldTest {
     @Test
     public void test_equals_different() throws Exception {
 	Field<Integer, Integer> f = new FieldImpl<Integer, Integer>(nr.getL(),
-		nr.getTreeData());
+		nr.getTreeData().getLeafNodeDescriptor());
 	f.setKey(1, -1);
 	assertFalse(field.equals(f));
     }
@@ -132,11 +132,11 @@ public class FieldTest {
     @Test
     public void test_equals_equals() throws Exception {
 	final Field<Integer, Integer> f1 = new FieldImpl<Integer, Integer>(
-		nr.getL(), nr.getTreeData());
+		nr.getL(), nr.getTreeData().getLeafNodeDescriptor());
 	f1.setKey(1, -1);
 
 	final Field<Integer, Integer> f2 = new FieldImpl<Integer, Integer>(
-		nr.getL(), nr.getTreeData());
+		nr.getL(), nr.getTreeData().getLeafNodeDescriptor());
 	f2.setKey(1, -1);
 
 	assertTrue(f1.equals(f2));
@@ -152,7 +152,7 @@ public class FieldTest {
 	byte[] field = new byte[] { 10, 1, 20, 2, 30 };
 
 	Field<Integer, Integer> f = new FieldImpl<Integer, Integer>(field,
-		nr.getTreeData());
+		nr.getTreeData().getLeafNodeDescriptor());
 
 	field[0] = -1;
 	field[1] = -1;
@@ -169,7 +169,7 @@ public class FieldTest {
 
     @Before
     public void setUp() throws Exception {
-	field = new FieldImpl<Integer, Integer>(nr.getL(), nr.getTreeData());
+	field = new FieldImpl<Integer, Integer>(nr.getL(), nr.getTreeData().getLeafNodeDescriptor());
     }
 
     @After

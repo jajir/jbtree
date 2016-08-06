@@ -38,12 +38,6 @@ public class JbTreeDataImpl<K, V> implements JbTreeData<K, V> {
 
     private final int l;
 
-    private final TypeDescriptor<K> keyTypeDescriptor;
-
-    private final TypeDescriptor<V> valueTypeDescriptor;
-
-    private final TypeDescriptor<Integer> linkTypeDescriptor;
-
     private final JbNodeDef<K, V> leafNodeDescriptor;
 
     private final JbNodeDef<K, Integer> nonLeafNodeDescriptor;
@@ -53,9 +47,9 @@ public class JbTreeDataImpl<K, V> implements JbTreeData<K, V> {
 	    final TypeDescriptor<Integer> linkTypeDescriptor) {
 	this.rootNodeId = startNodeId;
 	this.l = l;
-	this.keyTypeDescriptor = Preconditions.checkNotNull(keyTypeDescriptor);
-	this.valueTypeDescriptor = Preconditions.checkNotNull(valueTypeDescriptor);
-	this.linkTypeDescriptor = Preconditions.checkNotNull(linkTypeDescriptor);
+	Preconditions.checkNotNull(keyTypeDescriptor);
+	Preconditions.checkNotNull(valueTypeDescriptor);
+	Preconditions.checkNotNull(linkTypeDescriptor);
 	leafNodeDescriptor = new JbNodeDefImpl<K, V>(l, keyTypeDescriptor, valueTypeDescriptor,
 		linkTypeDescriptor);
 	nonLeafNodeDescriptor = new JbNodeDefImpl<K, Integer>(l, keyTypeDescriptor,
@@ -77,38 +71,6 @@ public class JbTreeDataImpl<K, V> implements JbTreeData<K, V> {
     }
 
     /**
-     * @return the l
-     */
-    @Override
-    public int getL() {
-	return l;
-    }
-
-    /**
-     * @return the keyTypeDescriptor
-     */
-    @Override
-    public TypeDescriptor<K> getKeyTypeDescriptor() {
-	return keyTypeDescriptor;
-    }
-
-    /**
-     * @return the valueTypeDescriptor
-     */
-    @Override
-    public TypeDescriptor<V> getValueTypeDescriptor() {
-	return valueTypeDescriptor;
-    }
-
-    /**
-     * @return the linkTypeDescriptor
-     */
-    @Override
-    public TypeDescriptor<Integer> getLinkTypeDescriptor() {
-	return linkTypeDescriptor;
-    }
-
-    /**
      * @return the leafNodeDescriptor
      */
     @Override
@@ -122,6 +84,14 @@ public class JbTreeDataImpl<K, V> implements JbTreeData<K, V> {
     @Override
     public JbNodeDef<K, Integer> getNonLeafNodeDescriptor() {
         return nonLeafNodeDescriptor;
+    }
+
+    /**
+     * @return the l
+     */
+    @Override
+    public int getL() {
+        return l;
     }
 
 }

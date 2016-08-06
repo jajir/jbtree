@@ -94,7 +94,7 @@ public class NodeStoreInMemConcurrencyTest extends TestCase {
 		treeData);
 	nodeStore = new NodeStoreInMem<Integer, Integer>(nodeBuilder);
 	NodeImpl<Integer, Integer> node = new NodeImpl<Integer, Integer>(1,
-		true, treeData);
+		true, treeData.getLeafNodeDescriptor());
 	nodeStore.writeNode(node);
     }
 

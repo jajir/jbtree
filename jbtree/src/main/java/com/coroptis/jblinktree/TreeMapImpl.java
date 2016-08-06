@@ -48,8 +48,10 @@ public class TreeMapImpl<K, V> implements TreeMap<K, V> {
 
     TreeMapImpl(final JbTree<K, V> tree, final JbTreeData<K, V> treeData) {
 	this.tree = Preconditions.checkNotNull(tree);
-	this.keyTypeDescriptor = Preconditions.checkNotNull(treeData.getKeyTypeDescriptor());
-	this.valueTypeDescriptor = Preconditions.checkNotNull(treeData.getValueTypeDescriptor());
+	this.keyTypeDescriptor = Preconditions
+		.checkNotNull(treeData.getLeafNodeDescriptor().getKeyTypeDescriptor());
+	this.valueTypeDescriptor = Preconditions
+		.checkNotNull(treeData.getLeafNodeDescriptor().getValueTypeDescriptor());
     }
 
     @SuppressWarnings("unchecked")
@@ -139,7 +141,7 @@ public class TreeMapImpl<K, V> implements TreeMap<K, V> {
 
     @Override
     public void visit(final JbDataVisitor<K, V> dataVisitor) {
-	//FIXME this does't provide ordered output.
+	// FIXME this does't provide ordered output.
 	tree.visit(new JbTreeVisitor<K, V>() {
 
 	    @Override

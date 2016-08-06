@@ -124,7 +124,7 @@ public class FileStoreConcurrencyTest {
 	JbTreeDataImpl<Integer, Integer> treeData = new JbTreeDataImpl<Integer, Integer>(
 		0, L, intDescriptor, intDescriptor, intDescriptor);
 	final Node<Integer, Integer> node = new NodeImpl<Integer, Integer>(
-		nodeId, false, treeData);
+		nodeId, false, treeData.getLeafNodeDescriptor());
 	node.insert(nodeId, nodeId);
 	return node;
     }

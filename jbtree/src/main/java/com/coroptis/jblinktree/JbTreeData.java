@@ -21,7 +21,7 @@ package com.coroptis.jblinktree;
  */
 
 /**
- * Holds data specific for tree.
+ * Holds tree meta data. Like id of first node and tree data definition.
  * 
  * @author jajir
  * 
@@ -30,7 +30,7 @@ package com.coroptis.jblinktree;
  * @param <V>
  *            value type
  */
-public interface JbTreeData<K, V> extends JbNodeDef<K, V> {
+public interface JbTreeData<K, V> {
 
     /**
      * Holds root node id.
@@ -56,5 +56,12 @@ public interface JbTreeData<K, V> extends JbNodeDef<K, V> {
      * @return the nonLeafNodeDescriptor
      */
     public JbNodeDef<K, Integer> getNonLeafNodeDescriptor();
+
+    /**
+     * Get max number of key value pairs in tree node.
+     * 
+     * @return L parameter
+     */
+    int getL();
 
 }

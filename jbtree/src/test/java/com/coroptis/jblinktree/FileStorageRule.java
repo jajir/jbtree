@@ -27,7 +27,7 @@ import org.junit.runners.model.Statement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.coroptis.jblinktree.junit.FileStorageTest;
+import com.coroptis.jblinktree.junit.FileStorageWriteTest;
 import com.coroptis.jblinktree.store.FileStorage;
 import com.coroptis.jblinktree.store.FileStorageImpl;
 import com.coroptis.jblinktree.type.TypeDescriptor;
@@ -43,7 +43,7 @@ import com.google.common.io.Files;
 public class FileStorageRule implements TestRule {
 
     private final Logger logger = LoggerFactory
-	    .getLogger(FileStorageTest.class);
+	    .getLogger(FileStorageWriteTest.class);
 
     private final static String FILE_NAME = "test.bin";
 

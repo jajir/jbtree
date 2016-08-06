@@ -66,7 +66,7 @@ public class NodeRule implements TestRule {
     }
 
     public FieldImpl<Integer, Integer> makeIntField() {
-	return new FieldImpl<Integer, Integer>(l, treeData);
+	return new FieldImpl<Integer, Integer>(l, treeData.getLeafNodeDescriptor());
     }
 
     private byte[] convert(final Integer[] fieldInt) {
@@ -78,14 +78,12 @@ public class NodeRule implements TestRule {
     }
 
     public FieldImpl<Integer, Integer> makeFieldFromArray(final Integer[] fieldInt) {
-	return new FieldImpl<Integer, Integer>(convert(fieldInt), treeData);
+	return new FieldImpl<Integer, Integer>(convert(fieldInt), treeData.getLeafNodeDescriptor());
     }
 
     /**
      * Construct node and fill byte field.
      * 
-     * @param l
-     *            required node parameter L
      * @param idNode
      *            required node id, node will be referred with this id.
      * @param fieldInt
