@@ -93,11 +93,11 @@ import com.google.common.base.Preconditions;
  */
 public class NodeImpl<K, V> implements Node<K, V> {
 
+    
     /**
-     * Main node parameter, it's number of nodes.
+     * TODO should be used treeData form field
      */
-
-    private final JbTreeData<K, V> treeData;
+    private final JbNodeDef<K, V> treeData;
 
     private final Integer id;
 
@@ -115,7 +115,7 @@ public class NodeImpl<K, V> implements Node<K, V> {
      *            required tree definition
      */
     public NodeImpl(final Integer nodeId, final boolean isLeafNode,
-	    final JbTreeData<K, V> treeData) {
+	    final JbNodeDef<K, V> treeData) {
 	this.id = nodeId;
 	this.treeData = treeData;
 	/**
@@ -138,7 +138,7 @@ public class NodeImpl<K, V> implements Node<K, V> {
      *            required tree definition
      */
     public NodeImpl(final Integer nodeId, final Field<K, V> field,
-	    final JbTreeData<K, V> treeData) {
+	    final JbNodeDef<K, V> treeData) {
 	this.id = nodeId;
 	this.treeData = treeData;
 	this.field = field;

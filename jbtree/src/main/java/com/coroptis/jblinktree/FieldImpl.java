@@ -59,12 +59,14 @@ import com.coroptis.jblinktree.type.TypeDescriptorInteger;
  * </table>
  * <p>
  * Filed required data type descriptor for:
+ * </p>
  * <ul>
  * <li>key</li>
- * <li>value - if it's non leaf node than this is {@link TypeDescriptorInteger}</li>
+ * <li>value - if it's non leaf node than this is {@link TypeDescriptorInteger}
+ * </li>
  * <li>link - always {@link TypeDescriptorInteger}</li>
  * </ul>
- * </p>
+ * 
  * @author jajir
  * 
  * 
@@ -83,7 +85,7 @@ public class FieldImpl<K, V> implements Field<K, V> {
      */
     private final int size;
 
-    private final JbTreeData<K, V> treeData;
+    private final JbNodeDef<K, V> treeData;
 
     /**
      * Basic constructor.
@@ -93,7 +95,7 @@ public class FieldImpl<K, V> implements Field<K, V> {
      * @param treeData
      *            required tree definition
      */
-    public FieldImpl(final int numberOfField, final JbTreeData<K, V> treeData) {
+    public FieldImpl(final int numberOfField, final JbNodeDef<K, V> treeData) {
 	this.treeData = treeData;
 	this.field = new byte[getPosition(numberOfField)
 		+ treeData.getLinkTypeDescriptor().getMaxLength()];
@@ -109,7 +111,7 @@ public class FieldImpl<K, V> implements Field<K, V> {
      * @param treeData
      *            required tree definition
      */
-    public FieldImpl(final byte[] field,final JbTreeData<K, V> treeData) {
+    public FieldImpl(final byte[] field, final JbNodeDef<K, V> treeData) {
 	this.treeData = treeData;
 	this.field = new byte[field.length];
 	System.arraycopy(field, 0, this.field, 0, this.field.length);
@@ -157,8 +159,8 @@ public class FieldImpl<K, V> implements Field<K, V> {
      * int, int, int)
      */
     @Override
-    public void copy(final Field<K, V> src, final int srcPos1,
-	    final int destPos1, final int length) {
+    public void copy(final Field<K, V> src, final int srcPos1, final int destPos1,
+	    final int length) {
 	final int srcPos = getPosition(srcPos1);
 	final int p = getPosition(srcPos1 + length) - srcPos;
 	final int destPos = getPosition(destPos1);

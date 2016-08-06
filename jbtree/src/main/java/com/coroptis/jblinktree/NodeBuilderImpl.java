@@ -50,12 +50,12 @@ public class NodeBuilderImpl<K, V> implements NodeBuilder<K, V> {
 	byte flag = field[0];
 	if (flag == Node.M) {
 	    // leaf node
-	    final Field<K, T> f = new FieldImpl(field, treeData);
-	    return (Node<K, T>) new NodeImpl(idNode, f, treeData);
+	    final Field<K, T> f = new FieldImpl(field, treeData.getLeafNodeDescriptor());
+	    return (Node<K, T>) new NodeImpl(idNode, f, treeData.getLeafNodeDescriptor());
 	} else {
 	    // non-leaf node
-	    final Field<K, T> f = new FieldImpl(field, treeData);
-	    return (Node<K, T>) new NodeImpl(idNode, f, treeData);
+	    final Field<K, T> f = new FieldImpl(field, treeData.getNonLeafNodeDescriptor());
+	    return (Node<K, T>) new NodeImpl(idNode, f, treeData.getNonLeafNodeDescriptor());
 	}
     }
 

@@ -44,6 +44,10 @@ public class JbTreeDataImpl<K, V> implements JbTreeData<K, V> {
 
     private final TypeDescriptor<Integer> linkTypeDescriptor;
 
+    private final JbNodeDef<K, V> leafNodeDescriptor;
+
+    private final JbNodeDef<K, Integer> nonLeafNodeDescriptor;
+
     public JbTreeDataImpl(final Integer startNodeId, final int l,
 	    final TypeDescriptor<K> keyTypeDescriptor, final TypeDescriptor<V> valueTypeDescriptor,
 	    final TypeDescriptor<Integer> linkTypeDescriptor) {
@@ -52,6 +56,10 @@ public class JbTreeDataImpl<K, V> implements JbTreeData<K, V> {
 	this.keyTypeDescriptor = Preconditions.checkNotNull(keyTypeDescriptor);
 	this.valueTypeDescriptor = Preconditions.checkNotNull(valueTypeDescriptor);
 	this.linkTypeDescriptor = Preconditions.checkNotNull(linkTypeDescriptor);
+	leafNodeDescriptor = new JbNodeDefImpl<K, V>(l, keyTypeDescriptor, valueTypeDescriptor,
+		linkTypeDescriptor);
+	nonLeafNodeDescriptor = new JbNodeDefImpl<K, Integer>(l, keyTypeDescriptor,
+		linkTypeDescriptor, linkTypeDescriptor);
     }
 
     @Override
@@ -98,6 +106,22 @@ public class JbTreeDataImpl<K, V> implements JbTreeData<K, V> {
     @Override
     public TypeDescriptor<Integer> getLinkTypeDescriptor() {
 	return linkTypeDescriptor;
+    }
+
+    /**
+     * @return the leafNodeDescriptor
+     */
+    @Override
+    public JbNodeDef<K, V> getLeafNodeDescriptor() {
+        return leafNodeDescriptor;
+    }
+
+    /**
+     * @return the nonLeafNodeDescriptor
+     */
+    @Override
+    public JbNodeDef<K, Integer> getNonLeafNodeDescriptor() {
+        return nonLeafNodeDescriptor;
     }
 
 }
