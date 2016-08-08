@@ -28,7 +28,6 @@ import java.util.Arrays;
 import java.util.concurrent.locks.ReentrantLock;
 
 import com.coroptis.jblinktree.JbNodeDef;
-import com.coroptis.jblinktree.JbTreeData;
 import com.coroptis.jblinktree.JblinktreeException;
 import com.coroptis.jblinktree.Node;
 import com.coroptis.jblinktree.NodeBuilder;
@@ -52,26 +51,21 @@ public class NodeFileStorageImpl<K, V> implements NodeFileStorage<K, V> {
 
     private final RandomAccessFile raf;
 
-    private final int maxNodeSize;
+    private final int maxNodeRecordSize;
 
     private final JbNodeDef<K, V> nodeDef;
 
     private final ReentrantLock lock = new ReentrantLock(false);
 
-    public NodeFileStorageImpl(final JbNodeDef<K, V> nodeDef, final NodeBuilder<K, V> nodeBuilder,
-	    String fileName) {
+    private final static int NUMBER_OF_KEYS_IN_NODE_LENGTH = 1;
+
+    public NodeFileStorageImpl(final JbNodeDef<K, V> nodeDef,
+	    final NodeBuilder<K, V> nodeBuilder, String fileName) {
 	this.nodeDef = Preconditions.checkNotNull(nodeDef);
 	this.nodeBuilder = Preconditions.checkNotNull(nodeBuilder);
 	this.fileName = Preconditions.checkNotNull(fileName);
-	/**
-	 * max node size is: flags + L * (key and value record size) + next link
-	 * 
-	 */
-	// TODO following code is related to filed implementation, should be
-	// there.
-	//FIXME following code sucks, node could be non leaf ;-)
-	maxNodeSize = 1 + nodeDef.getL() * (nodeDef.getKeyTypeDescriptor().getMaxLength()
-		+ nodeDef.getValueTypeDescriptor().getMaxLength()) + 4;
+	maxNodeRecordSize = NUMBER_OF_KEYS_IN_NODE_LENGTH
+		+ nodeDef.getRecordMaxLength();
 	try {
 	    raf = new RandomAccessFile(new File(fileName), "rw");
 	} catch (FileNotFoundException e) {
@@ -86,9 +80,9 @@ public class NodeFileStorageImpl<K, V> implements NodeFileStorage<K, V> {
 	    raf.seek(getPosition(node.getId()));
 	    raf.writeByte(node.getKeysCount());
 	    byte bytes[] = node.getFieldBytes();
-	    if (bytes.length < maxNodeSize) {
+	    if (bytes.length < nodeDef.getRecordMaxLength()) {
 		// add zeros to record
-		bytes = Arrays.copyOf(bytes, maxNodeSize);
+		bytes = Arrays.copyOf(bytes, nodeDef.getRecordMaxLength());
 	    }
 	    raf.write(bytes);
 	} catch (IOException e) {
@@ -104,20 +98,18 @@ public class NodeFileStorageImpl<K, V> implements NodeFileStorage<K, V> {
 	try {
 	    raf.seek(getPosition(nodeId));
 	    byte keys = raf.readByte();
-	    // TODO following code is related to filed implementation, should be
-	    // there.
-	    int fieldSize = 1 + keys * (nodeDef.getKeyTypeDescriptor().getMaxLength()
-		    + nodeDef.getValueTypeDescriptor().getMaxLength()) + 4;
+	    int fieldSize = nodeDef.getRecordActualLength(keys);
 	    byte[] bytes = new byte[fieldSize];
 	    raf.readFully(bytes);
 	    return nodeBuilder.makeNode(nodeId, bytes);
 	} catch (IOException e) {
 	    String msg = null;
 	    if (e.getMessage() == null) {
-		msg = "problem in reading node '" + nodeId + "' form file " + fileName;
-	    } else {
-		msg = e.getMessage() + ", problem in reading node '" + nodeId + "' from file "
+		msg = "problem in reading node '" + nodeId + "' form file "
 			+ fileName;
+	    } else {
+		msg = e.getMessage() + ", problem in reading node '" + nodeId
+			+ "' from file " + fileName;
 	    }
 	    throw new JblinktreeException(msg, e);
 	} finally {
@@ -135,9 +127,7 @@ public class NodeFileStorageImpl<K, V> implements NodeFileStorage<K, V> {
     }
 
     private long getPosition(final Integer nodeId) {
-	// TODO following code is related to filed implementation, should be
-	// there.
-	return (long) (maxNodeSize + 1) * nodeId;
+	return (long) maxNodeRecordSize * nodeId;
     }
 
 }

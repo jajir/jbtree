@@ -216,8 +216,7 @@ public class FieldImpl<K, V> implements Field<K, V> {
 
     private int computeLength() {
 	final int length = field.length - nodeDef.getLinkTypeDescriptor().getMaxLength() - 1;
-	final int recordLength = nodeDef.getKeyTypeDescriptor().getMaxLength()
-		+ nodeDef.getValueTypeDescriptor().getMaxLength();
+	final int recordLength = nodeDef.getKeyAndValueSize();
 	final int out = length / recordLength * 2;
 	return out + 1;
     }

@@ -23,7 +23,17 @@ package com.coroptis.jblinktree;
 import com.coroptis.jblinktree.type.TypeDescriptor;
 import com.google.common.base.Preconditions;
 
-//TODO some comment
+/**
+ * Contain information about node. It's data types of key and value.
+ * 
+ * @author jajir
+ *
+ * @param <K>
+ *            key type
+ * @param <V>
+ *            value type
+ * 
+ */
 public class JbNodeDefImpl<K, V> implements JbNodeDef<K, V> {
 
     private final int l;
@@ -45,41 +55,21 @@ public class JbNodeDefImpl<K, V> implements JbNodeDef<K, V> {
 		.checkNotNull(linkTypeDescriptor);
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.coroptis.jblinktree.JbNodeDescription#getL()
-     */
     @Override
     public int getL() {
 	return l;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.coroptis.jblinktree.JbNodeDescription#getKeyTypeDescriptor()
-     */
     @Override
     public TypeDescriptor<K> getKeyTypeDescriptor() {
 	return keyTypeDescriptor;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.coroptis.jblinktree.JbNodeDescription#getValueTypeDescriptor()
-     */
     @Override
     public TypeDescriptor<V> getValueTypeDescriptor() {
 	return valueTypeDescriptor;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.coroptis.jblinktree.JbNodeDescription#getLinkTypeDescriptor()
-     */
     @Override
     public TypeDescriptor<Integer> getLinkTypeDescriptor() {
 	return linkTypeDescriptor;
@@ -87,7 +77,18 @@ public class JbNodeDefImpl<K, V> implements JbNodeDef<K, V> {
 
     @Override
     public int getRecordMaxLength() {
-	return getL() * (getKeyTypeDescriptor().getMaxLength()
-		+ getValueTypeDescriptor().getMaxLength()) + 4;
+	return getRecordActualLength(getL());
+    }
+
+    @Override
+    public int getRecordActualLength(final int numberOfKeys) {
+	return FLAGS_LENGTH + numberOfKeys * getKeyAndValueSize()
+		+ getLinkTypeDescriptor().getMaxLength();
+    }
+
+    @Override
+    public int getKeyAndValueSize() {
+	return getKeyTypeDescriptor().getMaxLength()
+		+ getValueTypeDescriptor().getMaxLength();
     }
 }

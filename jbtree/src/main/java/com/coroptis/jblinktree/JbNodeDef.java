@@ -25,6 +25,11 @@ import com.coroptis.jblinktree.type.TypeDescriptor;
 public interface JbNodeDef<K, V> {
 
     /**
+     * Number of bytes occupied by node flag.
+     */
+    static int FLAGS_LENGTH = 1;
+
+    /**
      * Get max number of key value pairs in tree node.
      * 
      * @return L parameter
@@ -53,10 +58,32 @@ public interface JbNodeDef<K, V> {
     TypeDescriptor<Integer> getLinkTypeDescriptor();
 
     /**
-     * What is maximum record length in bytes.
+     * What is maximum record length in bytes. In this case node contains L key
+     * value pairs.
      * 
      * @return maximum length in bytes
      */
     int getRecordMaxLength();
+
+    /**
+     * What is actual record length in bytes. Number include:
+     * <ul>
+     * <li>node flags</li>
+     * <li>key value pair length * numberOfKeys</li>
+     * <li>next link</li>
+     * </ul>
+     * 
+     * @param numberOfKeys
+     *            required number of keys in node
+     * @return maximum length in bytes
+     */
+    int getRecordActualLength(int numberOfKeys);
+
+    /**
+     * return size of key and value in bytes.
+     * 
+     * @return key and value size
+     */
+    int getKeyAndValueSize();
 
 }
