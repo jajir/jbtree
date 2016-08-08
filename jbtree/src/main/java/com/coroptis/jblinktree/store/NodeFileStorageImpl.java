@@ -27,6 +27,7 @@ import java.io.RandomAccessFile;
 import java.util.Arrays;
 import java.util.concurrent.locks.ReentrantLock;
 
+import com.coroptis.jblinktree.JbNodeDef;
 import com.coroptis.jblinktree.JbTreeData;
 import com.coroptis.jblinktree.JblinktreeException;
 import com.coroptis.jblinktree.Node;
@@ -43,7 +44,7 @@ import com.google.common.base.Preconditions;
  * @param <V>
  *            value type
  */
-public class FileStorageImpl<K, V> implements FileStorage<K, V> {
+public class NodeFileStorageImpl<K, V> implements NodeFileStorage<K, V> {
 
     private final NodeBuilder<K, V> nodeBuilder;
 
@@ -53,13 +54,13 @@ public class FileStorageImpl<K, V> implements FileStorage<K, V> {
 
     private final int maxNodeSize;
 
-    private final JbTreeData<K, V> treeData;
+    private final JbNodeDef<K, V> nodeDef;
 
     private final ReentrantLock lock = new ReentrantLock(false);
 
-    public FileStorageImpl(final JbTreeData<K, V> treeData, final NodeBuilder<K, V> nodeBuilder,
+    public NodeFileStorageImpl(final JbNodeDef<K, V> nodeDef, final NodeBuilder<K, V> nodeBuilder,
 	    String fileName) {
-	this.treeData = Preconditions.checkNotNull(treeData);
+	this.nodeDef = Preconditions.checkNotNull(nodeDef);
 	this.nodeBuilder = Preconditions.checkNotNull(nodeBuilder);
 	this.fileName = Preconditions.checkNotNull(fileName);
 	/**
@@ -69,8 +70,8 @@ public class FileStorageImpl<K, V> implements FileStorage<K, V> {
 	// TODO following code is related to filed implementation, should be
 	// there.
 	//FIXME following code sucks, node could be non leaf ;-)
-	maxNodeSize = 1 + treeData.getL() * (treeData.getLeafNodeDescriptor().getKeyTypeDescriptor().getMaxLength()
-		+ treeData.getLeafNodeDescriptor().getValueTypeDescriptor().getMaxLength()) + 4;
+	maxNodeSize = 1 + nodeDef.getL() * (nodeDef.getKeyTypeDescriptor().getMaxLength()
+		+ nodeDef.getValueTypeDescriptor().getMaxLength()) + 4;
 	try {
 	    raf = new RandomAccessFile(new File(fileName), "rw");
 	} catch (FileNotFoundException e) {
@@ -105,8 +106,8 @@ public class FileStorageImpl<K, V> implements FileStorage<K, V> {
 	    byte keys = raf.readByte();
 	    // TODO following code is related to filed implementation, should be
 	    // there.
-	    int fieldSize = 1 + keys * (treeData.getLeafNodeDescriptor().getKeyTypeDescriptor().getMaxLength()
-		    + treeData.getLeafNodeDescriptor().getValueTypeDescriptor().getMaxLength()) + 4;
+	    int fieldSize = 1 + keys * (nodeDef.getKeyTypeDescriptor().getMaxLength()
+		    + nodeDef.getValueTypeDescriptor().getMaxLength()) + 4;
 	    byte[] bytes = new byte[fieldSize];
 	    raf.readFully(bytes);
 	    return nodeBuilder.makeNode(nodeId, bytes);

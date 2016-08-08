@@ -22,6 +22,7 @@ package com.coroptis.jblinktree;
 
 import com.coroptis.jblinktree.type.TypeDescriptor;
 import com.google.common.base.Preconditions;
+
 //TODO some comment
 public class JbNodeDefImpl<K, V> implements JbNodeDef<K, V> {
 
@@ -38,40 +39,55 @@ public class JbNodeDefImpl<K, V> implements JbNodeDef<K, V> {
 	    final TypeDescriptor<Integer> linkTypeDescriptor) {
 	this.l = l;
 	this.keyTypeDescriptor = Preconditions.checkNotNull(keyTypeDescriptor);
-	this.valueTypeDescriptor = Preconditions.checkNotNull(valueTypeDescriptor);
-	this.linkTypeDescriptor = Preconditions.checkNotNull(linkTypeDescriptor);
+	this.valueTypeDescriptor = Preconditions
+		.checkNotNull(valueTypeDescriptor);
+	this.linkTypeDescriptor = Preconditions
+		.checkNotNull(linkTypeDescriptor);
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see com.coroptis.jblinktree.JbNodeDescription#getL()
      */
     @Override
     public int getL() {
-        return l;
+	return l;
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see com.coroptis.jblinktree.JbNodeDescription#getKeyTypeDescriptor()
      */
     @Override
     public TypeDescriptor<K> getKeyTypeDescriptor() {
-        return keyTypeDescriptor;
+	return keyTypeDescriptor;
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see com.coroptis.jblinktree.JbNodeDescription#getValueTypeDescriptor()
      */
     @Override
     public TypeDescriptor<V> getValueTypeDescriptor() {
-        return valueTypeDescriptor;
+	return valueTypeDescriptor;
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see com.coroptis.jblinktree.JbNodeDescription#getLinkTypeDescriptor()
      */
     @Override
     public TypeDescriptor<Integer> getLinkTypeDescriptor() {
-        return linkTypeDescriptor;
+	return linkTypeDescriptor;
     }
 
+    @Override
+    public int getRecordMaxLength() {
+	return getL() * (getKeyTypeDescriptor().getMaxLength()
+		+ getValueTypeDescriptor().getMaxLength()) + 4;
+    }
 }

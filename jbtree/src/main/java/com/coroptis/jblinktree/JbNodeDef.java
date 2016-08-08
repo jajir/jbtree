@@ -52,4 +52,11 @@ public interface JbNodeDef<K, V> {
      */
     TypeDescriptor<Integer> getLinkTypeDescriptor();
 
+    /**
+     * What is maximum record length in bytes.
+     * 
+     * @return maximum length in bytes
+     */
+    int getRecordMaxLength();
+
 }

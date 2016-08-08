@@ -32,7 +32,7 @@ import com.coroptis.jblinktree.Node;
  * @param <V>
  *            value type
  */
-public interface FileStorage<K, V> {
+public interface ValueFileStorage<K, V> {
 
     void store(Node<K, V> node);
 

@@ -22,6 +22,7 @@ package com.coroptis.jblinktree.store;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
+import com.coroptis.jblinktree.JbNodeDef;
 import com.coroptis.jblinktree.JbTreeData;
 import com.coroptis.jblinktree.Node;
 import com.coroptis.jblinktree.NodeBuilder;
@@ -47,12 +48,13 @@ public class NodeStoreInFile<K, V> implements NodeStore<K> {
 
     private final LruCache<K, V> nodeCache;
 
-    private final FileStorage<K, V> fileStorage;
+    private final NodeFileStorage<K, V> fileStorage;
 
     public NodeStoreInFile(final JbTreeData<K, V> treeData, final NodeBuilder<K, V> nodeBuilder,
 	    String fileName, int numberOfNodesCacheSize) {
 	this.nextId = new AtomicInteger(FIRST_NODE_ID);
-	fileStorage = new FileStorageImpl<K,V>(treeData, nodeBuilder, fileName);
+	//FIXME - casting should be removed.
+	fileStorage = new NodeFileStorageImpl<K,V>((JbNodeDef<K, V>) treeData.getNonLeafNodeDescriptor(), nodeBuilder, fileName);
 	nodeLocks = new NodeLocks();
 	nodeCache = new LruCache<K, V>(nodeBuilder, numberOfNodesCacheSize, new OnEvict<K, V>() {
 
