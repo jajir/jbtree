@@ -115,7 +115,7 @@ public class NodeStringTest {
 	    assertTrue("keys should contains key " + pair[0],
 		    keys.contains(pair[0]));
 	    if (isLeafNode) {
-		assertEquals(value, n.getValue(key));
+		assertEquals(value, n.getValueByKey(key));
 	    } else {
 		assertEquals(value, n.getCorrespondingNodeId(key));
 	    }

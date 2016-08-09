@@ -67,7 +67,7 @@ public class NodeTest {
 
 	logger.debug(n.toString());
 	assertEquals(
-		"Node{id=0, isLeafNode=false, field=[0, 1, 1, 3, -40, 4], flag=0, link=98}",
+		"Node{id=0, isLeafNode=false, field=[<1, 0>, <3, 1>, <4, -40>], flag=0, link=98}",
 		n.toString());
 
     }
@@ -78,12 +78,12 @@ public class NodeTest {
 
 	verifyNode(node, new Integer[][] {}, true, -1);
 	assertEquals(null, node.getMaxKey());
-	assertEquals(null, node.getValue(2));
+	assertEquals(null, node.getValueByKey(2));
     }
 
     @Test(expected = NullPointerException.class)
-    public void test_getValue_null_key() {
-	node.getValue(null);
+    public void test_getValueByKey_null_key() {
+	node.getValueByKey(null);
     }
 
     @Test
@@ -443,7 +443,7 @@ public class NodeTest {
 	Node<Integer, Integer> n = nr.makeNodeFromIntegers(2,
 		new Integer[] { 0, 2, 1, 3, 23 });
 
-	boolean ret = n.updateNodeValue(0, 3);
+	boolean ret = n.updateKeyForValue(0, 3);
 
 	assertTrue(ret);
     }
@@ -453,7 +453,7 @@ public class NodeTest {
 	Node<Integer, Integer> n = nr.makeNodeFromIntegers(2,
 		new Integer[] { 0, 2, 1, 3, 23 });
 
-	boolean ret = n.updateNodeValue(0, 2);
+	boolean ret = n.updateKeyForValue(0, 2);
 
 	assertFalse(ret);
     }
@@ -463,7 +463,7 @@ public class NodeTest {
 	Node<Integer, Integer> n = nr.makeNodeFromIntegers(2,
 		new Integer[] { 0, 2, 1, 3, 23 });
 
-	boolean ret = n.updateNodeValue(10, 2);
+	boolean ret = n.updateKeyForValue(10, 2);
 
 	assertFalse(ret);
     }
@@ -502,7 +502,7 @@ public class NodeTest {
 	    assertTrue("keys should contains key " + pair[0],
 		    keys.contains(pair[0]));
 	    if (isLeafNode) {
-		assertEquals(value, n.getValue(key));
+		assertEquals(value, n.getValueByKey(key));
 	    } else {
 		assertEquals(value, n.getCorrespondingNodeId(key));
 	    }

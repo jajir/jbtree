@@ -47,7 +47,7 @@ public class JbTreeServiceImpl<K, V> implements JbTreeService<K, V> {
 	// TODO link to current node which key should be updated can be in
 	// different node than tmpKey
 	parentNode = treeTraversingService.moveRightNonLeafNode(parentNode, tmpKey);
-	if (parentNode.updateNodeValue(currentNode.getId(), currentNode.getMaxKey())) {
+	if (parentNode.updateKeyForValue(currentNode.getId(), currentNode.getMaxKey())) {
 	    nodeStore.writeNode(parentNode);
 	}
 	return parentNode;

@@ -103,16 +103,17 @@ public interface Node<K, V> {
     V remove(K key);
 
     /**
-     * For non-leaf tree it update value of some tree.
+     * For non-leaf tree it update key of some tree. It's useful for update
+     * sub-node max key.
      * 
-     * @param nodeIdToUpdate
-     *            required node is to update
-     * @param nodeMaxValue
-     *            required value, this value will be set for previous node id
-     * @return return <code>true</code> when node max value was really updated
-     *         otherwise return <code>false</code>
+     * @param valueToUpdate
+     *            required value which will be find
+     * @param keyToSet
+     *            required key that will be set to find value
+     * @return return <code>true</code> when valueToUpdate was found and key was
+     *         really updated otherwise return <code>false</code>
      */
-    boolean updateNodeValue(Integer nodeIdToUpdate, K nodeMaxValue);
+    boolean updateKeyForValue(Integer valueToUpdate, K keyToSet);
 
     /**
      * About half of keys will be copied to <code>node</code>.
@@ -178,7 +179,7 @@ public interface Node<K, V> {
      * @return found value if there is any, when value is <code>null</code> or
      *         there is no such key <code>null</code> is returned.
      */
-    V getValue(K key);
+    V getValueByKey(K key);
 
     /**
      * Get list of all node id stored in this node.

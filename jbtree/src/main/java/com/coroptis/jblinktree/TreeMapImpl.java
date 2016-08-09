@@ -147,7 +147,7 @@ public class TreeMapImpl<K, V> implements TreeMap<K, V> {
 	    @Override
 	    public boolean visitedLeaf(final Node<K, V> node) {
 		for (final K key : node.getKeys()) {
-		    V value = node.getValue(key);
+		    V value = node.getValueByKey(key);
 		    if (!dataVisitor.visited(key, value)) {
 			return false;
 		    }

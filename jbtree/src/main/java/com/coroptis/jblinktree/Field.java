@@ -54,8 +54,9 @@ public interface Field<K, V> {
     V getValue(int position);
 
     /**
-     * Copy data from {@link Field} <code>src</code> parameter to this object.
-     * 
+     * Copy data from {@link Field} <code>src</code> to this object.
+     *
+     *TODO update param names and description
      * @param src
      *            required field from which are data copied
      * @param srcPos
@@ -105,16 +106,12 @@ public interface Field<K, V> {
     byte[] getBytes();
 
     /**
-     * Get number of stored keys and values. Keys and values are counted
-     * separately.
+     * Get number of stored keys.
      * 
-     * FIXME now count form 1 change it to 0
-     * 
-     * TODO check if it's not better to count key,value pairs
      * 
      * @return number of stored keys and values
      */
-    int getLength();
+    int getKeyCount();
 
     /**
      * Get flag byte.
@@ -147,6 +144,6 @@ public interface Field<K, V> {
      *             when link is <code>null</code>
      */
     void setLink(Integer link);
-    
+
     JbNodeDef<K, V> getNodeDef();
 }

@@ -59,7 +59,7 @@ public class FieldTest {
 	Field<Integer, Integer> f = nr
 		.makeFieldFromArray(new Integer[] { 10, 1, 30 });
 
-	assertEquals(3, f.getLength());
+	assertEquals(1, f.getKeyCount());
     }
 
     @Test
@@ -67,7 +67,7 @@ public class FieldTest {
 	Field<Integer, Integer> f = nr
 		.makeFieldFromArray(new Integer[] { 10, 1, 20, 2, 30 });
 
-	assertEquals(5, f.getLength());
+	assertEquals(2, f.getKeyCount());
     }
 
     @Test
@@ -75,7 +75,10 @@ public class FieldTest {
 	Field<Integer, Integer> f = nr
 		.makeFieldFromArray(new Integer[] { 10, 1, 20, 2, 30 });
 
-	assertEquals(Integer.valueOf(2), f.getKey(3));
+	assertEquals(Integer.valueOf(2), f.getKey(1));
+	assertEquals(Integer.valueOf(20), f.getValue(1));
+	assertEquals(Integer.valueOf(1), f.getKey(0));
+	assertEquals(Integer.valueOf(10), f.getValue(0));
     }
 
     @Test
@@ -99,7 +102,7 @@ public class FieldTest {
     public void test_toString() throws Exception {
 	logger.debug(field.toString());
 	assertEquals(
-		"Field{field=[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]}",
+		"Field{field=[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]}",
 		field.toString());
     }
 

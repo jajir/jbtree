@@ -86,13 +86,13 @@ public class JbTreeImpl<K, V> implements JbTree<K, V> {
 	final Integer currentNodeId = treeTool.findLeafNodeId(key, stack, treeData.getRootNodeId());
 	Node<K, V> currentNode = nodeStore.getAndLock(currentNodeId);
 	currentNode = treeTraversingService.moveRightLeafNode(currentNode, key);
-	if (currentNode.getValue(key) == null) {
+	if (currentNode.getValueByKey(key) == null) {
 	    return jbTreeHelper.insertToLeafNode(currentNode, key, value, stack);
 	} else {
 	    /**
 	     * Key already exists. Rewrite value.
 	     */
-	    V oldValue = currentNode.getValue(key);
+	    V oldValue = currentNode.getValueByKey(key);
 	    treeService.storeValueIntoLeafNode(currentNode, key, value);
 	    return oldValue;
 	}
@@ -105,7 +105,7 @@ public class JbTreeImpl<K, V> implements JbTree<K, V> {
 	Integer currentNodeId = treeTool.findLeafNodeId(key, stack, treeData.getRootNodeId());
 	Node<K, V> currentNode = nodeStore.getAndLock(currentNodeId);
 	currentNode = treeTraversingService.moveRightLeafNode(currentNode, key);
-	if (currentNode.getValue(key) == null) {
+	if (currentNode.getValueByKey(key) == null) {
 	    /**
 	     * Node doesn't contains key, there is nothing to delete
 	     */
@@ -125,7 +125,7 @@ public class JbTreeImpl<K, V> implements JbTree<K, V> {
     @Override
     public V search(final K key) {
 	Preconditions.checkNotNull(key);
-	return jbTreeHelper.findAppropriateLeafNode(key).getValue(key);
+	return jbTreeHelper.findAppropriateLeafNode(key).getValueByKey(key);
     }
 
     @Override
@@ -138,7 +138,7 @@ public class JbTreeImpl<K, V> implements JbTree<K, V> {
     @Override
     public boolean containsKey(final K key) {
 	Preconditions.checkNotNull(key);
-	return jbTreeHelper.findAppropriateLeafNode(key).getValue(key) != null;
+	return jbTreeHelper.findAppropriateLeafNode(key).getValueByKey(key) != null;
     }
 
     @Override

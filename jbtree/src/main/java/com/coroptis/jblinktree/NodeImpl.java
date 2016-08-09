@@ -150,28 +150,28 @@ public class NodeImpl<K, V> implements Node<K, V> {
 
     @Override
     public int getKeysCount() {
-	return (field.getLength() - 1) / 2;
+	return field.getKeyCount();
     }
 
     @Override
     public void insert(final K key, final V value) {
 	Preconditions.checkNotNull(key);
 	Preconditions.checkNotNull(value);
-	for (int i = 1; i < field.getLength() - 1; i = i + 2) {
+	for (int i = 0; i < field.getKeyCount(); i++) {
 	    if (key.equals(field.getKey(i))) {
 		/**
 		 * Rewrite value.
 		 */
-		field.setValue(i - 1, value);
+		field.setValue(i, value);
 		return;
-	    } else if (field.getNodeDef().getKeyTypeDescriptor().compare(field.getKey(i),
-		    key) > 0) {
+	    } else if (field.getNodeDef().getKeyTypeDescriptor()
+		    .compare(field.getKey(i), key) > 0) {
 		// field.get(i) > key
 		couldInsertedKey();
 		/**
 		 * given value should be inserted 1 before current index
 		 */
-		insertToPosition(key, value, i - 1);
+		insertToPosition(key, value, i);
 		return;
 	    }
 	}
@@ -179,7 +179,7 @@ public class NodeImpl<K, V> implements Node<K, V> {
 	/**
 	 * New key is bigger than all others so should be at the end.
 	 */
-	insertToPosition(key, value, field.getLength() - 1);
+	insertToPosition(key, value, field.getKeyCount());
     }
 
     /**
@@ -188,8 +188,8 @@ public class NodeImpl<K, V> implements Node<K, V> {
      */
     private void couldInsertedKey() {
 	if (getKeysCount() >= field.getNodeDef().getL()) {
-	    throw new JblinktreeException(
-		    "Leaf (" + id + ") is full another value can't be inserted.");
+	    throw new JblinktreeException("Leaf (" + id
+		    + ") is full another value can't be inserted.");
 	}
     }
 
@@ -203,22 +203,25 @@ public class NodeImpl<K, V> implements Node<K, V> {
      * @param targetIndex
      *            required target index in field
      */
-    private void insertToPosition(final K key, final V value, final int targetIndex) {
+    private void insertToPosition(final K key, final V value,
+	    final int targetIndex) {
 	/**
 	 * It's create new node with new key & value pair and than copy data
 	 * from current node. Finally switch new node to current on.
 	 */
-	Field<K, V> field2 = new FieldImpl<K, V>(field.getLength() + 1, field.getNodeDef());
+	Field<K, V> field2 = new FieldImpl<K, V>(field.getKeyCount() + 1,
+		field.getNodeDef());
 	field2.setFlag(field.getFlag());
 	field2.setLink(field.getLink());
 	field2.setValue(targetIndex, value);
-	field2.setKey(targetIndex + 1, key);
+	field2.setKey(targetIndex, key);
 
 	if (targetIndex > 0) {
 	    field2.copy(field, 0, 0, targetIndex);
 	}
-	if (field.getLength() - targetIndex > 1) {
-	    field2.copy(field, targetIndex, targetIndex + 2, field.getLength() - targetIndex - 1);
+	if (field.getKeyCount() > targetIndex) {
+	    field2.copy(field, targetIndex, targetIndex + 1,
+		    field.getKeyCount() - targetIndex);
 	}
 	field = field2;
     }
@@ -226,16 +229,16 @@ public class NodeImpl<K, V> implements Node<K, V> {
     @Override
     public V remove(final K key) {
 	Preconditions.checkNotNull(key);
-	for (int i = 1; i < field.getLength() - 1; i = i + 2) {
+	for (int i = 0; i < field.getKeyCount(); i++) {
 	    if (key.equals(field.getKey(i))) {
 		/**
 		 * Remove key and value.
 		 */
-		final V oldValue = field.getValue(i - 1);
-		removeFromPosition(i - 1);
+		final V oldValue = field.getValue(i);
+		removeKeyValueAtPosition(i);
 		return oldValue;
-	    } else if (field.getNodeDef().getKeyTypeDescriptor().compare(field.getKey(i),
-		    key) > 0) {
+	    } else if (field.getNodeDef().getKeyTypeDescriptor()
+		    .compare(field.getKey(i), key) > 0) {
 		/**
 		 * if key in node is bigger than given key than node doesn't
 		 * contains key to delete.
@@ -247,16 +250,18 @@ public class NodeImpl<K, V> implements Node<K, V> {
     }
 
     @Override
-    public boolean updateNodeValue(final Integer nodeIdToUpdate, final K nodeMaxValue) {
+    public boolean updateKeyForValue(final Integer valueToUpdate,
+	    final K keyToSet) {
 	if (isLeafNode()) {
-	    throw new JblinktreeException("method could by used just on non-leaf nodes");
+	    throw new JblinktreeException(
+		    "method could by used just on non-leaf nodes");
 	}
-	for (int i = 0; i < field.getLength() - 2; i = i + 2) {
-	    if (field.getValue(i).equals(nodeIdToUpdate)) {
-		if (field.getKey(i + 1).equals(nodeMaxValue)) {
+	for (int i = 0; i < field.getKeyCount(); i++) {
+	    if (field.getValue(i).equals(valueToUpdate)) {
+		if (field.getKey(i).equals(keyToSet)) {
 		    return false;
 		} else {
-		    field.setKey(i + 1, nodeMaxValue);
+		    field.setKey(i, keyToSet);
 		    return true;
 		}
 	    }
@@ -271,12 +276,18 @@ public class NodeImpl<K, V> implements Node<K, V> {
      * @param position
      *            required position
      */
-    private void removeFromPosition(final int position) {
-	Field<K, V> tmp = new FieldImpl<K, V>(field.getLength() - 3, field.getNodeDef());
+    private void removeKeyValueAtPosition(final int position) {
+	Field<K, V> tmp = new FieldImpl<K, V>(field.getKeyCount() - 1,
+		field.getNodeDef());
 	if (position > 0) {
 	    tmp.copy(field, 0, 0, position);
 	}
-	tmp.copy(field, position + 2, position, field.getLength() - position - 2);
+	if (field.getKeyCount() - position - 1 > 0) {
+	    tmp.copy(field, position + 1, position,
+		    field.getKeyCount() - position - 1);
+	}
+	tmp.setLink(getLink());
+	tmp.setFlag(field.getFlag());
 	field = tmp;
     }
 
@@ -285,18 +296,20 @@ public class NodeImpl<K, V> implements Node<K, V> {
 	final NodeImpl<K, V> node = (NodeImpl<K, V>) nodea;
 	Preconditions.checkArgument(node.isEmpty());
 	if (getKeysCount() < 1) {
-	    throw new JblinktreeException("In node " + id + " are no values to move.");
+	    throw new JblinktreeException(
+		    "In node " + id + " are no values to move.");
 	}
 	// copy top half to empty node
 	final int startKeyNo = getKeysCount() / 2;
-	final int startIndex = startKeyNo * 2;
-	final int length = field.getLength() - startIndex;
+	final int startIndex = startKeyNo;
+	final int length = field.getKeyCount() - startIndex;
 	// TODO create field in static factory
 	node.field = new FieldImpl<K, V>(length - 1, field.getNodeDef());
 	node.field.copy(field, startIndex, 0, length);
 
 	// remove copied data from this node
-	Field<K, V> field2 = new FieldImpl<K, V>(startIndex, field.getNodeDef());
+	Field<K, V> field2 = new FieldImpl<K, V>(startIndex,
+		field.getNodeDef());
 	field2.copy(field, 0, 0, startIndex);
 	field = field2;
 	setLink(node.getId());
@@ -308,7 +321,7 @@ public class NodeImpl<K, V> implements Node<K, V> {
 	if (isEmpty()) {
 	    return null;
 	} else {
-	    return field.getKey(field.getLength() - 2);
+	    return field.getKey(field.getKeyCount() - 1);
 	}
     }
 
@@ -323,15 +336,16 @@ public class NodeImpl<K, V> implements Node<K, V> {
 	buff.append(", isLeafNode=");
 	buff.append(isLeafNode());
 	buff.append(", field=[");
-	for (int i = 0; i < field.getLength() - 1; i++) {
+	for (int i = 0; i < field.getKeyCount(); i++) {
 	    if (i != 0) {
 		buff.append(", ");
 	    }
-	    if (i % 2 == 0) {
-		buff.append(field.getValue(i));
-	    } else {
-		buff.append(field.getKey(i));
-	    }
+
+	    buff.append("<");
+	    buff.append(field.getKey(i));
+	    buff.append(", ");
+	    buff.append(field.getValue(i));
+	    buff.append(">");
 	}
 	buff.append("], flag=");
 	buff.append(field.getFlag());
@@ -354,29 +368,32 @@ public class NodeImpl<K, V> implements Node<K, V> {
     @Override
     public Integer getCorrespondingNodeId(final K key) {
 	if (isLeafNode()) {
-	    throw new JblinktreeException("Leaf node '" + id + "' doesn't have any child nodes.");
+	    throw new JblinktreeException(
+		    "Leaf node '" + id + "' doesn't have any child nodes.");
 	}
 	if (isEmpty()) {
 	    return getLink();
 	}
-	for (int i = 1; i < field.getLength() - 1; i = i + 2) {
-	    if (field.getNodeDef().getKeyTypeDescriptor().compare(key, field.getKey(i)) <= 0) {
+	for (int i = 0; i < field.getKeyCount(); i++) {
+	    if (field.getNodeDef().getKeyTypeDescriptor().compare(key,
+		    field.getKey(i)) <= 0) {
 		// TODO re-typing should be implicit
-		return (Integer) field.getValue(i - 1);
+		return (Integer) field.getValue(i);
 	    }
 	}
 	return getLink();
     }
 
     @Override
-    public V getValue(final K key) {
+    public V getValueByKey(final K key) {
 	Preconditions.checkNotNull(key);
 	if (!isLeafNode()) {
-	    throw new JblinktreeException("Non-leaf node '" + id + "' doesn't have leaf value.");
+	    throw new JblinktreeException(
+		    "Non-leaf node '" + id + "' doesn't have leaf value.");
 	}
-	for (int i = 1; i < field.getLength() - 1; i = i + 2) {
+	for (int i = 0; i < field.getKeyCount(); i++) {
 	    if (key.equals(field.getKey(i))) {
-		return field.getValue(i - 1);
+		return field.getValue(i);
 	    }
 	}
 	return null;
@@ -385,7 +402,7 @@ public class NodeImpl<K, V> implements Node<K, V> {
     @Override
     public List<Integer> getNodeIds() {
 	final List<Integer> out = new ArrayList<Integer>();
-	for (int i = 0; i < field.getLength() - 2; i = i + 2) {
+	for (int i = 0; i < field.getKeyCount(); i++) {
 	    // TODO it's it should be node <K,Integer>
 	    out.add((Integer) field.getValue(i));
 	}
@@ -395,7 +412,7 @@ public class NodeImpl<K, V> implements Node<K, V> {
     @Override
     public List<K> getKeys() {
 	final List<K> out = new ArrayList<K>();
-	for (int i = 1; i < field.getLength(); i = i + 2) {
+	for (int i = 0; i < field.getKeyCount(); i++) {
 	    out.add(field.getKey(i));
 	}
 	return out;
@@ -403,14 +420,16 @@ public class NodeImpl<K, V> implements Node<K, V> {
 
     @Override
     public boolean verify() {
-	if ((field.getLength()) % 2 == 0) {
+	if ((field.getKeyCount()) % 2 == 0) {
 	    throw new JblinktreeException(
-		    "node " + id + " have inforrect number of items in field: " + toString() + "");
+		    "node " + id + " have inforrect number of items in field: "
+			    + toString() + "");
 	}
 	if (!isLeafNode()) {
-	    for (int i = 0; i < field.getLength() - 1; i = i + 2) {
+	    for (int i = 0; i < field.getKeyCount(); i++) {
 		if (field.getValue(i) != null && field.getValue(i).equals(id)) {
-		    throw new JblinktreeException("node contains pointer to itself: " + toString());
+		    throw new JblinktreeException(
+			    "node contains pointer to itself: " + toString());
 		}
 	    }
 	}
@@ -464,7 +483,7 @@ public class NodeImpl<K, V> implements Node<K, V> {
 	buff.append("|");
 	buff.append(getId());
 	buff.append("}");
-	for (int i = 0; i < field.getLength() - 1; i = i + 2) {
+	for (int i = 0; i < field.getKeyCount() - 1; i = i + 2) {
 	    buff.append(" | {");
 	    buff.append("");
 	    buff.append(field.getKey(i + 1));

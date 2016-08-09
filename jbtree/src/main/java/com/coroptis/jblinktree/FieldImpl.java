@@ -80,11 +80,6 @@ public class FieldImpl<K, V> implements Field<K, V> {
 
     private byte[] field;
 
-    /**
-     * Object doesn't support length changes.
-     */
-    private final int size;
-
     private final JbNodeDef<K, V> nodeDef;
 
     /**
@@ -97,9 +92,7 @@ public class FieldImpl<K, V> implements Field<K, V> {
      */
     public FieldImpl(final int numberOfField, final JbNodeDef<K, V> nodeDef) {
 	this.nodeDef = nodeDef;
-	this.field = new byte[getPosition(numberOfField)
-		+ nodeDef.getLinkTypeDescriptor().getMaxLength()];
-	size = computeLength();
+	this.field = new byte[nodeDef.getRecordActualLength(numberOfField)];
     }
 
     /**
@@ -115,27 +108,38 @@ public class FieldImpl<K, V> implements Field<K, V> {
 	this.nodeDef = treeData;
 	this.field = new byte[field.length];
 	System.arraycopy(field, 0, this.field, 0, this.field.length);
-	size = computeLength();
-	if (getFlag() != Node.M
-		&& !(nodeDef.getValueTypeDescriptor() instanceof TypeDescriptorInteger)) {
-	    throw new JblinktreeException("Non-leaf node doesn't have value of type integer, it's "
-		    + nodeDef.getValueTypeDescriptor().getClass().getName());
+	if (getFlag() != Node.M && !(nodeDef
+		.getValueTypeDescriptor() instanceof TypeDescriptorInteger)) {
+	    throw new JblinktreeException(
+		    "Non-leaf node doesn't have value of type integer, it's "
+			    + nodeDef.getValueTypeDescriptor().getClass()
+				    .getName());
 	}
     }
 
     /**
-     * Compute index in byte array where should be item at given position
-     * stored.
+     * Return position in byte field where key is stored.
      * 
      * @param position
-     *            required position
-     * @return byte array position
+     *            required key value pair position
+     * @return key position
      */
-    private int getPosition(int position) {
-	final int p1 = position >>> 1;
-	final int p2 = (position + 1) >>> 1;
-	return p1 * nodeDef.getKeyTypeDescriptor().getMaxLength()
-		+ p2 * nodeDef.getValueTypeDescriptor().getMaxLength() + 1;
+    private int getKeyPosition(int position) {
+	// TODO remove this function, it just delegate call
+	return nodeDef.getRecordActualLength(position);
+    }
+
+    /**
+     * Return position in byte field where value is stored.
+     * 
+     * @param position
+     *            required key value pair position
+     * @return value position
+     */
+    private int getValuePosition(int position) {
+	// TODO move to nodeDef, it's nodeDef.getRecordActualLength(position);
+	// without link length
+	return JbNodeDef.FLAGS_LENGTH + position * nodeDef.getKeyAndValueSize();
     }
 
     /*
@@ -157,20 +161,13 @@ public class FieldImpl<K, V> implements Field<K, V> {
 	return buff.toString();
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.coroptis.jblinktree.Filed#copy(com.coroptis.jblinktree.Filed,
-     * int, int, int)
-     */
     @Override
-    public void copy(final Field<K, V> src, final int srcPos1, final int destPos1,
-	    final int length) {
-	final int srcPos = getPosition(srcPos1);
-	final int p = getPosition(srcPos1 + length) - srcPos;
-	final int destPos = getPosition(destPos1);
+    public void copy(final Field<K, V> src, final int srcPos1,
+	    final int destPos1, final int length) {
 	final FieldImpl<K, V> f = (FieldImpl<K, V>) src;
-	System.arraycopy(f.field, srcPos, field, destPos, p);
+	System.arraycopy(f.field, getValuePosition(srcPos1), field,
+		getValuePosition(destPos1),
+		length * nodeDef.getKeyAndValueSize());
 	setFlag(src.getFlag());
     }
 
@@ -185,7 +182,7 @@ public class FieldImpl<K, V> implements Field<K, V> {
     }
 
     /**
-     * Equals two fields objects. Juswt byte field is counted.
+     * Equals two fields objects. Just byte field is counted.
      */
     @Override
     @SuppressWarnings("unchecked")
@@ -214,36 +211,35 @@ public class FieldImpl<K, V> implements Field<K, V> {
 	return Arrays.hashCode(field);
     }
 
-    private int computeLength() {
-	final int length = field.length - nodeDef.getLinkTypeDescriptor().getMaxLength() - 1;
-	final int recordLength = nodeDef.getKeyAndValueSize();
-	final int out = length / recordLength * 2;
-	return out + 1;
-    }
-
     @Override
-    public int getLength() {
-	return size;
+    public int getKeyCount() {
+	return (field.length - JbNodeDef.FLAGS_LENGTH
+		- nodeDef.getLinkTypeDescriptor().getMaxLength())
+		/ nodeDef.getKeyAndValueSize();
     }
 
     @Override
     public K getKey(final int position) {
-	return nodeDef.getKeyTypeDescriptor().load(field, getPosition(position));
+	return nodeDef.getKeyTypeDescriptor().load(field,
+		getKeyPosition(position));
     }
 
     @Override
     public V getValue(final int position) {
-	return nodeDef.getValueTypeDescriptor().load(field, getPosition(position));
+	return nodeDef.getValueTypeDescriptor().load(field,
+		getValuePosition(position));
     }
 
     @Override
     public void setKey(final int position, final K value) {
-	nodeDef.getKeyTypeDescriptor().save(field, getPosition(position), value);
+	nodeDef.getKeyTypeDescriptor().save(field, getKeyPosition(position),
+		value);
     }
 
     @Override
     public void setValue(final int position, final V value) {
-	nodeDef.getValueTypeDescriptor().save(field, getPosition(position), value);
+	nodeDef.getValueTypeDescriptor().save(field, getValuePosition(position),
+		value);
     }
 
     @Override

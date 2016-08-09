@@ -75,11 +75,13 @@ public class JbNodeDefImpl<K, V> implements JbNodeDef<K, V> {
 	return linkTypeDescriptor;
     }
 
+    //TODO consider renaming record to field
     @Override
     public int getRecordMaxLength() {
 	return getRecordActualLength(getL());
     }
 
+    //TODO consider renaming record to field
     @Override
     public int getRecordActualLength(final int numberOfKeys) {
 	return FLAGS_LENGTH + numberOfKeys * getKeyAndValueSize()
@@ -91,4 +93,23 @@ public class JbNodeDefImpl<K, V> implements JbNodeDef<K, V> {
 	return getKeyTypeDescriptor().getMaxLength()
 		+ getValueTypeDescriptor().getMaxLength();
     }
+
+    /**
+     * Override {@link System#toString()} method.
+     */
+    @Override
+    public String toString() {
+	StringBuilder buff = new StringBuilder();
+	buff.append("JbNodeDef{L=");
+	buff.append(l);
+	buff.append(", keyTypeDescriptor=");
+	buff.append(getKeyTypeDescriptor());
+	buff.append(", valueTypeDescriptor=");
+	buff.append(getValueTypeDescriptor());
+	buff.append(", linkTypeDescriptor=");
+	buff.append(getLinkTypeDescriptor());
+	buff.append("}");
+	return buff.toString();
+    }
+
 }
