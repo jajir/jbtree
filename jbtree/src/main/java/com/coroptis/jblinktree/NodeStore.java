@@ -32,7 +32,7 @@ public interface NodeStore<K> {
     /**
      * When new tree is created than first node have this id.
      */
-    static Integer FIRST_NODE_ID = 0;
+    Integer FIRST_NODE_ID = 0;
 
     /**
      * Lock given node.

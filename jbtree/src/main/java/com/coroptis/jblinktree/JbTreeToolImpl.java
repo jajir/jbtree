@@ -63,7 +63,7 @@ public class JbTreeToolImpl<K, V> implements JbTreeTool<K, V> {
 	if (node.isEmpty()) {
 	    return true;
 	}
-	return (node.getMaxKey() != null && keyTypeDescriptor.compare(key, node.getMaxKey()) > 0);
+	return node.getMaxKey() != null && keyTypeDescriptor.compare(key, node.getMaxKey()) > 0;
     }
 
     @Override

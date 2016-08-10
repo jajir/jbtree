@@ -70,7 +70,7 @@ public class JbTreeHelperImpl<K, V> implements JbTreeHelper<K, V> {
 	if (currentNode.getKeysCount() >= treeData.getL()) {
 	    final Node<K, V> newNode = storeSplitLeafNode(currentNode, key, value);
 	    if (stack.isEmpty()) {
-		splitRootLeafNode(currentNode, newNode);
+		splitRootNode(currentNode, newNode);
 		return null;
 	    } else {
 		Integer tmpValue = newNode.getId();
@@ -112,7 +112,7 @@ public class JbTreeHelperImpl<K, V> implements JbTreeHelper<K, V> {
 		final Node<K, Integer> newNode = storeSplitNonLeafNode(currentNode, tmpKey,
 			tmpValue);
 		if (stack.isEmpty()) {
-		    splitRootNonLeafNode(currentNode, newNode);
+		    splitRootNode((Node<K, V>)currentNode,(Node<K, V>)newNode);
 		    return null;
 		} else {
 		    tmpValue = newNode.getId();
@@ -164,25 +164,8 @@ public class JbTreeHelperImpl<K, V> implements JbTreeHelper<K, V> {
 	return newNode;
     }
 
-    private Integer splitRootLeafNode(final Node<K, V> currentNode, final Node<K, V> newNode) {
-	ReentrantLock lock = new ReentrantLock(false);
-	lock.lock();
-	try {
-	    if (treeData.getRootNodeId().equals(currentNode.getId())) {
-		Preconditions.checkArgument(treeData.getRootNodeId().equals(currentNode.getId()));
-		treeData.setRootNodeId(treeTool.splitRootNode(currentNode, newNode));
-		nodeStore.unlockNode(currentNode.getId());
-	    } else {
-		nodeStore.unlockNode(currentNode.getId());
-	    }
-	} finally {
-	    lock.unlock();
-	}
-	return treeData.getRootNodeId();
-    }
-
-    private Integer splitRootNonLeafNode(final Node<K, Integer> currentNode,
-	    final Node<K, Integer> newNode) {
+    private Integer splitRootNode(final Node<K, V> currentNode,
+	    final Node<K, V> newNode) {
 	ReentrantLock lock = new ReentrantLock(false);
 	lock.lock();
 	try {

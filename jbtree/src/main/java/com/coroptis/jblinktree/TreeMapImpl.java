@@ -84,7 +84,7 @@ public class TreeMapImpl<K, V> implements TreeMap<K, V> {
     }
 
     @Override
-    public Set<java.util.Map.Entry<K, V>> entrySet() {
+    public Set<Map.Entry<K, V>> entrySet() {
 	throw new UnsupportedOperationException();
     }
 

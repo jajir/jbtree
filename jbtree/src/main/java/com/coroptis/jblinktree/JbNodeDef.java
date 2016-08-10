@@ -22,12 +22,23 @@ package com.coroptis.jblinktree;
 
 import com.coroptis.jblinktree.type.TypeDescriptor;
 
+/**
+ * Holds node data definition. It's helps store data to proper place in byte
+ * array.
+ * 
+ * @author jajir
+ *
+ * @param <K>
+ *            key type
+ * @param <V>
+ *            value type
+ */
 public interface JbNodeDef<K, V> {
 
     /**
      * Number of bytes occupied by node flag.
      */
-    static int FLAGS_LENGTH = 1;
+    int FLAGS_LENGTH = 1;
 
     /**
      * Get max number of key value pairs in tree node.
@@ -58,15 +69,15 @@ public interface JbNodeDef<K, V> {
     TypeDescriptor<Integer> getLinkTypeDescriptor();
 
     /**
-     * What is maximum record length in bytes. In this case node contains L key
-     * value pairs.
+     * What is maximum byte field length. In this case node contains L key value
+     * pairs.
      * 
      * @return maximum length in bytes
      */
-    int getRecordMaxLength();
+    int getFieldMaxLength();
 
     /**
-     * What is actual record length in bytes. Number include:
+     * What is actual byte field length. Number include:
      * <ul>
      * <li>node flags</li>
      * <li>key value pair length * numberOfKeys</li>
@@ -77,7 +88,25 @@ public interface JbNodeDef<K, V> {
      *            required number of keys in node
      * @return maximum length in bytes
      */
-    int getRecordActualLength(int numberOfKeys);
+    int getFieldActualLength(int numberOfKeys);
+
+    /**
+     * Return position in byte field where key is stored.
+     * 
+     * @param position
+     *            required key value pair position
+     * @return key position
+     */
+    int getKeyPosition(int position);
+
+    /**
+     * Return position in byte field where value is stored.
+     * 
+     * @param position
+     *            required key value pair position
+     * @return value position
+     */
+    int getValuePosition(int position);
 
     /**
      * return size of key and value in bytes.

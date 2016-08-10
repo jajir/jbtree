@@ -65,7 +65,7 @@ public class NodeFileStorageImpl<K, V> implements NodeFileStorage<K, V> {
 	this.nodeBuilder = Preconditions.checkNotNull(nodeBuilder);
 	this.fileName = Preconditions.checkNotNull(fileName);
 	maxNodeRecordSize = NUMBER_OF_KEYS_IN_NODE_LENGTH
-		+ nodeDef.getRecordMaxLength();
+		+ nodeDef.getFieldMaxLength();
 	try {
 	    raf = new RandomAccessFile(new File(fileName), "rw");
 	} catch (FileNotFoundException e) {
@@ -80,9 +80,9 @@ public class NodeFileStorageImpl<K, V> implements NodeFileStorage<K, V> {
 	    raf.seek(getPosition(node.getId()));
 	    raf.writeByte(node.getKeysCount());
 	    byte bytes[] = node.getFieldBytes();
-	    if (bytes.length < nodeDef.getRecordMaxLength()) {
+	    if (bytes.length < nodeDef.getFieldMaxLength()) {
 		// add zeros to record
-		bytes = Arrays.copyOf(bytes, nodeDef.getRecordMaxLength());
+		bytes = Arrays.copyOf(bytes, nodeDef.getFieldMaxLength());
 	    }
 	    raf.write(bytes);
 	} catch (IOException e) {
@@ -98,7 +98,7 @@ public class NodeFileStorageImpl<K, V> implements NodeFileStorage<K, V> {
 	try {
 	    raf.seek(getPosition(nodeId));
 	    byte keys = raf.readByte();
-	    int fieldSize = nodeDef.getRecordActualLength(keys);
+	    int fieldSize = nodeDef.getFieldActualLength(keys);
 	    byte[] bytes = new byte[fieldSize];
 	    raf.readFully(bytes);
 	    return nodeBuilder.makeNode(nodeId, bytes);

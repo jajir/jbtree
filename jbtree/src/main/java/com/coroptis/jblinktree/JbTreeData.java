@@ -50,12 +50,12 @@ public interface JbTreeData<K, V> {
     /**
      * @return the leafNodeDescriptor
      */
-    public JbNodeDef<K, V> getLeafNodeDescriptor();
+    JbNodeDef<K, V> getLeafNodeDescriptor();
 
     /**
      * @return the nonLeafNodeDescriptor
      */
-    public JbNodeDef<K, Integer> getNonLeafNodeDescriptor();
+    JbNodeDef<K, Integer> getNonLeafNodeDescriptor();
 
     /**
      * Get max number of key value pairs in tree node.

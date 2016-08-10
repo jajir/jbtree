@@ -92,7 +92,8 @@ public class FieldImpl<K, V> implements Field<K, V> {
      */
     public FieldImpl(final int numberOfField, final JbNodeDef<K, V> nodeDef) {
 	this.nodeDef = nodeDef;
-	this.field = new byte[nodeDef.getRecordActualLength(numberOfField)];
+	this.field = new byte[nodeDef.getFieldActualLength(numberOfField)];
+	setLink(Node.EMPTY_INT);
     }
 
     /**
@@ -117,36 +118,6 @@ public class FieldImpl<K, V> implements Field<K, V> {
 	}
     }
 
-    /**
-     * Return position in byte field where key is stored.
-     * 
-     * @param position
-     *            required key value pair position
-     * @return key position
-     */
-    private int getKeyPosition(int position) {
-	// TODO remove this function, it just delegate call
-	return nodeDef.getRecordActualLength(position);
-    }
-
-    /**
-     * Return position in byte field where value is stored.
-     * 
-     * @param position
-     *            required key value pair position
-     * @return value position
-     */
-    private int getValuePosition(int position) {
-	// TODO move to nodeDef, it's nodeDef.getRecordActualLength(position);
-	// without link length
-	return JbNodeDef.FLAGS_LENGTH + position * nodeDef.getKeyAndValueSize();
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.coroptis.jblinktree.Filed#toString()
-     */
     @Override
     public String toString() {
 	StringBuilder buff = new StringBuilder();
@@ -165,8 +136,8 @@ public class FieldImpl<K, V> implements Field<K, V> {
     public void copy(final Field<K, V> src, final int srcPos1,
 	    final int destPos1, final int length) {
 	final FieldImpl<K, V> f = (FieldImpl<K, V>) src;
-	System.arraycopy(f.field, getValuePosition(srcPos1), field,
-		getValuePosition(destPos1),
+	System.arraycopy(f.field, nodeDef.getValuePosition(srcPos1), field,
+		nodeDef.getValuePosition(destPos1),
 		length * nodeDef.getKeyAndValueSize());
 	setFlag(src.getFlag());
     }
@@ -221,25 +192,25 @@ public class FieldImpl<K, V> implements Field<K, V> {
     @Override
     public K getKey(final int position) {
 	return nodeDef.getKeyTypeDescriptor().load(field,
-		getKeyPosition(position));
+		nodeDef.getKeyPosition(position));
     }
 
     @Override
     public V getValue(final int position) {
 	return nodeDef.getValueTypeDescriptor().load(field,
-		getValuePosition(position));
+		nodeDef.getValuePosition(position));
     }
 
     @Override
     public void setKey(final int position, final K value) {
-	nodeDef.getKeyTypeDescriptor().save(field, getKeyPosition(position),
-		value);
+	nodeDef.getKeyTypeDescriptor().save(field,
+		nodeDef.getKeyPosition(position), value);
     }
 
     @Override
     public void setValue(final int position, final V value) {
-	nodeDef.getValueTypeDescriptor().save(field, getValuePosition(position),
-		value);
+	nodeDef.getValueTypeDescriptor().save(field,
+		nodeDef.getValuePosition(position), value);
     }
 
     @Override

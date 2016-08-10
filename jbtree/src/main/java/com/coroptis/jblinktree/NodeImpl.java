@@ -300,13 +300,13 @@ public class NodeImpl<K, V> implements Node<K, V> {
 		    "In node " + id + " are no values to move.");
 	}
 	// copy top half to empty node
-	final int startKeyNo = getKeysCount() / 2;
-	final int startIndex = startKeyNo;
+	final int startIndex = getKeysCount() / 2;
 	final int length = field.getKeyCount() - startIndex;
 	// TODO create field in static factory
-	node.field = new FieldImpl<K, V>(length - 1, field.getNodeDef());
+	node.field = new FieldImpl<K, V>(length, field.getNodeDef());
 	node.field.copy(field, startIndex, 0, length);
-
+	node.setLink(getLink());
+	
 	// remove copied data from this node
 	Field<K, V> field2 = new FieldImpl<K, V>(startIndex,
 		field.getNodeDef());
@@ -420,11 +420,6 @@ public class NodeImpl<K, V> implements Node<K, V> {
 
     @Override
     public boolean verify() {
-	if ((field.getKeyCount()) % 2 == 0) {
-	    throw new JblinktreeException(
-		    "node " + id + " have inforrect number of items in field: "
-			    + toString() + "");
-	}
 	if (!isLeafNode()) {
 	    for (int i = 0; i < field.getKeyCount(); i++) {
 		if (field.getValue(i) != null && field.getValue(i).equals(id)) {
@@ -466,7 +461,7 @@ public class NodeImpl<K, V> implements Node<K, V> {
      * @return
      */
     private boolean equal(Object a, Object b) {
-	return a == b || (a != null && a.equals(b));
+	return a == b || a != null && a.equals(b);
     }
 
     @Override

@@ -23,6 +23,9 @@ package com.coroptis.jblinktree;
 /**
  * Contains data for node. It contains in flag[byte], value, key pairs and link
  * as Integer.
+ * <p>
+ * Positions index of copied key value pair.
+ * </p>
  * 
  * 
  * @param <K>
@@ -56,15 +59,15 @@ public interface Field<K, V> {
     /**
      * Copy data from {@link Field} <code>src</code> to this object.
      *
-     *TODO update param names and description
+     *
      * @param src
      *            required field from which are data copied
      * @param srcPos
      *            required from which position are data copied
      * @param destPos
-     *            required from which position are data written
+     *            required to which position are data written
      * @param length
-     *            required how many bytes will be copied
+     *            required how many key value pairs will be copied
      * @throws ArrayIndexOutOfBoundsException
      *             when some positions are out of array limits
      */

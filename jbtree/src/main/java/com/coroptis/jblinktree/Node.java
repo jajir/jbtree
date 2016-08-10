@@ -38,12 +38,12 @@ public interface Node<K, V> {
     /**
      * When this value in at flag position than it's leaf node.
      */
-    final static byte M = -77;
+    byte M = -77;
 
     /**
      * Value for Integer represents empty state.
      */
-    final static Integer EMPTY_INT = -1;
+    Integer EMPTY_INT = -1;
 
     /**
      * Get link value. Delegate to {@link Field#getLink()}

@@ -32,6 +32,7 @@ import org.slf4j.LoggerFactory;
 
 import com.coroptis.jblinktree.Field;
 import com.coroptis.jblinktree.FieldImpl;
+import com.coroptis.jblinktree.Node;
 import com.coroptis.jblinktree.NodeRule;
 
 /**
@@ -102,7 +103,7 @@ public class FieldTest {
     public void test_toString() throws Exception {
 	logger.debug(field.toString());
 	assertEquals(
-		"Field{field=[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]}",
+		"Field{field=[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -1, -1, -1, -1]}",
 		field.toString());
     }
 
@@ -150,6 +151,15 @@ public class FieldTest {
 	assertTrue(field.equals(field));
     }
 
+    @Test
+    public void test_constructor_default_link() throws Exception {
+	Field<Integer, Integer> f = new FieldImpl<Integer, Integer>(2,
+		nr.getTreeData().getLeafNodeDescriptor());
+	
+	assertEquals(Node.EMPTY_INT, f.getLink());
+    }
+
+    
     @Test
     public void test_constructor_field_defensive_copy() throws Exception {
 	byte[] field = new byte[] { 10, 1, 20, 2, 30 };
