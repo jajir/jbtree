@@ -9,9 +9,9 @@ package com.coroptis.jblinktree;
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -26,21 +26,21 @@ package com.coroptis.jblinktree;
  * <p>
  * Positions index of copied key value pair.
  * </p>
- * 
- * 
+ *
+ *
  * @param <K>
  *            key type
  * @param <V>
  *            value type
- * 
+ *
  * @author jajir
- * 
+ *
  */
 public interface Field<K, V> {
 
     /**
      * Get key from specific position.
-     * 
+     *
      * @param position
      *            required key position
      * @return key
@@ -49,7 +49,7 @@ public interface Field<K, V> {
 
     /**
      * Get value from specific position.
-     * 
+     *
      * @param position
      *            required value position
      * @return value
@@ -75,7 +75,7 @@ public interface Field<K, V> {
 
     /**
      * Allows to set key at specific position.
-     * 
+     *
      * @param position
      *            required position
      * @param value
@@ -85,7 +85,7 @@ public interface Field<K, V> {
 
     /**
      * Allows to set value at specific position.
-     * 
+     *
      * @param position
      *            required position
      * @param value
@@ -103,29 +103,29 @@ public interface Field<K, V> {
      * <p>
      * Method should return defensive copy.
      * </p>
-     * 
+     *
      * @return field byte array
      */
     byte[] getBytes();
 
     /**
      * Get number of stored keys.
-     * 
-     * 
+     *
+     *
      * @return number of stored keys and values
      */
     int getKeyCount();
 
     /**
      * Get flag byte.
-     * 
-     * @return flab byte
+     *
+     * @return flag byte
      */
     byte getFlag();
 
     /**
-     * Allow to set flab byte
-     * 
+     * Allow to set flag byte.
+     *
      * @param b
      *            required flag byte
      */
@@ -133,14 +133,14 @@ public interface Field<K, V> {
 
     /**
      * Get link value.
-     * 
+     *
      * @return link value, could be {@link Node#EMPTY_INT}
      */
     Integer getLink();
 
     /**
      * Allows to set link value.
-     * 
+     *
      * @param link
      *            link value, could be {@link Node#EMPTY_INT}
      * @throws NullPointerException
@@ -148,5 +148,10 @@ public interface Field<K, V> {
      */
     void setLink(Integer link);
 
+    /**
+     * Return node data definition.
+     *
+     * @return node data definition
+     */
     JbNodeDef<K, V> getNodeDef();
 }
