@@ -9,9 +9,9 @@ package com.coroptis.jblinktree;
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -22,9 +22,9 @@ package com.coroptis.jblinktree;
 
 /**
  * Helps create nodes.
- * 
+ *
  * @author jajir
- * 
+ *
  * @param <K>
  *            key type
  * @param <V>
@@ -34,7 +34,7 @@ public interface NodeBuilder<K, V> {
 
     /**
      * Create empty node.
-     * 
+     *
      * @param idNode
      *            required node id
      * @return created empty node
@@ -43,7 +43,7 @@ public interface NodeBuilder<K, V> {
 
     /**
      * Create empty non-leaf node.
-     * 
+     *
      * @param idNode
      *            required node id
      * @return created empty node
@@ -52,7 +52,7 @@ public interface NodeBuilder<K, V> {
 
     /**
      * Create new node by copying array to new node.
-     * 
+     *
      * @param <T>
      *            node value type
      * @param idNode
@@ -65,7 +65,7 @@ public interface NodeBuilder<K, V> {
 
     /**
      * Create non-leaf node. Method allows insert two key value pairs
-     * 
+     *
      * @param idNode
      *            required node id
      * @param value1
@@ -78,6 +78,7 @@ public interface NodeBuilder<K, V> {
      *            required key 2
      * @return newly created non-leaf node
      */
-    Node<K, Integer> makeNonLeafNode(Integer idNode, Integer value1, K key1, Integer value2, K key2);
+    Node<K, Integer> makeNonLeafNode(Integer idNode, Integer value1, K key1,
+            Integer value2, K key2);
 
 }

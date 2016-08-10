@@ -11,9 +11,9 @@ import com.google.common.base.Preconditions;
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -23,48 +23,71 @@ import com.google.common.base.Preconditions;
  */
 
 /**
- * Implementation of {@link JbTreeService}.
- * 
+ * Immutable implementation of {@link JbTreeService}.
+ *
  * @author jajir
- * 
+ *
+ * @param <K>
+ *            key type
+ * @param <V>
+ *            value type
+ *
  */
-public class JbTreeServiceImpl<K, V> implements JbTreeService<K, V> {
+public final class JbTreeServiceImpl<K, V> implements JbTreeService<K, V> {
 
+    /**
+     * Default node store.
+     */
     private final NodeStore<K> nodeStore;
 
+    /**
+     * Tool for traversing through tree.
+     */
     private final JbTreeTraversingService<K, V> treeTraversingService;
 
-    public JbTreeServiceImpl(final NodeStore<K> nodeStore,
-	    final JbTreeTraversingService<K, V> treeTraversingService) {
-	this.nodeStore = Preconditions.checkNotNull(nodeStore);
-	this.treeTraversingService = Preconditions.checkNotNull(treeTraversingService);
+    /**
+     * Simple constructor.
+     *
+     * @param initNodeStore
+     *            required node store
+     * @param initTreeTraversingService
+     *            required tree traversing tool
+     */
+    public JbTreeServiceImpl(final NodeStore<K> initNodeStore,
+            final JbTreeTraversingService<K, V> initTreeTraversingService) {
+        this.nodeStore = Preconditions.checkNotNull(initNodeStore);
+        this.treeTraversingService = Preconditions
+                .checkNotNull(initTreeTraversingService);
     }
 
     @Override
-    public <S> Node<K, Integer> loadParentNode(final Node<K, S> currentNode, final K tmpKey,
-	    final Integer nextNodeId) {
-	Node<K, Integer> parentNode = nodeStore.getAndLock(nextNodeId);
-	// TODO link to current node which key should be updated can be in
-	// different node than tmpKey
-	parentNode = treeTraversingService.moveRightNonLeafNode(parentNode, tmpKey);
-	if (parentNode.updateKeyForValue(currentNode.getId(), currentNode.getMaxKey())) {
-	    nodeStore.writeNode(parentNode);
-	}
-	return parentNode;
+    public <S> Node<K, Integer> loadParentNode(final Node<K, S> currentNode,
+            final K tmpKey, final Integer nextNodeId) {
+        Node<K, Integer> parentNode = nodeStore.getAndLock(nextNodeId);
+        // TODO link to current node which key should be updated can be in
+        // different node than tmpKey
+        parentNode = treeTraversingService.moveRightNonLeafNode(parentNode,
+                tmpKey);
+        if (parentNode.updateKeyForValue(currentNode.getId(),
+                currentNode.getMaxKey())) {
+            nodeStore.writeNode(parentNode);
+        }
+        return parentNode;
     }
 
     @Override
-    public void storeValueIntoLeafNode(final Node<K, V> currentNode, final K key, final V value) {
-	currentNode.insert(key, value);
-	nodeStore.writeNode(currentNode);
-	nodeStore.unlockNode(currentNode.getId());
+    public void storeValueIntoLeafNode(final Node<K, V> currentNode,
+            final K key, final V value) {
+        currentNode.insert(key, value);
+        nodeStore.writeNode(currentNode);
+        nodeStore.unlockNode(currentNode.getId());
     }
 
     @Override
-    public void storeValueIntoNonLeafNode(final Node<K, Integer> currentNode, final K key,
-	    final Integer value) {
-	currentNode.insert(key, value);
-	nodeStore.writeNode(currentNode);
-	nodeStore.unlockNode(currentNode.getId());
+    public void storeValueIntoNonLeafNode(final Node<K, Integer> currentNode,
+            final K key, final Integer value) {
+        currentNode.insert(key, value);
+        nodeStore.writeNode(currentNode);
+        nodeStore.unlockNode(currentNode.getId());
     }
 }

@@ -9,9 +9,9 @@ package com.coroptis.jblinktree;
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -24,10 +24,10 @@ import java.util.List;
 
 /**
  * Tree node providing basic operations.
- * 
+ *
  * @author jajir
- * 
- * 
+ *
+ *
  * @param <K>
  *            key type
  * @param <V>
@@ -47,14 +47,14 @@ public interface Node<K, V> {
 
     /**
      * Get link value. Delegate to {@link Field#getLink()}
-     * 
+     *
      * @return link value, could be {@link Node#EMPTY_INT}
      */
     Integer getLink();
 
     /**
      * Allows to set link value. Delegate to {@link Field#setLink(Integer)}
-     * 
+     *
      * @param link
      *            link value, could be {@link Node#EMPTY_INT}
      * @throws NullPointerException
@@ -65,7 +65,7 @@ public interface Node<K, V> {
     /**
      * Return true when node is empty. Empty means there are no keys in node. In
      * case of non-leaf node there still can be P0 link and max value.
-     * 
+     *
      * @return return <code>true</code> when node is empty otherwise return
      *         <code>false</code>
      */
@@ -73,14 +73,14 @@ public interface Node<K, V> {
 
     /**
      * Get number of keys stored in node.
-     * 
+     *
      * @return number of stored keys.
      */
     int getKeysCount();
 
     /**
      * Insert or override some value in node.
-     * 
+     *
      * @param key
      *            required key
      * @param value
@@ -92,7 +92,7 @@ public interface Node<K, V> {
 
     /**
      * Remove key and associated value from node.
-     * 
+     *
      * @param key
      *            required key to remove
      * @return when key was found and removed it return <code>true</code>
@@ -105,7 +105,7 @@ public interface Node<K, V> {
     /**
      * For non-leaf tree it update key of some tree. It's useful for update
      * sub-node max key.
-     * 
+     *
      * @param valueToUpdate
      *            required value which will be find
      * @param keyToSet
@@ -120,7 +120,7 @@ public interface Node<K, V> {
      * <p>
      * From this node will be created structure: thisNode ---&gt; node
      * </p>
-     * 
+     *
      * @param node
      *            required empty node
      */
@@ -128,21 +128,21 @@ public interface Node<K, V> {
 
     /**
      * Return max key, that could be use for representing this node.
-     * 
+     *
      * @return max key
      */
     K getMaxKey();
 
     /**
      * Return node id.
-     * 
+     *
      * @return the id
      */
     Integer getId();
 
     /**
      * Inform id it's leaf node or non-leaf node.
-     * 
+     *
      * @return return <code>true</code> when it's leaf node otherwise return
      *         <code>false</code>
      */
@@ -163,7 +163,7 @@ public interface Node<K, V> {
      * procedure called this method than when key is bigger than max key than
      * null can be returned.
      * </p>
-     * 
+     *
      * @param key
      *            required key
      * @return node id, in case of rightmost node it returns <code>null</code>
@@ -173,7 +173,7 @@ public interface Node<K, V> {
 
     /**
      * Find value for given key.
-     * 
+     *
      * @param key
      *            required key
      * @return found value if there is any, when value is <code>null</code> or
@@ -183,21 +183,21 @@ public interface Node<K, V> {
 
     /**
      * Get list of all node id stored in this node.
-     * 
+     *
      * @return list of id
      */
     List<Integer> getNodeIds();
 
     /**
      * Get list of keys stored in node.
-     * 
+     *
      * @return list of keys.
      */
     List<K> getKeys();
 
     /**
      * Verify that node is consistent.
-     * 
+     *
      * @return <code>true</code> when node is consistent otherwise return
      *         <code>false</code>
      */
@@ -205,7 +205,7 @@ public interface Node<K, V> {
 
     /**
      * Write node content into {@link StringBuilder}.
-     * 
+     *
      * @param buff
      *            required {@link StringBuilder} instance
      * @param intendation
@@ -215,7 +215,7 @@ public interface Node<K, V> {
 
     /**
      * Get node content as byte array.
-     * 
+     *
      * @return byte array
      */
     byte[] getFieldBytes();

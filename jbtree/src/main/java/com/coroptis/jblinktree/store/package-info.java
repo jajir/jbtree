@@ -21,7 +21,7 @@
 
 /**
  * Storing node data to byte arrays and to file system.
- * 
+ *
  * @author jajir
  */
 package com.coroptis.jblinktree.store;

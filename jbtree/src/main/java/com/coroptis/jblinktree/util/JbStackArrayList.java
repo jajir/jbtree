@@ -9,9 +9,9 @@ package com.coroptis.jblinktree.util;
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -26,45 +26,45 @@ import java.util.EmptyStackException;
 /**
  * Simple implementations using field size. When field filled with values than
  * filed size is increased.
- * 
+ *
  * @author jajir
  *
  */
-public class JbStackArrayList implements JbStack {
+public final class JbStackArrayList implements JbStack {
 
-    public final static int INITIAL_FIELD_CAPACITY = 20;
+    public static final int INITIAL_FIELD_CAPACITY = 20;
 
-    private final static int FIELD_GROW_SIZE = 5;
+    private static final int FIELD_GROW_SIZE = 5;
 
     private Integer[] field;
 
     private int lastOne;
 
     public JbStackArrayList() {
-	field = new Integer[INITIAL_FIELD_CAPACITY];
-	lastOne = 0;
+        field = new Integer[INITIAL_FIELD_CAPACITY];
+        lastOne = 0;
     }
 
     @Override
     public Integer pop() {
-	if (isEmpty()) {
-	    throw new EmptyStackException();
-	} else {
-	    return field[--lastOne];
-	}
+        if (isEmpty()) {
+            throw new EmptyStackException();
+        } else {
+            return field[--lastOne];
+        }
     }
 
     @Override
     public void push(final Integer item) {
-	if (field.length <= lastOne) {
-	    field = Arrays.copyOf(field, field.length + FIELD_GROW_SIZE);
-	}
-	field[lastOne++] = item;
+        if (field.length <= lastOne) {
+            field = Arrays.copyOf(field, field.length + FIELD_GROW_SIZE);
+        }
+        field[lastOne++] = item;
     }
 
     @Override
     public boolean isEmpty() {
-	return lastOne == 0;
+        return lastOne == 0;
     }
 
 }

@@ -9,9 +9,9 @@ package com.coroptis.jblinktree;
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -24,9 +24,9 @@ import java.util.Map;
 
 /**
  * {@link Map} extension add Jbtree specific features.
- * 
+ *
  * @author jajir
- * 
+ *
  * @param <K>
  *            key type
  * @param <V>
@@ -42,7 +42,7 @@ public interface TreeMap<K, V> extends Map<K, V> {
     /**
      * TODO don't expose outside of implementation Traverse through entire tree
      * and visit all nodes.
-     * 
+     *
      * @param treeVisitor
      *            required visitor implementation
      */
@@ -50,7 +50,7 @@ public interface TreeMap<K, V> extends Map<K, V> {
 
     /**
      * Traverse through all tree key value pairs in tree.
-     * 
+     *
      * @param dataVisitor
      *            required data visitor
      */
@@ -61,7 +61,7 @@ public interface TreeMap<K, V> extends Map<K, V> {
      * <p>
      * Method is thread safe.
      * </p>
-     * 
+     *
      * @return number of locked nodes.
      */
     int countLockedNodes();

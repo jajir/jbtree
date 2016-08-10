@@ -9,9 +9,9 @@ package com.coroptis.jblinktree.junit;
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -42,35 +42,36 @@ public class FileStorageWriteTest {
 
     @Test
     public void test_store_verify_file() throws Exception {
-	fsRule.getFileStorage().store(node);
-	fsRule.getFileStorage().close();
+        fsRule.getFileStorage().store(node);
+        fsRule.getFileStorage().close();
 
-	assertTrue(fsRule.getTempFile().exists());
-	assertTrue(fsRule.getTempFile().isFile());
+        assertTrue(fsRule.getTempFile().exists());
+        assertTrue(fsRule.getTempFile().isFile());
     }
 
     @Test
     public void test_store_verify_node() throws Exception {
-	fsRule.getFileStorage().store(node);
+        fsRule.getFileStorage().store(node);
 
-	Node<Integer, Integer> node2 = fsRule.getFileStorage().load(14);
+        Node<Integer, Integer> node2 = fsRule.getFileStorage().load(14);
 
-	assertEquals(node, node2);
+        assertEquals(node, node2);
 
-	fsRule.getFileStorage().close();
+        fsRule.getFileStorage().close();
     }
 
     @Before
     public void setup() {
-	JbTreeData<Integer, Integer> treeData = new JbTreeDataImpl<Integer, Integer>(
-		1, 5, fsRule.getIntDescriptor(), fsRule.getIntDescriptor(),
-		fsRule.getIntDescriptor());
-	node = new NodeImpl<Integer, Integer>(14, false, treeData.getLeafNodeDescriptor());
-	node.insert(3, 23);
+        JbTreeData<Integer, Integer> treeData = new JbTreeDataImpl<Integer, Integer>(
+                1, 5, fsRule.getIntDescriptor(), fsRule.getIntDescriptor(),
+                fsRule.getIntDescriptor());
+        node = new NodeImpl<Integer, Integer>(14, false,
+                treeData.getLeafNodeDescriptor());
+        node.insert(3, 23);
     }
 
     @After
     public void tearDown() {
-	node = null;
+        node = null;
     }
 }

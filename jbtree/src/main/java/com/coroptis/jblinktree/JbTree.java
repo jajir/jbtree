@@ -9,9 +9,9 @@ package com.coroptis.jblinktree;
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -21,23 +21,24 @@ package com.coroptis.jblinktree;
  */
 
 /**
- * TODO rename or remove, it's confusing with TreeMap which should be used by end user.
- * 
+ * TODO rename or remove, it's confusing with TreeMap which should be used by
+ * end user.
+ *
  * Provide operations with tree. In tree could be stored key,value pairs.
- * 
+ *
  * @author jajir
- * 
+ *
  * @param <K>
  *            key type
  * @param <V>
  *            value type
- * 
+ *
  */
 public interface JbTree<K, V> {
 
     /**
      * Insert value and key into tree.
-     * 
+     *
      * @param key
      *            required parameter key
      * @param value
@@ -48,7 +49,7 @@ public interface JbTree<K, V> {
 
     /**
      * Remove key from tree. Associated value will be also removed.
-     * 
+     *
      * @param key
      *            required key
      * @return return <code>true</code> when key was found and removed otherwise
@@ -58,7 +59,7 @@ public interface JbTree<K, V> {
 
     /**
      * Find and return specific value for given key.
-     * 
+     *
      * @param key
      *            required key
      * @return find value if there is any otherwise return <code>null</code>
@@ -67,14 +68,14 @@ public interface JbTree<K, V> {
 
     /**
      * Count all keys stored in tree.
-     * 
+     *
      * @return number of all keys in tree.
      */
     int countValues();
 
     /**
      * Inform about presence of key in tree.
-     * 
+     *
      * @param key
      *            required key
      * @return if key is in tree return <code>true</code> otherwise return
@@ -92,7 +93,7 @@ public interface JbTree<K, V> {
      * <p>
      * Method is thread safe.
      * </p>
-     * 
+     *
      * @return number of locked nodes.
      */
     int countLockedNodes();
@@ -105,9 +106,9 @@ public interface JbTree<K, V> {
      * <p>
      * Method doesn't use node locking. It's not necessary.
      * </p>
-     * 
+     *
      * @param treeVisitor
-     *            required  {@link JbTreeVisitor} implementation.
+     *            required {@link JbTreeVisitor} implementation.
      */
     void visit(JbTreeVisitor<K, V> treeVisitor);
 
@@ -117,7 +118,7 @@ public interface JbTree<K, V> {
      * <p>
      * Method doesn't use node locking. It's not necessary.
      * </p>
-     * 
+     *
      * @param treeVisitor
      *            required {@link JbTreeVisitor} implementation.
      */

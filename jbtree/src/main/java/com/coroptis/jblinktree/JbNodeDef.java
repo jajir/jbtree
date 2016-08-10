@@ -9,9 +9,9 @@ package com.coroptis.jblinktree;
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -25,7 +25,7 @@ import com.coroptis.jblinktree.type.TypeDescriptor;
 /**
  * Holds node data definition. It's helps store data to proper place in byte
  * array.
- * 
+ *
  * @author jajir
  *
  * @param <K>
@@ -42,28 +42,28 @@ public interface JbNodeDef<K, V> {
 
     /**
      * Get max number of key value pairs in tree node.
-     * 
+     *
      * @return L parameter
      */
     int getL();
 
     /**
      * Return key type descriptor.
-     * 
+     *
      * @return key type descriptor
      */
     TypeDescriptor<K> getKeyTypeDescriptor();
 
     /**
      * Return value type descriptor.
-     * 
+     *
      * @return value type descriptor
      */
     TypeDescriptor<V> getValueTypeDescriptor();
 
     /**
      * Return next link type descriptor.
-     * 
+     *
      * @return next link type descriptor
      */
     TypeDescriptor<Integer> getLinkTypeDescriptor();
@@ -71,7 +71,7 @@ public interface JbNodeDef<K, V> {
     /**
      * What is maximum byte field length. In this case node contains L key value
      * pairs.
-     * 
+     *
      * @return maximum length in bytes
      */
     int getFieldMaxLength();
@@ -83,7 +83,7 @@ public interface JbNodeDef<K, V> {
      * <li>key value pair length * numberOfKeys</li>
      * <li>next link</li>
      * </ul>
-     * 
+     *
      * @param numberOfKeys
      *            required number of keys in node
      * @return maximum length in bytes
@@ -92,7 +92,7 @@ public interface JbNodeDef<K, V> {
 
     /**
      * Return position in byte field where key is stored.
-     * 
+     *
      * @param position
      *            required key value pair position
      * @return key position
@@ -101,7 +101,7 @@ public interface JbNodeDef<K, V> {
 
     /**
      * Return position in byte field where value is stored.
-     * 
+     *
      * @param position
      *            required key value pair position
      * @return value position
@@ -110,7 +110,7 @@ public interface JbNodeDef<K, V> {
 
     /**
      * return size of key and value in bytes.
-     * 
+     *
      * @return key and value size
      */
     int getKeyAndValueSize();

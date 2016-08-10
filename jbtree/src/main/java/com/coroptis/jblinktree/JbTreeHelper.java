@@ -11,9 +11,9 @@ import com.coroptis.jblinktree.util.JbStack;
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -23,9 +23,9 @@ import com.coroptis.jblinktree.util.JbStack;
  */
 
 /**
- * 
+ *
  * @author jajir
- * 
+ *
  * @param <K>
  *            key type
  * @param <V>
@@ -35,7 +35,7 @@ public interface JbTreeHelper<K, V> {
 
     /**
      * Find leaf node where given key belongs. Method doesn't lock and nodes.
-     * 
+     *
      * @param key
      *            required key
      * @return appropriate leaf node
@@ -44,7 +44,7 @@ public interface JbTreeHelper<K, V> {
 
     /**
      * Write given key value pair into leaf node.
-     * 
+     *
      * @param currentNode
      *            required leaf node
      * @param key

@@ -9,9 +9,9 @@ package com.coroptis.jblinktree.junit;
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -29,9 +29,9 @@ import com.coroptis.jblinktree.store.NodeStoreInMem;
 
 /**
  * Tests for {@link NodeStoreInMem}.
- * 
+ *
  * @author jajir
- * 
+ *
  */
 public class NodeStoreInMemTest extends AbstractMockingTest {
 
@@ -39,24 +39,24 @@ public class NodeStoreInMemTest extends AbstractMockingTest {
 
     @Test(expected = IllegalMonitorStateException.class)
     public void test_unlock_already_unlocked_node() throws Exception {
-	tested.lockNode(3);
+        tested.lockNode(3);
 
-	tested.unlockNode(3);
-	tested.unlockNode(3);
+        tested.unlockNode(3);
+        tested.unlockNode(3);
 
     }
 
     @Override
     @Before
     public void setUp() throws Exception {
-	super.setUp();
-	tested = new NodeStoreInMem<Integer, Integer>(nodeBuilder);
+        super.setUp();
+        tested = new NodeStoreInMem<Integer, Integer>(nodeBuilder);
     }
 
     @Override
     @After
     public void tearDown() throws Exception {
-	tested = null;
-	super.tearDown();
+        tested = null;
+        super.tearDown();
     }
 }

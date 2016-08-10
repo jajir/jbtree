@@ -20,9 +20,9 @@ import com.coroptis.jblinktree.type.TypeDescriptorInteger;
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -32,9 +32,9 @@ import com.coroptis.jblinktree.type.TypeDescriptorInteger;
  */
 /**
  * Junit test for {@link TypeDescriptorInteger}.
- * 
+ *
  * @author jajir
- * 
+ *
  */
 public class TypeDescriptorIntegerTest {
 
@@ -42,59 +42,59 @@ public class TypeDescriptorIntegerTest {
 
     @Test
     public void test_save() throws Exception {
-	byte[] b = new byte[6];
-	td.save(b, 1, -1);
+        byte[] b = new byte[6];
+        td.save(b, 1, -1);
 
-	assertEquals(0, b[0]);
-	assertEquals(-1, b[1]);
-	assertEquals(-1, b[2]);
-	assertEquals(-1, b[3]);
-	assertEquals(-1, b[4]);
-	assertEquals(0, b[5]);
+        assertEquals(0, b[0]);
+        assertEquals(-1, b[1]);
+        assertEquals(-1, b[2]);
+        assertEquals(-1, b[3]);
+        assertEquals(-1, b[4]);
+        assertEquals(0, b[5]);
     }
 
     @Test
     public void test_load() throws Exception {
-	byte[] b = new byte[6];
-	b[1] = 1;
-	b[2] = 2;
-	b[3] = 3;
-	b[4] = 4;
+        byte[] b = new byte[6];
+        b[1] = 1;
+        b[2] = 2;
+        b[3] = 3;
+        b[4] = 4;
 
-	assertEquals(Integer.valueOf(16909060), td.load(b, 1));
+        assertEquals(Integer.valueOf(16909060), td.load(b, 1));
     }
 
     @Test
     public void test_verifyType_pass() throws Exception {
-	td.verifyType(-4);
-	td.verifyType(Integer.MAX_VALUE);
+        td.verifyType(-4);
+        td.verifyType(Integer.MAX_VALUE);
     }
 
     @Test(expected = JblinktreeException.class)
     public void test_verifyType_false() throws Exception {
-	td.verifyType("blee");
+        td.verifyType("blee");
     }
 
     @Test
     public void test_compare() throws Exception {
-	assertTrue(td.compare(1, 4) < 0);
-	assertTrue(td.compare(-4, -1) < 0);
+        assertTrue(td.compare(1, 4) < 0);
+        assertTrue(td.compare(-4, -1) < 0);
 
-	assertTrue(td.compare(2, 1) > 0);
-	assertTrue(td.compare(-1, -2) > 0);
+        assertTrue(td.compare(2, 1) > 0);
+        assertTrue(td.compare(-1, -2) > 0);
 
-	assertTrue(td.compare(1, 1) == 0);
-	assertTrue(td.compare(-1, -1) == 0);
+        assertTrue(td.compare(1, 1) == 0);
+        assertTrue(td.compare(-1, -1) == 0);
     }
 
     @Before
     public void setup() {
-	td = new TypeDescriptorInteger();
+        td = new TypeDescriptorInteger();
     }
 
     @After
     public void tearDown() {
-	td = null;
+        td = null;
     }
 
 }

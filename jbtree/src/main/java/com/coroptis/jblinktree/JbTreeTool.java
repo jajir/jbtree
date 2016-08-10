@@ -11,9 +11,9 @@ import com.coroptis.jblinktree.util.JbStack;
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -24,14 +24,14 @@ import com.coroptis.jblinktree.util.JbStack;
 
 /**
  * Provide simple operations with tree.
- * 
+ *
  * @author jajir
- * 
+ *
  * @param <K>
  *            key type
  * @param <V>
  *            value type
- * 
+ *
  */
 public interface JbTreeTool<K, V> {
 
@@ -40,7 +40,7 @@ public interface JbTreeTool<K, V> {
      * <p>
      * Method doesn't work with locks.
      * </p>
-     * 
+     *
      * @param current
      *            required current node, this node should be locked
      * @param key
@@ -55,7 +55,7 @@ public interface JbTreeTool<K, V> {
      * <p>
      * Method doesn't work with locks. New node is not locked.
      * </p>
-     * 
+     *
      * @param currentNode
      *            required node which will be split
      * @param key
@@ -72,7 +72,7 @@ public interface JbTreeTool<K, V> {
      * <p>
      * Method doesn't work with locks. New node is not locked.
      * </p>
-     * 
+     *
      * @param currentNode
      *            required node which will be split
      * @param key
@@ -81,8 +81,8 @@ public interface JbTreeTool<K, V> {
      *            required inserted value
      * @return newly created node, this node contains higher part of keys.
      */
-    Node<K, Integer> splitNonLeafNode(final Node<K, Integer> currentNode, final K key,
-	    final Integer value);
+    Node<K, Integer> splitNonLeafNode(final Node<K, Integer> currentNode,
+            final K key, final Integer value);
 
     /**
      * It get already existing node, new node a create new root node pointing on
@@ -90,7 +90,7 @@ public interface JbTreeTool<K, V> {
      * <p>
      * Method doesn't work with locks.
      * </p>
-     * 
+     *
      * @param <S>
      *            node value type
      * @param currentRootNode
@@ -103,7 +103,7 @@ public interface JbTreeTool<K, V> {
 
     /**
      * When new tree is created this method create new empty leaf root node.
-     * 
+     *
      * @return new root node id.
      */
     Integer createRootNode();
@@ -119,7 +119,7 @@ public interface JbTreeTool<K, V> {
      * <p>
      * Method doesn't lock any nodes.
      * </p>
-     * 
+     *
      * @param key
      *            required key
      * @param stack
@@ -134,7 +134,7 @@ public interface JbTreeTool<K, V> {
     /**
      * During searching for proper place where to put key it's important to know
      * if is possible to move to next node. Next node is find by link.
-     * 
+     *
      * @param node
      *            required node
      * @param key
@@ -146,7 +146,7 @@ public interface JbTreeTool<K, V> {
 
     /**
      * Move to next node. Lock next node than unlock current node.
-     * 
+     *
      * @param <S>
      *            node value type
      * @param currentNode
@@ -156,6 +156,7 @@ public interface JbTreeTool<K, V> {
      * @return locked new node instance
      */
 
-    <S> Node<K, S> moveToNextNode(final Node<K, ?> currentNode, final Integer nextNodeId);
+    <S> Node<K, S> moveToNextNode(final Node<K, ?> currentNode,
+            final Integer nextNodeId);
 
 }

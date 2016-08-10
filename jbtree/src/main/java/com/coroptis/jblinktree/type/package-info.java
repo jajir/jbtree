@@ -22,7 +22,7 @@
 /**
  * Package contains B*link tree data types. Special types also provide methods
  * for saving and loading data from and to byte arrays.
- * 
+ *
  * @author jajir
  */
 package com.coroptis.jblinktree.type;

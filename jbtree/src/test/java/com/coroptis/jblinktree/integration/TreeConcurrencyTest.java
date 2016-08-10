@@ -9,9 +9,9 @@ package com.coroptis.jblinktree.integration;
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -41,13 +41,14 @@ import com.coroptis.jblinktree.type.Types;
 
 /**
  * Test that tree could work in multiple threads environment.
- * 
+ *
  * @author jajir
- * 
+ *
  */
 public class TreeConcurrencyTest extends TestCase {
 
-    private final Logger logger = LoggerFactory.getLogger(TreeConcurrencyTest.class);
+    private final Logger logger = LoggerFactory
+            .getLogger(TreeConcurrencyTest.class);
 
     private TreeMap<Integer, Integer> tree;
 
@@ -57,57 +58,59 @@ public class TreeConcurrencyTest extends TestCase {
 
     @Test
     public void testForThreadClash() throws Exception {
-	final int cycleCount = 1000*100;
-	final int threadCount = 50;
-	final CountDownLatch doneLatch = new CountDownLatch(cycleCount * threadCount);
-	final CountDownLatch startLatch = new CountDownLatch(1);
+        final int cycleCount = 1000 * 100;
+        final int threadCount = 50;
+        final CountDownLatch doneLatch = new CountDownLatch(
+                cycleCount * threadCount);
+        final CountDownLatch startLatch = new CountDownLatch(1);
 
-	for (int i = 0; i < threadCount; ++i) {
-	    Runnable runner = new Executer(new Worker() {
+        for (int i = 0; i < threadCount; ++i) {
+            Runnable runner = new Executer(new Worker() {
 
-		@Override
-		public void doWork() {
-		    doWorkNow();
-		}
-	    }, startLatch, doneLatch, cycleCount);
-	    new Thread(runner, "TestThread" + i).start();
-	}
+                @Override
+                public void doWork() {
+                    doWorkNow();
+                }
+            }, startLatch, doneLatch, cycleCount);
+            new Thread(runner, "TestThread" + i).start();
+        }
 
-	startLatch.countDown();
-	doneLatch.await(20, TimeUnit.SECONDS);
-	assertEquals("Some thread didn't finished work", 0, doneLatch.getCount());
-	assertEquals("Some locks wasn't unlocked", 0, tree.countLockedNodes());
-	tree.verify();
-	logger.debug("I'm done!");
-	treeUtil.toDotFile(new File("pok.dot"));
+        startLatch.countDown();
+        doneLatch.await(20, TimeUnit.SECONDS);
+        assertEquals("Some thread didn't finished work", 0,
+                doneLatch.getCount());
+        assertEquals("Some locks wasn't unlocked", 0, tree.countLockedNodes());
+        tree.verify();
+        logger.debug("I'm done!");
+        treeUtil.toDotFile(new File("pok.dot"));
     }
 
     @Override
     protected void setUp() throws Exception {
-	super.setUp();
-	tree = TreeBuilder.builder().setL(10).setKeyType(Types.integer())
-		.setValueType(Types.integer()).build();
-	treeUtil = new TreeUtil(tree);
-	random = new Random();
+        super.setUp();
+        tree = TreeBuilder.builder().setL(10).setKeyType(Types.integer())
+                .setValueType(Types.integer()).build();
+        treeUtil = new TreeUtil(tree);
+        random = new Random();
     }
 
     @Override
     protected void tearDown() throws Exception {
-	tree = null;
-	treeUtil = null;
-	super.tearDown();
+        tree = null;
+        treeUtil = null;
+        super.tearDown();
     }
 
     void doWorkNow() {
-	Integer integer = random.nextInt(100) + 1;
-	try {
-	    tree.put(integer, integer);
-	} catch (JblinktreeException e) {
-	    synchronized (e) {
-		// tree.toDotFile(new File("dot.dot"));
-	    }
-	    throw e;
-	}
+        Integer integer = random.nextInt(100) + 1;
+        try {
+            tree.put(integer, integer);
+        } catch (JblinktreeException e) {
+            synchronized (e) {
+                // tree.toDotFile(new File("dot.dot"));
+            }
+            throw e;
+        }
     }
 
 }

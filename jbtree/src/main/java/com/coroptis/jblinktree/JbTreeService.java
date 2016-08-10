@@ -9,9 +9,9 @@ package com.coroptis.jblinktree;
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -22,9 +22,14 @@ package com.coroptis.jblinktree;
 
 /**
  * Provide tree operations.
- * 
+ *
  * @author jajir
- * 
+ *
+ * @param <K>
+ *            key type
+ * @param <V>
+ *            value type
+ *
  */
 public interface JbTreeService<K, V> {
 
@@ -32,7 +37,7 @@ public interface JbTreeService<K, V> {
      * Load parent node of given node containing given key. When it's necessary
      * to move to next node than method move to next node. Method lock nodex in
      * correct order.
-     * 
+     *
      * @param <S>
      *            node value type
      * @param currentNode
@@ -44,11 +49,11 @@ public interface JbTreeService<K, V> {
      * @return locked parent node instance
      */
     <S> Node<K, Integer> loadParentNode(Node<K, S> currentNode, K key,
-	    Integer nextNodeId);
+            Integer nextNodeId);
 
     /**
      * Store value in leaf node under the key.
-     * 
+     *
      * @param node
      *            required leaf node
      * @param key
@@ -60,7 +65,7 @@ public interface JbTreeService<K, V> {
 
     /**
      * Store value in non-leaf node under the key.
-     * 
+     *
      * @param currentNode
      *            required non-leaf node
      * @param key
@@ -69,5 +74,5 @@ public interface JbTreeService<K, V> {
      *            required value
      */
     void storeValueIntoNonLeafNode(Node<K, Integer> currentNode, K key,
-	    Integer value);
+            Integer value);
 }
