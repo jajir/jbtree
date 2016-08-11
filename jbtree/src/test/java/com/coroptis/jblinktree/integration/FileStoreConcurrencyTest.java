@@ -46,7 +46,7 @@ import com.coroptis.jblinktree.type.TypeDescriptorInteger;
  * Writes and load multiple nodes in highly concurrent environment. Test verify
  * that nodeStore serialize all requests.
  *
- * @author jan
+ * @author jajir
  *
  */
 public class FileStoreConcurrencyTest {

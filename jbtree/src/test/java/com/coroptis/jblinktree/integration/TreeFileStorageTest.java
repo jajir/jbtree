@@ -36,7 +36,7 @@ import com.google.common.io.Files;
 /**
  * Verify basic operations with file storage.
  *
- * @author jan
+ * @author jajir
  *
  */
 public class TreeFileStorageTest {

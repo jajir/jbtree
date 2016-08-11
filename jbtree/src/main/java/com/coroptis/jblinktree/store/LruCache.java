@@ -30,7 +30,7 @@ import com.coroptis.jblinktree.NodeBuilder;
 /**
  * Implementation of Last Recent Used (LRU) cache.
  *
- * @author jan
+ * @author jajir
  *
  * @param <K>
  *            key type

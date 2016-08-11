@@ -28,7 +28,8 @@ import com.google.common.base.Preconditions;
  */
 
 /**
- * {@link String} type descriptor.
+ * {@link String} type descriptor. When stored string is longer than available
+ * space, than string is silently trim.
  *
  * FIXME current all chars are stored in 1 byte, it's not true in case UTF-8
  *

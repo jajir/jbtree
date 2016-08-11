@@ -48,14 +48,14 @@ public final class NodeStoreInFile<K, V> implements NodeStore<K> {
 
     private final LruCache<K, V> nodeCache;
 
-    private final NodeFileStorage<K, V> fileStorage;
+    private final KeyFileStorage<K, V> fileStorage;
 
     public NodeStoreInFile(final JbTreeData<K, V> treeData,
             final NodeBuilder<K, V> nodeBuilder, String fileName,
             int numberOfNodesCacheSize) {
         this.nextId = new AtomicInteger(FIRST_NODE_ID);
         // FIXME - casting should be removed.
-        fileStorage = new NodeFileStorageImpl<K, V>(
+        fileStorage = new KeyFileStorageImpl<K, V>(
                 (JbNodeDef<K, V>) treeData.getNonLeafNodeDescriptor(),
                 nodeBuilder, fileName);
         nodeLocks = new NodeLocks();

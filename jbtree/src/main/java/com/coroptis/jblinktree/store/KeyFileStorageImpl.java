@@ -34,16 +34,17 @@ import com.coroptis.jblinktree.NodeBuilder;
 import com.google.common.base.Preconditions;
 
 /**
- * Simple thread safe node storage.
+ * Simple thread safe node storage. Could be used just in case when values
+ * associated with keys occupy 4 or less bytes.
  *
- * @author jan
+ * @author jajir
  *
  * @param <K>
  *            key type
  * @param <V>
  *            value type
  */
-public final class NodeFileStorageImpl<K, V> implements NodeFileStorage<K, V> {
+public final class KeyFileStorageImpl<K, V> implements KeyFileStorage<K, V> {
 
     private final NodeBuilder<K, V> nodeBuilder;
 
@@ -59,7 +60,7 @@ public final class NodeFileStorageImpl<K, V> implements NodeFileStorage<K, V> {
 
     private static final int NUMBER_OF_KEYS_IN_NODE_LENGTH = 1;
 
-    public NodeFileStorageImpl(final JbNodeDef<K, V> nodeDef,
+    public KeyFileStorageImpl(final JbNodeDef<K, V> nodeDef,
             final NodeBuilder<K, V> nodeBuilder, String fileName) {
         this.nodeDef = Preconditions.checkNotNull(nodeDef);
         this.nodeBuilder = Preconditions.checkNotNull(nodeBuilder);
