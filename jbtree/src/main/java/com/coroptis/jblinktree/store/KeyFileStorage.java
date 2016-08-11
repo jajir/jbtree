@@ -34,10 +34,26 @@ import com.coroptis.jblinktree.Node;
  */
 public interface KeyFileStorage<K, V> {
 
+    /**
+     * Store node.
+     *
+     * @param node
+     *            required node
+     */
     void store(Node<K, V> node);
 
+    /**
+     * Load node by it's id.
+     *
+     * @param nodeId
+     *            required node id
+     * @return loaded node
+     */
     Node<K, V> load(Integer nodeId);
 
+    /**
+     * Close file storage.
+     */
     void close();
 
 }

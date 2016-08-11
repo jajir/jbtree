@@ -34,19 +34,24 @@ import com.google.common.base.Preconditions;
  */
 public final class NodeBuilderImpl<K, V> implements NodeBuilder<K, V> {
 
+    /**
+     * Tree data definition.
+     */
     private final JbTreeData<K, V> treeData;
 
-    public NodeBuilderImpl(final JbTreeData<K, V> treeData) {
-        this.treeData = treeData;
-    }
-
     /**
-     * Implementations is not
+     * Simple constructor.
+     *
+     * @param jbTreeData
+     *            required tree data
      */
+    public NodeBuilderImpl(final JbTreeData<K, V> jbTreeData) {
+        this.treeData = jbTreeData;
+    }
 
     @SuppressWarnings({ "rawtypes", "unchecked" })
     @Override
-    public <T> Node<K, T> makeNode(final Integer idNode, final byte field[]) {
+    public <T> Node<K, T> makeNode(final Integer idNode, final byte[] field) {
         byte flag = field[0];
         if (flag == Node.M) {
             // leaf node
@@ -79,7 +84,7 @@ public final class NodeBuilderImpl<K, V> implements NodeBuilder<K, V> {
     public Node<K, Integer> makeNonLeafNode(final Integer idNode,
             final Integer value1, final K key1, final Integer value2,
             final K key2) {
-        final byte b[] = new byte[1
+        final byte[] b = new byte[1
                 + treeData.getNonLeafNodeDescriptor().getKeyTypeDescriptor()
                         .getMaxLength() * 2
                 + treeData.getNonLeafNodeDescriptor().getLinkTypeDescriptor()

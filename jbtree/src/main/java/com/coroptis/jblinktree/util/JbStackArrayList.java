@@ -32,14 +32,29 @@ import java.util.EmptyStackException;
  */
 public final class JbStackArrayList implements JbStack {
 
+    /**
+     * Initial capacity of stack.
+     */
     public static final int INITIAL_FIELD_CAPACITY = 20;
 
+    /**
+     * How fast grow stack when reach it's capacity.
+     */
     private static final int FIELD_GROW_SIZE = 5;
 
+    /**
+     * Stack field.
+     */
     private Integer[] field;
 
+    /**
+     * index of last inserted value in field.
+     */
     private int lastOne;
 
+    /**
+     * Default constructor.
+     */
     public JbStackArrayList() {
         field = new Integer[INITIAL_FIELD_CAPACITY];
         lastOne = 0;

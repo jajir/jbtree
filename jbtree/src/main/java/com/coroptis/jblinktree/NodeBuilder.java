@@ -61,7 +61,7 @@ public interface NodeBuilder<K, V> {
      *            required byte array
      * @return newly created node
      */
-    <T> Node<K, T> makeNode(Integer idNode, byte field[]);
+    <T> Node<K, T> makeNode(Integer idNode, byte[] field);
 
     /**
      * Create non-leaf node. Method allows insert two key value pairs
