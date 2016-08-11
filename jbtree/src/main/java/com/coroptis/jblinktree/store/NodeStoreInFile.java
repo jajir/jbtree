@@ -48,7 +48,7 @@ public final class NodeStoreInFile<K, V> implements NodeStore<K> {
 
     private final LruCache<K, V> nodeCache;
 
-    private final KeyFileStorage<K, V> fileStorage;
+    private final NodeFileStorage<K, V> fileStorage;
 
     public NodeStoreInFile(final JbTreeData<K, V> treeData,
             final NodeBuilder<K, V> nodeBuilder, String fileName,

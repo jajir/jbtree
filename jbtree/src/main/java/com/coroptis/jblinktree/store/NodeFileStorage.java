@@ -23,7 +23,7 @@ package com.coroptis.jblinktree.store;
 import com.coroptis.jblinktree.Node;
 
 /**
- * Simple storing nodes to file and reding from file.
+ * Simple storing nodes to file and reading from file.
  *
  * @author jajir
  *
@@ -32,7 +32,7 @@ import com.coroptis.jblinktree.Node;
  * @param <V>
  *            value type
  */
-public interface KeyFileStorage<K, V> {
+public interface NodeFileStorage<K, V> {
 
     void store(Node<K, V> node);
 

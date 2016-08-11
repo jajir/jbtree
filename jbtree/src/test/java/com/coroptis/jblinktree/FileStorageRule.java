@@ -28,7 +28,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.coroptis.jblinktree.junit.FileStorageWriteTest;
-import com.coroptis.jblinktree.store.KeyFileStorage;
+import com.coroptis.jblinktree.store.NodeFileStorage;
 import com.coroptis.jblinktree.store.KeyFileStorageImpl;
 import com.coroptis.jblinktree.type.TypeDescriptor;
 import com.coroptis.jblinktree.type.TypeDescriptorInteger;
@@ -53,7 +53,7 @@ public class FileStorageRule implements TestRule {
 
     private NodeBuilder<Integer, Integer> nodeBuilder;
 
-    private KeyFileStorage<Integer, Integer> fileStorage;
+    private NodeFileStorage<Integer, Integer> fileStorage;
 
     private TypeDescriptor<Integer> intDescriptor;
 
@@ -95,7 +95,7 @@ public class FileStorageRule implements TestRule {
         tempDirectory = null;
     }
 
-    public KeyFileStorage<Integer, Integer> getFileStorage() {
+    public NodeFileStorage<Integer, Integer> getFileStorage() {
         return fileStorage;
     }
 

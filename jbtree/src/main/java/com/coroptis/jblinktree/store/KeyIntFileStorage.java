@@ -25,7 +25,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.util.Arrays;
-import java.util.concurrent.locks.ReentrantLock;
 
 import com.coroptis.jblinktree.JbNodeDef;
 import com.coroptis.jblinktree.JblinktreeException;
@@ -41,43 +40,36 @@ import com.google.common.base.Preconditions;
  *
  * @param <K>
  *            key type
- * @param <V>
- *            value type
  */
-@Deprecated
-public final class KeyFileStorageImpl<K, V> implements NodeFileStorage<K, V> {
+public final class KeyIntFileStorage<K> implements NodeFileStorage<K, Integer> {
 
-    private final NodeBuilder<K, V> nodeBuilder;
-
-    private final String fileName;
+    private final NodeBuilder<K, Integer> nodeBuilder;
 
     private final RandomAccessFile raf;
 
     private final int maxNodeRecordSize;
 
-    private final JbNodeDef<K, V> nodeDef;
-
-    private final ReentrantLock lock = new ReentrantLock(false);
+    private final JbNodeDef<K, Integer> nodeDef;
 
     private static final int NUMBER_OF_KEYS_IN_NODE_LENGTH = 1;
 
-    public KeyFileStorageImpl(final JbNodeDef<K, V> nodeDef,
-            final NodeBuilder<K, V> nodeBuilder, String fileName) {
+    public KeyIntFileStorage(final File file,
+            final JbNodeDef<K, Integer> nodeDef,
+            final NodeBuilder<K, Integer> nodeBuilder) {
         this.nodeDef = Preconditions.checkNotNull(nodeDef);
         this.nodeBuilder = Preconditions.checkNotNull(nodeBuilder);
-        this.fileName = Preconditions.checkNotNull(fileName);
+        Preconditions.checkNotNull(file);
         maxNodeRecordSize = NUMBER_OF_KEYS_IN_NODE_LENGTH
                 + nodeDef.getFieldMaxLength();
         try {
-            raf = new RandomAccessFile(new File(fileName), "rw");
+            raf = new RandomAccessFile(file, "rw");
         } catch (FileNotFoundException e) {
             throw new JblinktreeException(e.getMessage(), e);
         }
     }
 
     @Override
-    public void store(Node<K, V> node) {
-        lock.lock();
+    public void store(Node<K, Integer> node) {
         try {
             raf.seek(getPosition(node.getId()));
             raf.writeByte(node.getKeysCount());
@@ -89,14 +81,11 @@ public final class KeyFileStorageImpl<K, V> implements NodeFileStorage<K, V> {
             raf.write(bytes);
         } catch (IOException e) {
             throw new JblinktreeException(e.getMessage(), e);
-        } finally {
-            lock.unlock();
         }
     }
 
     @Override
-    public Node<K, V> load(Integer nodeId) {
-        lock.lock();
+    public Node<K, Integer> load(Integer nodeId) {
         try {
             raf.seek(getPosition(nodeId));
             byte keys = raf.readByte();
@@ -105,17 +94,7 @@ public final class KeyFileStorageImpl<K, V> implements NodeFileStorage<K, V> {
             raf.readFully(bytes);
             return nodeBuilder.makeNode(nodeId, bytes);
         } catch (IOException e) {
-            String msg = null;
-            if (e.getMessage() == null) {
-                msg = "problem in reading node '" + nodeId + "' form file "
-                        + fileName;
-            } else {
-                msg = e.getMessage() + ", problem in reading node '" + nodeId
-                        + "' from file " + fileName;
-            }
-            throw new JblinktreeException(msg, e);
-        } finally {
-            lock.unlock();
+            throw new JblinktreeException(e.getMessage(), e);
         }
     }
 
@@ -129,7 +108,7 @@ public final class KeyFileStorageImpl<K, V> implements NodeFileStorage<K, V> {
     }
 
     private long getPosition(final Integer nodeId) {
-        return (long) maxNodeRecordSize * nodeId;
+        return ((long) maxNodeRecordSize) * nodeId;
     }
 
 }
