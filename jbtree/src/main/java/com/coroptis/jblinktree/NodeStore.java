@@ -26,6 +26,8 @@ package com.coroptis.jblinktree;
  *
  * @author jajir
  *
+ * @param <K>
+ *            key type
  */
 public interface NodeStore<K> {
 

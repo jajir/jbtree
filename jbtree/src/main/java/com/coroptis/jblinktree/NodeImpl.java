@@ -93,8 +93,14 @@ import com.google.common.base.Preconditions;
  */
 public final class NodeImpl<K, V> implements Node<K, V> {
 
+    /**
+     * Holds node id.
+     */
     private final Integer id;
 
+    /**
+     * Byte array with key value pairs, link and flags.
+     */
     private Field<K, V> field;
 
     /**
@@ -123,14 +129,15 @@ public final class NodeImpl<K, V> implements Node<K, V> {
 
     /**
      *
+     *
      * @param nodeId
      *            required node id
-     * @param field
+     * @param nodeField
      *            required field with node byte array with data
      */
-    public NodeImpl(final Integer nodeId, final Field<K, V> field) {
+    public NodeImpl(final Integer nodeId, final Field<K, V> nodeField) {
         this.id = nodeId;
-        this.field = field;
+        this.field = nodeField;
     }
 
     @Override
@@ -433,12 +440,14 @@ public final class NodeImpl<K, V> implements Node<K, V> {
 
     @Override
     public int hashCode() {
-        return Arrays.hashCode(new Object[] { id, field });
+        return Arrays.hashCode(new Object[] {
+            id, field
+        });
     }
 
     @SuppressWarnings("unchecked")
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
         if (obj == null) {
             return false;
         }
@@ -446,21 +455,20 @@ public final class NodeImpl<K, V> implements Node<K, V> {
             return false;
         }
         final NodeImpl<K, V> n = (NodeImpl<K, V>) obj;
-        if (equal(id, n.id) && field.equals(n.field)) {
-            return true;
-        } else {
-            return false;
-        }
+        return equal(id, n.id) && field.equals(n.field);
     }
 
     /**
      * It's just copy of com.google.common.base.Objects.equals(Object).
      *
      * @param a
+     *            optional object
      * @param b
-     * @return
+     *            optional object
+     * @return return <code>true</code> when object are equals otherwise return
+     *         <code>false</code>
      */
-    private boolean equal(Object a, Object b) {
+    private boolean equal(final Object a, final Object b) {
         return a == b || a != null && a.equals(b);
     }
 

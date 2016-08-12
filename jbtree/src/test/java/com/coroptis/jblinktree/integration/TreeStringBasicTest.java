@@ -56,8 +56,8 @@ public class TreeStringBasicTest extends TestCase {
     @Override
     protected void setUp() throws Exception {
         super.setUp();
-        tree = TreeBuilder.builder().setL(2).setKeyType(Types.string())
-                .setValueType(Types.string()).build();
+        tree = TreeBuilder.builder().setL(2).setKeyType(Types.string(10))
+                .setValueType(Types.string(10)).build();
     }
 
     @Override

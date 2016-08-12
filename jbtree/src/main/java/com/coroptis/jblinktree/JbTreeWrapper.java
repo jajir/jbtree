@@ -48,16 +48,35 @@ import com.google.common.base.Preconditions;
  */
 public final class JbTreeWrapper<K, V> implements JbTree<K, V> {
 
+    /**
+     * Tree.
+     */
     private final JbTree<K, V> tree;
 
+    /**
+     * Node store.
+     */
     private final NodeStore<K> nodeStore;
 
+    /**
+     * In this file will be saved tree.
+     */
     private final File file;
 
-    JbTreeWrapper(final JbTree<K, V> tree, final NodeStore<K> nodeStore,
+    /**
+     * Simple constructor.
+     *
+     * @param jbTree
+     *            required tree
+     * @param initNodeStore
+     *            required node store
+     * @param fileName
+     *            required file name which will contain tree in .dot format
+     */
+    JbTreeWrapper(final JbTree<K, V> jbTree, final NodeStore<K> initNodeStore,
             final String fileName) {
-        this.tree = Preconditions.checkNotNull(tree);
-        this.nodeStore = Preconditions.checkNotNull(nodeStore);
+        this.tree = Preconditions.checkNotNull(jbTree);
+        this.nodeStore = Preconditions.checkNotNull(initNodeStore);
         this.file = new File(fileName);
     }
 
@@ -183,22 +202,28 @@ public final class JbTreeWrapper<K, V> implements JbTree<K, V> {
         }
     }
 
-    private static final String intendation = "    ";
+    /**
+     * Length of indentation in tree .dot representation.
+     */
+    private static final String INDENDATION = "    ";
 
+    /**
+     * Writes tree data to .dot file. Useful for debugging.
+     */
     @SuppressWarnings({ "unchecked", "rawtypes" })
     private void printData() {
         final StringBuilder buff = new StringBuilder();
 
         buff.append("digraph graphname {\n");
-        buff.append(intendation);
+        buff.append(INDENDATION);
         buff.append("edge [label=0];\n");
-        buff.append(intendation);
+        buff.append(INDENDATION);
         buff.append("graph [ranksep=1];\n");
-        buff.append(intendation);
+        buff.append(INDENDATION);
         buff.append("node [shape=record]\n");
 
         for (int i = 0; i < nodeStore.getMaxNodeId(); i++) {
-            nodeStore.get(i).writeTo(buff, intendation);
+            nodeStore.get(i).writeTo(buff, INDENDATION);
         }
 
         for (int i = 0; i < nodeStore.getMaxNodeId(); i++) {
@@ -220,11 +245,19 @@ public final class JbTreeWrapper<K, V> implements JbTree<K, V> {
         buff.toString();
     }
 
+    /**
+     * Write nodes to file in .dot file syntax.
+     *
+     * @param node
+     *            required node
+     * @param buff
+     *            required string buffer
+     */
     private void addNextNodes(final Node<Integer, Integer> node,
             final StringBuilder buff) {
         for (final Object o : node.getNodeIds()) {
             Integer i = (Integer) o;
-            buff.append(intendation);
+            buff.append(INDENDATION);
             buff.append("\"node");
             buff.append(node.getId());
             buff.append("\":F");
@@ -239,10 +272,18 @@ public final class JbTreeWrapper<K, V> implements JbTree<K, V> {
         }
     }
 
+    /**
+     * Generate link to another node in .dot file syntax.
+     *
+     * @param node
+     *            required node
+     * @param buff
+     *            required string buffer
+     */
     private void addLink(final Node<Integer, Integer> node,
             final StringBuilder buff) {
         if (node.getLink() != null) {
-            buff.append(intendation);
+            buff.append(INDENDATION);
             buff.append("\"node");
             buff.append(node.getId());
             buff.append("\":L");
@@ -257,6 +298,14 @@ public final class JbTreeWrapper<K, V> implements JbTree<K, V> {
         }
     }
 
+    /**
+     * Write content of buffer to file.
+     *
+     * @param buff
+     *            required {@link StringBuilder}
+     * @throws IOException
+     *             when file operation fails
+     */
     private void write(final StringBuilder buff) throws IOException {
         Writer out = null;
         try {

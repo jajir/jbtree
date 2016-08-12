@@ -25,6 +25,11 @@ package com.coroptis.jblinktree;
  * safe.
  *
  * @author jajir
+ *
+ * @param <K>
+ *            key type
+ * @param <V>
+ *            value type
  */
 public interface JbTreeVisitor<K, V> {
 

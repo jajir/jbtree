@@ -40,29 +40,60 @@ import com.google.common.base.Preconditions;
  */
 public final class TreeMapImpl<K, V> implements TreeMap<K, V> {
 
+    /**
+     * reference to tree.
+     */
     private final JbTree<K, V> tree;
 
+    /**
+     * Key type descriptor.
+     */
     private final TypeDescriptor<K> keyTypeDescriptor;
 
+    /**
+     * Value type descriptor.
+     */
     private final TypeDescriptor<V> valueTypeDescriptor;
 
-    TreeMapImpl(final JbTree<K, V> tree, final JbTreeData<K, V> treeData) {
-        this.tree = Preconditions.checkNotNull(tree);
+    /**
+     * Constructor should by called just from builder.
+     *
+     * @param jbTree
+     *            required tree
+     * @param treeData
+     *            required tree data descriptor
+     */
+    TreeMapImpl(final JbTree<K, V> jbTree, final JbTreeData<K, V> treeData) {
+        this.tree = Preconditions.checkNotNull(jbTree);
         this.keyTypeDescriptor = Preconditions.checkNotNull(
                 treeData.getLeafNodeDescriptor().getKeyTypeDescriptor());
         this.valueTypeDescriptor = Preconditions.checkNotNull(
                 treeData.getLeafNodeDescriptor().getValueTypeDescriptor());
     }
 
+    /**
+     * Verify key type and size.
+     *
+     * @param object
+     *            required object
+     * @return typed key
+     */
     @SuppressWarnings("unchecked")
-    private K verifyKey(Object object) {
+    private K verifyKey(final Object object) {
         Preconditions.checkNotNull(object, "key can't be null.");
         keyTypeDescriptor.verifyType(object);
         return (K) object;
     }
 
+    /**
+     * Verify value type and size.
+     *
+     * @param object
+     *            required object
+     * @return typed value
+     */
     @SuppressWarnings("unchecked")
-    private V verifyValue(Object object) {
+    private V verifyValue(final Object object) {
         Preconditions.checkNotNull(object, "value can't be null.");
         valueTypeDescriptor.verifyType(object);
         return (V) object;
@@ -74,12 +105,12 @@ public final class TreeMapImpl<K, V> implements TreeMap<K, V> {
     }
 
     @Override
-    public boolean containsKey(Object key) {
+    public boolean containsKey(final Object key) {
         return tree.containsKey(verifyKey(key));
     }
 
     @Override
-    public boolean containsValue(Object value) {
+    public boolean containsValue(final Object value) {
         throw new UnsupportedOperationException();
     }
 
@@ -89,7 +120,7 @@ public final class TreeMapImpl<K, V> implements TreeMap<K, V> {
     }
 
     @Override
-    public V get(Object key) {
+    public V get(final Object key) {
         return tree.search(verifyKey(key));
     }
 
@@ -104,17 +135,17 @@ public final class TreeMapImpl<K, V> implements TreeMap<K, V> {
     }
 
     @Override
-    public V put(K key, V value) {
+    public V put(final K key, final V value) {
         return tree.insert(verifyKey(key), verifyValue(value));
     }
 
     @Override
-    public void putAll(Map<? extends K, ? extends V> m) {
+    public void putAll(final Map<? extends K, ? extends V> m) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public V remove(Object key) {
+    public V remove(final Object key) {
         return tree.remove(verifyKey(key));
     }
 

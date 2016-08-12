@@ -28,16 +28,39 @@ import java.nio.charset.Charset;
  * @author jajir
  *
  */
-public class Types {
+public final class Types {
 
+    /**
+     * Hidden constructor.
+     */
+    private Types() {
+    }
+
+    /**
+     * Create Integer type descriptor.
+     *
+     * @return integer type descriptor
+     */
     public static TypeDescriptor<Integer> integer() {
         return new TypeDescriptorInteger();
     }
 
-    public static TypeDescriptor<String> string() {
-        return new TypeDescriptorString(10, Charset.forName("ISO_8859_1"));
+    /**
+     * Create String type descriptor.
+     *
+     * @param length
+     *            required maximum length of string
+     * @return String type descriptor
+     */
+    public static TypeDescriptor<String> string(final int length) {
+        return new TypeDescriptorString(length, Charset.forName("ISO_8859_1"));
     }
 
+    /**
+     * Create byte type descriptor.
+     *
+     * @return byte type descriptor
+     */
     public static TypeDescriptor<Byte> byteType() {
         return new TypeDescriptorByte();
     }

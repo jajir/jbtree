@@ -35,31 +35,62 @@ public final class TypeDescriptorInteger
         implements Serializable, TypeDescriptor<Integer> {
 
     /**
+     * How many bytes is required to store Integer.
+     */
+    private static final int REQUIRED_BYTES = 4;
+
+    /**
+     * With byte AND allows to select required part of bytes.
+     */
+    private static final int BYTE_MASK = 0xFF;
+
+    /**
+     * Bite shift for 0 bits.
+     */
+    private static final int BYTE_SHIFT_0 = 0;
+
+    /**
+     * Bite shift for 8 bits.
+     */
+    private static final int BYTE_SHIFT_8 = 8;
+
+    /**
+     * Bite shift for 16 bits.
+     */
+    private static final int BYTE_SHIFT_16 = 16;
+
+    /**
+     * Bite shift for 24 bits.
+     */
+    private static final int BYTE_SHIFT_24 = 24;
+
+    /**
      *
      */
     private static final long serialVersionUID = 1L;
 
     @Override
     public int getMaxLength() {
-        return 4;
+        return REQUIRED_BYTES;
     }
 
     @Override
     public void save(final byte[] data, final int from, final Integer value) {
-        /**
-         * TODO JH - + replace with ++, replace order & and >>>
-         */
+        int pos = from;
         int v = value.intValue();
-        data[from] = (byte) ((v >>> 24) & 0xFF);
-        data[from + 1] = (byte) ((v >>> 16) & 0xFF);
-        data[from + 2] = (byte) ((v >>> 8) & 0xFF);
-        data[from + 3] = (byte) ((v >>> 0) & 0xFF);
+        data[pos++] = (byte) ((v >>> BYTE_SHIFT_24) & BYTE_MASK);
+        data[pos++] = (byte) ((v >>> BYTE_SHIFT_16) & BYTE_MASK);
+        data[pos++] = (byte) ((v >>> BYTE_SHIFT_8) & BYTE_MASK);
+        data[pos] = (byte) ((v >>> BYTE_SHIFT_0) & BYTE_MASK);
     }
 
     @Override
     public Integer load(final byte[] data, final int from) {
-        return data[from] << 24 | (data[from + 1] & 0xFF) << 16
-                | (data[from + 2] & 0xFF) << 8 | (data[from + 3] & 0xFF);
+        int pos = from;
+        return data[pos++] << BYTE_SHIFT_24
+                | (data[pos++] & BYTE_MASK) << BYTE_SHIFT_16
+                | (data[pos++] & BYTE_MASK) << BYTE_SHIFT_8
+                | (data[pos] & BYTE_MASK);
     }
 
     @Override

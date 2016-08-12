@@ -40,30 +40,51 @@ public final class TypeDescriptorString
         implements Serializable, TypeDescriptor<String> {
 
     /**
+     * In this bytes will be stored actual string length.
+     */
+    private static final int LENGTH_OF_METADATA_IN_BYTES = 4;
+
+    /**
      *
      */
     private static final long serialVersionUID = 1L;
 
+    /**
+     * Maximum length of stored string.
+     */
     private final int maxLength;
 
+    /**
+     * Charset used for converting from Java UTF-8 to byte array.
+     */
     private final Charset charset;
 
+    /**
+     * Helps to store actual length of string in bytes.
+     */
     private final TypeDescriptorInteger typeDescriptorInteger;
 
-    public TypeDescriptorString(final int maxBytes, final Charset charset) {
+    /**
+     *
+     * @param maxBytes
+     *            required maximum length of field in bytes
+     * @param chset
+     *            required {@link Charset}
+     */
+    public TypeDescriptorString(final int maxBytes, final Charset chset) {
         this.maxLength = maxBytes;
-        this.charset = charset;
+        this.charset = chset;
         this.typeDescriptorInteger = new TypeDescriptorInteger();
     }
 
     @Override
     public int getMaxLength() {
-        return maxLength + 4;
+        return maxLength + LENGTH_OF_METADATA_IN_BYTES;
     }
 
     @Override
     public void save(final byte[] data, final int from, final String value) {
-        byte b[] = value.getBytes(charset);
+        byte[] b = value.getBytes(charset);
         final Integer currentLength = Math.min(b.length, maxLength);
         typeDescriptorInteger.save(data, from, currentLength);
         System.arraycopy(b, 0, data,
@@ -73,7 +94,7 @@ public final class TypeDescriptorString
     @Override
     public String load(final byte[] data, final int from) {
         final Integer currentLength = typeDescriptorInteger.load(data, from);
-        byte b[] = new byte[currentLength];
+        byte[] b = new byte[currentLength];
         System.arraycopy(data, from + typeDescriptorInteger.getMaxLength(), b,
                 0, currentLength);
         return new String(b, charset);
