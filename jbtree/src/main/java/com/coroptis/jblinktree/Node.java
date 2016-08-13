@@ -220,4 +220,11 @@ public interface Node<K, V> {
      */
     byte[] getFieldBytes();
 
+    /**
+     * Return field containing node data.
+     *
+     * @return field object
+     */
+    Field<K, V> getField();
+
 }

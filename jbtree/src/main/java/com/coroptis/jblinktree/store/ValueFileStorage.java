@@ -1,5 +1,7 @@
 package com.coroptis.jblinktree.store;
 
+import com.coroptis.jblinktree.Node;
+
 /*
  * #%L
  * jblinktree
@@ -29,16 +31,16 @@ package com.coroptis.jblinktree.store;
  * @param <V>
  *            value type
  */
-public interface ValueFileStorage<V> {
+public interface ValueFileStorage<K, V> {
 
     /**
      * Value File Name file extension.
      */
     String FILE_NAME_SUFFIX = "vfs";
 
-    void store(Integer valueId, V value);
+    void storeValues(Node<K, V> node);
 
-    V load(Integer valueId);
+    Node<K, V> loadValues(Node<K, V> node);
 
     void close();
 

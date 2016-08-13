@@ -50,8 +50,7 @@ public class TreeFileStorageTest {
                 .setValueType(new TypeDescriptorInteger()).setL(2)
                 .setNodeStoreInFileBuilder(
                         TreeBuilder.getNodeStoreInFileBuilder()
-                                .setFileName(tempDirectory + File.separator
-                                        + "pok.bin")
+                                .setFileName(tempDirectory.getAbsolutePath())
                                 .setNoOfCachedNodes(1))
                 .build();
 

@@ -511,4 +511,12 @@ public final class NodeImpl<K, V> implements Node<K, V> {
         return field.getBytes();
     }
 
+    /**
+     * @return the field
+     */
+    @Override
+    public Field<K, V> getField() {
+        return field;
+    }
+
 }

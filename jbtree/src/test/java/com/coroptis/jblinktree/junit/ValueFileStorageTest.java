@@ -45,36 +45,36 @@ import com.google.common.io.Files;
  */
 public class ValueFileStorageTest {
 
-    private ValueFileStorage<String> valueStorage;
-
-    private File tempDirectory;
-
-    @Test
-    public void test_read_and_write() throws Exception {
-        valueStorage.store(0, "Ahoj lidi!");
-
-        assertEquals("Ahoj lidi!", valueStorage.load(0));
-    }
-
-    @Test(expected = JblinktreeException.class)
-    public void test_read_invalid_valueId() throws Exception {
-        valueStorage.load(10);
-    }
-
-    @Before
-    public void setup() throws IOException {
-        tempDirectory = Files.createTempDir();
-        TypeDescriptor<String> td = new TypeDescriptorString(20,
-                Charset.forName("ISO-8859-1"));
-        valueStorage = new ValueFileStorageImpl<String>(new File(
-                tempDirectory.getAbsolutePath() + File.separator + "value.str"),
-                td);
-    }
-
-    @After
-    public void tearDown() {
-        tempDirectory = null;
-        valueStorage.close();
-        valueStorage = null;
-    }
+//    private ValueFileStorage<String> valueStorage;
+//
+//    private File tempDirectory;
+//
+//    @Test
+//    public void test_read_and_write() throws Exception {
+//        valueStorage.store(0, "Ahoj lidi!");
+//
+//        assertEquals("Ahoj lidi!", valueStorage.load(0));
+//    }
+//
+//    @Test(expected = JblinktreeException.class)
+//    public void test_read_invalid_valueId() throws Exception {
+//        valueStorage.load(10);
+//    }
+//
+//    @Before
+//    public void setup() throws IOException {
+//        tempDirectory = Files.createTempDir();
+//        TypeDescriptor<String> td = new TypeDescriptorString(20,
+//                Charset.forName("ISO-8859-1"));
+//        valueStorage = new ValueFileStorageImpl<String>(new File(
+//                tempDirectory.getAbsolutePath() + File.separator + "value.str"),
+//                td);
+//    }
+//
+//    @After
+//    public void tearDown() {
+//        tempDirectory = null;
+//        valueStorage.close();
+//        valueStorage = null;
+//    }
 }

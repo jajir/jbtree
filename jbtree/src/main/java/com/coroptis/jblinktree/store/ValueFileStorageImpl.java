@@ -25,7 +25,9 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 
+import com.coroptis.jblinktree.Field;
 import com.coroptis.jblinktree.JblinktreeException;
+import com.coroptis.jblinktree.Node;
 import com.coroptis.jblinktree.type.TypeDescriptor;
 
 /**
@@ -36,45 +38,24 @@ import com.coroptis.jblinktree.type.TypeDescriptor;
  * @param <V>
  *            value type
  */
-public class ValueFileStorageImpl<V> implements ValueFileStorage<V> {
+public class ValueFileStorageImpl<K, V> implements ValueFileStorage<K, V> {
 
     private final RandomAccessFile raf;
 
     private final TypeDescriptor<V> valueTypeDescriptor;
 
+    private final int l;
+
     public ValueFileStorageImpl(final File storeFile,
-            final TypeDescriptor<V> valueTypeDesc) {
+            final TypeDescriptor<V> valueTypeDesc, final int intL) {
         this.valueTypeDescriptor = valueTypeDesc;
+        this.l = intL;
         try {
             raf = new RandomAccessFile(storeFile, "rw");
         } catch (FileNotFoundException e) {
             throw new JblinktreeException(e.getMessage(), e);
         }
 
-    }
-
-    @Override
-    public void store(final Integer valueId, final V value) {
-        try {
-            raf.seek(filePosition(valueId));
-            byte data[] = new byte[valueTypeDescriptor.getMaxLength()];
-            valueTypeDescriptor.save(data, 0, value);
-            raf.write(data);
-        } catch (IOException e) {
-            throw new JblinktreeException(e.getMessage(), e);
-        }
-    }
-
-    @Override
-    public V load(final Integer valueId) {
-        try {
-            raf.seek(filePosition(valueId));
-            byte data[] = new byte[valueTypeDescriptor.getMaxLength()];
-            raf.readFully(data);
-            return valueTypeDescriptor.load(data, 0);
-        } catch (IOException e) {
-            throw new JblinktreeException(e.getMessage(), e);
-        }
     }
 
     @Override
@@ -94,7 +75,38 @@ public class ValueFileStorageImpl<V> implements ValueFileStorage<V> {
      * @return position in file
      */
     private long filePosition(final Integer valueId) {
-        return valueId * (long) valueTypeDescriptor.getMaxLength();
+        return valueId * ((long) valueTypeDescriptor.getMaxLength() * l);
+    }
+
+    @Override
+    public void storeValues(Node<K, V> node) {
+        try {
+            raf.seek(filePosition(node.getId()));
+            Field<K, V> field = node.getField();
+            byte data[] = new byte[valueTypeDescriptor.getMaxLength()];
+            for (int i = 0; i < field.getKeyCount(); i++) {
+                valueTypeDescriptor.save(data, 0, field.getValue(i));
+                raf.write(data);
+            }
+        } catch (IOException e) {
+            throw new JblinktreeException(e.getMessage(), e);
+        }
+    }
+
+    @Override
+    public Node<K, V> loadValues(Node<K, V> node) {
+        try {
+            raf.seek(filePosition(node.getId()));
+            Field<K, V> field = node.getField();
+            byte data[] = new byte[valueTypeDescriptor.getMaxLength()];
+            for (int i = 0; i < field.getKeyCount(); i++) {
+                raf.readFully(data);
+                field.setValue(0, valueTypeDescriptor.load(data, 0));
+            }
+            return node;
+        } catch (IOException e) {
+            throw new JblinktreeException(e.getMessage(), e);
+        }
     }
 
 }
