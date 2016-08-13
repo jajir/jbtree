@@ -28,6 +28,8 @@ import com.coroptis.jblinktree.Node;
  *
  * @author jajir
  *
+ * @param <K>
+ *            key type
  * @param <V>
  *            value type
  */
@@ -38,10 +40,26 @@ public interface ValueFileStorage<K, V> {
      */
     String FILE_NAME_SUFFIX = "vfs";
 
+    /**
+     * Save node values into file.
+     *
+     * @param node
+     *            required node
+     */
     void storeValues(Node<K, V> node);
 
+    /**
+     * Load data to give node. Same node is also returned.
+     *
+     * @param node
+     *            required node to which will be data loaded
+     * @return node with loaded values
+     */
     Node<K, V> loadValues(Node<K, V> node);
 
+    /**
+     * Free resources. Close open file.
+     */
     void close();
 
 }

@@ -29,26 +29,49 @@ import com.coroptis.jblinktree.Field;
 import com.coroptis.jblinktree.JblinktreeException;
 import com.coroptis.jblinktree.Node;
 import com.coroptis.jblinktree.type.TypeDescriptor;
+import com.google.common.base.Preconditions;
 
 /**
- * Immutable class store just values from key value pairs.
+ * Immutable class store just values from key value pairs. Class doesn't use any
+ * caching.
  *
  * @author jajir
  *
+ * @param <K>
+ *            key type
  * @param <V>
  *            value type
  */
-public class ValueFileStorageImpl<K, V> implements ValueFileStorage<K, V> {
+public final class ValueFileStorageImpl<K, V>
+        implements ValueFileStorage<K, V> {
 
+    /**
+     * File where are data stored.
+     */
     private final RandomAccessFile raf;
 
+    /**
+     * Value type descriptor.
+     */
     private final TypeDescriptor<V> valueTypeDescriptor;
 
+    /**
+     * Maximal number of key value pairs in node.
+     */
     private final int l;
 
+    /**
+     *
+     * @param storeFile
+     *            required {@link java.io.File} where all data will be stored
+     * @param valueTypeDesc
+     *            required value type description
+     * @param intL
+     *            required maximal number of key value pairs in node.
+     */
     public ValueFileStorageImpl(final File storeFile,
             final TypeDescriptor<V> valueTypeDesc, final int intL) {
-        this.valueTypeDescriptor = valueTypeDesc;
+        this.valueTypeDescriptor = Preconditions.checkNotNull(valueTypeDesc);
         this.l = intL;
         try {
             raf = new RandomAccessFile(storeFile, "rw");
@@ -79,11 +102,11 @@ public class ValueFileStorageImpl<K, V> implements ValueFileStorage<K, V> {
     }
 
     @Override
-    public void storeValues(Node<K, V> node) {
+    public void storeValues(final Node<K, V> node) {
         try {
             raf.seek(filePosition(node.getId()));
             Field<K, V> field = node.getField();
-            byte data[] = new byte[valueTypeDescriptor.getMaxLength()];
+            byte[] data = new byte[valueTypeDescriptor.getMaxLength()];
             for (int i = 0; i < field.getKeyCount(); i++) {
                 valueTypeDescriptor.save(data, 0, field.getValue(i));
                 raf.write(data);
@@ -94,14 +117,14 @@ public class ValueFileStorageImpl<K, V> implements ValueFileStorage<K, V> {
     }
 
     @Override
-    public Node<K, V> loadValues(Node<K, V> node) {
+    public Node<K, V> loadValues(final Node<K, V> node) {
         try {
             raf.seek(filePosition(node.getId()));
             Field<K, V> field = node.getField();
-            byte data[] = new byte[valueTypeDescriptor.getMaxLength()];
+            byte[] data = new byte[valueTypeDescriptor.getMaxLength()];
             for (int i = 0; i < field.getKeyCount(); i++) {
                 raf.readFully(data);
-                field.setValue(0, valueTypeDescriptor.load(data, 0));
+                field.setValue(i, valueTypeDescriptor.load(data, 0));
             }
             return node;
         } catch (IOException e) {

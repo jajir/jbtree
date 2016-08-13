@@ -92,7 +92,7 @@ public final class KeyIntFileStorage<K> implements NodeFileStorage<K, Integer> {
             int fieldSize = nodeDef.getFieldActualLength(keys);
             byte[] bytes = new byte[fieldSize];
             raf.readFully(bytes);
-            return nodeBuilder.makeNode(nodeId, bytes);
+            return nodeBuilder.makeNode(nodeId, bytes, nodeDef);
         } catch (IOException e) {
             throw new JblinktreeException(e.getMessage(), e);
         }

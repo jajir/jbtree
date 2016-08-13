@@ -67,6 +67,13 @@ public final class NodeBuilderImpl<K, V> implements NodeBuilder<K, V> {
     }
 
     @Override
+    public <T> Node<K, T> makeNode(Integer idNode, byte[] field,
+            JbNodeDef<K, T> jbNodeDef) {
+        final Field<K, T> f = new FieldImpl(field, jbNodeDef);
+        return (Node<K, T>) new NodeImpl(idNode, f);
+    }
+
+    @Override
     public Node<K, V> makeEmptyLeafNode(final Integer idNode) {
         Preconditions.checkNotNull(idNode);
         return new NodeImpl<K, V>(idNode, true,

@@ -1,5 +1,25 @@
 package com.coroptis.jblinktree.store;
 
+/*
+ * #%L
+ * jblinktree
+ * %%
+ * Copyright (C) 2015 coroptis
+ * %%
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * #L%
+ */
+
 import java.io.File;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -45,7 +65,7 @@ public final class NodeFileStorageImpl<K, V> implements NodeFileStorage<K, V> {
                 addFileToDir(directory, "value.str"),
                 nodeDef.getValueTypeDescriptor(), nodeDef.getL());
         this.keyIntFileStorage = new KeyIntFileStorage<K>(
-                addFileToDir(directory, "value.str"),
+                addFileToDir(directory, "key.str"),
                 treeData.getNonLeafNodeDescriptor(),
                 (NodeBuilder<K, Integer>) nodeBuilder);
     }
@@ -73,12 +93,13 @@ public final class NodeFileStorageImpl<K, V> implements NodeFileStorage<K, V> {
         byte[] b = new byte[treeData.getNonLeafNodeDescriptor()
                 .getFieldActualLength(node.getKeysCount())];
         b[0] = Node.M;
-        Node<K, Integer> out = nodeBuilder.makeNode(node.getId(), b);
+        Node<K, Integer> out = nodeBuilder.makeNode(node.getId(), b, treeData.getNonLeafNodeDescriptor());
         Preconditions.checkState(out.isLeafNode());
         Field<K, V> f = node.getField();
         for (int i = 0; i < f.getKeyCount(); i++) {
             out.getField().setKey(i, f.getKey(i));
         }
+        out.setLink(node.getLink());
         return out;
     }
 
@@ -92,6 +113,7 @@ public final class NodeFileStorageImpl<K, V> implements NodeFileStorage<K, V> {
         for (int i = 0; i < f.getKeyCount(); i++) {
             out.getField().setKey(i, f.getKey(i));
         }
+        out.setLink(node.getLink());
         return out;
     }
 

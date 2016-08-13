@@ -1,5 +1,6 @@
 package com.coroptis.jblinktree.integration;
 
+import static org.junit.Assert.*;
 import java.io.File;
 
 import org.junit.After;
@@ -30,7 +31,7 @@ import org.junit.Test;
 import com.coroptis.jblinktree.JbDataVisitor;
 import com.coroptis.jblinktree.TreeBuilder;
 import com.coroptis.jblinktree.TreeMap;
-import com.coroptis.jblinktree.type.TypeDescriptorInteger;
+import com.coroptis.jblinktree.type.Types;
 import com.google.common.io.Files;
 
 /**
@@ -43,29 +44,36 @@ public class TreeFileStorageTest {
 
     private File tempDirectory;
 
+    private final static int NUMBER_OF_CYCLES = 10;
+    
     @Test
     public void test_insert_few_moves() throws Exception {
-        TreeMap<Integer, Integer> tree = TreeBuilder.builder()
-                .setKeyType(new TypeDescriptorInteger())
-                .setValueType(new TypeDescriptorInteger()).setL(2)
+        TreeMap<Integer, String> tree = TreeBuilder.builder()
+                .setKeyType(Types.integer()).setValueType(Types.string(14))
+                .setL(2)
                 .setNodeStoreInFileBuilder(
                         TreeBuilder.getNodeStoreInFileBuilder()
                                 .setFileName(tempDirectory.getAbsolutePath())
                                 .setNoOfCachedNodes(1))
                 .build();
 
-        for (int i = 0; i < 10; i++) {
-            tree.put(i, i);
+        for (int i = 0; i < NUMBER_OF_CYCLES; i++) {
+            tree.put(i, "Old monkey-" + i);
         }
 
+        for (int i = 0; i < NUMBER_OF_CYCLES; i++) {
+            String val = tree.get(i);
+            assertEquals("Old monkey-" + i, val);
+        }
+        
         printAll(tree);
     }
 
-    private void printAll(TreeMap<Integer, Integer> tree) {
-        tree.visit(new JbDataVisitor<Integer, Integer>() {
+    private void printAll(TreeMap<Integer, String> tree) {
+        tree.visit(new JbDataVisitor<Integer, String>() {
 
             @Override
-            public boolean visited(final Integer key, final Integer value) {
+            public boolean visited(final Integer key, final String value) {
                 System.out.println("<" + key + ", " + value + ">");
                 return true;
             }

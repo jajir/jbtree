@@ -109,11 +109,11 @@ public final class FieldImpl<K, V> implements Field<K, V> {
      * @param sourceField
      *            required byte array, method create defensive copy of this
      *            array
-     * @param treeData
+     * @param jbNodeDef
      *            required tree definition
      */
-    public FieldImpl(final byte[] sourceField, final JbNodeDef<K, V> treeData) {
-        this.nodeDef = treeData;
+    public FieldImpl(final byte[] sourceField, final JbNodeDef<K, V> jbNodeDef) {
+        this.nodeDef = jbNodeDef;
         this.field = new byte[sourceField.length];
         System.arraycopy(sourceField, 0, this.field, 0, this.field.length);
         if (getFlag() != Node.M && !(nodeDef

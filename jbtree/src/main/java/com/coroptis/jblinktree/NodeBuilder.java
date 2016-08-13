@@ -51,7 +51,8 @@ public interface NodeBuilder<K, V> {
     Node<K, Integer> makeEmptyNonLeafNode(final Integer idNode);
 
     /**
-     * Create new node by copying array to new node.
+     * Create new node by copying array to new node. Node definition will be
+     * assigned based on field flag. See {@link Node#M}.
      *
      * @param <T>
      *            node value type
@@ -62,6 +63,22 @@ public interface NodeBuilder<K, V> {
      * @return newly created node
      */
     <T> Node<K, T> makeNode(Integer idNode, byte[] field);
+
+    /**
+     * Create new node by copying array to new node.
+     *
+     * @param <T>
+     *            node value type
+     * @param idNode
+     *            required node id
+     * @param field
+     *            required byte array
+     * @param jbNodeDef
+     *            required node data definition will be assigned no new node
+     * @return newly created node
+     */
+    <T> Node<K, T> makeNode(Integer idNode, byte[] field,
+            JbNodeDef<K, T> jbNodeDef);
 
     /**
      * Create non-leaf node. Method allows insert two key value pairs

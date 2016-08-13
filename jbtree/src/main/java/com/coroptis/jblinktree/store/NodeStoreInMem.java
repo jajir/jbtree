@@ -43,14 +43,31 @@ import com.google.common.base.Preconditions;
  */
 public final class NodeStoreInMem<K, V> implements NodeStore<K> {
 
+    /**
+     * In memory stored nodes.
+     */
     private final Map<Integer, byte[]> nodes;
 
+    /**
+     * Manage node locks.
+     */
     private final NodeLocks nodeLocks;
 
+    /**
+     * Node builder factory.
+     */
     private final NodeBuilder<K, V> nodeBuilder;
 
+    /**
+     * Atomic integer for generating new node ids.
+     */
     private final AtomicInteger nextId;
 
+    /**
+     *
+     * @param nodeBuilder
+     *            required node builder factory
+     */
     public NodeStoreInMem(final NodeBuilder<K, V> nodeBuilder) {
         this.nextId = new AtomicInteger(FIRST_NODE_ID);
         this.nodeBuilder = Preconditions.checkNotNull(nodeBuilder);
