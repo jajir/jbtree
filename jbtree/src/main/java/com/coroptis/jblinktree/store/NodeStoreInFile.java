@@ -22,7 +22,6 @@ package com.coroptis.jblinktree.store;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
-import com.coroptis.jblinktree.JbNodeDef;
 import com.coroptis.jblinktree.JbTreeData;
 import com.coroptis.jblinktree.Node;
 import com.coroptis.jblinktree.NodeBuilder;

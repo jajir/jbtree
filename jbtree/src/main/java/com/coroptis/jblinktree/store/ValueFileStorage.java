@@ -36,11 +36,6 @@ import com.coroptis.jblinktree.Node;
 public interface ValueFileStorage<K, V> {
 
     /**
-     * Value File Name file extension.
-     */
-    String FILE_NAME_SUFFIX = "vfs";
-
-    /**
      * Save node values into file.
      *
      * @param node

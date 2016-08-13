@@ -128,6 +128,7 @@ public final class JbTreeHelperImpl<K, V> implements JbTreeHelper<K, V> {
      *            required stack useful for back tracing through tree
      * @return <code>null</code> when it's new key otherwise return old value
      */
+    @SuppressWarnings("unchecked")
     private V insertNonLeaf(Node<K, Integer> currentNode, final K key,
             final Integer value, final JbStack stack) {
         /**

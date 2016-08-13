@@ -29,7 +29,6 @@ import com.coroptis.jblinktree.JbTreeTool;
 import com.coroptis.jblinktree.JbTreeTraversingService;
 import com.coroptis.jblinktree.Node;
 import com.coroptis.jblinktree.NodeBuilder;
-import com.coroptis.jblinktree.NodeImpl;
 import com.coroptis.jblinktree.NodeStore;
 
 /**

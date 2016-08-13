@@ -69,8 +69,8 @@ public final class NodeBuilderImpl<K, V> implements NodeBuilder<K, V> {
     @Override
     public <T> Node<K, T> makeNode(Integer idNode, byte[] field,
             JbNodeDef<K, T> jbNodeDef) {
-        final Field<K, T> f = new FieldImpl(field, jbNodeDef);
-        return (Node<K, T>) new NodeImpl(idNode, f);
+        final Field<K, T> f = new FieldImpl<K, T>(field, jbNodeDef);
+        return new NodeImpl<K, T>(idNode, f);
     }
 
     @Override
