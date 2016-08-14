@@ -25,7 +25,7 @@ import java.util.List;
 
 import com.coroptis.jblinktree.JblinktreeException;
 
-public class MetaTypesResolver {
+public final class MetaTypesResolver {
 
     static {
         MetaTypesResolver metaTypesResolver = MetaTypesResolver.getInstance();
@@ -54,7 +54,7 @@ public class MetaTypesResolver {
     }
 
     public <S> AbstractTypeDescriptorMetaData<TypeDescriptor<S>> resolve(
-            byte code) {
+            final byte code) {
         for (final MetaType metaType : metaTypes) {
             if (code == metaType.getCode()) {
                 return (AbstractTypeDescriptorMetaData<TypeDescriptor<S>>) metaType;
@@ -65,7 +65,7 @@ public class MetaTypesResolver {
     }
 
     public <S> AbstractTypeDescriptorMetaData<TypeDescriptor<S>> resolve(
-            Class<?> clazz) {
+            final Class<?> clazz) {
         for (final MetaType metaType : metaTypes) {
             if (clazz.equals(metaType.getMetaTypeClass())) {
                 return (AbstractTypeDescriptorMetaData<TypeDescriptor<S>>) metaType;

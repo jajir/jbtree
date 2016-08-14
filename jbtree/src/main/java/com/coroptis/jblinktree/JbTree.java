@@ -125,7 +125,7 @@ public interface JbTree<K, V> {
      * Free all resources. Should be called when all work with tree is done.
      */
     void close();
-    
+
     /**
      * Traverse through all tree key value pairs in tree.
      *
@@ -133,5 +133,5 @@ public interface JbTree<K, V> {
      *            required data visitor
      */
     void visit(JbDataVisitor<K, V> dataVisitor);
-    
+
 }

@@ -20,14 +20,20 @@ package com.coroptis.jblinktree.type;
  * #L%
  */
 
-public class MetaTypeInteger
+/**
+ * Class holding meta data about Integer data type.
+ *
+ * @author jajir
+ *
+ */
+public final class MetaTypeInteger
         extends AbstractTypeDescriptorMetaData<TypeDescriptorInteger> {
 
     @Override
     public byte getCode() {
         return MetaType.TYPE_INTEGER;
     }
-    
+
     @Override
     public Class<?> getMetaTypeClass() {
         return TypeDescriptorInteger.class;
@@ -35,7 +41,7 @@ public class MetaTypeInteger
 
     @Override
     public <S> S getInstance() {
-        return (S)new TypeDescriptorInteger();
+        return (S) new TypeDescriptorInteger();
     }
-    
+
 }

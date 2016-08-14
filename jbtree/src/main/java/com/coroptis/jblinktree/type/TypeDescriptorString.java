@@ -1,6 +1,5 @@
 package com.coroptis.jblinktree.type;
 
-import java.io.Serializable;
 import java.nio.charset.Charset;
 
 import com.coroptis.jblinktree.JblinktreeException;
@@ -30,24 +29,19 @@ import com.google.common.base.Preconditions;
 /**
  * {@link String} type descriptor. When stored string is longer than available
  * space, than string is silently trim.
- *
- * FIXME current all chars are stored in 1 byte, it's not true in case UTF-8
+ * <p>
+ * Note that number of chars that could be stored depends on charset.
+ * <p>
  *
  * @author jajir
  *
  */
-public final class TypeDescriptorString
-        implements Serializable, TypeDescriptor<String> {
+public final class TypeDescriptorString implements TypeDescriptor<String> {
 
     /**
      * In this bytes will be stored actual string length.
      */
     public static final int LENGTH_OF_METADATA_IN_BYTES = 4;
-
-    /**
-     *
-     */
-    private static final long serialVersionUID = 1L;
 
     /**
      * Maximum length of stored string.
@@ -73,7 +67,7 @@ public final class TypeDescriptorString
      */
     public TypeDescriptorString(final int maxBytes, final Charset chset) {
         this.maxLength = maxBytes;
-        this.charset = chset;
+        this.charset = Preconditions.checkNotNull(chset);
         this.typeDescriptorInteger = new TypeDescriptorInteger();
     }
 
@@ -110,7 +104,7 @@ public final class TypeDescriptorString
     }
 
     @Override
-    public int compare(final String value1, final String value2) {
+    public int compareValues(final String value1, final String value2) {
         return value1.compareTo(value2);
     }
 
@@ -131,28 +125,31 @@ public final class TypeDescriptorString
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((charset == null) ? 0 : charset.hashCode());
+        result = prime * result + charset.hashCode();
         result = prime * result + maxLength;
         return result;
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (this == obj)
+    public boolean equals(final Object obj) {
+        if (this == obj) {
             return true;
-        if (obj == null)
+        }
+        if (obj == null) {
             return false;
-        if (getClass() != obj.getClass())
+        }
+        if (getClass() != obj.getClass()) {
             return false;
+        }
         TypeDescriptorString other = (TypeDescriptorString) obj;
         if (charset == null) {
-            if (other.charset != null)
+            if (other.charset != null) {
                 return false;
-        } else if (!charset.equals(other.charset))
+            }
+        } else if (!charset.equals(other.charset)) {
             return false;
-        if (maxLength != other.maxLength)
-            return false;
-        return true;
+        }
+        return maxLength == other.maxLength;
     }
 
 }

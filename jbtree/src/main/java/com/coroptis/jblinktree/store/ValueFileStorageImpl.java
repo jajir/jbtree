@@ -34,6 +34,10 @@ import com.google.common.base.Preconditions;
 /**
  * Immutable class store just values from key value pairs. Class doesn't use any
  * caching.
+ * <p>
+ * When node A is stored with 3 values and later with just 1 value than
+ * physically unused values are still stored.
+ * </p>
  *
  * @author jajir
  *
@@ -103,6 +107,7 @@ public final class ValueFileStorageImpl<K, V>
 
     @Override
     public void storeValues(final Node<K, V> node) {
+        verifyLeafNode(node);
         try {
             raf.seek(filePosition(node.getId()));
             Field<K, V> field = node.getField();
@@ -118,6 +123,7 @@ public final class ValueFileStorageImpl<K, V>
 
     @Override
     public Node<K, V> loadValues(final Node<K, V> node) {
+        verifyLeafNode(node);
         try {
             raf.seek(filePosition(node.getId()));
             Field<K, V> field = node.getField();
@@ -132,4 +138,16 @@ public final class ValueFileStorageImpl<K, V>
         }
     }
 
+    /**
+     * Verify that it's leaf node. When it's not leaf node than
+     * {@link JblinktreeException} is thrown.
+     *
+     * @param node
+     *            required leaf node
+     */
+    private void verifyLeafNode(final Node<K, V> node) {
+        if (!node.isLeafNode()) {
+            throw new JblinktreeException("Leaf node is required. " + node);
+        }
+    }
 }

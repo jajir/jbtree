@@ -1,5 +1,10 @@
 package com.coroptis.jblinktree;
 
+import com.coroptis.jblinktree.store.NodeConverter;
+import com.coroptis.jblinktree.store.NodeConverterImpl;
+import com.coroptis.jblinktree.store.NodeFileStorage;
+import com.coroptis.jblinktree.store.NodeFileStorageImpl;
+
 /*
  * #%L
  * jblinktree
@@ -110,8 +115,8 @@ public final class TreeBuilder {
          */
         public final NodeStoreInFileBuilder setNoOfCachedNodes(
                 final int numberOfCachedNodes) {
-            this.noOfCachedNodes = Preconditions
-                    .checkNotNull(numberOfCachedNodes);
+            this.noOfCachedNodes =
+                    Preconditions.checkNotNull(numberOfCachedNodes);
             return this;
         }
 
@@ -206,8 +211,8 @@ public final class TreeBuilder {
      */
     public TreeBuilder setNodeStoreInFileBuilder(
             final NodeStoreInFileBuilder nodeStoreFileBuilder) {
-        this.nodeStoreInFileBuilder = Preconditions
-                .checkNotNull(nodeStoreFileBuilder);
+        this.nodeStoreInFileBuilder =
+                Preconditions.checkNotNull(nodeStoreFileBuilder);
         return this;
     }
 
@@ -252,38 +257,46 @@ public final class TreeBuilder {
                 "key TypeDescriptor is null, use .setKeyType in builder");
         Preconditions.checkNotNull(valueTypeDescriptor,
                 "value TypeDescriptor is null, use .setValueType in builder");
-        final TypeDescriptor<Integer> linkTypeDescriptor = new TypeDescriptorInteger();
+        final TypeDescriptor<Integer> linkTypeDescriptor =
+                new TypeDescriptorInteger();
         final JbTreeData<K, V> treeData = new JbTreeDataImpl<K, V>(
                 NodeStore.FIRST_NODE_ID, l,
                 (TypeDescriptor<K>) keyTypeDescriptor,
                 (TypeDescriptor<V>) valueTypeDescriptor, linkTypeDescriptor);
 
-        final JbNodeBuilder<K, V> nodeBuilder = new JbNodeBuilderImpl<K, V>(
-                treeData);
+        final JbNodeBuilder<K, V> nodeBuilder =
+                new JbNodeBuilderImpl<K, V>(treeData);
 
         final NodeStore<K> nodeStore;
         if (nodeStoreInFileBuilder == null) {
             nodeStore = new NodeStoreInMem<K, V>(nodeBuilder);
         } else {
-            nodeStore = new NodeStoreInFile<K, V>(treeData, nodeBuilder,
-                    nodeStoreInFileBuilder.getFileName(),
-                    nodeStoreInFileBuilder.getNoOfCachedNodes());
+            final NodeConverter<K, V> nodeConverter =
+                    new NodeConverterImpl<K, V>(treeData, nodeBuilder);
+            final NodeFileStorage<K, V> fileStorage =
+                    new NodeFileStorageImpl<K, V>(treeData, nodeBuilder,
+                            nodeStoreInFileBuilder.getFileName(),
+                            nodeConverter);
+            nodeStore = new NodeStoreInFile<K, V>(nodeBuilder,
+                    nodeStoreInFileBuilder.getNoOfCachedNodes(), fileStorage);
         }
         final JbTreeTool<K, V> jbTreeTool = new JbTreeToolImpl<K, V>(nodeStore,
                 (TypeDescriptor<K>) keyTypeDescriptor, nodeBuilder);
-        final JbTreeTraversingService<K, V> treeLockingTool = new JbTreeTraversingServiceImpl<K, V>(
-                jbTreeTool);
-        final JbTreeService<K, V> treeService = new JbTreeServiceImpl<K, V>(
-                nodeStore, treeLockingTool);
+        final JbTreeTraversingService<K, V> treeLockingTool =
+                new JbTreeTraversingServiceImpl<K, V>(jbTreeTool);
+        final JbTreeService<K, V> treeService =
+                new JbTreeServiceImpl<K, V>(nodeStore, treeLockingTool);
         final JbTreeHelper<K, V> jbTreeHelper = new JbTreeHelperImpl<K, V>(
                 nodeStore, jbTreeTool, treeService, treeData);
         final JbTree<K, V> tree = new JbTreeImpl<K, V>(nodeStore, jbTreeTool,
                 jbTreeHelper, treeData, treeLockingTool, treeService);
 
-        /**
-         * Initialize tree, create first node.
-         */
-        jbTreeTool.createRootNode();
+        if (nodeStore.isNewlyCreated()) {
+            /**
+             * Initialize tree, create first node.
+             */
+            jbTreeTool.createRootNode();
+        }
 
         if (treeWrapperFileName == null) {
             return new TreeMapImpl<K, V>(tree, treeData);

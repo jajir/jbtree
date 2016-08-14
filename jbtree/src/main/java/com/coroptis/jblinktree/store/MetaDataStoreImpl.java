@@ -35,7 +35,7 @@ import com.google.common.base.Preconditions;
 /**
  * Immutable implementation.
  *
- * @author jan
+ * @author jajir
  *
  * @param <K>
  *            key type
@@ -49,7 +49,7 @@ public class MetaDataStoreImpl<K, V> implements MetaDataStore<K, V> {
     private final File metaFile;
 
     private final RandomAccessFile raf;
-
+    //FIXME next node snould be stored
     private static final String HEADER = "jbTree-metadata";
 
     public MetaDataStoreImpl(final File file,
@@ -80,7 +80,7 @@ public class MetaDataStoreImpl<K, V> implements MetaDataStore<K, V> {
     private void verifyHeader() throws IOException {
         raf.seek(0);
         byte[] b = new byte[HEADER.length()];
-        raf.read(b);
+        raf.readFully(b);
         String loaded = new String(b, Charset.forName("ISO-8859-1"));
         if (!HEADER.equals(loaded)) {
             throw new JblinktreeException(

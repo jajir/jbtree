@@ -20,19 +20,61 @@ package com.coroptis.jblinktree.type;
  * #L%
  */
 
+/**
+ * Information about data types have to be stored. This class define meta data
+ * about data type.
+ *
+ * @author jajir
+ *
+ */
 public interface MetaType {
 
+    /**
+     * Integer type id.
+     */
     byte TYPE_INTEGER = 0;
 
+    /**
+     * String type id.
+     */
     byte TYPE_STRING = 2;
 
+    /**
+     * Byte type id.
+     */
     byte TYPE_BYTE = 3;
 
+    /**
+     * Return type unique data type code. It allows to detect which data type is
+     * stored.
+     *
+     * @return byte data type code
+     */
     byte getCode();
 
-    //TODO ? should be parameterized
+    /**
+     * Return class that is described.
+     *
+     *
+     * TODO ? should be parameterized
+     *
+     *
+     * @return described class
+     */
     Class<?> getMetaTypeClass();
-    
+
+    /**
+     * Return data type instance.
+     *
+     * TODO should be done in same factory. Instance can't be always created
+     * without params.
+     *
+     * TODO <S> should be paramete of class
+     *
+     * @return data type instance
+     * @param <S>
+     *            data type
+     */
     <S> S getInstance();
 
 }

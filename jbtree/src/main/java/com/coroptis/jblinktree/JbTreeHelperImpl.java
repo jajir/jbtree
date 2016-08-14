@@ -118,7 +118,7 @@ public final class JbTreeHelperImpl<K, V> implements JbTreeHelper<K, V> {
     /**
      * Write given key value pair into non-leaf node.
      *
-     * @param currentNode
+     * @param node
      *            required leaf node
      * @param key
      *            required key
@@ -129,8 +129,9 @@ public final class JbTreeHelperImpl<K, V> implements JbTreeHelper<K, V> {
      * @return <code>null</code> when it's new key otherwise return old value
      */
     @SuppressWarnings("unchecked")
-    private V insertNonLeaf(Node<K, Integer> currentNode, final K key,
+    private V insertNonLeaf(final Node<K, Integer> node, final K key,
             final Integer value, final JbStack stack) {
+        Node<K, Integer> currentNode = node;
         /**
          * Key and value have to be inserted
          */

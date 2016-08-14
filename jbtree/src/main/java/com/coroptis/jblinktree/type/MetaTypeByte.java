@@ -20,7 +20,13 @@ package com.coroptis.jblinktree.type;
  * #L%
  */
 
-public class MetaTypeByte
+/**
+ * Class holding meta data about Byte data type.
+ *
+ * @author jajir
+ *
+ */
+public final class MetaTypeByte
         extends AbstractTypeDescriptorMetaData<TypeDescriptorByte> {
 
     @Override
@@ -35,7 +41,7 @@ public class MetaTypeByte
 
     @Override
     public <S> S getInstance() {
-        return (S)new TypeDescriptorByte();
+        return (S) new TypeDescriptorByte();
     }
 
 }

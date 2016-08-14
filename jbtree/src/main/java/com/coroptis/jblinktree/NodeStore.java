@@ -120,5 +120,13 @@ public interface NodeStore<K> {
      * Free all resources.
      */
     void close();
-    
+
+    /**
+     * Was tree newly created or loaded from file system.
+     *
+     * @return <code>true</code> when tree is newly created and tree have to be
+     *         initialized otherwise return <code>false</code>
+     */
+    boolean isNewlyCreated();
+
 }

@@ -23,16 +23,15 @@ package com.coroptis.jblinktree.store;
 import java.io.File;
 import java.util.concurrent.locks.ReentrantLock;
 
-import com.coroptis.jblinktree.Field;
-import com.coroptis.jblinktree.JbNodeDef;
-import com.coroptis.jblinktree.JbTreeData;
-import com.coroptis.jblinktree.Node;
 import com.coroptis.jblinktree.JbNodeBuilder;
+import com.coroptis.jblinktree.JbTreeData;
+import com.coroptis.jblinktree.JblinktreeException;
+import com.coroptis.jblinktree.Node;
 import com.google.common.base.Preconditions;
 
 /**
- * Simple thread safe node storage. Could be used just in case when values
- * associated with keys occupy 4 or less bytes.
+ * Simple immutable thread safe node storage. Could be used just in case when
+ * values associated with keys occupy 4 or less bytes.
  *
  * @author jajir
  *
@@ -43,52 +42,106 @@ import com.google.common.base.Preconditions;
  */
 public final class NodeFileStorageImpl<K, V> implements NodeFileStorage<K, V> {
 
-    private final JbNodeBuilder<K, V> nodeBuilder;
+    /**
+     * Name of the file where values will be stored.
+     */
+    private static final String FILE_VALUES = "value.str";
 
-    private final JbNodeDef<K, V> nodeDef;
+    /**
+     * Name of the file where tree metadata will be stored.
+     */
+    private static final String FILE_META_DATA = "meta.str";
 
-    private final JbTreeData<K, V> treeData;
+    /**
+     * Name of the file where keys will be stored.
+     */
+    private static final String FILE_KEYS = "key.str";
 
+    /**
+     * Contains names of all files. Simplify work with files.
+     */
+    private static final String[] FILES = {
+            FILE_VALUES, FILE_META_DATA, FILE_KEYS };
+
+    /**
+     * Unified locking for file system operations.
+     */
     private final ReentrantLock lock = new ReentrantLock(false);
 
+    /**
+     * Store values from nodes.
+     */
     private final ValueFileStorage<K, V> valueFileStorage;
 
+    /**
+     * Key Integer node file storage.
+     */
     private final KeyIntFileStorage<K> keyIntFileStorage;
 
+    /**
+     * Meta data file storage.
+     */
     private final MetaDataStore<K, V> metaDataStore;
 
+    /**
+     * Helping class for node.
+     */
+    private final NodeConverter<K, V> nodeConverter;
+
+    /**
+     * When it's <code>true</code> than tree is newly created.
+     */
+    private final boolean isNewlyCreated;
+
+    /**
+     *
+     * @param jbTreeData
+     *            required tree data definition
+     * @param nodeBuilder
+     *            required node builder factory
+     * @param directory
+     *            required directory
+     * @param initNodeConverter
+     *            required node converter
+     */
     public NodeFileStorageImpl(final JbTreeData<K, V> jbTreeData,
-            final JbNodeBuilder<K, V> nodeBuilder, String directory) {
-        this.treeData = Preconditions.checkNotNull(jbTreeData);
-        this.nodeDef = treeData.getLeafNodeDescriptor();
-        this.nodeBuilder = Preconditions.checkNotNull(nodeBuilder);
-        Preconditions.checkNotNull(directory);
-        //FIXME when one file from 3 is missing --> exception with explanation is throws.
-        //FIXME When all are missing it's fine.
-        //FIXME verify that directory is directory
-        //FIXME verify that files are really files
+            final JbNodeBuilder<K, V> nodeBuilder, final String directory,
+            final NodeConverter<K, V> initNodeConverter) {
+        this.nodeConverter = Preconditions.checkNotNull(initNodeConverter);
+        verifyDirectory(directory);
+        isNewlyCreated = isNewlyCreatedInternal(directory);
         this.valueFileStorage = new ValueFileStorageImpl<K, V>(
-                addFileToDir(directory, "value.str"),
-                nodeDef.getValueTypeDescriptor(), nodeDef.getL());
-        this.keyIntFileStorage = new KeyIntFileStorage<K>(
-                addFileToDir(directory, "key.str"),
-                treeData.getNonLeafNodeDescriptor(),
-                (JbNodeBuilder<K, Integer>) nodeBuilder);
+                addFileToDir(directory, FILE_VALUES),
+                jbTreeData.getLeafNodeDescriptor().getValueTypeDescriptor(),
+                jbTreeData.getLeafNodeDescriptor().getL());
+        this.keyIntFileStorage =
+                new KeyIntFileStorage<K>(addFileToDir(directory, FILE_KEYS),
+                        jbTreeData.getNonLeafNodeDescriptor(),
+                        (JbNodeBuilder<K, Integer>) nodeBuilder);
         this.metaDataStore = new MetaDataStoreImpl<K, V>(
-                addFileToDir(directory, "meta.str"), treeData);
+                addFileToDir(directory, FILE_META_DATA), jbTreeData);
     }
 
+    /**
+     * Create File object form file name and directory.
+     *
+     * @param directory
+     *            required directory name
+     * @param fileName
+     *            file name
+     * @return {@link File} object
+     */
     private File addFileToDir(final String directory, final String fileName) {
         return new File(directory + File.separator + fileName);
     }
 
     @Override
-    public void store(Node<K, V> node) {
+    public void store(final Node<K, V> node) {
         lock.lock();
         try {
             if (node.isLeafNode()) {
                 valueFileStorage.storeValues(node);
-                keyIntFileStorage.store(convertToKeyInt(node));
+                keyIntFileStorage.store(nodeConverter.convertToKeyInt(node));
             } else {
                 keyIntFileStorage.store((Node<K, Integer>) node);
             }
@@ -97,42 +150,13 @@ public final class NodeFileStorageImpl<K, V> implements NodeFileStorage<K, V> {
         }
     }
 
-    private Node<K, Integer> convertToKeyInt(Node<K, V> node) {
-        byte[] b = new byte[treeData.getNonLeafNodeDescriptor()
-                .getFieldActualLength(node.getKeysCount())];
-        b[0] = Node.M;
-        Node<K, Integer> out = nodeBuilder.makeNode(node.getId(), b,
-                treeData.getNonLeafNodeDescriptor());
-        Preconditions.checkState(out.isLeafNode());
-        Field<K, V> f = node.getField();
-        for (int i = 0; i < f.getKeyCount(); i++) {
-            out.getField().setKey(i, f.getKey(i));
-        }
-        out.setLink(node.getLink());
-        return out;
-    }
-
-    private Node<K, V> convertToKeyValue(Node<K, Integer> node) {
-        byte[] b = new byte[treeData.getLeafNodeDescriptor()
-                .getFieldActualLength(node.getKeysCount())];
-        b[0] = Node.M;
-        Node<K, V> out = nodeBuilder.makeNode(node.getId(), b);
-        Preconditions.checkState(out.isLeafNode());
-        Field<K, Integer> f = node.getField();
-        for (int i = 0; i < f.getKeyCount(); i++) {
-            out.getField().setKey(i, f.getKey(i));
-        }
-        out.setLink(node.getLink());
-        return out;
-    }
-
     @Override
-    public Node<K, V> load(Integer nodeId) {
+    public Node<K, V> load(final Integer nodeId) {
         lock.lock();
         try {
             Node<K, Integer> node = keyIntFileStorage.load(nodeId);
             if (node.isLeafNode()) {
-                Node<K, V> out = convertToKeyValue(node);
+                Node<K, V> out = nodeConverter.convertToKeyValue(node);
                 return valueFileStorage.loadValues(out);
             } else {
                 return (Node<K, V>) node;
@@ -151,6 +175,74 @@ public final class NodeFileStorageImpl<K, V> implements NodeFileStorage<K, V> {
             metaDataStore.close();
         } finally {
             lock.unlock();
+        }
+    }
+
+    /**
+     * @return the isNewlyCreated
+     */
+    @Override
+    public boolean isNewlyCreated() {
+        return isNewlyCreated;
+    }
+
+    /**
+     * Verify that all tree files exists or all of then doesn't exists.
+     *
+     * @param directory
+     *            required directory
+     * @return <code>true</code> when it's new tree and any file exists
+     *         otherwise return <code>false</code>
+     */
+    private boolean isNewlyCreatedInternal(final String directory) {
+        boolean out = true;
+        File f = addFileToDir(directory, FILES[0]);
+        if (f.exists()) {
+            out = false;
+            if (f.isDirectory()) {
+                throw new JblinktreeException(
+                        "file '" + f.getAbsolutePath() + "' should be a file");
+            }
+            for (int i = 1; i < FILES.length; i++) {
+                f = addFileToDir(directory, FILES[i]);
+                if (!f.exists()) {
+                    throw new JblinktreeException("inconsistent tree, file '"
+                            + f.getAbsolutePath() + "' should exist");
+                }
+                if (f.isDirectory()) {
+                    throw new JblinktreeException("file '" + f.getAbsolutePath()
+                            + "' should be a file");
+                }
+            }
+        } else {
+            for (int i = 1; i < FILES.length; i++) {
+                f = addFileToDir(directory, FILES[i]);
+                if (f.exists()) {
+                    throw new JblinktreeException("inconsistent tree, file '"
+                            + f.getAbsolutePath() + "' should not exist");
+                }
+            }
+        }
+        return out;
+    }
+
+    /**
+     * Verify that tree home directory is existing directory.
+     *
+     * @param directory
+     *            required directory
+     */
+    private void verifyDirectory(final String directory) {
+        Preconditions.checkNotNull(directory);
+        File f = new File(directory);
+        if (f.exists()) {
+            if (!f.isDirectory()) {
+                throw new JblinktreeException(
+                        "Tree home '" + directory + "' is not directory.");
+            }
+        } else {
+            throw new JblinktreeException(
+                    "Tree home '" + directory + "' doesn't exists.");
         }
     }
 

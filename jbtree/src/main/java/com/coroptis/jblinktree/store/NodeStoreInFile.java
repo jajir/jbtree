@@ -22,9 +22,8 @@ package com.coroptis.jblinktree.store;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
-import com.coroptis.jblinktree.JbTreeData;
-import com.coroptis.jblinktree.Node;
 import com.coroptis.jblinktree.JbNodeBuilder;
+import com.coroptis.jblinktree.Node;
 import com.coroptis.jblinktree.NodeLocks;
 import com.coroptis.jblinktree.NodeStore;
 import com.google.common.base.Preconditions;
@@ -41,31 +40,52 @@ import com.google.common.base.Preconditions;
  */
 public final class NodeStoreInFile<K, V> implements NodeStore<K> {
 
+    /**
+     * Node lock service.
+     */
     private final NodeLocks nodeLocks;
 
+    // FIXME when tree is loaded form file this have to initialized
+    /**
+     * Helps to determine new next node id.
+     */
     private final AtomicInteger nextId;
 
+    /**
+     * Node in memory cache.
+     */
     private final Cache<K, V> nodeCache;
 
+    /**
+     * Node file system storage.
+     */
     private final NodeFileStorage<K, V> fileStorage;
 
-    public NodeStoreInFile(final JbTreeData<K, V> treeData,
-            final JbNodeBuilder<K, V> nodeBuilder, String fileName,
-            int numberOfNodesCacheSize) {
+    /**
+     *
+     * @param nodeBuilder
+     *            required node builder factory
+     * @param numberOfNodesCacheSize
+     *            required maximum number of keys in memory
+     * @param nodeFileStorage
+     *            node file storage
+     */
+    public NodeStoreInFile(final JbNodeBuilder<K, V> nodeBuilder,
+            final int numberOfNodesCacheSize,
+            final NodeFileStorage<K, V> nodeFileStorage) {
         this.nextId = new AtomicInteger(FIRST_NODE_ID);
-        fileStorage = new NodeFileStorageImpl<K, V>(treeData, nodeBuilder,
-                fileName);
+        this.fileStorage = Preconditions.checkNotNull(nodeFileStorage);
         nodeLocks = new NodeLocks();
         nodeCache = new CacheLru<K, V>(nodeBuilder, numberOfNodesCacheSize,
                 new CacheListener<K, V>() {
 
                     @Override
-                    public void onUnload(Node<K, V> node) {
+                    public void onUnload(final Node<K, V> node) {
                         fileStorage.store(node);
                     }
 
                     @Override
-                    public Node<K, V> onLoad(Integer nodeId) {
+                    public Node<K, V> onLoad(final Integer nodeId) {
                         return fileStorage.load(nodeId);
                     }
                 });
@@ -83,8 +103,8 @@ public final class NodeStoreInFile<K, V> implements NodeStore<K> {
 
     @Override
     public <S> Node<K, S> get(final Integer nodeId) {
-        Node<K, S> node = (Node<K, S>) nodeCache
-                .get(Preconditions.checkNotNull(nodeId));
+        Node<K, S> node =
+                (Node<K, S>) nodeCache.get(Preconditions.checkNotNull(nodeId));
         return node;
     }
 
@@ -128,4 +148,8 @@ public final class NodeStoreInFile<K, V> implements NodeStore<K> {
         fileStorage.close();
     }
 
+    @Override
+    public boolean isNewlyCreated() {
+        return fileStorage.isNewlyCreated();
+    }
 }

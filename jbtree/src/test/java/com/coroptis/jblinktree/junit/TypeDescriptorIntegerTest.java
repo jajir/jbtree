@@ -77,14 +77,14 @@ public class TypeDescriptorIntegerTest {
 
     @Test
     public void test_compare() throws Exception {
-        assertTrue(td.compare(1, 4) < 0);
-        assertTrue(td.compare(-4, -1) < 0);
+        assertTrue(td.compareValues(1, 4) < 0);
+        assertTrue(td.compareValues(-4, -1) < 0);
 
-        assertTrue(td.compare(2, 1) > 0);
-        assertTrue(td.compare(-1, -2) > 0);
+        assertTrue(td.compareValues(2, 1) > 0);
+        assertTrue(td.compareValues(-1, -2) > 0);
 
-        assertTrue(td.compare(1, 1) == 0);
-        assertTrue(td.compare(-1, -1) == 0);
+        assertTrue(td.compareValues(1, 1) == 0);
+        assertTrue(td.compareValues(-1, -1) == 0);
     }
 
     @Before

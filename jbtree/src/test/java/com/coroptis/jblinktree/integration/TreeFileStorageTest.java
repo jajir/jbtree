@@ -50,17 +50,30 @@ public class TreeFileStorageTest {
 
     @Test
     public void test_insert_few_moves() throws Exception {
-        insertMoves();
-        verifyMoves();
+        insertMoves(0);
+        verifyMoves(0);
         printAll(tree);
     }
 
     @Test
     public void test_close_and_reopen_tree() throws Exception {
-        insertMoves();
+        insertMoves(0);
         tree.close();
         tree = makeTree();
-        verifyMoves();
+        verifyMoves(0);
+    }
+
+    @Test
+    public void test_close_and_reopen_and_insert_again() throws Exception {
+        insertMoves(0);
+        tree.close();
+        tree = makeTree();
+        verifyMoves(0);
+        insertMoves(10);
+//        verifyMoves(0);
+        verifyMoves(10);
+        printAll(tree);
+        //FIXME
     }
 
     private TreeMap<Integer, String> makeTree() {
@@ -84,15 +97,15 @@ public class TreeFileStorageTest {
         });
     }
 
-    private void insertMoves() {
-        for (int i = 0; i < NUMBER_OF_CYCLES; i++) {
+    private void insertMoves(final int start) {
+        for (int i = start; i < NUMBER_OF_CYCLES + start; i++) {
             tree.put(i, "Old monkey-" + i);
         }
 
     }
 
-    private void verifyMoves() {
-        for (int i = 0; i < NUMBER_OF_CYCLES; i++) {
+    private void verifyMoves(final int start) {
+        for (int i = start; i < NUMBER_OF_CYCLES + start; i++) {
             String val = tree.get(i);
             assertEquals("Old monkey-" + i, val);
         }

@@ -172,7 +172,7 @@ public final class NodeImpl<K, V> implements Node<K, V> {
                 field.setValue(i, value);
                 return;
             } else if (field.getNodeDef().getKeyTypeDescriptor()
-                    .compare(field.getKey(i), key) > 0) {
+                    .compareValues(field.getKey(i), key) > 0) {
                 // field.get(i) > key
                 couldInsertedKey();
                 /**
@@ -245,7 +245,7 @@ public final class NodeImpl<K, V> implements Node<K, V> {
                 removeKeyValueAtPosition(i);
                 return oldValue;
             } else if (field.getNodeDef().getKeyTypeDescriptor()
-                    .compare(field.getKey(i), key) > 0) {
+                    .compareValues(field.getKey(i), key) > 0) {
                 /**
                  * if key in node is bigger than given key than node doesn't
                  * contains key to delete.
@@ -382,7 +382,7 @@ public final class NodeImpl<K, V> implements Node<K, V> {
             return getLink();
         }
         for (int i = 0; i < field.getKeyCount(); i++) {
-            if (field.getNodeDef().getKeyTypeDescriptor().compare(key,
+            if (field.getNodeDef().getKeyTypeDescriptor().compareValues(key,
                     field.getKey(i)) <= 0) {
                 // TODO re-typing should be implicit
                 return (Integer) field.getValue(i);

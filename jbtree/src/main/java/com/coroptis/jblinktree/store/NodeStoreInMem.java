@@ -65,12 +65,12 @@ public final class NodeStoreInMem<K, V> implements NodeStore<K> {
 
     /**
      *
-     * @param nodeBuilder
+     * @param jbNodeBuilder
      *            required node builder factory
      */
-    public NodeStoreInMem(final JbNodeBuilder<K, V> nodeBuilder) {
+    public NodeStoreInMem(final JbNodeBuilder<K, V> jbNodeBuilder) {
         this.nextId = new AtomicInteger(FIRST_NODE_ID);
-        this.nodeBuilder = Preconditions.checkNotNull(nodeBuilder);
+        this.nodeBuilder = Preconditions.checkNotNull(jbNodeBuilder);
         nodes = new ConcurrentHashMap<Integer, byte[]>();
         nodeLocks = new NodeLocks();
     }
@@ -134,4 +134,8 @@ public final class NodeStoreInMem<K, V> implements NodeStore<K> {
         nodes.clear();
     }
 
+    @Override
+    public boolean isNewlyCreated() {
+        return true;
+    }
 }

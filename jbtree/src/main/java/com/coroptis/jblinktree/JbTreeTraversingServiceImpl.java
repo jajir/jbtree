@@ -51,10 +51,11 @@ public final class JbTreeTraversingServiceImpl<K, V>
     }
 
     @Override
-    public Node<K, Integer> moveRightNonLeafNode(Node<K, Integer> current,
+    public Node<K, Integer> moveRightNonLeafNode(final Node<K, Integer> node,
             final K key) {
         Preconditions.checkNotNull(key);
-        Preconditions.checkNotNull(current);
+        Preconditions.checkNotNull(node);
+        Node<K, Integer> current = node;
         if (current.isLeafNode()) {
             throw new JblinktreeException(
                     "method is for non-leaf nodes, but given node is leaf: "
@@ -70,9 +71,10 @@ public final class JbTreeTraversingServiceImpl<K, V>
     }
 
     @Override
-    public Node<K, V> moveRightLeafNode(Node<K, V> current, final K key) {
+    public Node<K, V> moveRightLeafNode(final Node<K, V> node, final K key) {
         Preconditions.checkNotNull(key);
-        Preconditions.checkNotNull(current);
+        Preconditions.checkNotNull(node);
+        Node<K, V> current = node;
         if (!current.isLeafNode()) {
             throw new JblinktreeException(
                     "method is for leaf nodes, but given node is non-leaf");

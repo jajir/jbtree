@@ -58,6 +58,9 @@ public final class TreeMapImpl<K, V> implements TreeMap<K, V> {
      */
     private final TypeDescriptor<V> valueTypeDescriptor;
 
+    /**
+     * Is <code>true</code> when tree is closed.
+     */
     private boolean isClosed;
 
     /**
@@ -200,6 +203,10 @@ public final class TreeMapImpl<K, V> implements TreeMap<K, V> {
         tree.close();
     }
 
+    /**
+     * Verify that tree is not closed. When user invoke some operation on closed
+     * node than {@link JblinktreeException} is thrown.
+     */
     private void checkIsClosed() {
         if (isClosed) {
             throw new JblinktreeException("Attempt to work with closed tree.");

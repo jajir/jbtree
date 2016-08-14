@@ -22,15 +22,32 @@ package com.coroptis.jblinktree.type;
 
 import java.nio.charset.Charset;
 
-public class MetaTypeString
+/**
+ * Class holding meta data about string data type.
+ *
+ * @author jajir
+ *
+ */
+public final class MetaTypeString
         extends AbstractTypeDescriptorMetaData<TypeDescriptorString> {
 
-    private final TypeDescriptor<Integer> tdInteger = new TypeDescriptorInteger();
+    /**
+     * Type descriptor for working with integers.
+     */
+    private final TypeDescriptor<Integer> tdInteger =
+            new TypeDescriptorInteger();
 
+    /**
+     * String type descriptor for saving/loading charset.
+     */
     private final TypeDescriptor<String> tdString = new TypeDescriptorString(
             RESERVED_BYTES_FOR_CHARSET - tdInteger.getMaxLength(),
             Charset.forName("ISO-8859-1"));
 
+    /**
+     * How many chars is reserved for charset name. Available number of string
+     * will be 46.
+     */
     private static final Integer RESERVED_BYTES_FOR_CHARSET = 50;
 
     @Override

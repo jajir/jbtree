@@ -1,7 +1,5 @@
 package com.coroptis.jblinktree.type;
 
-import java.util.Comparator;
-
 /*
  * #%L
  * jblinktree

@@ -20,13 +20,19 @@ package com.coroptis.jblinktree.type;
  * #L%
  */
 
-import java.io.Serializable;
-
+/**
+ * Abstract class for simple meta data definition.
+ *
+ * @author jajir
+ *
+ * @param <T>
+ *            described data type
+ */
 public abstract class AbstractTypeDescriptorMetaData<T>
-        implements Serializable, TypeDescriptor<T>, MetaType {
+        implements TypeDescriptor<T>, MetaType {
 
     @Override
-    public int compare(T o1, T o2) {
+    public int compareValues(final T o1, final T o2) {
         throw new UnsupportedOperationException(
                 "It's not alowed to store meda tada about metadata.");
     }
@@ -37,19 +43,19 @@ public abstract class AbstractTypeDescriptorMetaData<T>
     }
 
     @Override
-    public void save(byte[] data, int from, T value) {
+    public void save(final byte[] data, final int from, final T value) {
         throw new UnsupportedOperationException(
                 "It's not alowed to store meta data about metadata.");
     }
 
     @Override
-    public T load(byte[] data, int from) {
+    public T load(final byte[] data, final int from) {
         throw new UnsupportedOperationException(
                 "It's not alowed to store meda tada about metadata.");
     }
 
     @Override
-    public void verifyType(Object object) {
+    public void verifyType(final Object object) {
         throw new UnsupportedOperationException(
                 "It's not alowed to store meda tada about metadata.");
     }

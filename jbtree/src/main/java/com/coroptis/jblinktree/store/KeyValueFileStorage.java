@@ -45,7 +45,7 @@ import com.google.common.base.Preconditions;
  *            value type
  */
 @Deprecated
-public final class KeyFileStorageImpl<K, V> implements NodeFileStorage<K, V> {
+public final class KeyValueFileStorage<K, V> implements NodeFileStorage<K, V> {
 
     private final JbNodeBuilder<K, V> nodeBuilder;
 
@@ -61,13 +61,13 @@ public final class KeyFileStorageImpl<K, V> implements NodeFileStorage<K, V> {
 
     private static final int NUMBER_OF_KEYS_IN_NODE_LENGTH = 1;
 
-    public KeyFileStorageImpl(final JbNodeDef<K, V> nodeDef,
+    public KeyValueFileStorage(final JbNodeDef<K, V> nodeDef,
             final JbNodeBuilder<K, V> nodeBuilder, String fileName) {
         this.nodeDef = Preconditions.checkNotNull(nodeDef);
         this.nodeBuilder = Preconditions.checkNotNull(nodeBuilder);
         this.fileName = Preconditions.checkNotNull(fileName);
-        maxNodeRecordSize = NUMBER_OF_KEYS_IN_NODE_LENGTH
-                + nodeDef.getFieldMaxLength();
+        maxNodeRecordSize =
+                NUMBER_OF_KEYS_IN_NODE_LENGTH + nodeDef.getFieldMaxLength();
         try {
             raf = new RandomAccessFile(new File(fileName), "rw");
         } catch (FileNotFoundException e) {
@@ -130,6 +130,11 @@ public final class KeyFileStorageImpl<K, V> implements NodeFileStorage<K, V> {
 
     private long getPosition(final Integer nodeId) {
         return (long) maxNodeRecordSize * nodeId;
+    }
+
+    @Override
+    public boolean isNewlyCreated() {
+        throw new JblinktreeException("Not yet implemented");
     }
 
 }

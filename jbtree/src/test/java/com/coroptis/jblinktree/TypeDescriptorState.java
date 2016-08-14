@@ -33,7 +33,7 @@ import com.coroptis.jblinktree.type.TypeDescriptor;
 public class TypeDescriptorState implements TypeDescriptor<State> {
 
     @Override
-    public int compare(State o1, State o2) {
+    public int compareValues(State o1, State o2) {
         return o2.getFlags() - o1.getFlags();
     }
 

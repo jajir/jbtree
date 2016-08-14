@@ -34,6 +34,8 @@ import com.coroptis.jblinktree.JbTreeDataImpl;
 import com.coroptis.jblinktree.Node;
 import com.coroptis.jblinktree.JbNodeBuilder;
 import com.coroptis.jblinktree.JbNodeBuilderImpl;
+import com.coroptis.jblinktree.store.NodeConverter;
+import com.coroptis.jblinktree.store.NodeConverterImpl;
 import com.coroptis.jblinktree.store.NodeFileStorageImpl;
 import com.coroptis.jblinktree.type.TypeDescriptor;
 import com.coroptis.jblinktree.type.TypeDescriptorInteger;
@@ -58,30 +60,33 @@ public class NodeFileStorageTest {
             Node<String, String> n = storage.load(i);
             assertEquals("Ahoj lidi!" + i, n.getField().getKey(0));
             assertEquals("Jde to!" + i, n.getField().getValue(0));
-            assertEquals(Integer.valueOf(- i * 100), n.getLink());
+            assertEquals(Integer.valueOf(-i * 100), n.getLink());
         }
     }
 
     Node<String, String> createNode(final Integer i) {
         Node<String, String> n = nodeBuilder.makeEmptyLeafNode(i);
         n.insert("Ahoj lidi!" + i, "Jde to!" + i);
-        n.setLink(- i * 100);
+        n.setLink(-i * 100);
         return n;
     }
 
     @Before
     public void setup() {
         tempDirectory = Files.createTempDir();
-        TypeDescriptor<String> tdKey = new TypeDescriptorString(13,
-                Charset.forName("ISO-8859-1"));
-        TypeDescriptor<String> tdValue = new TypeDescriptorString(9,
-                Charset.forName("ISO-8859-1"));
+        TypeDescriptor<String> tdKey =
+                new TypeDescriptorString(13, Charset.forName("ISO-8859-1"));
+        TypeDescriptor<String> tdValue =
+                new TypeDescriptorString(9, Charset.forName("ISO-8859-1"));
         TypeDescriptor<Integer> tdLink = new TypeDescriptorInteger();
-        JbTreeData<String, String> treeData = new JbTreeDataImpl<String, String>(
-                0, 2, tdKey, tdValue, tdLink);
+        JbTreeData<String, String> treeData =
+                new JbTreeDataImpl<String, String>(0, 2, tdKey, tdValue,
+                        tdLink);
         nodeBuilder = new JbNodeBuilderImpl<String, String>(treeData);
+        NodeConverter<String, String> initNodeConverter =
+                new NodeConverterImpl<String, String>(treeData, nodeBuilder);
         storage = new NodeFileStorageImpl<String, String>(treeData, nodeBuilder,
-                tempDirectory.getAbsolutePath());
+                tempDirectory.getAbsolutePath(), initNodeConverter);
     }
 
     @After

@@ -27,10 +27,12 @@ import java.util.Map;
 import java.util.Set;
 
 import com.coroptis.jblinktree.Node;
+import com.google.common.base.Preconditions;
 import com.coroptis.jblinktree.JbNodeBuilder;
 
 /**
- * Implementation of Last Recent Used (LRU) cache.
+ * Implementation of cache with eviction based on Last Recent Used (LRU)
+ * algorithm.
  *
  * @author jajir
  *
@@ -41,12 +43,26 @@ import com.coroptis.jblinktree.JbNodeBuilder;
  */
 public final class CacheLru<K, V> implements Cache<K, V> {
 
-    final JbNodeBuilder<K, V> nodeBuilder;
+    /**
+     * Node builder factory.
+     */
+    private final JbNodeBuilder<K, V> nodeBuilder;
 
+    /**
+     * Cache itself.
+     */
     private final Map<Integer, byte[]> cache = new HashMap<Integer, byte[]>();
 
-    private final LinkedList<Integer> lastRecentUsedIds = new LinkedList<Integer>();
+    /**
+     * Holds list of last accessed ids. Based on this list is selected last used
+     * node id to remove.
+     */
+    private final LinkedList<Integer> lastRecentUsedIds =
+            new LinkedList<Integer>();
 
+    /**
+     * How many nodes will be hold in cache.
+     */
     private final int numberOfNodesCacheSize;
 
     /**
@@ -54,12 +70,21 @@ public final class CacheLru<K, V> implements Cache<K, V> {
      */
     private final CacheListener<K, V> cacheListener;
 
-    public CacheLru(final JbNodeBuilder<K, V> nodeBuilder,
-            final int numberOfNodesCacheSize,
+    /**
+     *
+     * @param jbNodeBuilder
+     *            required node builder
+     * @param maxNumberOfNodesInCache
+     *            required maximum number of in memory cached nodes.
+     * @param initCacheListerer
+     *            required cache listener
+     */
+    public CacheLru(final JbNodeBuilder<K, V> jbNodeBuilder,
+            final int maxNumberOfNodesInCache,
             final CacheListener<K, V> initCacheListerer) {
-        this.nodeBuilder = nodeBuilder;
-        this.numberOfNodesCacheSize = numberOfNodesCacheSize;
-        this.cacheListener = initCacheListerer;
+        this.nodeBuilder = Preconditions.checkNotNull(jbNodeBuilder);
+        this.numberOfNodesCacheSize = maxNumberOfNodesInCache;
+        this.cacheListener = Preconditions.checkNotNull(initCacheListerer);
     }
 
     @Override
@@ -69,6 +94,10 @@ public final class CacheLru<K, V> implements Cache<K, V> {
         checkCacheSize();
     }
 
+    /**
+     * Verify that number of nodes in cache is under limit. When limit is
+     * reached node is evicted.
+     */
     private void checkCacheSize() {
         if (cache.size() > numberOfNodesCacheSize) {
             Integer nodeId = lastRecentUsedIds.removeLast();
@@ -97,6 +126,12 @@ public final class CacheLru<K, V> implements Cache<K, V> {
         }
     }
 
+    /**
+     * Mark some node id as last used. Helps to find less used node to remove.
+     *
+     * @param idNode
+     *            required node id
+     */
     private void setLastUsed(final Integer idNode) {
         lastRecentUsedIds.remove(idNode);
         lastRecentUsedIds.add(0, idNode);

@@ -1,5 +1,4 @@
 package com.coroptis.jblinktree.store;
-
 /*
  * #%L
  * jblinktree
@@ -23,7 +22,7 @@ package com.coroptis.jblinktree.store;
 import com.coroptis.jblinktree.Node;
 
 /**
- * Cache for nodes for B*link tree.
+ * Allows to convert Node<K,V> to Node<K,Interer> and convert it back.
  *
  * @author jajir
  *
@@ -32,38 +31,24 @@ import com.coroptis.jblinktree.Node;
  * @param <V>
  *            value type
  */
-public interface Cache<K, V> {
+public interface NodeConverter<K, V> {
 
     /**
-     * Put another node into cache. If some node should be evicted from cache
-     * than {@link CacheListener#onUnload(Node)} is called.
+     * Convert Node<K,V> to Node<K,Integer>. Integers will be empty.
      *
      * @param node
      *            required node
+     * @return converted node
      */
-    void put(Node<K, V> node);
+    Node<K, Integer> convertToKeyInt(Node<K, V> node);
 
     /**
-     * Remove node from cache. Call {@link CacheListener#onUnload(Node)}
+     * Convert Node<K,Integer> to Node<K,V>. Values will be empty.
      *
-     * @param idNode
-     *            required id node
+     * @param node
+     *            required node
+     * @return converted node
      */
-    void remove(Integer idNode);
-
-    /**
-     * Get node from cache. If requested node is not in cache than
-     * {@link CacheListener#onLoad(Integer)} is called.
-     *
-     * @param idNode
-     *            required id node
-     * @return cached node
-     */
-    Node<K, V> get(Integer idNode);
-
-    /**
-     * Evict all cached data.
-     */
-    void close();
+    Node<K, V> convertToKeyValue(Node<K, Integer> node);
 
 }

@@ -1,7 +1,5 @@
 package com.coroptis.jblinktree.type;
 
-import java.io.Serializable;
-
 import com.coroptis.jblinktree.JblinktreeException;
 import com.google.common.base.MoreObjects;
 
@@ -31,13 +29,12 @@ import com.google.common.base.MoreObjects;
  * @author jajir
  *
  */
-public final class TypeDescriptorByte
-        implements Serializable, TypeDescriptor<Byte> {
+public final class TypeDescriptorByte implements TypeDescriptor<Byte> {
 
     /**
-     *
+     * Default hash code.
      */
-    private static final long serialVersionUID = 1L;
+    private static final int DEFAULT_HASHCODE = 9014865;
 
     @Override
     public int getMaxLength() {
@@ -63,7 +60,7 @@ public final class TypeDescriptorByte
     }
 
     @Override
-    public int compare(final Byte value1, final Byte value2) {
+    public int compareValues(final Byte value1, final Byte value2) {
         return value1.compareTo(value2);
     }
 
@@ -78,15 +75,17 @@ public final class TypeDescriptorByte
      */
     @Override
     public int hashCode() {
-        return 9014865;
+        return DEFAULT_HASHCODE;
     }
 
     @Override
     public boolean equals(final Object obj) {
-        if (this == obj)
+        if (this == obj) {
             return true;
-        if (obj == null)
+        }
+        if (obj == null) {
             return false;
+        }
         return getClass() == obj.getClass();
     }
 

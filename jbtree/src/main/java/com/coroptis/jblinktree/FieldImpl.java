@@ -112,7 +112,8 @@ public final class FieldImpl<K, V> implements Field<K, V> {
      * @param jbNodeDef
      *            required tree definition
      */
-    public FieldImpl(final byte[] sourceField, final JbNodeDef<K, V> jbNodeDef) {
+    public FieldImpl(final byte[] sourceField,
+            final JbNodeDef<K, V> jbNodeDef) {
         this.nodeDef = jbNodeDef;
         this.field = new byte[sourceField.length];
         System.arraycopy(sourceField, 0, this.field, 0, this.field.length);

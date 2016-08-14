@@ -20,7 +20,24 @@ package com.coroptis.jblinktree.type;
  * #L%
  */
 
+/**
+ * Define method for comparing values.
+ *
+ * @author jajir
+ *
+ * @param <T>
+ *            type which should be compared
+ */
 public interface ValueComparator<T> {
 
-    int compare(T o1, T o2);
+    /**
+     * Compare values. Same definition as {@link java.util.Comparator}.
+     *
+     * @param o1
+     *            required first value
+     * @param o2
+     *            required second value
+     * @return comparing result
+     */
+    int compareValues(T o1, T o2);
 }

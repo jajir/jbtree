@@ -56,4 +56,12 @@ public interface NodeFileStorage<K, V> {
      */
     void close();
 
+    /**
+     * When it's <code>true</code> than tree is newly created node storage.
+     *
+     * @return Return <code>true</code> when tree is newly created otherwise
+     *         return <code>false</code>
+     */
+    boolean isNewlyCreated();
+
 }

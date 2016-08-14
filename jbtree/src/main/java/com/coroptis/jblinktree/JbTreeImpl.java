@@ -94,8 +94,8 @@ public final class JbTreeImpl<K, V> implements JbTree<K, V> {
         this.treeTool = Preconditions.checkNotNull(jbTreeTool);
         this.treeHelper = Preconditions.checkNotNull(jbTreeHelper);
         this.treeData = Preconditions.checkNotNull(initTreeData);
-        this.treeTraversingService = Preconditions
-                .checkNotNull(jbTreeTraversingService);
+        this.treeTraversingService =
+                Preconditions.checkNotNull(jbTreeTraversingService);
         this.treeService = Preconditions.checkNotNull(jbTreeService);
     }
 
@@ -104,8 +104,8 @@ public final class JbTreeImpl<K, V> implements JbTree<K, V> {
         Preconditions.checkNotNull(key);
         Preconditions.checkNotNull(value);
         final JbStack stack = new JbStackArrayList();
-        final Integer currentNodeId = treeTool.findLeafNodeId(key, stack,
-                treeData.getRootNodeId());
+        final Integer currentNodeId =
+                treeTool.findLeafNodeId(key, stack, treeData.getRootNodeId());
         Node<K, V> currentNode = nodeStore.getAndLock(currentNodeId);
         currentNode = treeTraversingService.moveRightLeafNode(currentNode, key);
         if (currentNode.getValueByKey(key) == null) {
@@ -124,10 +124,11 @@ public final class JbTreeImpl<K, V> implements JbTree<K, V> {
     public V remove(final K key) {
         Preconditions.checkNotNull(key);
         final JbStack stack = new JbStackArrayList();
-        Integer currentNodeId = treeTool.findLeafNodeId(key, stack,
-                treeData.getRootNodeId());
+        Integer currentNodeId =
+                treeTool.findLeafNodeId(key, stack, treeData.getRootNodeId());
         Node<K, V> currentNode = nodeStore.getAndLock(currentNodeId);
-        currentNode = treeTraversingService.moveRightLeafNode(currentNode, key);
+        currentNode =
+                treeTraversingService.moveRightLeafNode(currentNode, key);
         if (currentNode.getValueByKey(key) == null) {
             /**
              * Node doesn't contains key, there is nothing to delete
@@ -153,7 +154,8 @@ public final class JbTreeImpl<K, V> implements JbTree<K, V> {
 
     @Override
     public int countValues() {
-        JbTreeVisitorRecordCounter<K, V> counter = new JbTreeVisitorRecordCounter<K, V>();
+        JbTreeVisitorRecordCounter<K, V> counter =
+                new JbTreeVisitorRecordCounter<K, V>();
         visitLeafNodes(counter);
         return counter.getCount();
     }

@@ -78,15 +78,16 @@ public final class JbTreeToolImpl<K, V> implements JbTreeTool<K, V> {
             return true;
         }
         return node.getMaxKey() != null
-                && keyTypeDescriptor.compare(key, node.getMaxKey()) > 0;
+                && keyTypeDescriptor.compareValues(key, node.getMaxKey()) > 0;
     }
 
     @Override
-    public Node<K, V> moveRightLeafNodeWithoutLocking(Node<K, V> current,
+    public Node<K, V> moveRightLeafNodeWithoutLocking(final Node<K, V> node,
             final K key) {
+        Node<K, V> current = node;
         if (current.isLeafNode()) {
-            while (current.getLink() != null && keyTypeDescriptor.compare(key,
-                    current.getMaxKey()) > 0) {
+            while (current.getLink() != null && keyTypeDescriptor
+                    .compareValues(key, current.getMaxKey()) > 0) {
                 current = nodeStore.get(current.getLink());
             }
             return current;
@@ -130,10 +131,10 @@ public final class JbTreeToolImpl<K, V> implements JbTreeTool<K, V> {
     @Override
     public Node<K, V> splitLeafNode(final Node<K, V> currentNode, final K key,
             final V value) {
-        final Node<K, V> newNode = nodeBuilder
-                .makeEmptyLeafNode(nodeStore.getNextId());
+        final Node<K, V> newNode =
+                nodeBuilder.makeEmptyLeafNode(nodeStore.getNextId());
         currentNode.moveTopHalfOfDataTo(newNode);
-        if (keyTypeDescriptor.compare(currentNode.getMaxKey(), key) < 0) {
+        if (keyTypeDescriptor.compareValues(currentNode.getMaxKey(), key) < 0) {
             newNode.insert(key, value);
         } else {
             currentNode.insert(key, value);
@@ -144,10 +145,10 @@ public final class JbTreeToolImpl<K, V> implements JbTreeTool<K, V> {
     @Override
     public Node<K, Integer> splitNonLeafNode(final Node<K, Integer> currentNode,
             final K key, final Integer value) {
-        final Node<K, Integer> newNode = nodeBuilder
-                .makeEmptyNonLeafNode(nodeStore.getNextId());
+        final Node<K, Integer> newNode =
+                nodeBuilder.makeEmptyNonLeafNode(nodeStore.getNextId());
         currentNode.moveTopHalfOfDataTo(newNode);
-        if (keyTypeDescriptor.compare(currentNode.getMaxKey(), key) < 0) {
+        if (keyTypeDescriptor.compareValues(currentNode.getMaxKey(), key) < 0) {
             newNode.insert(key, value);
         } else {
             currentNode.insert(key, value);
@@ -163,10 +164,10 @@ public final class JbTreeToolImpl<K, V> implements JbTreeTool<K, V> {
     public <S> Integer splitRootNode(final Node<K, S> currentRootNode,
             final Node<K, S> newNode) {
         // TODO consider case when new node is smaller that currentRootNode
-        Node<K, Integer> newRoot = nodeBuilder.makeNonLeafNode(
-                nodeStore.getNextId(), currentRootNode.getId(),
-                currentRootNode.getMaxKey(), newNode.getId(),
-                newNode.getMaxKey());
+        Node<K, Integer> newRoot =
+                nodeBuilder.makeNonLeafNode(nodeStore.getNextId(),
+                        currentRootNode.getId(), currentRootNode.getMaxKey(),
+                        newNode.getId(), newNode.getMaxKey());
         nodeStore.writeNode(newRoot);
         return newRoot.getId();
     }
