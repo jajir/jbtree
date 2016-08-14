@@ -51,7 +51,7 @@ public class FileStorageRule implements TestRule {
 
     private JbTreeData<Integer, Integer> treeData;
 
-    private NodeBuilder<Integer, Integer> nodeBuilder;
+    private JbNodeBuilder<Integer, Integer> nodeBuilder;
 
     private NodeFileStorage<Integer, Integer> fileStorage;
 
@@ -80,7 +80,7 @@ public class FileStorageRule implements TestRule {
         intDescriptor = new TypeDescriptorInteger();
         treeData = new JbTreeDataImpl<Integer, Integer>(0, 5, intDescriptor,
                 intDescriptor, intDescriptor);
-        nodeBuilder = new NodeBuilderImpl<Integer, Integer>(treeData);
+        nodeBuilder = new JbNodeBuilderImpl<Integer, Integer>(treeData);
         fileStorage = new KeyFileStorageImpl<Integer, Integer>(
                 treeData.getNonLeafNodeDescriptor(), nodeBuilder,
                 getTempFile().getAbsolutePath());

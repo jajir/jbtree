@@ -28,7 +28,7 @@ import com.coroptis.jblinktree.JbTreeService;
 import com.coroptis.jblinktree.JbTreeTool;
 import com.coroptis.jblinktree.JbTreeTraversingService;
 import com.coroptis.jblinktree.Node;
-import com.coroptis.jblinktree.NodeBuilder;
+import com.coroptis.jblinktree.JbNodeBuilder;
 import com.coroptis.jblinktree.NodeStore;
 
 /**
@@ -51,24 +51,24 @@ public abstract class AbstractMockingTest {
 
     protected JbTreeData<Integer, Integer> treeData;
 
-    protected NodeBuilder<Integer, Integer> nodeBuilder;
+    protected JbNodeBuilder<Integer, Integer> nodeBuilder;
 
     protected Node<Integer, Integer> n1, n2, n3, n4;
 
-    protected NodeBuilder<Integer, Integer> builder;
+    protected JbNodeBuilder<Integer, Integer> builder;
 
     protected Object[] mocks;
 
     @SuppressWarnings("unchecked")
     protected void setUp() throws Exception {
         nodeStore = EasyMock.createMock(NodeStore.class);
-        nodeBuilder = EasyMock.createMock(NodeBuilder.class);
+        nodeBuilder = EasyMock.createMock(JbNodeBuilder.class);
         treeTool = EasyMock.createMock(JbTreeTool.class);
         n1 = EasyMock.createMock(Node.class);
         n2 = EasyMock.createMock(Node.class);
         n3 = EasyMock.createMock(Node.class);
         n4 = EasyMock.createMock(Node.class);
-        builder = EasyMock.createMock(NodeBuilder.class);
+        builder = EasyMock.createMock(JbNodeBuilder.class);
         jbTreeService = EasyMock.createMock(JbTreeService.class);
         treeHelper = EasyMock.createMock(JbTreeHelper.class);
         treeData = EasyMock.createMock(JbTreeData.class);

@@ -45,28 +45,32 @@ public class TreeFileStorageTest {
     private File tempDirectory;
 
     private final static int NUMBER_OF_CYCLES = 10;
-    
+
+    private TreeMap<Integer, String> tree;
+
     @Test
     public void test_insert_few_moves() throws Exception {
-        TreeMap<Integer, String> tree = TreeBuilder.builder()
-                .setKeyType(Types.integer()).setValueType(Types.string(14))
-                .setL(2)
+        insertMoves();
+        verifyMoves();
+        printAll(tree);
+    }
+
+    @Test
+    public void test_close_and_reopen_tree() throws Exception {
+        insertMoves();
+        tree.close();
+        tree = makeTree();
+        verifyMoves();
+    }
+
+    private TreeMap<Integer, String> makeTree() {
+        return TreeBuilder.builder().setKeyType(Types.integer())
+                .setValueType(Types.string(14)).setL(2)
                 .setNodeStoreInFileBuilder(
                         TreeBuilder.getNodeStoreInFileBuilder()
                                 .setFileName(tempDirectory.getAbsolutePath())
                                 .setNoOfCachedNodes(1))
                 .build();
-
-        for (int i = 0; i < NUMBER_OF_CYCLES; i++) {
-            tree.put(i, "Old monkey-" + i);
-        }
-
-        for (int i = 0; i < NUMBER_OF_CYCLES; i++) {
-            String val = tree.get(i);
-            assertEquals("Old monkey-" + i, val);
-        }
-        
-        printAll(tree);
     }
 
     private void printAll(TreeMap<Integer, String> tree) {
@@ -80,14 +84,31 @@ public class TreeFileStorageTest {
         });
     }
 
+    private void insertMoves() {
+        for (int i = 0; i < NUMBER_OF_CYCLES; i++) {
+            tree.put(i, "Old monkey-" + i);
+        }
+
+    }
+
+    private void verifyMoves() {
+        for (int i = 0; i < NUMBER_OF_CYCLES; i++) {
+            String val = tree.get(i);
+            assertEquals("Old monkey-" + i, val);
+        }
+    }
+
     @Before
     public void setUp() {
         tempDirectory = Files.createTempDir();
+        tree = makeTree();
     }
 
     @After
     public void tearDown() {
         tempDirectory.delete();
         tempDirectory = null;
+        tree.close();
+        tree = null;
     }
 }

@@ -21,11 +21,13 @@ package com.coroptis.jblinktree.store;
  */
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Map;
+import java.util.Set;
 
 import com.coroptis.jblinktree.Node;
-import com.coroptis.jblinktree.NodeBuilder;
+import com.coroptis.jblinktree.JbNodeBuilder;
 
 /**
  * Implementation of Last Recent Used (LRU) cache.
@@ -37,9 +39,9 @@ import com.coroptis.jblinktree.NodeBuilder;
  * @param <V>
  *            value type
  */
-public final class LruCache<K, V> {
+public final class CacheLru<K, V> implements Cache<K, V> {
 
-    final NodeBuilder<K, V> nodeBuilder;
+    final JbNodeBuilder<K, V> nodeBuilder;
 
     private final Map<Integer, byte[]> cache = new HashMap<Integer, byte[]>();
 
@@ -47,16 +49,21 @@ public final class LruCache<K, V> {
 
     private final int numberOfNodesCacheSize;
 
-    private final OnEvict<K, V> onEvict;
+    /**
+     * Cache listener.
+     */
+    private final CacheListener<K, V> cacheListener;
 
-    public LruCache(final NodeBuilder<K, V> nodeBuilder,
-            final int numberOfNodesCacheSize, final OnEvict<K, V> onEvict) {
+    public CacheLru(final JbNodeBuilder<K, V> nodeBuilder,
+            final int numberOfNodesCacheSize,
+            final CacheListener<K, V> initCacheListerer) {
         this.nodeBuilder = nodeBuilder;
         this.numberOfNodesCacheSize = numberOfNodesCacheSize;
-        this.onEvict = onEvict;
+        this.cacheListener = initCacheListerer;
     }
 
-    void put(final Node<K, V> node) {
+    @Override
+    public void put(final Node<K, V> node) {
         setLastUsed(node.getId());
         cache.put(node.getId(), node.getFieldBytes());
         checkCacheSize();
@@ -66,22 +73,25 @@ public final class LruCache<K, V> {
         if (cache.size() > numberOfNodesCacheSize) {
             Integer nodeId = lastRecentUsedIds.removeLast();
             final byte[] field = cache.remove(nodeId);
-            onEvict.evict((Node<K, V>) nodeBuilder.makeNode(nodeId, field));
+            cacheListener
+                    .onUnload((Node<K, V>) nodeBuilder.makeNode(nodeId, field));
         }
     }
 
-    void remove(final Integer idNode) {
+    @Override
+    public void remove(final Integer idNode) {
         lastRecentUsedIds.remove(idNode);
         Node<K, V> node = nodeBuilder.makeNode(idNode, cache.remove(idNode));
-        onEvict.evict(node);
+        cacheListener.onUnload(node);
     }
 
-    Node<K, V> get(final Integer idNode) {
+    @Override
+    public Node<K, V> get(final Integer idNode) {
         if (cache.containsKey(idNode)) {
             setLastUsed(idNode);
             return nodeBuilder.makeNode(idNode, cache.get(idNode));
         } else {
-            Node<K, V> node = onEvict.load(idNode);
+            Node<K, V> node = cacheListener.onLoad(idNode);
             put(node);
             return node;
         }
@@ -90,6 +100,15 @@ public final class LruCache<K, V> {
     private void setLastUsed(final Integer idNode) {
         lastRecentUsedIds.remove(idNode);
         lastRecentUsedIds.add(0, idNode);
+    }
+
+    @Override
+    public void close() {
+        Set<Integer> ids = new HashSet<Integer>();
+        ids.addAll(cache.keySet());
+        for (Integer idNode : ids) {
+            remove(idNode);
+        }
     }
 
 }

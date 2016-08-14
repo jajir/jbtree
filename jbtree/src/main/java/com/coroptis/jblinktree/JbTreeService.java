@@ -75,4 +75,14 @@ public interface JbTreeService<K, V> {
      */
     void storeValueIntoNonLeafNode(Node<K, Integer> currentNode, K key,
             Integer value);
+
+    /**
+     * Find node containing smaller key.
+     *
+     * @param rootNodeId
+     *            required id of root node
+     * @return smaller node
+     */
+    Node<K, V> findSmallerNode(Integer rootNodeId);
+
 }

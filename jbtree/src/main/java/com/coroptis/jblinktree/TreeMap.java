@@ -65,4 +65,13 @@ public interface TreeMap<K, V> extends Map<K, V> {
      * @return number of locked nodes.
      */
     int countLockedNodes();
+
+    /**
+     * Free all resources. Should be called when all work with tree is done.
+     * <p>
+     * Close is not thread safe.
+     * </p>
+     */
+    void close();
+
 }

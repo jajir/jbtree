@@ -23,6 +23,8 @@ package com.coroptis.jblinktree.store;
 import com.coroptis.jblinktree.Node;
 
 /**
+ * Allows to detect when node is no longer needed in cache and also when it's
+ * needed back.
  *
  * @author jajir
  *
@@ -31,10 +33,23 @@ import com.coroptis.jblinktree.Node;
  * @param <V>
  *            value type
  */
-public interface OnEvict<K, V> {
+public interface CacheListener<K, V> {
 
-    void evict(Node<K, V> node);
+    /**
+     * Called when node is no longer needed in cache.
+     *
+     * @param node
+     *            required node
+     */
+    void onUnload(Node<K, V> node);
 
-    Node<K, V> load(Integer nodeId);
+    /**
+     * Called when is needed node that is not in cache.
+     *
+     * @param nodeId
+     *            required node id
+     * @return loaded node
+     */
+    Node<K, V> onLoad(Integer nodeId);
 
 }

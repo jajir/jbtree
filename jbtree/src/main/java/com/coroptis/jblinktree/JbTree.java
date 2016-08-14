@@ -21,10 +21,7 @@ package com.coroptis.jblinktree;
  */
 
 /**
- * TODO rename or remove, it's confusing with TreeMap which should be used by
- * end user.
- *
- * Provide operations with tree. In tree could be stored key,value pairs.
+ * Class for internal tree representation. End-user should use {@link TreeMap}.
  *
  * @author jajir
  *
@@ -123,4 +120,18 @@ public interface JbTree<K, V> {
      *            required {@link JbTreeVisitor} implementation.
      */
     void visitLeafNodes(JbTreeVisitor<K, V> treeVisitor);
+
+    /**
+     * Free all resources. Should be called when all work with tree is done.
+     */
+    void close();
+    
+    /**
+     * Traverse through all tree key value pairs in tree.
+     *
+     * @param dataVisitor
+     *            required data visitor
+     */
+    void visit(JbDataVisitor<K, V> dataVisitor);
+    
 }

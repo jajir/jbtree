@@ -51,7 +51,7 @@ public final class JbTreeImpl<K, V> implements JbTree<K, V> {
     /**
      * Tree helper.
      */
-    private final JbTreeHelper<K, V> jbTreeHelper;
+    private final JbTreeHelper<K, V> treeHelper;
 
     /**
      * Tree data definition.
@@ -71,32 +71,32 @@ public final class JbTreeImpl<K, V> implements JbTree<K, V> {
     /**
      * Create and initialize tree.
      *
-     * @param initNodeStore
+     * @param jbNodeStore
      *            required {@link NodeStore} object
-     * @param initTreeTool
+     * @param jbTreeTool
      *            required {@link JbTreeTool} object
-     * @param initTreeHelper
+     * @param jbTreeHelper
      *            required {@link JbTreeHelper} object
      * @param initTreeData
      *            required {@link JbTreeData} object
-     * @param initTreeTraversingService
+     * @param jbTreeTraversingService
      *            required {@link JbTreeTraversingService} object
-     * @param initTreeService
+     * @param jbTreeService
      *            required {@link JbTreeService} object
      */
-    public JbTreeImpl(final NodeStore<K> initNodeStore,
-            final JbTreeTool<K, V> initTreeTool,
-            final JbTreeHelper<K, V> initTreeHelper,
+    public JbTreeImpl(final NodeStore<K> jbNodeStore,
+            final JbTreeTool<K, V> jbTreeTool,
+            final JbTreeHelper<K, V> jbTreeHelper,
             final JbTreeData<K, V> initTreeData,
-            final JbTreeTraversingService<K, V> initTreeTraversingService,
-            final JbTreeService<K, V> initTreeService) {
-        this.nodeStore = Preconditions.checkNotNull(initNodeStore);
-        this.treeTool = Preconditions.checkNotNull(initTreeTool);
-        this.jbTreeHelper = Preconditions.checkNotNull(initTreeHelper);
+            final JbTreeTraversingService<K, V> jbTreeTraversingService,
+            final JbTreeService<K, V> jbTreeService) {
+        this.nodeStore = Preconditions.checkNotNull(jbNodeStore);
+        this.treeTool = Preconditions.checkNotNull(jbTreeTool);
+        this.treeHelper = Preconditions.checkNotNull(jbTreeHelper);
         this.treeData = Preconditions.checkNotNull(initTreeData);
         this.treeTraversingService = Preconditions
-                .checkNotNull(initTreeTraversingService);
-        this.treeService = Preconditions.checkNotNull(initTreeService);
+                .checkNotNull(jbTreeTraversingService);
+        this.treeService = Preconditions.checkNotNull(jbTreeService);
     }
 
     @Override
@@ -109,8 +109,7 @@ public final class JbTreeImpl<K, V> implements JbTree<K, V> {
         Node<K, V> currentNode = nodeStore.getAndLock(currentNodeId);
         currentNode = treeTraversingService.moveRightLeafNode(currentNode, key);
         if (currentNode.getValueByKey(key) == null) {
-            return jbTreeHelper.insertToLeafNode(currentNode, key, value,
-                    stack);
+            return treeHelper.insertToLeafNode(currentNode, key, value, stack);
         } else {
             /**
              * Key already exists. Rewrite value.
@@ -149,13 +148,12 @@ public final class JbTreeImpl<K, V> implements JbTree<K, V> {
     @Override
     public V search(final K key) {
         Preconditions.checkNotNull(key);
-        return jbTreeHelper.findAppropriateLeafNode(key).getValueByKey(key);
+        return treeHelper.findAppropriateLeafNode(key).getValueByKey(key);
     }
 
     @Override
     public int countValues() {
-        JbTreeVisitorRecordCounter<K, V>
-            counter = new JbTreeVisitorRecordCounter<K, V>();
+        JbTreeVisitorRecordCounter<K, V> counter = new JbTreeVisitorRecordCounter<K, V>();
         visitLeafNodes(counter);
         return counter.getCount();
     }
@@ -163,7 +161,7 @@ public final class JbTreeImpl<K, V> implements JbTree<K, V> {
     @Override
     public boolean containsKey(final K key) {
         Preconditions.checkNotNull(key);
-        return jbTreeHelper.findAppropriateLeafNode(key)
+        return treeHelper.findAppropriateLeafNode(key)
                 .getValueByKey(key) != null;
     }
 
@@ -278,4 +276,15 @@ public final class JbTreeImpl<K, V> implements JbTree<K, V> {
     public int countLockedNodes() {
         return nodeStore.countLockedNodes();
     }
+
+    @Override
+    public void close() {
+        nodeStore.close();
+    }
+
+    @Override
+    public void visit(final JbDataVisitor<K, V> dataVisitor) {
+        treeHelper.visit(dataVisitor);
+    }
+
 }

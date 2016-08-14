@@ -26,7 +26,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import com.coroptis.jblinktree.JblinktreeException;
 import com.coroptis.jblinktree.Node;
-import com.coroptis.jblinktree.NodeBuilder;
+import com.coroptis.jblinktree.JbNodeBuilder;
 import com.coroptis.jblinktree.NodeLocks;
 import com.coroptis.jblinktree.NodeStore;
 import com.google.common.base.Preconditions;
@@ -56,7 +56,7 @@ public final class NodeStoreInMem<K, V> implements NodeStore<K> {
     /**
      * Node builder factory.
      */
-    private final NodeBuilder<K, V> nodeBuilder;
+    private final JbNodeBuilder<K, V> nodeBuilder;
 
     /**
      * Atomic integer for generating new node ids.
@@ -68,7 +68,7 @@ public final class NodeStoreInMem<K, V> implements NodeStore<K> {
      * @param nodeBuilder
      *            required node builder factory
      */
-    public NodeStoreInMem(final NodeBuilder<K, V> nodeBuilder) {
+    public NodeStoreInMem(final JbNodeBuilder<K, V> nodeBuilder) {
         this.nextId = new AtomicInteger(FIRST_NODE_ID);
         this.nodeBuilder = Preconditions.checkNotNull(nodeBuilder);
         nodes = new ConcurrentHashMap<Integer, byte[]>();
@@ -127,6 +127,11 @@ public final class NodeStoreInMem<K, V> implements NodeStore<K> {
     @Override
     public int getMaxNodeId() {
         return nextId.get();
+    }
+
+    @Override
+    public void close() {
+        nodes.clear();
     }
 
 }

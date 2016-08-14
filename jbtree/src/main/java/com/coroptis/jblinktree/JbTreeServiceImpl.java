@@ -90,4 +90,18 @@ public final class JbTreeServiceImpl<K, V> implements JbTreeService<K, V> {
         nodeStore.writeNode(currentNode);
         nodeStore.unlockNode(currentNode.getId());
     }
+
+    @Override
+    public Node<K, V> findSmallerNode(final Integer rootNodeId) {
+        Integer currentNodeId = rootNodeId;
+        while (true) {
+            final Node<K, V> node = nodeStore.get(currentNodeId);
+            if (node.isLeafNode()) {
+                return node;
+            } else {
+                currentNodeId = (Integer) node.getField().getValue(0);
+            }
+        }
+    }
+
 }

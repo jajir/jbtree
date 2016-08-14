@@ -30,8 +30,8 @@ import org.slf4j.LoggerFactory;
 import com.coroptis.jblinktree.Executer;
 import com.coroptis.jblinktree.JbTreeData;
 import com.coroptis.jblinktree.JbTreeDataImpl;
-import com.coroptis.jblinktree.NodeBuilder;
-import com.coroptis.jblinktree.NodeBuilderImpl;
+import com.coroptis.jblinktree.JbNodeBuilder;
+import com.coroptis.jblinktree.JbNodeBuilderImpl;
 import com.coroptis.jblinktree.NodeImpl;
 import com.coroptis.jblinktree.NodeStore;
 import com.coroptis.jblinktree.Worker;
@@ -90,7 +90,7 @@ public class NodeStoreInMemConcurrencyTest extends TestCase {
         TypeDescriptor<Integer> td = new TypeDescriptorInteger();
         JbTreeData<Integer, Integer> treeData = new JbTreeDataImpl<Integer, Integer>(
                 NodeStore.FIRST_NODE_ID, 2, td, td, td);
-        NodeBuilder<Integer, Integer> nodeBuilder = new NodeBuilderImpl<Integer, Integer>(
+        JbNodeBuilder<Integer, Integer> nodeBuilder = new JbNodeBuilderImpl<Integer, Integer>(
                 treeData);
         nodeStore = new NodeStoreInMem<Integer, Integer>(nodeBuilder);
         NodeImpl<Integer, Integer> node = new NodeImpl<Integer, Integer>(1,

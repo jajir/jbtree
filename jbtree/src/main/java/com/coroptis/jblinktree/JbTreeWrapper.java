@@ -338,4 +338,14 @@ public final class JbTreeWrapper<K, V> implements JbTree<K, V> {
         Object execute();
     }
 
+    @Override
+    public void close() {
+        tree.close();
+    }
+
+    @Override
+    public void visit(final JbDataVisitor<K, V> dataVisitor) {
+        tree.visit(dataVisitor);
+    }
+
 }

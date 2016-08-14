@@ -56,5 +56,13 @@ public interface JbTreeHelper<K, V> {
      * @return <code>null</code> when it's new key otherwise return old value
      */
     V insertToLeafNode(Node<K, V> currentNode, K key, V value, JbStack stack);
-
+    
+    /**
+     * Traverse through all tree key value pairs in tree.
+     *
+     * @param dataVisitor
+     *            required data visitor
+     */
+    void visit(JbDataVisitor<K, V> dataVisitor);
+    
 }

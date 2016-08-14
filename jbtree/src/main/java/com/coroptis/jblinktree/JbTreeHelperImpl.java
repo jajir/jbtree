@@ -232,4 +232,21 @@ public final class JbTreeHelperImpl<K, V> implements JbTreeHelper<K, V> {
         return treeData.getRootNodeId();
     }
 
+    @Override
+    public void visit(final JbDataVisitor<K, V> dataVisitor) {
+        Node<K, V> currentNode = treeService
+                .findSmallerNode(treeData.getRootNodeId());
+        while (true) {
+            Field<K, V> f = currentNode.getField();
+            for (int i = 0; i < f.getKeyCount(); i++) {
+                dataVisitor.visited(f.getKey(i), f.getValue(i));
+            }
+            if (Node.EMPTY_INT.equals(f.getLink())) {
+                return;
+            } else {
+                currentNode = nodeStore.get(f.getLink());
+            }
+        }
+    }
+
 }

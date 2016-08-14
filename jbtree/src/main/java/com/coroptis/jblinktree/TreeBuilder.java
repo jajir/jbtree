@@ -85,6 +85,11 @@ public final class TreeBuilder {
 
         /**
          * Allow to set directory where will be tree stored.
+         * <p>
+         * When files exists than tree tries to load data from disk. If node was
+         * stored with different key value types than will be throws
+         * {@link JblinktreeException}.
+         * </p>
          *
          * @param directory
          *            required directory path
@@ -188,8 +193,7 @@ public final class TreeBuilder {
      * @return current tree builder instance
      */
     public TreeBuilder setTreeWrapper(final String fileName) {
-        this.treeWrapperFileName = Preconditions
-                .checkNotNull(fileName);
+        this.treeWrapperFileName = Preconditions.checkNotNull(fileName);
         return this;
     }
 
@@ -228,8 +232,7 @@ public final class TreeBuilder {
      *            required value type descriptor
      * @return current tree builder instance
      */
-    public TreeBuilder setValueType(
-            final TypeDescriptor<?> typeDescriptor) {
+    public TreeBuilder setValueType(final TypeDescriptor<?> typeDescriptor) {
         this.valueTypeDescriptor = typeDescriptor;
         return this;
     }
@@ -249,14 +252,13 @@ public final class TreeBuilder {
                 "key TypeDescriptor is null, use .setKeyType in builder");
         Preconditions.checkNotNull(valueTypeDescriptor,
                 "value TypeDescriptor is null, use .setValueType in builder");
-        final TypeDescriptor<Integer> linkTypeDescriptor =
-                new TypeDescriptorInteger();
+        final TypeDescriptor<Integer> linkTypeDescriptor = new TypeDescriptorInteger();
         final JbTreeData<K, V> treeData = new JbTreeDataImpl<K, V>(
                 NodeStore.FIRST_NODE_ID, l,
                 (TypeDescriptor<K>) keyTypeDescriptor,
                 (TypeDescriptor<V>) valueTypeDescriptor, linkTypeDescriptor);
 
-        final NodeBuilder<K, V> nodeBuilder = new NodeBuilderImpl<K, V>(
+        final JbNodeBuilder<K, V> nodeBuilder = new JbNodeBuilderImpl<K, V>(
                 treeData);
 
         final NodeStore<K> nodeStore;
@@ -269,8 +271,7 @@ public final class TreeBuilder {
         }
         final JbTreeTool<K, V> jbTreeTool = new JbTreeToolImpl<K, V>(nodeStore,
                 (TypeDescriptor<K>) keyTypeDescriptor, nodeBuilder);
-        final JbTreeTraversingService<K, V> treeLockingTool =
-                new JbTreeTraversingServiceImpl<K, V>(
+        final JbTreeTraversingService<K, V> treeLockingTool = new JbTreeTraversingServiceImpl<K, V>(
                 jbTreeTool);
         final JbTreeService<K, V> treeService = new JbTreeServiceImpl<K, V>(
                 nodeStore, treeLockingTool);

@@ -30,6 +30,9 @@ import com.google.common.base.Preconditions;
 /**
  * {@link Map} Implementation. Wrap JBtree map. Not all methods are fully
  * implemented.
+ * <p>
+ * Working with closed tree could leads to exceptions.
+ * </p>
  *
  * @author jajir
  *
@@ -55,6 +58,8 @@ public final class TreeMapImpl<K, V> implements TreeMap<K, V> {
      */
     private final TypeDescriptor<V> valueTypeDescriptor;
 
+    private boolean isClosed;
+
     /**
      * Constructor should by called just from builder.
      *
@@ -69,6 +74,7 @@ public final class TreeMapImpl<K, V> implements TreeMap<K, V> {
                 treeData.getLeafNodeDescriptor().getKeyTypeDescriptor());
         this.valueTypeDescriptor = Preconditions.checkNotNull(
                 treeData.getLeafNodeDescriptor().getValueTypeDescriptor());
+        isClosed = false;
     }
 
     /**
@@ -106,6 +112,7 @@ public final class TreeMapImpl<K, V> implements TreeMap<K, V> {
 
     @Override
     public boolean containsKey(final Object key) {
+        checkIsClosed();
         return tree.containsKey(verifyKey(key));
     }
 
@@ -121,6 +128,7 @@ public final class TreeMapImpl<K, V> implements TreeMap<K, V> {
 
     @Override
     public V get(final Object key) {
+        checkIsClosed();
         return tree.search(verifyKey(key));
     }
 
@@ -136,6 +144,7 @@ public final class TreeMapImpl<K, V> implements TreeMap<K, V> {
 
     @Override
     public V put(final K key, final V value) {
+        checkIsClosed();
         return tree.insert(verifyKey(key), verifyValue(value));
     }
 
@@ -146,11 +155,13 @@ public final class TreeMapImpl<K, V> implements TreeMap<K, V> {
 
     @Override
     public V remove(final Object key) {
+        checkIsClosed();
         return tree.remove(verifyKey(key));
     }
 
     @Override
     public int size() {
+        checkIsClosed();
         return tree.countValues();
     }
 
@@ -161,41 +172,38 @@ public final class TreeMapImpl<K, V> implements TreeMap<K, V> {
 
     @Override
     public void verify() {
+        checkIsClosed();
         tree.verify();
     }
 
     @Override
     @Deprecated
     public void visit(final JbTreeVisitor<K, V> treeVisitor) {
+        checkIsClosed();
         tree.visit(treeVisitor);
     }
 
     @Override
     public void visit(final JbDataVisitor<K, V> dataVisitor) {
-        // FIXME this does't provide ordered output.
-        tree.visit(new JbTreeVisitor<K, V>() {
-
-            @Override
-            public boolean visitedLeaf(final Node<K, V> node) {
-                for (final K key : node.getKeys()) {
-                    V value = node.getValueByKey(key);
-                    if (!dataVisitor.visited(key, value)) {
-                        return false;
-                    }
-                }
-                return true;
-            }
-
-            @Override
-            public boolean visitedNonLeaf(final Node<K, Integer> node) {
-                return true;
-            }
-        });
+        checkIsClosed();
+        tree.visit(dataVisitor);
     }
 
     @Override
     public int countLockedNodes() {
+        checkIsClosed();
         return tree.countLockedNodes();
+    }
+
+    @Override
+    public void close() {
+        tree.close();
+    }
+
+    private void checkIsClosed() {
+        if (isClosed) {
+            throw new JblinktreeException("Attempt to work with closed tree.");
+        }
     }
 
 }

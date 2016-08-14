@@ -32,7 +32,7 @@ import com.google.common.base.Preconditions;
  * @param <V>
  *            value type
  */
-public final class NodeBuilderImpl<K, V> implements NodeBuilder<K, V> {
+public final class JbNodeBuilderImpl<K, V> implements JbNodeBuilder<K, V> {
 
     /**
      * Tree data definition.
@@ -45,7 +45,7 @@ public final class NodeBuilderImpl<K, V> implements NodeBuilder<K, V> {
      * @param jbTreeData
      *            required tree data
      */
-    public NodeBuilderImpl(final JbTreeData<K, V> jbTreeData) {
+    public JbNodeBuilderImpl(final JbTreeData<K, V> jbTreeData) {
         this.treeData = jbTreeData;
     }
 

@@ -29,7 +29,7 @@ import java.util.Arrays;
 import com.coroptis.jblinktree.JbNodeDef;
 import com.coroptis.jblinktree.JblinktreeException;
 import com.coroptis.jblinktree.Node;
-import com.coroptis.jblinktree.NodeBuilder;
+import com.coroptis.jblinktree.JbNodeBuilder;
 import com.google.common.base.Preconditions;
 
 /**
@@ -43,7 +43,7 @@ import com.google.common.base.Preconditions;
  */
 public final class KeyIntFileStorage<K> implements NodeFileStorage<K, Integer> {
 
-    private final NodeBuilder<K, Integer> nodeBuilder;
+    private final JbNodeBuilder<K, Integer> nodeBuilder;
 
     private final RandomAccessFile raf;
 
@@ -55,7 +55,7 @@ public final class KeyIntFileStorage<K> implements NodeFileStorage<K, Integer> {
 
     public KeyIntFileStorage(final File file,
             final JbNodeDef<K, Integer> nodeDef,
-            final NodeBuilder<K, Integer> nodeBuilder) {
+            final JbNodeBuilder<K, Integer> nodeBuilder) {
         this.nodeDef = Preconditions.checkNotNull(nodeDef);
         this.nodeBuilder = Preconditions.checkNotNull(nodeBuilder);
         Preconditions.checkNotNull(file);

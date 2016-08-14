@@ -115,4 +115,10 @@ public interface NodeStore<K> {
      * @return maximal node id
      */
     int getMaxNodeId();
+
+    /**
+     * Free all resources.
+     */
+    void close();
+    
 }

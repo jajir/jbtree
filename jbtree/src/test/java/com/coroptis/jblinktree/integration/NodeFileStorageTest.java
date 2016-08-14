@@ -32,8 +32,8 @@ import org.junit.Test;
 import com.coroptis.jblinktree.JbTreeData;
 import com.coroptis.jblinktree.JbTreeDataImpl;
 import com.coroptis.jblinktree.Node;
-import com.coroptis.jblinktree.NodeBuilder;
-import com.coroptis.jblinktree.NodeBuilderImpl;
+import com.coroptis.jblinktree.JbNodeBuilder;
+import com.coroptis.jblinktree.JbNodeBuilderImpl;
 import com.coroptis.jblinktree.store.NodeFileStorageImpl;
 import com.coroptis.jblinktree.type.TypeDescriptor;
 import com.coroptis.jblinktree.type.TypeDescriptorInteger;
@@ -46,7 +46,7 @@ public class NodeFileStorageTest {
 
     private File tempDirectory;
 
-    private NodeBuilder<String, String> nodeBuilder;
+    private JbNodeBuilder<String, String> nodeBuilder;
 
     @Test
     public void test_read_and_write() throws Exception {
@@ -79,7 +79,7 @@ public class NodeFileStorageTest {
         TypeDescriptor<Integer> tdLink = new TypeDescriptorInteger();
         JbTreeData<String, String> treeData = new JbTreeDataImpl<String, String>(
                 0, 2, tdKey, tdValue, tdLink);
-        nodeBuilder = new NodeBuilderImpl<String, String>(treeData);
+        nodeBuilder = new JbNodeBuilderImpl<String, String>(treeData);
         storage = new NodeFileStorageImpl<String, String>(treeData, nodeBuilder,
                 tempDirectory.getAbsolutePath());
     }

@@ -27,7 +27,7 @@ import com.coroptis.jblinktree.Field;
 import com.coroptis.jblinktree.JbNodeDef;
 import com.coroptis.jblinktree.JbTreeData;
 import com.coroptis.jblinktree.Node;
-import com.coroptis.jblinktree.NodeBuilder;
+import com.coroptis.jblinktree.JbNodeBuilder;
 import com.google.common.base.Preconditions;
 
 /**
@@ -43,7 +43,7 @@ import com.google.common.base.Preconditions;
  */
 public final class NodeFileStorageImpl<K, V> implements NodeFileStorage<K, V> {
 
-    private final NodeBuilder<K, V> nodeBuilder;
+    private final JbNodeBuilder<K, V> nodeBuilder;
 
     private final JbNodeDef<K, V> nodeDef;
 
@@ -56,7 +56,7 @@ public final class NodeFileStorageImpl<K, V> implements NodeFileStorage<K, V> {
     private final KeyIntFileStorage<K> keyIntFileStorage;
 
     public NodeFileStorageImpl(final JbTreeData<K, V> jbTreeData,
-            final NodeBuilder<K, V> nodeBuilder, String directory) {
+            final JbNodeBuilder<K, V> nodeBuilder, String directory) {
         this.treeData = Preconditions.checkNotNull(jbTreeData);
         this.nodeDef = treeData.getLeafNodeDescriptor();
         this.nodeBuilder = Preconditions.checkNotNull(nodeBuilder);
@@ -67,7 +67,7 @@ public final class NodeFileStorageImpl<K, V> implements NodeFileStorage<K, V> {
         this.keyIntFileStorage = new KeyIntFileStorage<K>(
                 addFileToDir(directory, "key.str"),
                 treeData.getNonLeafNodeDescriptor(),
-                (NodeBuilder<K, Integer>) nodeBuilder);
+                (JbNodeBuilder<K, Integer>) nodeBuilder);
     }
 
     private File addFileToDir(final String directory, final String fileName) {
@@ -93,7 +93,8 @@ public final class NodeFileStorageImpl<K, V> implements NodeFileStorage<K, V> {
         byte[] b = new byte[treeData.getNonLeafNodeDescriptor()
                 .getFieldActualLength(node.getKeysCount())];
         b[0] = Node.M;
-        Node<K, Integer> out = nodeBuilder.makeNode(node.getId(), b, treeData.getNonLeafNodeDescriptor());
+        Node<K, Integer> out = nodeBuilder.makeNode(node.getId(), b,
+                treeData.getNonLeafNodeDescriptor());
         Preconditions.checkState(out.isLeafNode());
         Field<K, V> f = node.getField();
         for (int i = 0; i < f.getKeyCount(); i++) {
@@ -135,8 +136,13 @@ public final class NodeFileStorageImpl<K, V> implements NodeFileStorage<K, V> {
 
     @Override
     public void close() {
-        keyIntFileStorage.close();
-        valueFileStorage.close();
+        lock.lock();
+        try {
+            keyIntFileStorage.close();
+            valueFileStorage.close();
+        } finally {
+            lock.unlock();
+        }
     }
 
 }

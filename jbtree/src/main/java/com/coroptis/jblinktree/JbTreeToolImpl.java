@@ -49,7 +49,7 @@ public final class JbTreeToolImpl<K, V> implements JbTreeTool<K, V> {
     /**
      * Node builder factory.
      */
-    private final NodeBuilder<K, V> nodeBuilder;
+    private final JbNodeBuilder<K, V> nodeBuilder;
 
     /**
      * Default constructor.
@@ -63,7 +63,7 @@ public final class JbTreeToolImpl<K, V> implements JbTreeTool<K, V> {
      */
     public JbTreeToolImpl(final NodeStore<K> initNodeStore,
             final TypeDescriptor<K> keyTypeDesc,
-            final NodeBuilder<K, V> initNodeBuilder) {
+            final JbNodeBuilder<K, V> initNodeBuilder) {
         this.nodeStore = Preconditions.checkNotNull(initNodeStore);
         this.keyTypeDescriptor = Preconditions.checkNotNull(keyTypeDesc);
         this.nodeBuilder = initNodeBuilder;

@@ -24,7 +24,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import com.coroptis.jblinktree.JbTreeData;
 import com.coroptis.jblinktree.Node;
-import com.coroptis.jblinktree.NodeBuilder;
+import com.coroptis.jblinktree.JbNodeBuilder;
 import com.coroptis.jblinktree.NodeLocks;
 import com.coroptis.jblinktree.NodeStore;
 import com.google.common.base.Preconditions;
@@ -45,30 +45,27 @@ public final class NodeStoreInFile<K, V> implements NodeStore<K> {
 
     private final AtomicInteger nextId;
 
-    private final LruCache<K, V> nodeCache;
+    private final Cache<K, V> nodeCache;
 
     private final NodeFileStorage<K, V> fileStorage;
 
     public NodeStoreInFile(final JbTreeData<K, V> treeData,
-            final NodeBuilder<K, V> nodeBuilder, String fileName,
+            final JbNodeBuilder<K, V> nodeBuilder, String fileName,
             int numberOfNodesCacheSize) {
         this.nextId = new AtomicInteger(FIRST_NODE_ID);
-        // FIXME - casting should be removed.
-//        fileStorage = new KeyFileStorageImpl<K, V>(
-//                (JbNodeDef<K, V>) treeData.getNonLeafNodeDescriptor(),
-//                nodeBuilder, fileName);
-        fileStorage=  new NodeFileStorageImpl<K,V>(treeData, nodeBuilder, fileName);
+        fileStorage = new NodeFileStorageImpl<K, V>(treeData, nodeBuilder,
+                fileName);
         nodeLocks = new NodeLocks();
-        nodeCache = new LruCache<K, V>(nodeBuilder, numberOfNodesCacheSize,
-                new OnEvict<K, V>() {
+        nodeCache = new CacheLru<K, V>(nodeBuilder, numberOfNodesCacheSize,
+                new CacheListener<K, V>() {
 
                     @Override
-                    public void evict(Node<K, V> node) {
+                    public void onUnload(Node<K, V> node) {
                         fileStorage.store(node);
                     }
 
                     @Override
-                    public Node<K, V> load(Integer nodeId) {
+                    public Node<K, V> onLoad(Integer nodeId) {
                         return fileStorage.load(nodeId);
                     }
                 });
@@ -123,6 +120,12 @@ public final class NodeStoreInFile<K, V> implements NodeStore<K> {
     @Override
     public int getMaxNodeId() {
         return nextId.get();
+    }
+
+    @Override
+    public void close() {
+        nodeCache.close();
+        fileStorage.close();
     }
 
 }

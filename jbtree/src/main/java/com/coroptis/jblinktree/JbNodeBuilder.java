@@ -30,7 +30,7 @@ package com.coroptis.jblinktree;
  * @param <V>
  *            value type
  */
-public interface NodeBuilder<K, V> {
+public interface JbNodeBuilder<K, V> {
 
     /**
      * Create empty node.
