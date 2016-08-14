@@ -31,7 +31,7 @@ import java.util.Comparator;
  *            type that will be described
  *
  */
-public interface TypeDescriptor<T> extends Comparator<T> {
+public interface TypeDescriptor<T> extends ValueComparator<T> {
 
     /**
      * Get maximum length of field when it's stored in bytes.

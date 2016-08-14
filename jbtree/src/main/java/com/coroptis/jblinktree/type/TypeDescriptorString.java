@@ -42,7 +42,7 @@ public final class TypeDescriptorString
     /**
      * In this bytes will be stored actual string length.
      */
-    private static final int LENGTH_OF_METADATA_IN_BYTES = 4;
+    public static final int LENGTH_OF_METADATA_IN_BYTES = 4;
 
     /**
      *
@@ -118,6 +118,41 @@ public final class TypeDescriptorString
     public String toString() {
         return MoreObjects.toStringHelper(TypeDescriptorString.class)
                 .add("maxLength", getMaxLength()).toString();
+    }
+
+    /**
+     * @return the charset
+     */
+    public Charset getCharset() {
+        return charset;
+    }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((charset == null) ? 0 : charset.hashCode());
+        result = prime * result + maxLength;
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        TypeDescriptorString other = (TypeDescriptorString) obj;
+        if (charset == null) {
+            if (other.charset != null)
+                return false;
+        } else if (!charset.equals(other.charset))
+            return false;
+        if (maxLength != other.maxLength)
+            return false;
+        return true;
     }
 
 }

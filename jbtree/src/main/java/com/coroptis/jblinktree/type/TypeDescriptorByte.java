@@ -73,4 +73,21 @@ public final class TypeDescriptorByte
                 .add("maxLength", getMaxLength()).toString();
     }
 
+    /**
+     * Always return same number. All instances of this class are same.
+     */
+    @Override
+    public int hashCode() {
+        return 9014865;
+    }
+
+    @Override
+    public boolean equals(final Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        return getClass() == obj.getClass();
+    }
+
 }

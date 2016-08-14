@@ -55,12 +55,18 @@ public final class NodeFileStorageImpl<K, V> implements NodeFileStorage<K, V> {
 
     private final KeyIntFileStorage<K> keyIntFileStorage;
 
+    private final MetaDataStore<K, V> metaDataStore;
+
     public NodeFileStorageImpl(final JbTreeData<K, V> jbTreeData,
             final JbNodeBuilder<K, V> nodeBuilder, String directory) {
         this.treeData = Preconditions.checkNotNull(jbTreeData);
         this.nodeDef = treeData.getLeafNodeDescriptor();
         this.nodeBuilder = Preconditions.checkNotNull(nodeBuilder);
         Preconditions.checkNotNull(directory);
+        //FIXME when one file from 3 is missing --> exception with explanation is throws.
+        //FIXME When all are missing it's fine.
+        //FIXME verify that directory is directory
+        //FIXME verify that files are really files
         this.valueFileStorage = new ValueFileStorageImpl<K, V>(
                 addFileToDir(directory, "value.str"),
                 nodeDef.getValueTypeDescriptor(), nodeDef.getL());
@@ -68,6 +74,8 @@ public final class NodeFileStorageImpl<K, V> implements NodeFileStorage<K, V> {
                 addFileToDir(directory, "key.str"),
                 treeData.getNonLeafNodeDescriptor(),
                 (JbNodeBuilder<K, Integer>) nodeBuilder);
+        this.metaDataStore = new MetaDataStoreImpl<K, V>(
+                addFileToDir(directory, "meta.str"), treeData);
     }
 
     private File addFileToDir(final String directory, final String fileName) {
@@ -140,6 +148,7 @@ public final class NodeFileStorageImpl<K, V> implements NodeFileStorage<K, V> {
         try {
             keyIntFileStorage.close();
             valueFileStorage.close();
+            metaDataStore.close();
         } finally {
             lock.unlock();
         }
