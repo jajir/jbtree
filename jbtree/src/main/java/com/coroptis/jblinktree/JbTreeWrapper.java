@@ -64,19 +64,27 @@ public final class JbTreeWrapper<K, V> implements JbTree<K, V> {
     private final File file;
 
     /**
+     * Tree data description.
+     */
+    private final JbTreeData<K, V> treeData;
+
+    /**
      * Simple constructor.
      *
      * @param jbTree
      *            required tree
+     * @param jbTreeData
+     *            required tree data description
      * @param initNodeStore
      *            required node store
      * @param fileName
      *            required file name which will contain tree in .dot format
      */
-    JbTreeWrapper(final JbTree<K, V> jbTree, final NodeStore<K> initNodeStore,
-            final String fileName) {
+    JbTreeWrapper(final JbTree<K, V> jbTree, final JbTreeData<K, V> jbTreeData,
+            final NodeStore<K> initNodeStore, final String fileName) {
         this.tree = Preconditions.checkNotNull(jbTree);
         this.nodeStore = Preconditions.checkNotNull(initNodeStore);
+        this.treeData = Preconditions.checkNotNull(jbTreeData);
         this.file = new File(fileName);
     }
 
@@ -222,11 +230,11 @@ public final class JbTreeWrapper<K, V> implements JbTree<K, V> {
         buff.append(INDENDATION);
         buff.append("node [shape=record]\n");
 
-        for (int i = 0; i < nodeStore.getMaxNodeId(); i++) {
+        for (int i = 0; i < treeData.getMaxNodeId(); i++) {
             nodeStore.get(i).writeTo(buff, INDENDATION);
         }
 
-        for (int i = 0; i < nodeStore.getMaxNodeId(); i++) {
+        for (int i = 0; i < treeData.getMaxNodeId(); i++) {
             Node n = (Node) nodeStore.get(i);
             addLink(n, buff);
             if (!n.isLeafNode()) {

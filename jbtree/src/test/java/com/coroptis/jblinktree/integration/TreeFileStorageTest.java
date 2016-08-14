@@ -70,10 +70,9 @@ public class TreeFileStorageTest {
         tree = makeTree();
         verifyMoves(0);
         insertMoves(10);
-//        verifyMoves(0);
-        verifyMoves(10);
         printAll(tree);
-        //FIXME
+        verifyMoves(0);
+        verifyMoves(10);
     }
 
     private TreeMap<Integer, String> makeTree() {

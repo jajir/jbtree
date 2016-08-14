@@ -150,12 +150,8 @@ public final class FieldImpl<K, V> implements Field<K, V> {
         setFlag(src.getFlag());
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see com.coroptis.jblinktree.Filed#getBytes()
-     */
     @Override
+    @Deprecated
     public byte[] getBytes() {
         return field;
     }

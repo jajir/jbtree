@@ -28,10 +28,13 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.coroptis.jblinktree.JbTreeData;
+import com.coroptis.jblinktree.JbTreeDataImpl;
 import com.coroptis.jblinktree.JbTreeTool;
 import com.coroptis.jblinktree.JbTreeToolImpl;
 import com.coroptis.jblinktree.Node;
 import com.coroptis.jblinktree.NodeImpl;
+import com.coroptis.jblinktree.type.TypeDescriptor;
 import com.coroptis.jblinktree.type.TypeDescriptorInteger;
 import com.coroptis.jblinktree.util.JbStack;
 import com.coroptis.jblinktree.util.JbStackArrayList;
@@ -105,8 +108,10 @@ public class JbTreeToolTest extends AbstractMockingTest {
     @Before
     public void setUp() throws Exception {
         super.setUp();
-        tested = new JbTreeToolImpl<Integer, Integer>(nodeStore,
-                new TypeDescriptorInteger(), builder);
+        TypeDescriptor<Integer> tdInt = new TypeDescriptorInteger();
+        JbTreeData<Integer, Integer> td =
+                new JbTreeDataImpl<Integer, Integer>(0, 3, tdInt, tdInt, tdInt);
+        tested = new JbTreeToolImpl<Integer, Integer>(nodeStore, td, builder);
     }
 
     @Override

@@ -64,4 +64,26 @@ public interface JbTreeData<K, V> {
      */
     int getL();
 
+    /**
+     * Method provide new node id.
+     *
+     * @return new node id
+     */
+    Integer getNextId();
+
+    /**
+     * Get maximal node id.
+     *
+     * @return maximal node id
+     */
+    Integer getMaxNodeId();
+
+    /**
+     * Allows to set maximal node is.
+     *
+     * @param maxNodeId
+     *            required new max node id
+     */
+    void setMaxNodeId(Integer maxNodeId);
+
 }

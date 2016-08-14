@@ -62,6 +62,7 @@ public class MetaDataStoreTest {
         metaDataStore = new MetaDataStoreImpl<Integer, String>(metaFile,
                 treeData);
         assertEquals(Integer.valueOf(8765), treeData.getRootNodeId());
+        assertEquals(Integer.valueOf(31), treeData.getMaxNodeId());
         metaDataStore.close();
     }
 
@@ -90,6 +91,7 @@ public class MetaDataStoreTest {
         treeData = new JbTreeDataImpl<Integer, String>(0, 2, tdKey, tdValue,
                 tdLink);
         treeData.setRootNodeId(8765);
+        treeData.setMaxNodeId(31);
         metaDataStore = new MetaDataStoreImpl<Integer, String>(metaFile,
                 treeData);
     }

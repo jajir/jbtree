@@ -69,7 +69,7 @@ public interface MetaType {
      * TODO should be done in same factory. Instance can't be always created
      * without params.
      *
-     * TODO <S> should be paramete of class
+     * TODO &gt;S&lt; should be parameter of class
      *
      * @return data type instance
      * @param <S>

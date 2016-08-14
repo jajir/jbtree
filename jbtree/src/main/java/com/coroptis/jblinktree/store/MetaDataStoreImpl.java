@@ -49,7 +49,7 @@ public class MetaDataStoreImpl<K, V> implements MetaDataStore<K, V> {
     private final File metaFile;
 
     private final RandomAccessFile raf;
-    //FIXME next node snould be stored
+
     private static final String HEADER = "jbTree-metadata";
 
     public MetaDataStoreImpl(final File file,
@@ -69,10 +69,12 @@ public class MetaDataStoreImpl<K, V> implements MetaDataStore<K, V> {
         if (isFileNew) {
             writeHeader();
             writeRootNodeId();
+            writeMaxNodeId();
             writeDataTypes();
         } else {
             verifyHeader();
             loadRootNodeId();
+            loadMaxNodeId();
             verifyDataTypes();
         }
     }
@@ -91,11 +93,21 @@ public class MetaDataStoreImpl<K, V> implements MetaDataStore<K, V> {
 
     private void loadRootNodeId() throws IOException {
         raf.seek(HEADER.length());
-        final TypeDescriptor<Integer> linkTd = treeData.getLeafNodeDescriptor()
-                .getLinkTypeDescriptor();
+        final TypeDescriptor<Integer> linkTd =
+                treeData.getLeafNodeDescriptor().getLinkTypeDescriptor();
         byte[] b = new byte[linkTd.getMaxLength()];
         raf.readFully(b);
         treeData.setRootNodeId(linkTd.load(b, 0));
+    }
+
+    private void loadMaxNodeId() throws IOException {
+        raf.seek(HEADER.length() + treeData.getLeafNodeDescriptor()
+                .getLinkTypeDescriptor().getMaxLength());
+        final TypeDescriptor<Integer> linkTd =
+                treeData.getLeafNodeDescriptor().getLinkTypeDescriptor();
+        byte[] b = new byte[linkTd.getMaxLength()];
+        raf.readFully(b);
+        treeData.setMaxNodeId(linkTd.load(b, 0));
     }
 
     private void writeHeader() throws IOException {
@@ -105,10 +117,20 @@ public class MetaDataStoreImpl<K, V> implements MetaDataStore<K, V> {
 
     private void writeRootNodeId() throws IOException {
         raf.seek(HEADER.length());
-        final TypeDescriptor<Integer> linkTd = treeData.getLeafNodeDescriptor()
-                .getLinkTypeDescriptor();
+        final TypeDescriptor<Integer> linkTd =
+                treeData.getLeafNodeDescriptor().getLinkTypeDescriptor();
         byte[] b = new byte[linkTd.getMaxLength()];
         linkTd.save(b, 0, treeData.getRootNodeId());
+        raf.write(b);
+    }
+
+    private void writeMaxNodeId() throws IOException {
+        raf.seek(HEADER.length()+ treeData.getLeafNodeDescriptor()
+        .getLinkTypeDescriptor().getMaxLength());
+        final TypeDescriptor<Integer> linkTd =
+                treeData.getLeafNodeDescriptor().getLinkTypeDescriptor();
+        byte[] b = new byte[linkTd.getMaxLength()];
+        linkTd.save(b, 0, treeData.getMaxNodeId());
         raf.write(b);
     }
 
@@ -116,8 +138,8 @@ public class MetaDataStoreImpl<K, V> implements MetaDataStore<K, V> {
             long position) throws IOException {
         raf.seek(position);
         MetaTypesResolver metaTypesResolver = MetaTypesResolver.getInstance();
-        AbstractTypeDescriptorMetaData<TypeDescriptor<S>> mt = metaTypesResolver
-                .resolve(td.getClass());
+        AbstractTypeDescriptorMetaData<TypeDescriptor<S>> mt =
+                metaTypesResolver.resolve(td.getClass());
         raf.writeByte(mt.getCode());
         if (mt.getMaxLength() > 0) {
             byte[] b = new byte[mt.getMaxLength()];
@@ -132,8 +154,8 @@ public class MetaDataStoreImpl<K, V> implements MetaDataStore<K, V> {
         raf.seek(position);
         MetaTypesResolver metaTypesResolver = MetaTypesResolver.getInstance();
         byte code = raf.readByte();
-        AbstractTypeDescriptorMetaData<TypeDescriptor<S>> mt = metaTypesResolver
-                .resolve(code);
+        AbstractTypeDescriptorMetaData<TypeDescriptor<S>> mt =
+                metaTypesResolver.resolve(code);
         TypeDescriptor<S> td2;
         if (mt.getMaxLength() > 0) {
             byte[] b = new byte[mt.getMaxLength()];
@@ -185,7 +207,7 @@ public class MetaDataStoreImpl<K, V> implements MetaDataStore<K, V> {
 
     private int getDataTypePos() {
         return HEADER.length() + treeData.getLeafNodeDescriptor()
-                .getLinkTypeDescriptor().getMaxLength();
+                .getLinkTypeDescriptor().getMaxLength() * 2;
     }
 
 }

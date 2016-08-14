@@ -102,19 +102,6 @@ public interface NodeStore<K> {
      */
     int countLockedNodes();
 
-    /**
-     * Method provide new node id.
-     *
-     * @return new node id
-     */
-    Integer getNextId();
-
-    /**
-     * Get maximal node id.
-     *
-     * @return maximal node id
-     */
-    int getMaxNodeId();
 
     /**
      * Free all resources.

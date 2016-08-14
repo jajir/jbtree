@@ -22,7 +22,8 @@ package com.coroptis.jblinktree.store;
 import com.coroptis.jblinktree.Node;
 
 /**
- * Allows to convert Node<K,V> to Node<K,Interer> and convert it back.
+ * Allows to convert Node&lt;K,V&gt; to Node&lt;K,Interer&gt; and convert it
+ * back.
  *
  * @author jajir
  *
@@ -34,7 +35,7 @@ import com.coroptis.jblinktree.Node;
 public interface NodeConverter<K, V> {
 
     /**
-     * Convert Node<K,V> to Node<K,Integer>. Integers will be empty.
+     * Convert Node&lt;K,V&gt; to Node&lt;K,Integer&gt;. Integers will be empty.
      *
      * @param node
      *            required node
@@ -43,7 +44,7 @@ public interface NodeConverter<K, V> {
     Node<K, Integer> convertToKeyInt(Node<K, V> node);
 
     /**
-     * Convert Node<K,Integer> to Node<K,V>. Values will be empty.
+     * Convert Node&lt;K,Integer&gt; to Node&lt;K,V&gt;. Values will be empty.
      *
      * @param node
      *            required node

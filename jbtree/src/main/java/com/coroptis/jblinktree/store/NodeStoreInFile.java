@@ -20,8 +20,6 @@ package com.coroptis.jblinktree.store;
  * #L%
  */
 
-import java.util.concurrent.atomic.AtomicInteger;
-
 import com.coroptis.jblinktree.JbNodeBuilder;
 import com.coroptis.jblinktree.Node;
 import com.coroptis.jblinktree.NodeLocks;
@@ -45,12 +43,6 @@ public final class NodeStoreInFile<K, V> implements NodeStore<K> {
      */
     private final NodeLocks nodeLocks;
 
-    // FIXME when tree is loaded form file this have to initialized
-    /**
-     * Helps to determine new next node id.
-     */
-    private final AtomicInteger nextId;
-
     /**
      * Node in memory cache.
      */
@@ -73,7 +65,6 @@ public final class NodeStoreInFile<K, V> implements NodeStore<K> {
     public NodeStoreInFile(final JbNodeBuilder<K, V> nodeBuilder,
             final int numberOfNodesCacheSize,
             final NodeFileStorage<K, V> nodeFileStorage) {
-        this.nextId = new AtomicInteger(FIRST_NODE_ID);
         this.fileStorage = Preconditions.checkNotNull(nodeFileStorage);
         nodeLocks = new NodeLocks();
         nodeCache = new CacheLru<K, V>(nodeBuilder, numberOfNodesCacheSize,
@@ -130,16 +121,6 @@ public final class NodeStoreInFile<K, V> implements NodeStore<K> {
     @Override
     public int countLockedNodes() {
         return nodeLocks.countLockedThreads();
-    }
-
-    @Override
-    public Integer getNextId() {
-        return nextId.getAndIncrement();
-    }
-
-    @Override
-    public int getMaxNodeId() {
-        return nextId.get();
     }
 
     @Override

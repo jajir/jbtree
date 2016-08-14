@@ -1,5 +1,7 @@
 package com.coroptis.jblinktree;
 
+import java.util.concurrent.atomic.AtomicInteger;
+
 import com.coroptis.jblinktree.type.TypeDescriptor;
 import com.google.common.base.Preconditions;
 
@@ -56,6 +58,11 @@ public final class JbTreeDataImpl<K, V> implements JbTreeData<K, V> {
     private final JbNodeDef<K, Integer> nonLeafNodeDescriptor;
 
     /**
+     * Atomic integer for generating new node ids.
+     */
+    private final AtomicInteger nextId;
+
+    /**
      * Basic constructor.
      *
      * @param startNodeId
@@ -73,6 +80,7 @@ public final class JbTreeDataImpl<K, V> implements JbTreeData<K, V> {
             final TypeDescriptor<K> keyTypeDesc,
             final TypeDescriptor<V> valueTypeDesc,
             final TypeDescriptor<Integer> linkTypeDesc) {
+        this.nextId = new AtomicInteger(NodeStore.FIRST_NODE_ID);
         this.rootNodeId = Preconditions.checkNotNull(startNodeId);
         this.l = initL;
         Preconditions.checkNotNull(keyTypeDesc);
@@ -112,6 +120,21 @@ public final class JbTreeDataImpl<K, V> implements JbTreeData<K, V> {
     @Override
     public JbNodeDef<K, Integer> getNonLeafNodeDescriptor() {
         return nonLeafNodeDescriptor;
+    }
+
+    @Override
+    public Integer getNextId() {
+        return nextId.getAndIncrement();
+    }
+
+    @Override
+    public Integer getMaxNodeId() {
+        return nextId.get();
+    }
+
+    @Override
+    public void setMaxNodeId(final Integer maxNodeId) {
+        nextId.set(maxNodeId);
     }
 
     /**
