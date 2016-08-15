@@ -42,43 +42,91 @@ import com.google.common.base.Preconditions;
  * @param <V>
  *            value type
  */
-public class MetaDataStoreImpl<K, V> implements MetaDataStore<K, V> {
+public final class MetaDataStoreImpl<K, V> implements MetaDataStore<K, V> {
 
+    /**
+     * Tree data descriptor.
+     */
     private final JbTreeData<K, V> treeData;
 
-    private final File metaFile;
-
+    /**
+     * Random access file obejct.
+     */
     private final RandomAccessFile raf;
 
+    /**
+     * Header that will be written as first bytes to file.
+     */
     private static final String HEADER = "jbTree-metadata";
 
+    /**
+     *
+     * @param file
+     *            required file where will be data written or readed from
+     * @param jbTreeData
+     *            tree data definition
+     */
     public MetaDataStoreImpl(final File file,
             final JbTreeData<K, V> jbTreeData) {
         this.treeData = Preconditions.checkNotNull(jbTreeData);
-        this.metaFile = Preconditions.checkNotNull(file);
+        Preconditions.checkNotNull(file);
         final boolean isFileNew = !file.exists();
         try {
-            raf = new RandomAccessFile(metaFile, "rw");
+            raf = new RandomAccessFile(file, "rw");
             init(isFileNew);
         } catch (IOException e) {
             throw new JblinktreeException(e.getMessage(), e);
         }
     }
 
+    /**
+     * Initialize meta data file. If already exists than verify that data are
+     * correct and read them. If doesn't exists write default values.
+     *
+     * @param isFileNew
+     *            required boolean is <code>true</code> when file is newly
+     *            created otherwise should be <code>false</code>
+     * @throws IOException
+     *             read or write IOException
+     */
     private void init(final boolean isFileNew) throws IOException {
         if (isFileNew) {
             writeHeader();
-            writeRootNodeId();
-            writeMaxNodeId();
-            writeDataTypes();
+            writeMeta();
         } else {
             verifyHeader();
-            loadRootNodeId();
-            loadMaxNodeId();
+            treeData.setRootNodeId(loadInt(HEADER.length()));
+            treeData.setMaxNodeId(
+                    loadInt(HEADER.length() + treeData.getLeafNodeDescriptor()
+                            .getLinkTypeDescriptor().getMaxLength()));
             verifyDataTypes();
         }
     }
 
+    /**
+     * Write root node id and max used node id.
+     *
+     * @throws IOException
+     *             read or write IOException
+     */
+    private void writeMeta() throws IOException {
+        writeInt(HEADER.length(), treeData.getRootNodeId());
+        writeInt(
+                HEADER.length() + treeData.getLeafNodeDescriptor()
+                        .getLinkTypeDescriptor().getMaxLength(),
+                treeData.getMaxNodeId());
+        writeDataTypes();
+    }
+
+    /**
+     * Verify that file header {@link #HEADER} is correctly stored.
+     *
+     * @throws IOException
+     *             read or write IOException
+     * @throws JblinktreeException
+     *             exception is throws when header is not correctly read from
+     *             file
+     */
     private void verifyHeader() throws IOException {
         raf.seek(0);
         byte[] b = new byte[HEADER.length()];
@@ -91,55 +139,74 @@ public class MetaDataStoreImpl<K, V> implements MetaDataStore<K, V> {
         }
     }
 
-    private void loadRootNodeId() throws IOException {
-        raf.seek(HEADER.length());
-        final TypeDescriptor<Integer> linkTd =
-                treeData.getLeafNodeDescriptor().getLinkTypeDescriptor();
-        byte[] b = new byte[linkTd.getMaxLength()];
-        raf.readFully(b);
-        treeData.setRootNodeId(linkTd.load(b, 0));
-    }
-
-    private void loadMaxNodeId() throws IOException {
-        raf.seek(HEADER.length() + treeData.getLeafNodeDescriptor()
-                .getLinkTypeDescriptor().getMaxLength());
-        final TypeDescriptor<Integer> linkTd =
-                treeData.getLeafNodeDescriptor().getLinkTypeDescriptor();
-        byte[] b = new byte[linkTd.getMaxLength()];
-        raf.readFully(b);
-        treeData.setMaxNodeId(linkTd.load(b, 0));
-    }
-
+    /**
+     * Write {@link #HEADER} to file.
+     *
+     * @throws IOException
+     *             read or write IOException
+     */
     private void writeHeader() throws IOException {
         raf.seek(0);
         raf.write(HEADER.getBytes(Charset.forName("ISO-8859-1")));
     }
 
-    private void writeRootNodeId() throws IOException {
-        raf.seek(HEADER.length());
-        final TypeDescriptor<Integer> linkTd =
-                treeData.getLeafNodeDescriptor().getLinkTypeDescriptor();
+    /**
+     * Load single {@link java.lang.Integer} value from file.
+     *
+     * @param position
+     *            required position in file
+     * @return loaded value
+     * @throws IOException
+     *             read or write IOException
+     */
+    private Integer loadInt(final long position) throws IOException {
+        raf.seek(position);
+        final TypeDescriptor<Integer> linkTd = treeData.getLeafNodeDescriptor()
+                .getLinkTypeDescriptor();
         byte[] b = new byte[linkTd.getMaxLength()];
-        linkTd.save(b, 0, treeData.getRootNodeId());
+        raf.readFully(b);
+        return linkTd.load(b, 0);
+    }
+
+    /**
+     * Write single {@link java.lang.Integer} value to file.
+     *
+     * @param position
+     *            required position of integer in file
+     * @param value
+     *            stored value
+     * @throws IOException
+     *             read or write IOException
+     */
+    private void writeInt(final long position, final Integer value)
+            throws IOException {
+        raf.seek(position);
+        final TypeDescriptor<Integer> linkTd = treeData.getLeafNodeDescriptor()
+                .getLinkTypeDescriptor();
+        byte[] b = new byte[linkTd.getMaxLength()];
+        linkTd.save(b, 0, value);
         raf.write(b);
     }
 
-    private void writeMaxNodeId() throws IOException {
-        raf.seek(HEADER.length()+ treeData.getLeafNodeDescriptor()
-        .getLinkTypeDescriptor().getMaxLength());
-        final TypeDescriptor<Integer> linkTd =
-                treeData.getLeafNodeDescriptor().getLinkTypeDescriptor();
-        byte[] b = new byte[linkTd.getMaxLength()];
-        linkTd.save(b, 0, treeData.getMaxNodeId());
-        raf.write(b);
-    }
-
+    /**
+     * Write type descriptor to file.
+     *
+     * @param td
+     *            required type descriptor
+     * @param position
+     *            required position where will be value written
+     * @return how many bytes was written to file
+     * @throws IOException
+     *             read or write IOException
+     * @param <S>
+     *            type described by data type descriptor
+     */
     private <S> int writeTypeDescriptor(final TypeDescriptor<S> td,
-            long position) throws IOException {
+            final long position) throws IOException {
         raf.seek(position);
         MetaTypesResolver metaTypesResolver = MetaTypesResolver.getInstance();
-        AbstractTypeDescriptorMetaData<TypeDescriptor<S>> mt =
-                metaTypesResolver.resolve(td.getClass());
+        AbstractTypeDescriptorMetaData<TypeDescriptor<S>> mt = metaTypesResolver
+                .resolve(td.getClass());
         raf.writeByte(mt.getCode());
         if (mt.getMaxLength() > 0) {
             byte[] b = new byte[mt.getMaxLength()];
@@ -149,13 +216,29 @@ public class MetaDataStoreImpl<K, V> implements MetaDataStore<K, V> {
         return 1 + mt.getMaxLength();
     }
 
+    /**
+     * Load type descriptor and compare it with given.
+     *
+     * @param td
+     *            required data type descriptor
+     * @param position
+     *            required position from which will be data type descriptor
+     *            loaded
+     * @return how many bytes was loaded from file
+     * @throws IOException
+     *             read or write IOException
+     * @throws JblinktreeException
+     *             when loaded data type descriptor is not equals as given one
+     * @param <S>
+     *            type described by data type descriptor
+     */
     private <S> int verifyTypeDescriptor(final TypeDescriptor<S> td,
-            long position) throws IOException {
+            final long position) throws IOException {
         raf.seek(position);
         MetaTypesResolver metaTypesResolver = MetaTypesResolver.getInstance();
         byte code = raf.readByte();
-        AbstractTypeDescriptorMetaData<TypeDescriptor<S>> mt =
-                metaTypesResolver.resolve(code);
+        AbstractTypeDescriptorMetaData<TypeDescriptor<S>> mt = metaTypesResolver
+                .resolve(code);
         TypeDescriptor<S> td2;
         if (mt.getMaxLength() > 0) {
             byte[] b = new byte[mt.getMaxLength()];
@@ -172,6 +255,12 @@ public class MetaDataStoreImpl<K, V> implements MetaDataStore<K, V> {
         }
     }
 
+    /**
+     * Write all data type descriptors from {@link JbTreeData}.
+     *
+     * @throws IOException
+     *             read or write IOException
+     */
     private void writeDataTypes() throws IOException {
         int pos = getDataTypePos();
         raf.seek(pos);
@@ -183,6 +272,13 @@ public class MetaDataStoreImpl<K, V> implements MetaDataStore<K, V> {
                 treeData.getLeafNodeDescriptor().getLinkTypeDescriptor(), pos);
     }
 
+    /**
+     * Verify all data type descriptors from {@link JbTreeData} and from loaded
+     * values.
+     *
+     * @throws IOException
+     *             read or write IOException
+     */
     private void verifyDataTypes() throws IOException {
         int pos = getDataTypePos();
         raf.seek(pos);
@@ -197,14 +293,19 @@ public class MetaDataStoreImpl<K, V> implements MetaDataStore<K, V> {
     @Override
     public void close() {
         try {
-            writeRootNodeId();
-            writeDataTypes();
+            writeMeta();
             raf.close();
         } catch (IOException e) {
             throw new JblinktreeException(e.getMessage(), e);
         }
     }
 
+    /**
+     * return position where ends file header and starts place for data types
+     * descriptors.
+     *
+     * @return length of header in bytes
+     */
     private int getDataTypePos() {
         return HEADER.length() + treeData.getLeafNodeDescriptor()
                 .getLinkTypeDescriptor().getMaxLength() * 2;
