@@ -70,7 +70,7 @@ public final class JbTreeHelperImpl<K, V> implements JbTreeHelper<K, V> {
      * @param initTreeData
      *            required tree data definition
      */
-    JbTreeHelperImpl(final NodeStore<K> initNodeStore,
+    public JbTreeHelperImpl(final NodeStore<K> initNodeStore,
             final JbTreeTool<K, V> initTreeTool,
             final JbTreeService<K, V> initTreeService,
             final JbTreeData<K, V> initTreeData) {
@@ -240,7 +240,9 @@ public final class JbTreeHelperImpl<K, V> implements JbTreeHelper<K, V> {
         while (true) {
             Field<K, V> f = currentNode.getField();
             for (int i = 0; i < f.getKeyCount(); i++) {
-                dataVisitor.visited(f.getKey(i), f.getValue(i));
+                if(!dataVisitor.visited(f.getKey(i), f.getValue(i))){
+                    return;
+                }
             }
             if (Node.EMPTY_INT.equals(f.getLink())) {
                 return;
