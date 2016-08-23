@@ -48,7 +48,7 @@ public interface Node<K, V> {
     /**
      * Get link value. Delegate to {@link Field#getLink()}
      *
-     * @return link value, could be {@link Node#EMPTY_INT}
+     * @return link value, could be {@link Node#EMPTY_INT} but never null
      */
     Integer getLink();
 

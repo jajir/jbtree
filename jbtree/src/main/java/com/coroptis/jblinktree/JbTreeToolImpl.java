@@ -93,8 +93,9 @@ public final class JbTreeToolImpl<K, V> implements JbTreeTool<K, V> {
             final K key) {
         Node<K, V> current = node;
         if (current.isLeafNode()) {
-            while (current.getLink() != null && keyTypeDescriptor
-                    .compareValues(key, current.getMaxKey()) > 0) {
+            while (!Node.EMPTY_INT.equals(current.getLink())
+                    && keyTypeDescriptor.compareValues(key,
+                            current.getMaxKey()) > 0) {
                 current = nodeStore.get(current.getLink());
             }
             return current;

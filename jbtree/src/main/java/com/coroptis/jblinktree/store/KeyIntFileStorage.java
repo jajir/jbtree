@@ -118,7 +118,8 @@ public final class KeyIntFileStorage<K> implements NodeFileStorage<K, Integer> {
             raf.readFully(bytes);
             return nodeBuilder.makeNode(nodeId, bytes, nodeDef);
         } catch (IOException e) {
-            throw new JblinktreeException(e.getMessage(), e);
+            throw new JblinktreeException("Can't find nodeId '" + nodeId + "'",
+                    e);
         }
     }
 

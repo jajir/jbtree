@@ -19,9 +19,7 @@ package com.coroptis.jblinktree.junit;
  * limitations under the License.
  * #L%
  */
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 import org.easymock.EasyMock;
 import org.junit.After;
@@ -32,6 +30,7 @@ import com.coroptis.jblinktree.JbTreeData;
 import com.coroptis.jblinktree.JbTreeDataImpl;
 import com.coroptis.jblinktree.JbTreeTool;
 import com.coroptis.jblinktree.JbTreeToolImpl;
+import com.coroptis.jblinktree.JblinktreeException;
 import com.coroptis.jblinktree.Node;
 import com.coroptis.jblinktree.NodeImpl;
 import com.coroptis.jblinktree.type.TypeDescriptor;
@@ -101,6 +100,28 @@ public class JbTreeToolTest extends AbstractMockingTest {
         Integer ret = tested.findLeafNodeId(12, stack, 2);
 
         assertEquals(Integer.valueOf(62), ret);
+        EasyMock.verify(nodeStore, treeTool, n1, n2);
+    }
+
+    @Test(expected = JblinktreeException.class)
+    public void test_moveRightLeafNodeWithoutLocking_nonLeafNode()
+            throws Exception {
+        EasyMock.expect(n1.isLeafNode()).andReturn(false);
+        EasyMock.replay(nodeStore, treeTool, n1, n2);
+        tested.moveRightLeafNodeWithoutLocking(n1, 13);
+
+        EasyMock.verify(nodeStore, treeTool, n1, n2);
+    }
+
+    @Test
+    public void test_moveRightLeafNodeWithoutLocking() throws Exception {
+        EasyMock.expect(n1.isLeafNode()).andReturn(true);
+        EasyMock.expect(n1.getLink()).andReturn(Node.EMPTY_INT);
+        EasyMock.replay(nodeStore, treeTool, n1, n2);
+        Node<Integer, Integer> ret =
+                tested.moveRightLeafNodeWithoutLocking(n1, 13);
+
+        assertSame(ret, n1);
         EasyMock.verify(nodeStore, treeTool, n1, n2);
     }
 

@@ -36,12 +36,16 @@ import com.coroptis.jblinktree.Node;
 public interface CacheListener<K, V> {
 
     /**
-     * Called when node is no longer needed in cache.
+     * Called when node is no longer needed in cache. Parameter wasChanges helps
+     * to control node persisting.
      *
      * @param node
      *            required node
+     * @param wasChanged
+     *            it's <code>true</code> when object was changed in cache in
+     *            that case have to be persisted
      */
-    void onUnload(Node<K, V> node);
+    void onUnload(Node<K, V> node, boolean wasChanged);
 
     /**
      * Called when is needed node that is not in cache.

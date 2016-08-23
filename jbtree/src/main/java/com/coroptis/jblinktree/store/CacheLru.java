@@ -26,9 +26,9 @@ import java.util.LinkedList;
 import java.util.Map;
 import java.util.Set;
 
+import com.coroptis.jblinktree.JbNodeBuilder;
 import com.coroptis.jblinktree.Node;
 import com.google.common.base.Preconditions;
-import com.coroptis.jblinktree.JbNodeBuilder;
 
 /**
  * Implementation of cache with eviction based on Last Recent Used (LRU)
@@ -51,7 +51,8 @@ public final class CacheLru<K, V> implements Cache<K, V> {
     /**
      * Cache itself.
      */
-    private final Map<Integer, byte[]> cache = new HashMap<Integer, byte[]>();
+    private final Map<Integer, CacheItem> cache =
+            new HashMap<Integer, CacheItem>();
 
     /**
      * Holds list of last accessed ids. Based on this list is selected last used
@@ -90,7 +91,7 @@ public final class CacheLru<K, V> implements Cache<K, V> {
     @Override
     public void put(final Node<K, V> node) {
         setLastUsed(node.getId());
-        cache.put(node.getId(), node.getFieldBytes());
+        cache.put(node.getId(), CacheItem.make(node.getFieldBytes(), true));
         checkCacheSize();
     }
 
@@ -100,28 +101,29 @@ public final class CacheLru<K, V> implements Cache<K, V> {
      */
     private void checkCacheSize() {
         if (cache.size() > numberOfNodesCacheSize) {
-            Integer nodeId = lastRecentUsedIds.removeLast();
-            final byte[] field = cache.remove(nodeId);
-            cacheListener
-                    .onUnload((Node<K, V>) nodeBuilder.makeNode(nodeId, field));
+            remove(lastRecentUsedIds.getLast());
         }
     }
 
     @Override
     public void remove(final Integer idNode) {
         lastRecentUsedIds.remove(idNode);
-        Node<K, V> node = nodeBuilder.makeNode(idNode, cache.remove(idNode));
-        cacheListener.onUnload(node);
+        final CacheItem cacheItem = cache.remove(idNode);
+        final Node<K, V> node =
+                nodeBuilder.makeNode(idNode, cacheItem.getNodeData());
+        cacheListener.onUnload(node, cacheItem.isChanged());
     }
 
     @Override
     public Node<K, V> get(final Integer idNode) {
         if (cache.containsKey(idNode)) {
             setLastUsed(idNode);
-            return nodeBuilder.makeNode(idNode, cache.get(idNode));
+            final CacheItem cacheItem = cache.get(idNode);
+            return nodeBuilder.makeNode(idNode, cacheItem.getNodeData());
         } else {
             Node<K, V> node = cacheListener.onLoad(idNode);
-            put(node);
+            setLastUsed(node.getId());
+            cache.put(node.getId(), CacheItem.make(node.getFieldBytes()));
             return node;
         }
     }

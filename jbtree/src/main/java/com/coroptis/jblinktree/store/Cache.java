@@ -36,7 +36,7 @@ public interface Cache<K, V> {
 
     /**
      * Put another node into cache. If some node should be evicted from cache
-     * than {@link CacheListener#onUnload(Node)} is called.
+     * than {@link CacheListener#onUnload(Node, boolean)} is called.
      *
      * @param node
      *            required node
@@ -44,7 +44,8 @@ public interface Cache<K, V> {
     void put(Node<K, V> node);
 
     /**
-     * Remove node from cache. Call {@link CacheListener#onUnload(Node)}
+     * Remove node from cache. Call
+     * {@link CacheListener#onUnload(Node, boolean)}
      *
      * @param idNode
      *            required id node

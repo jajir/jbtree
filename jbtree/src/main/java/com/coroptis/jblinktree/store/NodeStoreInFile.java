@@ -71,8 +71,11 @@ public final class NodeStoreInFile<K, V> implements NodeStore<K> {
                 new CacheListener<K, V>() {
 
                     @Override
-                    public void onUnload(final Node<K, V> node) {
-                        fileStorage.store(node);
+                    public void onUnload(final Node<K, V> node,
+                            final boolean wasChanged) {
+                        if (wasChanged) {
+                            fileStorage.store(node);
+                        }
                     }
 
                     @Override

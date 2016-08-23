@@ -56,6 +56,15 @@ public class TreeFileStorageTest {
     }
 
     @Test
+    public void test_containsKey() throws Exception {
+        insertMoves(0);
+        verifyMoves(0);
+        assertTrue(tree.containsKey(Integer.valueOf(7)));
+        assertFalse(tree.containsKey(Integer.valueOf(732)));
+        assertFalse(tree.containsKey(Integer.valueOf(-272)));
+    }
+
+    @Test
     public void test_close_and_reopen_tree() throws Exception {
         insertMoves(0);
         tree.close();
