@@ -1,7 +1,5 @@
 package com.coroptis.jblinktree.junit;
 
-import static org.junit.Assert.*;
-
 import org.easymock.EasyMock;
 
 /*
@@ -32,26 +30,38 @@ import com.coroptis.jblinktree.JbDataVisitor;
 import com.coroptis.jblinktree.JbTreeHelper;
 import com.coroptis.jblinktree.JbTreeHelperImpl;
 
+/**
+ * Test for {@link JbTreeHelper}.
+ * 
+ * @author jajir
+ *
+ */
 public class JbTreeHelperTest extends AbstractMockingTest {
 
     private JbTreeHelper<Integer, Integer> treeHelper;
-    
-    //FIXME
-//    @Test
-//    public void test_visit() throws Exception {
-//        JbDataVisitor<Integer, Integer> visitor =
-//                EasyMock.createMock(JbDataVisitor.class);
-//        EasyMock.expect(treeData.getRootNodeId()).andReturn(55);
-//        EasyMock.expect(jbTreeService.findSmallerNode(55)).andReturn(n1);
-//        EasyMock.replay(mocks);
-//        EasyMock.replay(visitor);
-//        
-//        treeHelper.visit(visitor);
-//
-//        EasyMock.verify(mocks);
-//        EasyMock.replay(visitor);
-//   }
-//
+
+    @SuppressWarnings("unchecked")
+    @Test
+    public void test_visit() throws Exception {
+        JbDataVisitor<Integer, Integer> visitor =
+                EasyMock.createMock(JbDataVisitor.class);
+        EasyMock.expect(treeData.getRootNodeId()).andReturn(55);
+        EasyMock.expect(jbTreeService.findSmallerNode(55)).andReturn(n1);
+        EasyMock.expect(n1.getField()).andReturn(f1);
+        EasyMock.expect(f1.getKeyCount()).andReturn(1);
+        EasyMock.expect(f1.getKey(0)).andReturn(33);
+        EasyMock.expect(f1.getValue(0)).andReturn(44);
+        EasyMock.expect(visitor.visited(33, 44)).andReturn(false);
+
+        EasyMock.replay(mocks);
+        EasyMock.replay(visitor);
+
+        treeHelper.visit(visitor);
+
+        EasyMock.verify(mocks);
+        EasyMock.verify(visitor);
+    }
+
     @Override
     @Before
     public void setUp() throws Exception {

@@ -19,13 +19,12 @@ package com.coroptis.jblinktree.junit;
  * limitations under the License.
  * #L%
  */
-
-import static org.junit.Assert.*;
+import static org.junit.Assert.fail;
 
 import java.io.File;
-import java.io.IOException;
 import java.nio.charset.Charset;
 
+import org.easymock.EasyMock;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -40,41 +39,73 @@ import com.google.common.io.Files;
 /**
  * Simple tests for {@link ValueFileStorage}.
  *
- * @author jiroutj
+ * @author jajir
  *
  */
-public class ValueFileStorageTest {
+public class ValueFileStorageTest extends AbstractMockingTest {
 
-//    private ValueFileStorage<String> valueStorage;
-//
-//    private File tempDirectory;
-//
-//    @Test
-//    public void test_read_and_write() throws Exception {
-//        valueStorage.store(0, "Ahoj lidi!");
-//
-//        assertEquals("Ahoj lidi!", valueStorage.load(0));
-//    }
-//
-//    @Test(expected = JblinktreeException.class)
-//    public void test_read_invalid_valueId() throws Exception {
-//        valueStorage.load(10);
-//    }
-//
-//    @Before
-//    public void setup() throws IOException {
-//        tempDirectory = Files.createTempDir();
-//        TypeDescriptor<String> td = new TypeDescriptorString(20,
-//                Charset.forName("ISO-8859-1"));
-//        valueStorage = new ValueFileStorageImpl<String>(new File(
-//                tempDirectory.getAbsolutePath() + File.separator + "value.str"),
-//                td);
-//    }
-//
-//    @After
-//    public void tearDown() {
-//        tempDirectory = null;
-//        valueStorage.close();
-//        valueStorage = null;
-//    }
+    private ValueFileStorage<Integer, String> valueStorage;
+
+    private File tempDirectory;
+
+    @Test
+    public void test_read_and_write() throws Exception {
+        EasyMock.expect(n4.isLeafNode()).andReturn(true);
+        EasyMock.expect(n4.getId()).andReturn(0);
+        EasyMock.expect(n4.getField()).andReturn(f4);
+        EasyMock.expect(f4.getKeyCount()).andReturn(1).times(2);
+        EasyMock.expect(f4.getValue(0)).andReturn("Ahoj lidi");
+        EasyMock.replay(mocks);
+
+        valueStorage.storeValues(n4);
+
+        EasyMock.verify(mocks);
+    }
+
+    @Test()
+    public void test_store_only_leaf_nodes() throws Exception {
+        EasyMock.expect(n4.isLeafNode()).andReturn(false);
+        EasyMock.replay(mocks);
+        try {
+            valueStorage.storeValues(n4);
+            fail();
+        } catch (JblinktreeException e) {
+            EasyMock.verify(mocks);
+        }
+    }
+
+    @Test()
+    public void test_read_invalid_nodeId() throws Exception {
+        EasyMock.expect(n4.isLeafNode()).andReturn(true);
+        EasyMock.expect(n4.getId()).andReturn(10);
+        EasyMock.expect(n4.getField()).andReturn(f4);
+        EasyMock.expect(f4.getKeyCount()).andReturn(1);
+        EasyMock.replay(mocks);
+        try {
+            valueStorage.loadValues(n4);
+            fail();
+        } catch (JblinktreeException e) {
+            EasyMock.verify(mocks);
+        }
+    }
+
+    @Before
+    public void setup() throws Exception {
+        super.setUp();
+        tempDirectory = Files.createTempDir();
+        TypeDescriptor<String> td =
+                new TypeDescriptorString(20, Charset.forName("ISO-8859-1"));
+        valueStorage = new ValueFileStorageImpl<Integer, String>(new File(
+                tempDirectory.getAbsolutePath() + File.separator + "value.str"),
+                td, 3);
+    }
+
+    @Override
+    @After
+    public void tearDown() throws Exception {
+        super.tearDown();
+        tempDirectory = null;
+        valueStorage.close();
+        valueStorage = null;
+    }
 }
