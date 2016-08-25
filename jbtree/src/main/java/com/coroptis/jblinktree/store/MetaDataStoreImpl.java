@@ -27,7 +27,7 @@ import java.nio.charset.Charset;
 
 import com.coroptis.jblinktree.JbTreeData;
 import com.coroptis.jblinktree.JblinktreeException;
-import com.coroptis.jblinktree.type.AbstractTypeDescriptorMetaData;
+import com.coroptis.jblinktree.type.AbstractMetaType;
 import com.coroptis.jblinktree.type.MetaTypesResolver;
 import com.coroptis.jblinktree.type.TypeDescriptor;
 import com.google.common.base.Preconditions;
@@ -42,7 +42,7 @@ import com.google.common.base.Preconditions;
  * @param <V>
  *            value type
  */
-public final class MetaDataStoreImpl<K, V> implements MetaDataStore<K, V> {
+public final class MetaDataStoreImpl<K, V> implements MetaDataStore {
 
     /**
      * Tree data descriptor.
@@ -50,7 +50,7 @@ public final class MetaDataStoreImpl<K, V> implements MetaDataStore<K, V> {
     private final JbTreeData<K, V> treeData;
 
     /**
-     * Random access file obejct.
+     * Random access file object.
      */
     private final RandomAccessFile raf;
 
@@ -205,7 +205,7 @@ public final class MetaDataStoreImpl<K, V> implements MetaDataStore<K, V> {
             final long position) throws IOException {
         raf.seek(position);
         MetaTypesResolver metaTypesResolver = MetaTypesResolver.getInstance();
-        AbstractTypeDescriptorMetaData<TypeDescriptor<S>> mt = metaTypesResolver
+        AbstractMetaType<TypeDescriptor<S>> mt = metaTypesResolver
                 .resolve(td.getClass());
         raf.writeByte(mt.getCode());
         if (mt.getMaxLength() > 0) {
@@ -237,7 +237,7 @@ public final class MetaDataStoreImpl<K, V> implements MetaDataStore<K, V> {
         raf.seek(position);
         MetaTypesResolver metaTypesResolver = MetaTypesResolver.getInstance();
         byte code = raf.readByte();
-        AbstractTypeDescriptorMetaData<TypeDescriptor<S>> mt = metaTypesResolver
+        AbstractMetaType<TypeDescriptor<S>> mt = metaTypesResolver
                 .resolve(code);
         TypeDescriptor<S> td2;
         if (mt.getMaxLength() > 0) {

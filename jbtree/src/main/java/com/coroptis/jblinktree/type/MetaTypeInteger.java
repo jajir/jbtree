@@ -27,7 +27,7 @@ package com.coroptis.jblinktree.type;
  *
  */
 public final class MetaTypeInteger
-        extends AbstractTypeDescriptorMetaData<TypeDescriptorInteger> {
+        extends AbstractMetaType<TypeDescriptorInteger> {
 
     @Override
     public byte getCode() {
@@ -35,13 +35,29 @@ public final class MetaTypeInteger
     }
 
     @Override
-    public Class<?> getMetaTypeClass() {
+    public Class<TypeDescriptorInteger> getMetaTypeClass() {
         return TypeDescriptorInteger.class;
     }
 
     @Override
-    public <S> S getInstance() {
-        return (S) new TypeDescriptorInteger();
+    public TypeDescriptorInteger getInstance() {
+        return new TypeDescriptorInteger();
+    }
+
+    @Override
+    public int getMaxLength() {
+        return 0;
+    }
+
+    @Override
+    public void save(final byte[] data, final int from,
+            final TypeDescriptorInteger value) {
+        throw new UnsupportedOperationException("It's not alowed.");
+    }
+
+    @Override
+    public TypeDescriptorInteger load(final byte[] data, final int from) {
+        throw new UnsupportedOperationException("It's not alowed.");
     }
 
 }

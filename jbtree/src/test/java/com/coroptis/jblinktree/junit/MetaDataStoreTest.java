@@ -41,7 +41,7 @@ import com.google.common.io.Files;
 
 public class MetaDataStoreTest {
 
-    private MetaDataStore<Integer, String> metaDataStore;
+    private MetaDataStore metaDataStore;
 
     private File tempDirectory;
 

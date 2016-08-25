@@ -31,13 +31,8 @@ package com.coroptis.jblinktree.store;
  * </ul>
  *
  * @author jajir
- *
- * @param <K>
- *            key type
- * @param <V>
- *            value type
  */
-public interface MetaDataStore<K, V> {
+public interface MetaDataStore {
 
     /**
      * Write all meta data to file and close file.

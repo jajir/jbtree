@@ -25,6 +25,12 @@ import java.util.List;
 
 import com.coroptis.jblinktree.JblinktreeException;
 
+/**
+ * Helps convert byte code to specific typeDescriptor.
+ *
+ * @author jajir
+ *
+ */
 public final class MetaTypesResolver {
 
     static {
@@ -34,14 +40,28 @@ public final class MetaTypesResolver {
         metaTypesResolver.addMetaType(new MetaTypeInteger());
     }
 
+    /**
+     * Singleton instance.
+     */
     private static MetaTypesResolver instance;
 
-    private final List<MetaType> metaTypes;
+    /**
+     * List with meta types.
+     */
+    private final List<MetaType<?>> metaTypes;
 
+    /**
+     * Private constructor.
+     */
     private MetaTypesResolver() {
-        metaTypes = new ArrayList<MetaType>();
+        metaTypes = new ArrayList<MetaType<?>>();
     }
 
+    /**
+     * Return singleton instance.
+     *
+     * @return return MetaTypesResolver instance
+     */
     public static MetaTypesResolver getInstance() {
         if (instance == null) {
             instance = new MetaTypesResolver();
@@ -49,26 +69,51 @@ public final class MetaTypesResolver {
         return instance;
     }
 
-    public void addMetaType(final MetaType metaType) {
+    /**
+     * Allows to add meta data type.
+     *
+     * @param metaType
+     *            required meta type
+     */
+    public void addMetaType(final MetaType<?> metaType) {
         metaTypes.add(metaType);
     }
 
-    public <S> AbstractTypeDescriptorMetaData<TypeDescriptor<S>> resolve(
-            final byte code) {
-        for (final MetaType metaType : metaTypes) {
+    /**
+     * for data type identification code find meta type.
+     *
+     * @param code
+     *            data type identification code
+     * @return meta type descriptor
+     * @param <T>
+     *            type described by {@link TypeDescriptor}.
+     */
+    @SuppressWarnings("unchecked")
+    public <T> AbstractMetaType<TypeDescriptor<T>> resolve(final byte code) {
+        for (final MetaType<?> metaType : metaTypes) {
             if (code == metaType.getCode()) {
-                return (AbstractTypeDescriptorMetaData<TypeDescriptor<S>>) metaType;
+                return (AbstractMetaType<TypeDescriptor<T>>) metaType;
             }
         }
         throw new JblinktreeException(
                 "Unable to find type for code '" + code + "'");
     }
 
-    public <S> AbstractTypeDescriptorMetaData<TypeDescriptor<S>> resolve(
+    /**
+     * For given {@link TypeDescriptor} find meta descriptor.
+     *
+     * @param clazz
+     *            dataTypeDescriptor class
+     * @return meta type descriptor
+     * @param <T>
+     *            type described by {@link TypeDescriptor}.
+     */
+    @SuppressWarnings("unchecked")
+    public <T> AbstractMetaType<TypeDescriptor<T>> resolve(
             final Class<?> clazz) {
-        for (final MetaType metaType : metaTypes) {
+        for (final MetaType<?> metaType : metaTypes) {
             if (clazz.equals(metaType.getMetaTypeClass())) {
-                return (AbstractTypeDescriptorMetaData<TypeDescriptor<S>>) metaType;
+                return (AbstractMetaType<TypeDescriptor<T>>) metaType;
             }
         }
         throw new JblinktreeException(

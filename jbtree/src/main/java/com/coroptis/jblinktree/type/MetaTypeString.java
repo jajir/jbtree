@@ -29,7 +29,7 @@ import java.nio.charset.Charset;
  *
  */
 public final class MetaTypeString
-        extends AbstractTypeDescriptorMetaData<TypeDescriptorString> {
+        extends AbstractMetaType<TypeDescriptorString> {
 
     /**
      * Type descriptor for working with integers.
@@ -78,13 +78,13 @@ public final class MetaTypeString
     }
 
     @Override
-    public Class<?> getMetaTypeClass() {
+    public Class<TypeDescriptorString> getMetaTypeClass() {
         return TypeDescriptorString.class;
     }
 
     @Override
-    public <S> S getInstance() {
-        return (S) new TypeDescriptorString(1, Charset.defaultCharset());
+    public TypeDescriptorString getInstance() {
+        return new TypeDescriptorString(1, Charset.defaultCharset());
     }
 
 }

@@ -21,41 +21,23 @@ package com.coroptis.jblinktree.type;
  */
 
 /**
- * Class holding meta data about Byte data type.
+ * Abstract class for simple meta data definition.
  *
  * @author jajir
  *
+ * @param <T>
+ *            described data type
  */
-public final class MetaTypeByte extends AbstractMetaType<TypeDescriptorByte> {
+public abstract class AbstractMetaType<T>
+        implements TypeDescriptor<T>, MetaType<T> {
 
     @Override
-    public byte getCode() {
-        return MetaType.TYPE_BYTE;
-    }
-
-    @Override
-    public Class<TypeDescriptorByte> getMetaTypeClass() {
-        return TypeDescriptorByte.class;
-    }
-
-    @Override
-    public TypeDescriptorByte getInstance() {
-        return new TypeDescriptorByte();
-    }
-
-    @Override
-    public int getMaxLength() {
-        return 0;
-    }
-
-    @Override
-    public void save(final byte[] data, final int from,
-            final TypeDescriptorByte value) {
+    public final int compareValues(final T o1, final T o2) {
         throw new UnsupportedOperationException("It's not alowed.");
     }
 
     @Override
-    public TypeDescriptorByte load(final byte[] data, final int from) {
+    public final void verifyType(final Object object) {
         throw new UnsupportedOperationException("It's not alowed.");
     }
 

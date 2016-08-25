@@ -26,8 +26,10 @@ package com.coroptis.jblinktree.type;
  *
  * @author jajir
  *
+ * @param <T>
+ *            type descriptor which is defined by extended class
  */
-public interface MetaType {
+public interface MetaType<T> {
 
     /**
      * Integer type id.
@@ -55,26 +57,15 @@ public interface MetaType {
     /**
      * Return class that is described.
      *
-     *
-     * TODO ? should be parameterized
-     *
-     *
      * @return described class
      */
-    Class<?> getMetaTypeClass();
+    Class<T> getMetaTypeClass();
 
     /**
      * Return data type instance.
      *
-     * TODO should be done in same factory. Instance can't be always created
-     * without params.
-     *
-     * TODO &gt;S&lt; should be parameter of class
-     *
      * @return data type instance
-     * @param <S>
-     *            data type
      */
-    <S> S getInstance();
+    T getInstance();
 
 }

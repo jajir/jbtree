@@ -81,7 +81,7 @@ public final class NodeFileStorageImpl<K, V> implements NodeFileStorage<K, V> {
     /**
      * Meta data file storage.
      */
-    private final MetaDataStore<K, V> metaDataStore;
+    private final MetaDataStore metaDataStore;
 
     /**
      * Helping class for node.

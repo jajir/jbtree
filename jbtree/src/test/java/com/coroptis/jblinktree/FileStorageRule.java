@@ -28,8 +28,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.coroptis.jblinktree.junit.FileStorageWriteTest;
+import com.coroptis.jblinktree.store.KeyIntFileStorage;
 import com.coroptis.jblinktree.store.NodeFileStorage;
-import com.coroptis.jblinktree.store.KeyValueFileStorage;
 import com.coroptis.jblinktree.type.TypeDescriptor;
 import com.coroptis.jblinktree.type.TypeDescriptorInteger;
 import com.google.common.io.Files;
@@ -42,8 +42,8 @@ import com.google.common.io.Files;
  */
 public class FileStorageRule implements TestRule {
 
-    private final Logger logger = LoggerFactory
-            .getLogger(FileStorageWriteTest.class);
+    private final Logger logger =
+            LoggerFactory.getLogger(FileStorageWriteTest.class);
 
     private final static String FILE_NAME = "test.bin";
 
@@ -81,9 +81,8 @@ public class FileStorageRule implements TestRule {
         treeData = new JbTreeDataImpl<Integer, Integer>(0, 5, intDescriptor,
                 intDescriptor, intDescriptor);
         nodeBuilder = new JbNodeBuilderImpl<Integer, Integer>(treeData);
-        fileStorage = new KeyValueFileStorage<Integer, Integer>(
-                treeData.getNonLeafNodeDescriptor(), nodeBuilder,
-                getTempFile().getAbsolutePath());
+        fileStorage = new KeyIntFileStorage<Integer>(getTempFile(),
+                treeData.getNonLeafNodeDescriptor(), nodeBuilder);
     }
 
     public void tearDown() {
