@@ -152,11 +152,11 @@ public final class NodeImpl<K, V> implements Node<K, V> {
 
     @Override
     public boolean isEmpty() {
-        return getKeysCount() == 0;
+        return getKeyCount() == 0;
     }
 
     @Override
-    public int getKeysCount() {
+    public int getKeyCount() {
         return field.getKeyCount();
     }
 
@@ -194,7 +194,7 @@ public final class NodeImpl<K, V> implements Node<K, V> {
      * {@link JblinktreeException}.
      */
     private void couldInsertedKey() {
-        if (getKeysCount() >= field.getNodeDef().getL()) {
+        if (getKeyCount() >= field.getNodeDef().getL()) {
             throw new JblinktreeException("Leaf (" + id
                     + ") is full another value can't be inserted.");
         }
@@ -302,12 +302,12 @@ public final class NodeImpl<K, V> implements Node<K, V> {
     public void moveTopHalfOfDataTo(final Node<K, V> nodea) {
         final NodeImpl<K, V> node = (NodeImpl<K, V>) nodea;
         Preconditions.checkArgument(node.isEmpty());
-        if (getKeysCount() < 1) {
+        if (getKeyCount() < 1) {
             throw new JblinktreeException(
                     "In node " + id + " are no values to move.");
         }
         // copy top half to empty node
-        final int startIndex = getKeysCount() / 2;
+        final int startIndex = getKeyCount() / 2;
         final int length = field.getKeyCount() - startIndex;
         // TODO create field in static factory
         node.field = new FieldImpl<K, V>(length, field.getNodeDef());
@@ -517,6 +517,26 @@ public final class NodeImpl<K, V> implements Node<K, V> {
     @Override
     public Field<K, V> getField() {
         return field;
+    }
+
+    @Override
+    public K getKey(final int position) {
+        return field.getKey(position);
+    }
+
+    @Override
+    public V getValue(final int position) {
+        return field.getValue(position);
+    }
+
+    @Override
+    public void setKey(final int position,final K value) {
+        field.setKey(position, value);
+    }
+
+    @Override
+    public void setValue(final int position,final V value) {
+        field.setValue(position, value);
     }
 
 }

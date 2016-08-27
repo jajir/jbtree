@@ -106,7 +106,7 @@ public class NodeStringTest {
         logger.debug(n.toString());
 
         assertEquals("Expected number of key is invalid", pairs.length,
-                n.getKeysCount());
+                n.getKeyCount());
         assertEquals("isLeafNode value is invalid", isLeafNode, n.isLeafNode());
         List<String> keys = n.getKeys();
         for (String[] pair : pairs) {

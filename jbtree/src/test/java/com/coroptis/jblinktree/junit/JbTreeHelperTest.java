@@ -47,10 +47,9 @@ public class JbTreeHelperTest extends AbstractMockingTest {
                 EasyMock.createMock(JbDataVisitor.class);
         EasyMock.expect(treeData.getRootNodeId()).andReturn(55);
         EasyMock.expect(jbTreeService.findSmallerNode(55)).andReturn(n1);
-        EasyMock.expect(n1.getField()).andReturn(f1);
-        EasyMock.expect(f1.getKeyCount()).andReturn(1);
-        EasyMock.expect(f1.getKey(0)).andReturn(33);
-        EasyMock.expect(f1.getValue(0)).andReturn(44);
+        EasyMock.expect(n1.getKeyCount()).andReturn(1);
+        EasyMock.expect(n1.getKey(0)).andReturn(33);
+        EasyMock.expect(n1.getValue(0)).andReturn(44);
         EasyMock.expect(visitor.visited(33, 44)).andReturn(false);
 
         EasyMock.replay(mocks);

@@ -76,7 +76,7 @@ public interface Node<K, V> {
      *
      * @return number of stored keys.
      */
-    int getKeysCount();
+    int getKeyCount();
 
     /**
      * Insert or override some value in node.
@@ -225,6 +225,45 @@ public interface Node<K, V> {
      *
      * @return field object
      */
+    @Deprecated
     Field<K, V> getField();
+
+    /**
+     * Get key from specific position.
+     *
+     * @param position
+     *            required key position
+     * @return key
+     */
+    K getKey(int position);
+
+    /**
+     * Get value from specific position.
+     *
+     * @param position
+     *            required value position
+     * @return value
+     */
+    V getValue(int position);
+
+    /**
+     * Allows to set key at specific position.
+     *
+     * @param position
+     *            required position
+     * @param value
+     *            required key
+     */
+    void setKey(int position, K value);
+
+    /**
+     * Allows to set value at specific position.
+     *
+     * @param position
+     *            required position
+     * @param value
+     *            required value
+     */
+    void setValue(int position, V value);
 
 }

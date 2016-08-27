@@ -94,9 +94,9 @@ public final class JbTreeHelperImpl<K, V> implements JbTreeHelper<K, V> {
     @Override
     public V insertToLeafNode(final Node<K, V> currentNode, final K key,
             final V value, final JbStack stack) {
-        if (currentNode.getKeysCount() >= treeData.getL()) {
-            final Node<K, V> newNode =
-                    storeSplitLeafNode(currentNode, key, value);
+        if (currentNode.getKeyCount() >= treeData.getL()) {
+            final Node<K, V> newNode = storeSplitLeafNode(currentNode, key,
+                    value);
             if (stack.isEmpty()) {
                 splitRootNode(currentNode, newNode);
                 return null;
@@ -138,9 +138,9 @@ public final class JbTreeHelperImpl<K, V> implements JbTreeHelper<K, V> {
         Integer tmpValue = value;
         K tmpKey = key;
         while (true) {
-            if (currentNode.getKeysCount() >= treeData.getL()) {
-                final Node<K, Integer> newNode =
-                        storeSplitNonLeafNode(currentNode, tmpKey, tmpValue);
+            if (currentNode.getKeyCount() >= treeData.getL()) {
+                final Node<K, Integer> newNode = storeSplitNonLeafNode(
+                        currentNode, tmpKey, tmpValue);
                 if (stack.isEmpty()) {
                     splitRootNode((Node<K, V>) currentNode,
                             (Node<K, V>) newNode);
@@ -176,8 +176,8 @@ public final class JbTreeHelperImpl<K, V> implements JbTreeHelper<K, V> {
      */
     private Node<K, V> storeSplitLeafNode(final Node<K, V> currentNode,
             final K key, final V value) {
-        final Node<K, V> newNode =
-                treeTool.splitLeafNode(currentNode, key, value);
+        final Node<K, V> newNode = treeTool.splitLeafNode(currentNode, key,
+                value);
         nodeStore.writeNode(newNode);
         nodeStore.writeNode(currentNode);
         return newNode;
@@ -197,8 +197,8 @@ public final class JbTreeHelperImpl<K, V> implements JbTreeHelper<K, V> {
     private Node<K, Integer> storeSplitNonLeafNode(
             final Node<K, Integer> currentNode, final K key,
             final Integer value) {
-        final Node<K, Integer> newNode =
-                treeTool.splitNonLeafNode(currentNode, key, value);
+        final Node<K, Integer> newNode = treeTool.splitNonLeafNode(currentNode,
+                key, value);
         nodeStore.writeNode(newNode);
         nodeStore.writeNode(currentNode);
         return newNode;
@@ -235,19 +235,19 @@ public final class JbTreeHelperImpl<K, V> implements JbTreeHelper<K, V> {
 
     @Override
     public void visit(final JbDataVisitor<K, V> dataVisitor) {
-        Node<K, V> currentNode =
-                treeService.findSmallerNode(treeData.getRootNodeId());
+        Node<K, V> currentNode = treeService
+                .findSmallerNode(treeData.getRootNodeId());
         while (true) {
-            Field<K, V> f = currentNode.getField();
-            for (int i = 0; i < f.getKeyCount(); i++) {
-                if (!dataVisitor.visited(f.getKey(i), f.getValue(i))) {
+            for (int i = 0; i < currentNode.getKeyCount(); i++) {
+                if (!dataVisitor.visited(currentNode.getKey(i),
+                        currentNode.getValue(i))) {
                     return;
                 }
             }
-            if (Node.EMPTY_INT.equals(f.getLink())) {
+            if (Node.EMPTY_INT.equals(currentNode.getLink())) {
                 return;
             } else {
-                currentNode = nodeStore.get(f.getLink());
+                currentNode = nodeStore.get(currentNode.getLink());
             }
         }
     }

@@ -99,7 +99,7 @@ public final class JbTreeServiceImpl<K, V> implements JbTreeService<K, V> {
             if (node.isLeafNode()) {
                 return node;
             } else {
-                currentNodeId = (Integer) node.getField().getValue(0);
+                currentNodeId = (Integer) node.getValue(0);
             }
         }
     }

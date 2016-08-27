@@ -64,14 +64,13 @@ public final class NodeConverterImpl<K, V> implements NodeConverter<K, V> {
     @Override
     public Node<K, Integer> convertToKeyInt(final Node<K, V> node) {
         byte[] b = new byte[treeData.getNonLeafNodeDescriptor()
-                .getFieldActualLength(node.getKeysCount())];
+                .getFieldActualLength(node.getKeyCount())];
         b[0] = Node.M;
         Node<K, Integer> out = nodeBuilder.makeNode(node.getId(), b,
                 treeData.getNonLeafNodeDescriptor());
         Preconditions.checkState(out.isLeafNode());
-        Field<K, V> f = node.getField();
-        for (int i = 0; i < f.getKeyCount(); i++) {
-            out.getField().setKey(i, f.getKey(i));
+        for (int i = 0; i < node.getKeyCount(); i++) {
+            out.setKey(i, node.getKey(i));
         }
         out.setLink(node.getLink());
         return out;
@@ -80,13 +79,12 @@ public final class NodeConverterImpl<K, V> implements NodeConverter<K, V> {
     @Override
     public Node<K, V> convertToKeyValue(final Node<K, Integer> node) {
         byte[] b = new byte[treeData.getLeafNodeDescriptor()
-                .getFieldActualLength(node.getKeysCount())];
+                .getFieldActualLength(node.getKeyCount())];
         b[0] = Node.M;
         Node<K, V> out = nodeBuilder.makeNode(node.getId(), b);
         Preconditions.checkState(out.isLeafNode());
-        Field<K, Integer> f = node.getField();
-        for (int i = 0; i < f.getKeyCount(); i++) {
-            out.getField().setKey(i, f.getKey(i));
+        for (int i = 0; i < node.getKeyCount(); i++) {
+            out.setKey(i, node.getKey(i));
         }
         out.setLink(node.getLink());
         return out;

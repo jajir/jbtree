@@ -76,6 +76,7 @@ import com.coroptis.jblinktree.type.TypeDescriptorInteger;
  *            value type
  *
  */
+@Deprecated
 public final class FieldImpl<K, V> implements Field<K, V> {
 
     /**

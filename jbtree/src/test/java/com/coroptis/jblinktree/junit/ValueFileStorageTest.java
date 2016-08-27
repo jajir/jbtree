@@ -52,9 +52,8 @@ public class ValueFileStorageTest extends AbstractMockingTest {
     public void test_read_and_write() throws Exception {
         EasyMock.expect(n4.isLeafNode()).andReturn(true);
         EasyMock.expect(n4.getId()).andReturn(0);
-        EasyMock.expect(n4.getField()).andReturn(f4);
-        EasyMock.expect(f4.getKeyCount()).andReturn(1).times(2);
-        EasyMock.expect(f4.getValue(0)).andReturn("Ahoj lidi");
+        EasyMock.expect(n4.getKeyCount()).andReturn(1).times(2);
+        EasyMock.expect(n4.getValue(0)).andReturn("Ahoj lidi");
         EasyMock.replay(mocks);
 
         valueStorage.storeValues(n4);
@@ -78,8 +77,7 @@ public class ValueFileStorageTest extends AbstractMockingTest {
     public void test_read_invalid_nodeId() throws Exception {
         EasyMock.expect(n4.isLeafNode()).andReturn(true);
         EasyMock.expect(n4.getId()).andReturn(10);
-        EasyMock.expect(n4.getField()).andReturn(f4);
-        EasyMock.expect(f4.getKeyCount()).andReturn(1);
+        EasyMock.expect(n4.getKeyCount()).andReturn(1);
         EasyMock.replay(mocks);
         try {
             valueStorage.loadValues(n4);

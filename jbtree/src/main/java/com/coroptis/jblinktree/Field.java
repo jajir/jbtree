@@ -36,6 +36,7 @@ package com.coroptis.jblinktree;
  * @author jajir
  *
  */
+@Deprecated
 public interface Field<K, V> {
 
     /**

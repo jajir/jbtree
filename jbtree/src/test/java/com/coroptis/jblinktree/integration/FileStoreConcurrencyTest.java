@@ -107,7 +107,7 @@ public class FileStoreConcurrencyTest {
             if (read) {
                 Node<Integer, Integer> node = fsRule.getFileStorage()
                         .load(integer);
-                assertEquals(1, node.getKeysCount());
+                assertEquals(1, node.getKeyCount());
             } else {
                 fsRule.getFileStorage().store(getNode(integer));
             }

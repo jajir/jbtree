@@ -131,7 +131,7 @@ public class NodeTest {
 
         logger.debug(n.toString());
 
-        assertEquals(3, n.getKeysCount());
+        assertEquals(3, n.getKeyCount());
         assertFalse("it's non leaf node", n.isLeafNode());
         List<Integer> keys = n.getKeys();
         assertTrue(keys.contains(1));
@@ -153,7 +153,7 @@ public class NodeTest {
 
         logger.debug(n.toString());
 
-        assertEquals(3, n.getKeysCount());
+        assertEquals(3, n.getKeyCount());
         assertFalse("it's non leaf node", n.isLeafNode());
         List<Integer> keys = n.getKeys();
         assertTrue(keys.contains(1));
@@ -173,7 +173,7 @@ public class NodeTest {
 
         logger.debug(n.toString());
 
-        assertEquals(2, n.getKeysCount());
+        assertEquals(2, n.getKeyCount());
         assertFalse("it's non leaf node", n.isLeafNode());
         List<Integer> keys = n.getKeys();
         assertTrue(keys.contains(3));
@@ -304,7 +304,7 @@ public class NodeTest {
         /**
          * First node
          */
-        assertEquals("key count is not correct", 1, node.getKeysCount());
+        assertEquals("key count is not correct", 1, node.getKeyCount());
         assertTrue(node.isLeafNode());
         List<Integer> keys = node.getKeys();
         assertTrue(keys.contains(1));
@@ -314,7 +314,7 @@ public class NodeTest {
         /**
          * Second node
          */
-        assertEquals(1, node2.getKeysCount());
+        assertEquals(1, node2.getKeyCount());
         keys = node2.getKeys();
         assertTrue(keys.contains(2));
         assertTrue("target node should be leaf", node2.isLeafNode());
@@ -340,7 +340,7 @@ public class NodeTest {
         Node<Integer, Integer> n = nr.makeNodeFromIntegers(10,
                 new Integer[] { 0, 1, 1, 2, 5, 9, -1 });
         logger.debug("node  " + n.toString());
-        assertEquals("key count is not correct", 3, n.getKeysCount());
+        assertEquals("key count is not correct", 3, n.getKeyCount());
 
         NodeImpl<Integer, Integer> node2 = new NodeImpl<Integer, Integer>(11,
                 true, nr.getTreeData().getLeafNodeDescriptor());
@@ -351,7 +351,7 @@ public class NodeTest {
         /**
          * First node
          */
-        assertEquals("key count is not correct", 1, n.getKeysCount());
+        assertEquals("key count is not correct", 1, n.getKeyCount());
         assertFalse(n.isLeafNode());
         List<Integer> keys = n.getKeys();
         assertTrue(keys.contains(1));
@@ -361,7 +361,7 @@ public class NodeTest {
         /**
          * Second node
          */
-        assertEquals(2, node2.getKeysCount());
+        assertEquals(2, node2.getKeyCount());
         keys = node2.getKeys();
         assertTrue(keys.contains(2));
         assertFalse(node2.isLeafNode());
@@ -382,7 +382,7 @@ public class NodeTest {
             assertTrue(true);
         }
 
-        assertEquals(2, node.getKeysCount());
+        assertEquals(2, node.getKeyCount());
         assertFalse(node.isEmpty());
         assertTrue(node.isLeafNode());
         List<Integer> keys = node.getKeys();
@@ -493,7 +493,7 @@ public class NodeTest {
         logger.debug(n.toString());
 
         assertEquals("Expected number of key is invalid", pairs.length,
-                n.getKeysCount());
+                n.getKeyCount());
         assertEquals("isLeafNode value is invalid", isLeafNode, n.isLeafNode());
         List<Integer> keys = n.getKeys();
         for (Integer[] pair : pairs) {
@@ -520,7 +520,7 @@ public class NodeTest {
         Node<Integer, Integer> n = nr.makeNodeFromIntegers(2,
                 new Integer[] { -77, 10, 1, 10, -1 });
 
-        assertEquals(2, n.getKeysCount());
+        assertEquals(2, n.getKeyCount());
     }
 
     @Test
@@ -528,7 +528,7 @@ public class NodeTest {
         Node<Integer, Integer> n = new NodeImpl<Integer, Integer>(10, true,
                 nr.getTreeData().getLeafNodeDescriptor());
 
-        assertEquals(0, n.getKeysCount());
+        assertEquals(0, n.getKeyCount());
     }
 
     @Test
@@ -536,7 +536,7 @@ public class NodeTest {
         Node<Integer, Integer> n = nr.makeNodeFromIntegers(2,
                 new Integer[] { 0, 2, 1, 3, 23 });
 
-        assertEquals(2, n.getKeysCount());
+        assertEquals(2, n.getKeyCount());
     }
 
     @Test
@@ -544,7 +544,7 @@ public class NodeTest {
         Node<Integer, Integer> n = nr.makeNodeFromIntegers(2,
                 new Integer[] { 0, 2, 23 });
 
-        assertEquals(1, n.getKeysCount());
+        assertEquals(1, n.getKeyCount());
     }
 
     @Test
@@ -552,7 +552,7 @@ public class NodeTest {
         Node<Integer, Integer> n = new NodeImpl<Integer, Integer>(10, false,
                 nr.getTreeData().getLeafNodeDescriptor());
 
-        assertEquals(0, n.getKeysCount());
+        assertEquals(0, n.getKeyCount());
     }
 
     @Test

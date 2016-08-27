@@ -110,10 +110,9 @@ public final class ValueFileStorageImpl<K, V>
         verifyLeafNode(node);
         try {
             raf.seek(filePosition(node.getId()));
-            Field<K, V> field = node.getField();
             byte[] data = new byte[valueTypeDescriptor.getMaxLength()];
-            for (int i = 0; i < field.getKeyCount(); i++) {
-                valueTypeDescriptor.save(data, 0, field.getValue(i));
+            for (int i = 0; i < node.getKeyCount(); i++) {
+                valueTypeDescriptor.save(data, 0, node.getValue(i));
                 raf.write(data);
             }
         } catch (IOException e) {
@@ -126,11 +125,10 @@ public final class ValueFileStorageImpl<K, V>
         verifyLeafNode(node);
         try {
             raf.seek(filePosition(node.getId()));
-            Field<K, V> field = node.getField();
             byte[] data = new byte[valueTypeDescriptor.getMaxLength()];
-            for (int i = 0; i < field.getKeyCount(); i++) {
+            for (int i = 0; i < node.getKeyCount(); i++) {
                 raf.readFully(data);
-                field.setValue(i, valueTypeDescriptor.load(data, 0));
+                node.setValue(i, valueTypeDescriptor.load(data, 0));
             }
             return node;
         } catch (IOException e) {

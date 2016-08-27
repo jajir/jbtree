@@ -40,7 +40,7 @@ class JbTreeVisitorRecordCounter<K, V> implements JbTreeVisitor<K, V> {
     @Override
     public boolean visitedLeaf(final Node<K, V> node) {
         if (node.isLeafNode()) {
-            count += node.getKeysCount();
+            count += node.getKeyCount();
         }
         return true;
     }
@@ -48,7 +48,7 @@ class JbTreeVisitorRecordCounter<K, V> implements JbTreeVisitor<K, V> {
     @Override
     public boolean visitedNonLeaf(final Node<K, Integer> node) {
         if (node.isLeafNode()) {
-            count += node.getKeysCount();
+            count += node.getKeyCount();
         }
         return true;
     }

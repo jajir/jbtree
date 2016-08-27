@@ -96,7 +96,7 @@ public final class KeyIntFileStorage<K> implements NodeFileStorage<K, Integer> {
     public void store(final Node<K, Integer> node) {
         try {
             raf.seek(getPosition(node.getId()));
-            raf.writeByte(node.getKeysCount());
+            raf.writeByte(node.getKeyCount());
             byte[] bytes = node.getFieldBytes();
             if (bytes.length < nodeDef.getFieldMaxLength()) {
                 // add zeros to record

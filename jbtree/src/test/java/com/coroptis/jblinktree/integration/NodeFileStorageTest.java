@@ -58,8 +58,8 @@ public class NodeFileStorageTest {
 
         for (int i = 0; i < 10; i++) {
             Node<String, String> n = storage.load(i);
-            assertEquals("Ahoj lidi!" + i, n.getField().getKey(0));
-            assertEquals("Jde to!" + i, n.getField().getValue(0));
+            assertEquals("Ahoj lidi!" + i, n.getKey(0));
+            assertEquals("Jde to!" + i, n.getValue(0));
             assertEquals(Integer.valueOf(-i * 100), n.getLink());
         }
     }
