@@ -62,20 +62,21 @@ public class JbTreeTraversingServiceTest extends AbstractMockingTest {
     public void test_moveRightNonLeafNode_nextNodeId_isNotCurrentLink()
             throws Exception {
         EasyMock.expect(n1.isLeafNode()).andReturn(false);
-        EasyMock.expect(n1.getCorrespondingNodeId(10)).andReturn(4);
+        EasyMock.expect(nodeService.getCorrespondingNodeId(n1, 10))
+                .andReturn(4);
         EasyMock.expect(n1.getLink()).andReturn(12);
-        EasyMock.replay(mocks);
+        replay();
         Node<Integer, Integer> ret = tested.moveRightNonLeafNode(n1, 10);
 
         assertEquals(n1, ret);
-        EasyMock.verify(mocks);
+        verify();
     }
 
     @Test
     public void test_moveRightNonLeafNode_nextNodeId_isEmptyLink()
             throws Exception {
         EasyMock.expect(n1.isLeafNode()).andReturn(false);
-        EasyMock.expect(n1.getCorrespondingNodeId(10))
+        EasyMock.expect(nodeService.getCorrespondingNodeId(n1, 10))
                 .andReturn(NodeImpl.EMPTY_INT);
         EasyMock.replay(mocks);
         Node<Integer, Integer> ret = tested.moveRightNonLeafNode(n1, 10);
@@ -88,11 +89,13 @@ public class JbTreeTraversingServiceTest extends AbstractMockingTest {
     @Test
     public void test_moveRightNonLeafNode_move() throws Exception {
         EasyMock.expect(n1.isLeafNode()).andReturn(false);
-        EasyMock.expect(n1.getCorrespondingNodeId(10)).andReturn(4);
+        EasyMock.expect(nodeService.getCorrespondingNodeId(n1, 10))
+                .andReturn(4);
         EasyMock.expect(n1.getLink()).andReturn(4);
 
         EasyMock.expect(treeTool.moveToNextNode(n1, 4)).andReturn((Node) n2);
-        EasyMock.expect(n2.getCorrespondingNodeId(10)).andReturn(12);
+        EasyMock.expect(nodeService.getCorrespondingNodeId(n2, 10))
+                .andReturn(12);
         EasyMock.expect(n2.getLink()).andReturn(60);
         EasyMock.replay(mocks);
         Node<Integer, Integer> ret = tested.moveRightNonLeafNode(n1, 10);
@@ -147,7 +150,8 @@ public class JbTreeTraversingServiceTest extends AbstractMockingTest {
     @Before
     public void setUp() throws Exception {
         super.setUp();
-        tested = new JbTreeTraversingServiceImpl<Integer, Integer>(treeTool);
+        tested = new JbTreeTraversingServiceImpl<Integer, Integer>(treeTool,
+                nodeService);
     }
 
     @Override

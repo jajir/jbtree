@@ -139,10 +139,10 @@ public class NodeTest {
         assertEquals(Integer.valueOf(98), n.getLink());
         assertEquals("non-leaf nodes should preserver it's max key",
                 Integer.valueOf(4), n.getMaxKey());
-        assertEquals(Integer.valueOf(0), n.getCorrespondingNodeId(1));
-        assertEquals(Integer.valueOf(1), n.getCorrespondingNodeId(3));
-        assertEquals(Integer.valueOf(-40), n.getCorrespondingNodeId(4));
-        assertEquals(Integer.valueOf(98), n.getCorrespondingNodeId(5));
+        assertEquals(Integer.valueOf(0), n.getValueByKey(1));
+        assertEquals(Integer.valueOf(1), n.getValueByKey(3));
+        assertEquals(Integer.valueOf(-40), n.getValueByKey(4));
+        assertEquals(null, n.getValueByKey(5));
     }
 
     @Test
@@ -160,9 +160,9 @@ public class NodeTest {
         assertTrue(keys.contains(2));
         assertTrue(keys.contains(4));
         assertEquals(Integer.valueOf(-1), n.getLink());
-        assertEquals(Integer.valueOf(0), n.getCorrespondingNodeId(1));
-        assertEquals(Integer.valueOf(1), n.getCorrespondingNodeId(2));
-        assertEquals(Integer.valueOf(3), n.getCorrespondingNodeId(4));
+        assertEquals(Integer.valueOf(0), n.getValueByKey(1));
+        assertEquals(Integer.valueOf(1), n.getValueByKey(2));
+        assertEquals(Integer.valueOf(3), n.getValueByKey(4));
     }
 
     @Test
@@ -179,8 +179,8 @@ public class NodeTest {
         assertTrue(keys.contains(3));
         assertTrue(keys.contains(4));
         assertEquals(Integer.valueOf(0), n.getLink());
-        assertEquals(Integer.valueOf(0), n.getCorrespondingNodeId(4));
-        assertEquals(Integer.valueOf(-30), n.getCorrespondingNodeId(3));
+        assertEquals(Integer.valueOf(0), n.getValueByKey(4));
+        assertEquals(Integer.valueOf(-30), n.getValueByKey(3));
     }
 
     @Test(expected = NullPointerException.class)
@@ -412,33 +412,6 @@ public class NodeTest {
     }
 
     @Test
-    public void test_getCorrespondingNodeId_return_link() throws Exception {
-        Node<Integer, Integer> n = nr.makeNodeFromIntegers(2,
-                new Integer[] { 0, 1, 2, 3, 33 });
-
-        logger.debug(n.toString());
-
-        Integer nodeId = n.getCorrespondingNodeId(4);
-
-        assertNotNull("node id can't be null", nodeId);
-        assertEquals("node id should be different", Integer.valueOf(33),
-                nodeId);
-    }
-
-    @Test
-    public void test_getCorrespondingNodeId_simple() throws Exception {
-        Node<Integer, Integer> n = nr.makeNodeFromIntegers(2,
-                new Integer[] { 0, 2, 1, 3, 23 });
-
-        logger.debug(n.toString());
-
-        Integer nodeId = n.getCorrespondingNodeId(3);
-
-        assertNotNull("node id can't be null", nodeId);
-        assertEquals("node id should be different", Integer.valueOf(1), nodeId);
-    }
-
-    @Test
     public void test_updateNodeValue_value_was_updated() throws Exception {
         Node<Integer, Integer> n = nr.makeNodeFromIntegers(2,
                 new Integer[] { 0, 2, 1, 3, 23 });
@@ -501,11 +474,7 @@ public class NodeTest {
             final Integer value = pair[1];
             assertTrue("keys should contains key " + pair[0],
                     keys.contains(pair[0]));
-            if (isLeafNode) {
-                assertEquals(value, n.getValueByKey(key));
-            } else {
-                assertEquals(value, n.getCorrespondingNodeId(key));
-            }
+            assertEquals(value, n.getValueByKey(key));
         }
         assertEquals("Node link is invalid", expectedNodeLink, n.getLink());
         if (pairs.length > 0) {

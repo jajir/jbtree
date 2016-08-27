@@ -57,6 +57,11 @@ public final class JbTreeToolImpl<K, V> implements JbTreeTool<K, V> {
     private final JbTreeData<K, V> treeData;
 
     /**
+     * Node service.
+     */
+    private final JbNodeService<K, V> nodeService;
+
+    /**
      * Default constructor.
      *
      * @param initNodeStore
@@ -65,13 +70,17 @@ public final class JbTreeToolImpl<K, V> implements JbTreeTool<K, V> {
      *            required tree data descriptor
      * @param initNodeBuilder
      *            required node builder
+     * @param jbNodeService
+     *            node service
      */
     public JbTreeToolImpl(final NodeStore<K> initNodeStore,
             final JbTreeData<K, V> jbTreeData,
-            final JbNodeBuilder<K, V> initNodeBuilder) {
+            final JbNodeBuilder<K, V> initNodeBuilder,
+            final JbNodeService<K, V> jbNodeService) {
         this.nodeStore = Preconditions.checkNotNull(initNodeStore);
         this.treeData = Preconditions.checkNotNull(jbTreeData);
-        this.nodeBuilder = initNodeBuilder;
+        this.nodeBuilder = Preconditions.checkNotNull(initNodeBuilder);
+        this.nodeService = Preconditions.checkNotNull(jbNodeService);
         keyTypeDescriptor =
                 jbTreeData.getNonLeafNodeDescriptor().getKeyTypeDescriptor();
     }
@@ -110,15 +119,16 @@ public final class JbTreeToolImpl<K, V> implements JbTreeTool<K, V> {
             final Integer rootNodeId) {
         Node<K, Integer> currentNode = nodeStore.get(rootNodeId);
         while (!currentNode.isLeafNode()) {
-            Integer nextNodeId = currentNode.getCorrespondingNodeId(key);
+            Integer nextNodeId =
+                    nodeService.getCorrespondingNodeId(currentNode, key);
             if (NodeImpl.EMPTY_INT.equals(nextNodeId)) {
                 /**
                  * This is rightmost node and next link is <code>null</code> so
                  * use node id associated with bigger key.
                  */
                 stack.push(currentNode.getId());
-                nextNodeId = currentNode
-                        .getCorrespondingNodeId(currentNode.getMaxKey());
+                nextNodeId = nodeService.getCorrespondingNodeId(currentNode,
+                        currentNode.getMaxKey());
                 if (NodeImpl.EMPTY_INT.equals(nextNodeId)) {
                     throw new JblinktreeException(
                             "There is no node id for max value '"

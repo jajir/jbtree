@@ -41,13 +41,22 @@ public final class JbTreeTraversingServiceImpl<K, V>
     private final JbTreeTool<K, V> treeTool;
 
     /**
+     * Node service.
+     */
+    private final JbNodeService<K, V> nodeService;
+
+    /**
      * Simple constructor.
      *
      * @param initTreeTool
      *            required tree tool
+     * @param jbNodeService
+     *            node service
      */
-    public JbTreeTraversingServiceImpl(final JbTreeTool<K, V> initTreeTool) {
+    public JbTreeTraversingServiceImpl(final JbTreeTool<K, V> initTreeTool,
+            final JbNodeService<K, V> jbNodeService) {
         this.treeTool = Preconditions.checkNotNull(initTreeTool);
+        this.nodeService = Preconditions.checkNotNull(jbNodeService);
     }
 
     @Override
@@ -61,11 +70,11 @@ public final class JbTreeTraversingServiceImpl<K, V>
                     "method is for non-leaf nodes, but given node is leaf: "
                             + current.toString());
         }
-        Integer nextNodeId = current.getCorrespondingNodeId(key);
+        Integer nextNodeId = nodeService.getCorrespondingNodeId(current, key);
         while (!NodeImpl.EMPTY_INT.equals(nextNodeId)
                 && nextNodeId.equals(current.getLink())) {
             current = treeTool.moveToNextNode(current, nextNodeId);
-            nextNodeId = current.getCorrespondingNodeId(key);
+            nextNodeId = nodeService.getCorrespondingNodeId(current, key);
         }
         return current;
     }

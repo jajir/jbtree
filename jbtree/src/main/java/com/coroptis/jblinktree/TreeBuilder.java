@@ -280,10 +280,12 @@ public final class TreeBuilder {
             nodeStore = new NodeStoreInFile<K, V>(nodeBuilder,
                     nodeStoreInFileBuilder.getNoOfCachedNodes(), fileStorage);
         }
-        final JbTreeTool<K, V> jbTreeTool =
-                new JbTreeToolImpl<K, V>(nodeStore, treeData, nodeBuilder);
+        final JbNodeService<K, V> jbNodeService = new JbNodeServiceImpl<K, V>();
+        final JbTreeTool<K, V> jbTreeTool = new JbTreeToolImpl<K, V>(nodeStore,
+                treeData, nodeBuilder, jbNodeService);
         final JbTreeTraversingService<K, V> treeLockingTool =
-                new JbTreeTraversingServiceImpl<K, V>(jbTreeTool);
+                new JbTreeTraversingServiceImpl<K, V>(jbTreeTool,
+                        jbNodeService);
         final JbTreeService<K, V> treeService =
                 new JbTreeServiceImpl<K, V>(nodeStore, treeLockingTool);
         final JbTreeHelper<K, V> jbTreeHelper = new JbTreeHelperImpl<K, V>(

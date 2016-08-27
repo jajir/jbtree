@@ -20,8 +20,7 @@ package com.coroptis.jblinktree.junit;
  * #L%
  */
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 import java.nio.charset.Charset;
 import java.util.List;
@@ -117,7 +116,7 @@ public class NodeStringTest {
             if (isLeafNode) {
                 assertEquals(value, n.getValueByKey(key));
             } else {
-                assertEquals(value, n.getCorrespondingNodeId(key));
+                fail("it's not leaf node.");
             }
         }
         assertEquals("Node link is invalid", expectedNodeLink, n.getLink());

@@ -22,14 +22,15 @@ package com.coroptis.jblinktree.junit;
 
 import org.easymock.EasyMock;
 
+import com.coroptis.jblinktree.Field;
+import com.coroptis.jblinktree.JbNodeBuilder;
+import com.coroptis.jblinktree.JbNodeService;
 import com.coroptis.jblinktree.JbTreeData;
 import com.coroptis.jblinktree.JbTreeHelper;
 import com.coroptis.jblinktree.JbTreeService;
 import com.coroptis.jblinktree.JbTreeTool;
 import com.coroptis.jblinktree.JbTreeTraversingService;
 import com.coroptis.jblinktree.Node;
-import com.coroptis.jblinktree.Field;
-import com.coroptis.jblinktree.JbNodeBuilder;
 import com.coroptis.jblinktree.NodeStore;
 
 /**
@@ -57,11 +58,14 @@ public abstract class AbstractMockingTest {
     protected Node<Integer, Integer> n1, n2, n3;
     protected Node<Integer, String> n4;
 
+    //FIXME remove fields
     protected Field<Integer, Integer> f1, f2, f3;
 
     protected Field<Integer, String> f4;
 
     protected JbNodeBuilder<Integer, Integer> builder;
+
+    protected JbNodeService<Integer, Integer> nodeService;
 
     protected Object[] mocks;
 
@@ -82,11 +86,12 @@ public abstract class AbstractMockingTest {
         jbTreeService = EasyMock.createMock(JbTreeService.class);
         treeHelper = EasyMock.createMock(JbTreeHelper.class);
         treeData = EasyMock.createMock(JbTreeData.class);
+        nodeService = EasyMock.createMock(JbNodeService.class);
         treeTraversingService =
                 EasyMock.createMock(JbTreeTraversingService.class);
         mocks = new Object[] { nodeStore, nodeBuilder, treeTool, n1, n2, n3, n4,
                 f1, f2, f3, f4, builder, jbTreeService, treeHelper, treeData,
-                treeTraversingService };
+                treeTraversingService, nodeService };
     }
 
     protected void tearDown() throws Exception {
@@ -102,6 +107,17 @@ public abstract class AbstractMockingTest {
         nodeStore = null;
         builder = null;
         mocks = null;
+        nodeService = null;
+    }
+
+    protected void replay(final Object... otherMocks) {
+        EasyMock.replay(mocks);
+        EasyMock.replay(otherMocks);
+    }
+
+    protected void verify(final Object... otherMocks) {
+        EasyMock.verify(mocks);
+        EasyMock.verify(otherMocks);
     }
 
 }

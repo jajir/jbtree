@@ -19,7 +19,10 @@ package com.coroptis.jblinktree.junit;
  * limitations under the License.
  * #L%
  */
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
 
 import org.easymock.EasyMock;
 import org.junit.After;
@@ -53,20 +56,20 @@ public class JbTreeToolTest extends AbstractMockingTest {
         EasyMock.expect(n1.getLink()).andReturn(4);
         EasyMock.expect(n1.isEmpty()).andReturn(false);
         EasyMock.expect(n1.getMaxKey()).andReturn(7).times(2);
-        EasyMock.replay(mocks);
+        replay();
 
         boolean ret = tested.canMoveToNextNode(n1, 12);
-        EasyMock.verify(mocks);
+        verify();
         assertTrue(ret);
     }
 
     @Test
     public void test_canMoveToNextNode_empty_link() throws Exception {
         EasyMock.expect(n1.getLink()).andReturn(NodeImpl.EMPTY_INT);
-        EasyMock.replay(mocks);
+        replay();
 
         boolean ret = tested.canMoveToNextNode(n1, 12);
-        EasyMock.verify(mocks);
+        verify();
         assertFalse(ret);
     }
 
@@ -74,10 +77,10 @@ public class JbTreeToolTest extends AbstractMockingTest {
     public void test_canMoveToNextNodenodeIsEmpty() throws Exception {
         EasyMock.expect(n1.getLink()).andReturn(4);
         EasyMock.expect(n1.isEmpty()).andReturn(true);
-        EasyMock.replay(mocks);
+        replay();
 
         boolean ret = tested.canMoveToNextNode(n1, 12);
-        EasyMock.verify(mocks);
+        verify();
         assertTrue(ret);
     }
 
@@ -89,40 +92,43 @@ public class JbTreeToolTest extends AbstractMockingTest {
         EasyMock.expect(n1.getId()).andReturn(2);
         EasyMock.expect(n1.isLeafNode()).andReturn(false);
 
-        EasyMock.expect(n1.getCorrespondingNodeId(12)).andReturn(60);
+        EasyMock.expect(nodeService.getCorrespondingNodeId(n1, 12))
+                .andReturn(60);
         EasyMock.expect(n1.getLink()).andReturn(98);
 
         EasyMock.expect(nodeStore.get(60)).andReturn((Node) n2);
         EasyMock.expect(n2.isLeafNode()).andReturn(true);
         EasyMock.expect(n2.getId()).andReturn(62);
 
-        EasyMock.replay(nodeStore, treeTool, n1, n2);
+        replay();
         Integer ret = tested.findLeafNodeId(12, stack, 2);
 
         assertEquals(Integer.valueOf(62), ret);
-        EasyMock.verify(nodeStore, treeTool, n1, n2);
+        verify();
     }
 
     @Test(expected = JblinktreeException.class)
     public void test_moveRightLeafNodeWithoutLocking_nonLeafNode()
             throws Exception {
         EasyMock.expect(n1.isLeafNode()).andReturn(false);
-        EasyMock.replay(nodeStore, treeTool, n1, n2);
+
+        replay();
         tested.moveRightLeafNodeWithoutLocking(n1, 13);
 
-        EasyMock.verify(nodeStore, treeTool, n1, n2);
+        verify();
     }
 
     @Test
     public void test_moveRightLeafNodeWithoutLocking() throws Exception {
         EasyMock.expect(n1.isLeafNode()).andReturn(true);
         EasyMock.expect(n1.getLink()).andReturn(Node.EMPTY_INT);
-        EasyMock.replay(nodeStore, treeTool, n1, n2);
+
+        replay();
         Node<Integer, Integer> ret =
                 tested.moveRightLeafNodeWithoutLocking(n1, 13);
 
         assertSame(ret, n1);
-        EasyMock.verify(nodeStore, treeTool, n1, n2);
+        verify();
     }
 
     @Override
@@ -132,7 +138,8 @@ public class JbTreeToolTest extends AbstractMockingTest {
         TypeDescriptor<Integer> tdInt = new TypeDescriptorInteger();
         JbTreeData<Integer, Integer> td =
                 new JbTreeDataImpl<Integer, Integer>(0, 3, tdInt, tdInt, tdInt);
-        tested = new JbTreeToolImpl<Integer, Integer>(nodeStore, td, builder);
+        tested = new JbTreeToolImpl<Integer, Integer>(nodeStore, td, builder,
+                nodeService);
     }
 
     @Override

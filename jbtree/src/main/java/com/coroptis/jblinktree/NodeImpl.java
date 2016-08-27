@@ -373,31 +373,8 @@ public final class NodeImpl<K, V> implements Node<K, V> {
     }
 
     @Override
-    public Integer getCorrespondingNodeId(final K key) {
-        if (isLeafNode()) {
-            throw new JblinktreeException(
-                    "Leaf node '" + id + "' doesn't have any child nodes.");
-        }
-        if (isEmpty()) {
-            return getLink();
-        }
-        for (int i = 0; i < field.getKeyCount(); i++) {
-            if (field.getNodeDef().getKeyTypeDescriptor().compareValues(key,
-                    field.getKey(i)) <= 0) {
-                // TODO re-typing should be implicit
-                return (Integer) field.getValue(i);
-            }
-        }
-        return getLink();
-    }
-
-    @Override
     public V getValueByKey(final K key) {
         Preconditions.checkNotNull(key);
-        if (!isLeafNode()) {
-            throw new JblinktreeException(
-                    "Non-leaf node '" + id + "' doesn't have leaf value.");
-        }
         for (int i = 0; i < field.getKeyCount(); i++) {
             if (key.equals(field.getKey(i))) {
                 return field.getValue(i);
@@ -511,14 +488,6 @@ public final class NodeImpl<K, V> implements Node<K, V> {
         return field.getBytes();
     }
 
-    /**
-     * @return the field
-     */
-    @Override
-    public Field<K, V> getField() {
-        return field;
-    }
-
     @Override
     public K getKey(final int position) {
         return field.getKey(position);
@@ -539,4 +508,11 @@ public final class NodeImpl<K, V> implements Node<K, V> {
         field.setValue(position, value);
     }
 
+    /**
+     * @return the nodeDef
+     */
+    @Override
+    public JbNodeDef<K, V> getNodeDef() {
+        return field.getNodeDef();
+    }
 }
