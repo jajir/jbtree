@@ -27,6 +27,7 @@ import java.util.List;
 
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,6 +36,7 @@ import com.coroptis.jblinktree.JbTreeData;
 import com.coroptis.jblinktree.JbTreeDataImpl;
 import com.coroptis.jblinktree.Node;
 import com.coroptis.jblinktree.NodeImpl;
+import com.coroptis.jblinktree.NodeUtilRule;
 import com.coroptis.jblinktree.type.TypeDescriptor;
 import com.coroptis.jblinktree.type.TypeDescriptorInteger;
 import com.coroptis.jblinktree.type.TypeDescriptorString;
@@ -55,9 +57,12 @@ public class NodeStringTest {
 
     private TypeDescriptor<Integer> intDescriptor;
 
+    @Rule
+    public NodeUtilRule nodeUtil = new NodeUtilRule();
+
     @Test
     public void test_insert_leaf_one() throws Exception {
-        node.insert("ahoj", "lidi");
+        node.insertToPosition("ahoj", "lidi", 0);
 
         verifyNode(node, new String[][] { { "ahoj", "lidi" } }, true,
                 Node.EMPTY_INT);
@@ -65,8 +70,8 @@ public class NodeStringTest {
 
     @Test
     public void test_insert_leaf_second_bigger() throws Exception {
-        node.insert("ahoj", "lidi");
-        node.insert("flying", "pig");
+        node.insertToPosition("ahoj", "lidi", 0);
+        node.insertToPosition("flying", "pig", 1);
 
         verifyNode(node,
                 new String[][] { { "ahoj", "lidi" }, { "flying", "pig" } },
@@ -75,8 +80,8 @@ public class NodeStringTest {
 
     @Test
     public void test_insert_leaf_second_smaller() throws Exception {
-        node.insert("ahoj", "lidi");
-        node.insert("aaa taxi", "is fast");
+        node.insertToPosition("aaa taxi", "is fast", 0);
+        node.insertToPosition("ahoj", "lidi", 1);
 
         verifyNode(node, new String[][] { { "aaa taxi", "is fast" },
                 { "ahoj", "lidi" } }, true, Node.EMPTY_INT);
@@ -107,7 +112,7 @@ public class NodeStringTest {
         assertEquals("Expected number of key is invalid", pairs.length,
                 n.getKeyCount());
         assertEquals("isLeafNode value is invalid", isLeafNode, n.isLeafNode());
-        List<String> keys = n.getKeys();
+        List<String> keys = nodeUtil.getKeys(n);
         for (String[] pair : pairs) {
             final String key = pair[0];
             final String value = pair[1];
@@ -129,8 +134,8 @@ public class NodeStringTest {
 
     @Before
     public void setUp() throws Exception {
-        stringDescriptor = new TypeDescriptorString(10,
-                Charset.forName("UTF-8"));
+        stringDescriptor =
+                new TypeDescriptorString(10, Charset.forName("UTF-8"));
         intDescriptor = new TypeDescriptorInteger();
         JbTreeData<String, String> td = new JbTreeDataImpl<String, String>(0, 5,
                 stringDescriptor, stringDescriptor, intDescriptor);

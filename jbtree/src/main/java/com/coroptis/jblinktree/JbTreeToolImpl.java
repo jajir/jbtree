@@ -146,6 +146,7 @@ public final class JbTreeToolImpl<K, V> implements JbTreeTool<K, V> {
         return currentNode.getId();
     }
 
+    //TODO followign methods are same
     @Override
     public Node<K, V> splitLeafNode(final Node<K, V> currentNode, final K key,
             final V value) {
@@ -153,9 +154,9 @@ public final class JbTreeToolImpl<K, V> implements JbTreeTool<K, V> {
                 nodeBuilder.makeEmptyLeafNode(treeData.getNextId());
         currentNode.moveTopHalfOfDataTo(newNode);
         if (keyTypeDescriptor.compareValues(currentNode.getMaxKey(), key) < 0) {
-            newNode.insert(key, value);
+            nodeService.insert(newNode, key, value);
         } else {
-            currentNode.insert(key, value);
+            nodeService.insert(currentNode, key, value);
         }
         return newNode;
     }
@@ -167,9 +168,9 @@ public final class JbTreeToolImpl<K, V> implements JbTreeTool<K, V> {
                 nodeBuilder.makeEmptyNonLeafNode(treeData.getNextId());
         currentNode.moveTopHalfOfDataTo(newNode);
         if (keyTypeDescriptor.compareValues(currentNode.getMaxKey(), key) < 0) {
-            newNode.insert(key, value);
+            nodeService.insert(newNode, key, value);
         } else {
-            currentNode.insert(key, value);
+            nodeService.insert(currentNode, key, value);
         }
         return newNode;
     }

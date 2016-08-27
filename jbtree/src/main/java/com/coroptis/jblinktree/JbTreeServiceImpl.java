@@ -46,18 +46,27 @@ public final class JbTreeServiceImpl<K, V> implements JbTreeService<K, V> {
     private final JbTreeTraversingService<K, V> treeTraversingService;
 
     /**
+     * Node service.
+     */
+    private final JbNodeService<K, V> nodeService;
+
+    /**
      * Simple constructor.
      *
      * @param initNodeStore
      *            required node store
      * @param initTreeTraversingService
      *            required tree traversing tool
+     * @param jbNodeService
+     *            node service
      */
     public JbTreeServiceImpl(final NodeStore<K> initNodeStore,
-            final JbTreeTraversingService<K, V> initTreeTraversingService) {
+            final JbTreeTraversingService<K, V> initTreeTraversingService,
+            final JbNodeService<K, V> jbNodeService) {
         this.nodeStore = Preconditions.checkNotNull(initNodeStore);
-        this.treeTraversingService = Preconditions
-                .checkNotNull(initTreeTraversingService);
+        this.treeTraversingService =
+                Preconditions.checkNotNull(initTreeTraversingService);
+        this.nodeService = Preconditions.checkNotNull(jbNodeService);
     }
 
     @Override
@@ -66,9 +75,9 @@ public final class JbTreeServiceImpl<K, V> implements JbTreeService<K, V> {
         Node<K, Integer> parentNode = nodeStore.getAndLock(nextNodeId);
         // TODO link to current node which key should be updated can be in
         // different node than tmpKey
-        parentNode = treeTraversingService.moveRightNonLeafNode(parentNode,
-                tmpKey);
-        if (parentNode.updateKeyForValue(currentNode.getId(),
+        parentNode =
+                treeTraversingService.moveRightNonLeafNode(parentNode, tmpKey);
+        if (nodeService.updateKeyForValue(parentNode, currentNode.getId(),
                 currentNode.getMaxKey())) {
             nodeStore.writeNode(parentNode);
         }
@@ -78,7 +87,7 @@ public final class JbTreeServiceImpl<K, V> implements JbTreeService<K, V> {
     @Override
     public void storeValueIntoLeafNode(final Node<K, V> currentNode,
             final K key, final V value) {
-        currentNode.insert(key, value);
+        nodeService.insert(currentNode, key, value);
         nodeStore.writeNode(currentNode);
         nodeStore.unlockNode(currentNode.getId());
     }
@@ -86,7 +95,7 @@ public final class JbTreeServiceImpl<K, V> implements JbTreeService<K, V> {
     @Override
     public void storeValueIntoNonLeafNode(final Node<K, Integer> currentNode,
             final K key, final Integer value) {
-        currentNode.insert(key, value);
+        nodeService.insert(currentNode, key, value);
         nodeStore.writeNode(currentNode);
         nodeStore.unlockNode(currentNode.getId());
     }

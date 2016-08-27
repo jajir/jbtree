@@ -73,7 +73,8 @@ public class JbTreeTest extends AbstractMockingTest {
     public void setUp() throws Exception {
         super.setUp();
         jbTree = new JbTreeImpl<Integer, Integer>(nodeStore, treeTool,
-                treeHelper, treeData, treeTraversingService, jbTreeService);
+                treeHelper, treeData, treeTraversingService, jbTreeService,
+                nodeService);
     }
 
     @Override

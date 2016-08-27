@@ -53,24 +53,26 @@ public class JbTreeServiceTest extends AbstractMockingTest {
     @Test
     public void test_loadParentNode() throws Exception {
         prepareMocksUpToIf();
-        EasyMock.expect(n3.updateKeyForValue(3, 39)).andReturn(true);
+        EasyMock.expect(nodeService.updateKeyForValue(n3, 3, 39))
+                .andReturn(true);
         nodeStore.writeNode(n3);
-        EasyMock.replay(mocks);
+        replay();
         Node<Integer, Integer> ret = tested.loadParentNode(n1, 10, 34);
 
         assertEquals(n3, ret);
-        EasyMock.verify(mocks);
+        verify();
     }
 
     @Test
     public void test_loadParentNode_noUpdate() throws Exception {
         prepareMocksUpToIf();
-        EasyMock.expect(n3.updateKeyForValue(3, 39)).andReturn(false);
-        EasyMock.replay(mocks);
+        EasyMock.expect(nodeService.updateKeyForValue(n3, 3, 39))
+                .andReturn(false);
+        replay();
         Node<Integer, Integer> ret = tested.loadParentNode(n1, 10, 34);
 
         assertEquals(n3, ret);
-        EasyMock.verify(mocks);
+        verify();
     }
 
     @Override
@@ -78,7 +80,7 @@ public class JbTreeServiceTest extends AbstractMockingTest {
     public void setUp() throws Exception {
         super.setUp();
         tested = new JbTreeServiceImpl<Integer, Integer>(nodeStore,
-                treeTraversingService);
+                treeTraversingService, nodeService);
     }
 
     @Override

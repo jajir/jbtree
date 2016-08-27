@@ -34,6 +34,8 @@ import com.coroptis.jblinktree.JbTreeDataImpl;
 import com.coroptis.jblinktree.Node;
 import com.coroptis.jblinktree.JbNodeBuilder;
 import com.coroptis.jblinktree.JbNodeBuilderImpl;
+import com.coroptis.jblinktree.JbNodeService;
+import com.coroptis.jblinktree.JbNodeServiceImpl;
 import com.coroptis.jblinktree.store.NodeConverter;
 import com.coroptis.jblinktree.store.NodeConverterImpl;
 import com.coroptis.jblinktree.store.NodeFileStorageImpl;
@@ -45,6 +47,8 @@ import com.google.common.io.Files;
 public class NodeFileStorageTest {
 
     private NodeFileStorageImpl<String, String> storage;
+
+    private JbNodeService<String, String> nodeService;
 
     private File tempDirectory;
 
@@ -66,7 +70,7 @@ public class NodeFileStorageTest {
 
     Node<String, String> createNode(final Integer i) {
         Node<String, String> n = nodeBuilder.makeEmptyLeafNode(i);
-        n.insert("Ahoj lidi!" + i, "Jde to!" + i);
+        nodeService.insert(n, "Ahoj lidi!" + i, "Jde to!" + i);
         n.setLink(-i * 100);
         return n;
     }
@@ -87,6 +91,7 @@ public class NodeFileStorageTest {
                 new NodeConverterImpl<String, String>(treeData, nodeBuilder);
         storage = new NodeFileStorageImpl<String, String>(treeData, nodeBuilder,
                 tempDirectory.getAbsolutePath(), initNodeConverter);
+        nodeService = new JbNodeServiceImpl<String, String>();
     }
 
     @After
@@ -94,6 +99,7 @@ public class NodeFileStorageTest {
         tempDirectory = null;
         storage.close();
         storage = null;
+        nodeService = null;
     }
 
 }

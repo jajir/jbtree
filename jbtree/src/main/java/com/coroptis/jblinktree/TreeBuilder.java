@@ -286,12 +286,13 @@ public final class TreeBuilder {
         final JbTreeTraversingService<K, V> treeLockingTool =
                 new JbTreeTraversingServiceImpl<K, V>(jbTreeTool,
                         jbNodeService);
-        final JbTreeService<K, V> treeService =
-                new JbTreeServiceImpl<K, V>(nodeStore, treeLockingTool);
+        final JbTreeService<K, V> treeService = new JbTreeServiceImpl<K, V>(
+                nodeStore, treeLockingTool, jbNodeService);
         final JbTreeHelper<K, V> jbTreeHelper = new JbTreeHelperImpl<K, V>(
                 nodeStore, jbTreeTool, treeService, treeData);
-        final JbTree<K, V> tree = new JbTreeImpl<K, V>(nodeStore, jbTreeTool,
-                jbTreeHelper, treeData, treeLockingTool, treeService);
+        final JbTree<K, V> tree =
+                new JbTreeImpl<K, V>(nodeStore, jbTreeTool, jbTreeHelper,
+                        treeData, treeLockingTool, treeService, jbNodeService);
 
         if (nodeStore.isNewlyCreated()) {
             /**
@@ -304,7 +305,7 @@ public final class TreeBuilder {
             return new TreeMapImpl<K, V>(tree, treeData);
         } else {
             return new TreeMapImpl<K, V>(new JbTreeWrapper<K, V>(tree, treeData,
-                    nodeStore, treeWrapperFileName), treeData);
+                    nodeStore, treeWrapperFileName, jbNodeService), treeData);
 
         }
     }

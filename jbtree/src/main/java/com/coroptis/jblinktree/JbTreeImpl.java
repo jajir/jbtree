@@ -69,6 +69,11 @@ public final class JbTreeImpl<K, V> implements JbTree<K, V> {
     private final JbTreeService<K, V> treeService;
 
     /**
+     * Node service.
+     */
+    private final JbNodeService<K, V> nodeService;
+
+    /**
      * Create and initialize tree.
      *
      * @param jbNodeStore
@@ -83,13 +88,16 @@ public final class JbTreeImpl<K, V> implements JbTree<K, V> {
      *            required {@link JbTreeTraversingService} object
      * @param jbTreeService
      *            required {@link JbTreeService} object
+     * @param jbNodeService
+     *            required {@link JbNodeService} object
      */
     public JbTreeImpl(final NodeStore<K> jbNodeStore,
             final JbTreeTool<K, V> jbTreeTool,
             final JbTreeHelper<K, V> jbTreeHelper,
             final JbTreeData<K, V> initTreeData,
             final JbTreeTraversingService<K, V> jbTreeTraversingService,
-            final JbTreeService<K, V> jbTreeService) {
+            final JbTreeService<K, V> jbTreeService,
+            final JbNodeService<K, V> jbNodeService) {
         this.nodeStore = Preconditions.checkNotNull(jbNodeStore);
         this.treeTool = Preconditions.checkNotNull(jbTreeTool);
         this.treeHelper = Preconditions.checkNotNull(jbTreeHelper);
@@ -97,6 +105,7 @@ public final class JbTreeImpl<K, V> implements JbTree<K, V> {
         this.treeTraversingService =
                 Preconditions.checkNotNull(jbTreeTraversingService);
         this.treeService = Preconditions.checkNotNull(jbTreeService);
+        this.nodeService = Preconditions.checkNotNull(jbNodeService);
     }
 
     @Override
@@ -127,8 +136,7 @@ public final class JbTreeImpl<K, V> implements JbTree<K, V> {
         Integer currentNodeId =
                 treeTool.findLeafNodeId(key, stack, treeData.getRootNodeId());
         Node<K, V> currentNode = nodeStore.getAndLock(currentNodeId);
-        currentNode =
-                treeTraversingService.moveRightLeafNode(currentNode, key);
+        currentNode = treeTraversingService.moveRightLeafNode(currentNode, key);
         if (currentNode.getValueByKey(key) == null) {
             /**
              * Node doesn't contains key, there is nothing to delete
@@ -139,7 +147,7 @@ public final class JbTreeImpl<K, V> implements JbTree<K, V> {
             /**
              * Leaf node contains key so remove it.
              */
-            final V oldValue = currentNode.remove(key);
+            final V oldValue = nodeService.remove(currentNode, key);
             nodeStore.writeNode(currentNode);
             nodeStore.unlockNode(currentNode.getId());
             return oldValue;
@@ -217,7 +225,8 @@ public final class JbTreeImpl<K, V> implements JbTree<K, V> {
                     if (!treeVisitor.visitedNonLeaf((Node<K, Integer>) node)) {
                         return;
                     }
-                    for (final Integer i : node.getNodeIds()) {
+                    for (final Integer i : nodeService
+                            .getNodeIds((Node) node)) {
                         stack.push(i);
                     }
                 }
@@ -240,7 +249,8 @@ public final class JbTreeImpl<K, V> implements JbTree<K, V> {
                 leafNode = node;
             } else {
                 // move to the next smaller node.
-                nodeId = node.getNodeIds().get(0);
+                Node<K, Integer> n = (Node) node;
+                nodeId = nodeService.getNodeIds(n).get(0);
             }
         }
         // iterate all leaf nodes until last one.

@@ -69,6 +69,11 @@ public final class JbTreeWrapper<K, V> implements JbTree<K, V> {
     private final JbTreeData<K, V> treeData;
 
     /**
+     * Node service.
+     */
+    private final JbNodeService<K, V> nodeService;
+
+    /**
      * Simple constructor.
      *
      * @param jbTree
@@ -79,13 +84,17 @@ public final class JbTreeWrapper<K, V> implements JbTree<K, V> {
      *            required node store
      * @param fileName
      *            required file name which will contain tree in .dot format
+     * @param jbNodeService
+     *            node service
      */
     JbTreeWrapper(final JbTree<K, V> jbTree, final JbTreeData<K, V> jbTreeData,
-            final NodeStore<K> initNodeStore, final String fileName) {
+            final NodeStore<K> initNodeStore, final String fileName,
+            final JbNodeService<K, V> jbNodeService) {
         this.tree = Preconditions.checkNotNull(jbTree);
         this.nodeStore = Preconditions.checkNotNull(initNodeStore);
         this.treeData = Preconditions.checkNotNull(jbTreeData);
         this.file = new File(fileName);
+        this.nodeService = Preconditions.checkNotNull(jbNodeService);
     }
 
     @SuppressWarnings("unchecked")
@@ -231,7 +240,7 @@ public final class JbTreeWrapper<K, V> implements JbTree<K, V> {
         buff.append("node [shape=record]\n");
 
         for (int i = 0; i < treeData.getMaxNodeId(); i++) {
-            nodeStore.get(i).writeTo(buff, INDENDATION);
+            nodeService.writeTo(nodeStore.get(i), buff, INDENDATION);
         }
 
         for (int i = 0; i < treeData.getMaxNodeId(); i++) {
@@ -261,9 +270,9 @@ public final class JbTreeWrapper<K, V> implements JbTree<K, V> {
      * @param buff
      *            required string buffer
      */
-    private void addNextNodes(final Node<Integer, Integer> node,
+    private void addNextNodes(final Node<K, Integer> node,
             final StringBuilder buff) {
-        for (final Object o : node.getNodeIds()) {
+        for (final Object o : nodeService.getNodeIds(node)) {
             Integer i = (Integer) o;
             buff.append(INDENDATION);
             buff.append("\"node");

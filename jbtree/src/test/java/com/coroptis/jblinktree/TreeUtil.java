@@ -38,6 +38,8 @@ public class TreeUtil {
 
     private final TreeMap<Integer, Integer> jbTree;
 
+    private final NodeUtilRule nodeUtilRule = new NodeUtilRule();
+
     public TreeUtil(final TreeMap<Integer, Integer> jbTree) {
         this.jbTree = jbTree;
     }
@@ -57,13 +59,13 @@ public class TreeUtil {
 
             @Override
             public boolean visitedLeaf(final Node<Integer, Integer> node) {
-                node.writeTo(buff, intendation);
+                nodeUtilRule.writeTo(node, buff, intendation);
                 return true;
             }
 
             @Override
             public boolean visitedNonLeaf(final Node<Integer, Integer> node) {
-                node.writeTo(buff, intendation);
+                nodeUtilRule.writeTo(node, buff, intendation);
                 return true;
             }
         });
@@ -96,7 +98,7 @@ public class TreeUtil {
             @Override
             public boolean visitedNonLeaf(final Node<Integer, Integer> node) {
                 addLink(node);
-                for (final Object o : node.getNodeIds()) {
+                for (final Object o : nodeUtilRule.getNodeIds(node)) {
                     Integer i = (Integer) o;
                     buff.append(intendation);
                     buff.append("\"node");

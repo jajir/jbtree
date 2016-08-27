@@ -35,6 +35,8 @@ import org.slf4j.LoggerFactory;
 
 import com.coroptis.jblinktree.Executer;
 import com.coroptis.jblinktree.FileStorageRule;
+import com.coroptis.jblinktree.JbNodeService;
+import com.coroptis.jblinktree.JbNodeServiceImpl;
 import com.coroptis.jblinktree.JbTreeDataImpl;
 import com.coroptis.jblinktree.JblinktreeException;
 import com.coroptis.jblinktree.Node;
@@ -51,8 +53,8 @@ import com.coroptis.jblinktree.type.TypeDescriptorInteger;
  */
 public class FileStoreConcurrencyTest {
 
-    private final Logger logger = LoggerFactory
-            .getLogger(FileStoreConcurrencyTest.class);
+    private final Logger logger =
+            LoggerFactory.getLogger(FileStoreConcurrencyTest.class);
 
     private final Integer L = 5;
 
@@ -61,12 +63,14 @@ public class FileStoreConcurrencyTest {
     @Rule
     public FileStorageRule fsRule = new FileStorageRule();
 
+    private JbNodeService<Integer, Integer> nodeService;
+
     @Test
     public void testForThreadClash() throws Exception {
         final int cycleCount = 1000 * 1;
         final int threadCount = 100;
-        final CountDownLatch doneLatch = new CountDownLatch(
-                cycleCount * threadCount);
+        final CountDownLatch doneLatch =
+                new CountDownLatch(cycleCount * threadCount);
         final CountDownLatch startLatch = new CountDownLatch(1);
 
         for (int i = 0; i < threadCount; ++i) {
@@ -93,11 +97,13 @@ public class FileStoreConcurrencyTest {
         for (int i = 0; i < 100; i++) {
             fsRule.getFileStorage().store(getNode(i));
         }
+        nodeService = new JbNodeServiceImpl<Integer, Integer>();
     }
 
     @After
     public void tearDown() throws Exception {
         random = null;
+        nodeService = null;
     }
 
     void doWorkNow() {
@@ -105,8 +111,8 @@ public class FileStoreConcurrencyTest {
         boolean read = random.nextBoolean();
         try {
             if (read) {
-                Node<Integer, Integer> node = fsRule.getFileStorage()
-                        .load(integer);
+                Node<Integer, Integer> node =
+                        fsRule.getFileStorage().load(integer);
                 assertEquals(1, node.getKeyCount());
             } else {
                 fsRule.getFileStorage().store(getNode(integer));
@@ -121,11 +127,12 @@ public class FileStoreConcurrencyTest {
 
     private Node<Integer, Integer> getNode(final Integer nodeId) {
         TypeDescriptorInteger intDescriptor = new TypeDescriptorInteger();
-        JbTreeDataImpl<Integer, Integer> treeData = new JbTreeDataImpl<Integer, Integer>(
-                0, L, intDescriptor, intDescriptor, intDescriptor);
+        JbTreeDataImpl<Integer, Integer> treeData =
+                new JbTreeDataImpl<Integer, Integer>(0, L, intDescriptor,
+                        intDescriptor, intDescriptor);
         final Node<Integer, Integer> node = new NodeImpl<Integer, Integer>(
                 nodeId, false, treeData.getLeafNodeDescriptor());
-        node.insert(nodeId, nodeId);
+        nodeService.insert(node, nodeId, nodeId);
         return node;
     }
 

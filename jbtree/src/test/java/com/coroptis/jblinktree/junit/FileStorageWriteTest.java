@@ -28,6 +28,8 @@ import org.junit.Rule;
 import org.junit.Test;
 
 import com.coroptis.jblinktree.FileStorageRule;
+import com.coroptis.jblinktree.JbNodeService;
+import com.coroptis.jblinktree.JbNodeServiceImpl;
 import com.coroptis.jblinktree.JbTreeData;
 import com.coroptis.jblinktree.JbTreeDataImpl;
 import com.coroptis.jblinktree.Node;
@@ -39,6 +41,8 @@ public class FileStorageWriteTest {
     public FileStorageRule fsRule = new FileStorageRule();
 
     private Node<Integer, Integer> node;
+
+    private JbNodeService<Integer, Integer> nodeService;
 
     @Test
     public void test_store_verify_file() throws Exception {
@@ -62,16 +66,19 @@ public class FileStorageWriteTest {
 
     @Before
     public void setup() {
-        JbTreeData<Integer, Integer> treeData = new JbTreeDataImpl<Integer, Integer>(
-                1, 5, fsRule.getIntDescriptor(), fsRule.getIntDescriptor(),
-                fsRule.getIntDescriptor());
+        nodeService = new JbNodeServiceImpl<Integer, Integer>();
+        JbTreeData<Integer, Integer> treeData =
+                new JbTreeDataImpl<Integer, Integer>(1, 5,
+                        fsRule.getIntDescriptor(), fsRule.getIntDescriptor(),
+                        fsRule.getIntDescriptor());
         node = new NodeImpl<Integer, Integer>(14, false,
                 treeData.getLeafNodeDescriptor());
-        node.insert(3, 23);
+        nodeService.insert(node, 3, 23);
     }
 
     @After
     public void tearDown() {
         node = null;
+        nodeService = null;
     }
 }

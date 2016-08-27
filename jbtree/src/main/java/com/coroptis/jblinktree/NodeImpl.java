@@ -160,46 +160,6 @@ public final class NodeImpl<K, V> implements Node<K, V> {
         return field.getKeyCount();
     }
 
-    @Override
-    public void insert(final K key, final V value) {
-        Preconditions.checkNotNull(key);
-        Preconditions.checkNotNull(value);
-        for (int i = 0; i < field.getKeyCount(); i++) {
-            if (key.equals(field.getKey(i))) {
-                /**
-                 * Rewrite value.
-                 */
-                field.setValue(i, value);
-                return;
-            } else if (field.getNodeDef().getKeyTypeDescriptor()
-                    .compareValues(field.getKey(i), key) > 0) {
-                // field.get(i) > key
-                couldInsertedKey();
-                /**
-                 * given value should be inserted 1 before current index
-                 */
-                insertToPosition(key, value, i);
-                return;
-            }
-        }
-        couldInsertedKey();
-        /**
-         * New key is bigger than all others so should be at the end.
-         */
-        insertToPosition(key, value, field.getKeyCount());
-    }
-
-    /**
-     * When new value can't be inserted into this node it throws
-     * {@link JblinktreeException}.
-     */
-    private void couldInsertedKey() {
-        if (getKeyCount() >= field.getNodeDef().getL()) {
-            throw new JblinktreeException("Leaf (" + id
-                    + ") is full another value can't be inserted.");
-        }
-    }
-
     /**
      * Insert key and value to some specific index position in field.
      *
@@ -210,7 +170,8 @@ public final class NodeImpl<K, V> implements Node<K, V> {
      * @param targetIndex
      *            required target index in field
      */
-    private void insertToPosition(final K key, final V value,
+    @Override
+    public void insertToPosition(final K key, final V value,
             final int targetIndex) {
         /**
          * It's create new node with new key & value pair and than copy data
@@ -234,56 +195,7 @@ public final class NodeImpl<K, V> implements Node<K, V> {
     }
 
     @Override
-    public V remove(final K key) {
-        Preconditions.checkNotNull(key);
-        for (int i = 0; i < field.getKeyCount(); i++) {
-            if (key.equals(field.getKey(i))) {
-                /**
-                 * Remove key and value.
-                 */
-                final V oldValue = field.getValue(i);
-                removeKeyValueAtPosition(i);
-                return oldValue;
-            } else if (field.getNodeDef().getKeyTypeDescriptor()
-                    .compareValues(field.getKey(i), key) > 0) {
-                /**
-                 * if key in node is bigger than given key than node doesn't
-                 * contains key to delete.
-                 */
-                return null;
-            }
-        }
-        return null;
-    }
-
-    @Override
-    public boolean updateKeyForValue(final Integer valueToUpdate,
-            final K keyToSet) {
-        if (isLeafNode()) {
-            throw new JblinktreeException(
-                    "method could by used just on non-leaf nodes");
-        }
-        for (int i = 0; i < field.getKeyCount(); i++) {
-            if (field.getValue(i).equals(valueToUpdate)) {
-                if (field.getKey(i).equals(keyToSet)) {
-                    return false;
-                } else {
-                    field.setKey(i, keyToSet);
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-
-    /**
-     * Remove two bytes from node field at given position. Method doesn't care
-     * about meaning of bites.
-     *
-     * @param position
-     *            required position
-     */
-    private void removeKeyValueAtPosition(final int position) {
+    public void removeKeyValueAtPosition(final int position) {
         Field<K, V> tmp = new FieldImpl<K, V>(field.getKeyCount() - 1,
                 field.getNodeDef());
         if (position > 0) {
@@ -315,8 +227,8 @@ public final class NodeImpl<K, V> implements Node<K, V> {
         node.setLink(getLink());
 
         // remove copied data from this node
-        Field<K, V> field2 = new FieldImpl<K, V>(startIndex,
-                field.getNodeDef());
+        Field<K, V> field2 =
+                new FieldImpl<K, V>(startIndex, field.getNodeDef());
         field2.copy(field, 0, 0, startIndex);
         field = field2;
         setLink(node.getId());
@@ -384,25 +296,6 @@ public final class NodeImpl<K, V> implements Node<K, V> {
     }
 
     @Override
-    public List<Integer> getNodeIds() {
-        final List<Integer> out = new ArrayList<Integer>();
-        for (int i = 0; i < field.getKeyCount(); i++) {
-            // TODO it's it should be node <K,Integer>
-            out.add((Integer) field.getValue(i));
-        }
-        return out;
-    }
-
-    @Override
-    public List<K> getKeys() {
-        final List<K> out = new ArrayList<K>();
-        for (int i = 0; i < field.getKeyCount(); i++) {
-            out.add(field.getKey(i));
-        }
-        return out;
-    }
-
-    @Override
     public boolean verify() {
         if (!isLeafNode()) {
             for (int i = 0; i < field.getKeyCount(); i++) {
@@ -417,9 +310,7 @@ public final class NodeImpl<K, V> implements Node<K, V> {
 
     @Override
     public int hashCode() {
-        return Arrays.hashCode(new Object[] {
-            id, field
-        });
+        return Arrays.hashCode(new Object[] { id, field });
     }
 
     @SuppressWarnings("unchecked")
@@ -450,40 +341,6 @@ public final class NodeImpl<K, V> implements Node<K, V> {
     }
 
     @Override
-    public void writeTo(final StringBuilder buff, final String intendation) {
-        buff.append(intendation);
-        buff.append("node");
-        buff.append(getId());
-        buff.append(" [shape=record,label=\" {");
-        if (isLeafNode()) {
-            buff.append("L");
-        } else {
-            buff.append("N");
-        }
-        buff.append("|");
-        buff.append(getId());
-        buff.append("}");
-        for (int i = 0; i < field.getKeyCount() - 1; i = i + 2) {
-            buff.append(" | {");
-            buff.append("");
-            buff.append(field.getKey(i + 1));
-            buff.append("| <F");
-            buff.append(field.getValue(i));
-            buff.append("> ");
-            buff.append(field.getValue(i));
-            buff.append("}");
-        }
-        buff.append(" | ");
-        if (getLink() != null) {
-            buff.append("<L");
-            buff.append(getLink());
-            buff.append("> ");
-        }
-        buff.append(getLink());
-        buff.append("\"];\n");
-    }
-
-    @Override
     public byte[] getFieldBytes() {
         return field.getBytes();
     }
@@ -499,12 +356,12 @@ public final class NodeImpl<K, V> implements Node<K, V> {
     }
 
     @Override
-    public void setKey(final int position,final K value) {
+    public void setKey(final int position, final K value) {
         field.setKey(position, value);
     }
 
     @Override
-    public void setValue(final int position,final V value) {
+    public void setValue(final int position, final V value) {
         field.setValue(position, value);
     }
 

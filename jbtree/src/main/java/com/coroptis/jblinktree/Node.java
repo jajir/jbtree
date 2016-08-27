@@ -79,43 +79,6 @@ public interface Node<K, V> {
     int getKeyCount();
 
     /**
-     * Insert or override some value in node.
-     *
-     * @param key
-     *            required key
-     * @param value
-     *            required value
-     * @throws NullPointerException
-     *             when key or value is null
-     */
-    void insert(K key, V value);
-
-    /**
-     * Remove key and associated value from node.
-     *
-     * @param key
-     *            required key to remove
-     * @return when key was found and removed it return <code>true</code>
-     *         otherwise it return <code>false</code>
-     * @throws NullPointerException
-     *             when key or value is null
-     */
-    V remove(K key);
-
-    /**
-     * For non-leaf tree it update key of some tree. It's useful for update
-     * sub-node max key.
-     *
-     * @param valueToUpdate
-     *            required value which will be find
-     * @param keyToSet
-     *            required key that will be set to find value
-     * @return return <code>true</code> when valueToUpdate was found and key was
-     *         really updated otherwise return <code>false</code>
-     */
-    boolean updateKeyForValue(Integer valueToUpdate, K keyToSet);
-
-    /**
      * About half of keys will be copied to <code>node</code>.
      * <p>
      * From this node will be created structure: thisNode ---&gt; node
@@ -162,36 +125,12 @@ public interface Node<K, V> {
     V getValueByKey(K key);
 
     /**
-     * Get list of all node id stored in this node.
-     *
-     * @return list of id
-     */
-    List<Integer> getNodeIds();
-
-    /**
-     * Get list of keys stored in node.
-     *
-     * @return list of keys.
-     */
-    List<K> getKeys();
-
-    /**
      * Verify that node is consistent.
      *
      * @return <code>true</code> when node is consistent otherwise return
      *         <code>false</code>
      */
     boolean verify();
-
-    /**
-     * Write node content into {@link StringBuilder}.
-     *
-     * @param buff
-     *            required {@link StringBuilder} instance
-     * @param intendation
-     *            how many white spaces should be added before each line.
-     */
-    void writeTo(StringBuilder buff, String intendation);
 
     /**
      * Get node content as byte array.
@@ -244,4 +183,26 @@ public interface Node<K, V> {
      * @return node data definition
      */
     JbNodeDef<K, V> getNodeDef();
+
+    /**
+     * Insert key and value to some specific index position in field.
+     *
+     * @param key
+     *            required key
+     * @param value
+     *            required value
+     * @param targetIndex
+     *            required target index in field
+     */
+    void insertToPosition(K key, V value, int targetIndex);
+
+    /**
+     * Remove two bytes from node field at given position. Method doesn't care
+     * about meaning of bites.
+     *
+     * @param position
+     *            required position
+     */
+    void removeKeyValueAtPosition(final int position);
+
 }
