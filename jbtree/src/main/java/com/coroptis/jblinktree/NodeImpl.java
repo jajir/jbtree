@@ -1,29 +1,8 @@
 package com.coroptis.jblinktree;
 
-/*
- * #%L
- * jblinktree
- * %%
- * Copyright (C) 2015 coroptis
- * %%
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- * #L%
- */
-
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 
+import com.coroptis.jblinktree.type.TypeDescriptorInteger;
 import com.google.common.base.Preconditions;
 
 /**
@@ -99,9 +78,14 @@ public final class NodeImpl<K, V> implements Node<K, V> {
     private final Integer id;
 
     /**
-     * Byte array with key value pairs, link and flags.
+     * Byte array with node data.
      */
-    private Field<K, V> field;
+    private byte[] field;
+
+    /**
+     * Node data definition.
+     */
+    private final JbNodeDef<K, V> nodeDef;
 
     /**
      * Create and initialize node.
@@ -111,20 +95,20 @@ public final class NodeImpl<K, V> implements Node<K, V> {
      * @param isLeafNode
      *            required value, when it's <code>true</code> than it's leaf
      *            node otherwise it's non-leaf node.
-     * @param treeData
+     * @param jbNodeDef
      *            required tree definition
      */
     public NodeImpl(final Integer nodeId, final boolean isLeafNode,
-            final JbNodeDef<K, V> treeData) {
+            final JbNodeDef<K, V> jbNodeDef) {
         this.id = nodeId;
-        /**
-         * There is three position even in empty node: P0, max key and link.
-         */
-        field = new FieldImpl<K, V>(0, treeData);
+        this.nodeDef = jbNodeDef;
+        this.field = new byte[jbNodeDef.getFieldActualLength(0)];
         if (isLeafNode) {
-            field.setFlag(M);
+            setFlag(M);
+        } else {
+            setFlag((byte) -3);
         }
-        setLink(EMPTY_INT);
+        setLink(Node.EMPTY_INT);
     }
 
     /**
@@ -135,19 +119,38 @@ public final class NodeImpl<K, V> implements Node<K, V> {
      * @param nodeField
      *            required field with node byte array with data
      */
-    public NodeImpl(final Integer nodeId, final Field<K, V> nodeField) {
+    public NodeImpl(final Integer nodeId, final byte[] sourceField,
+            final JbNodeDef<K, V> jbNodeDef) {
         this.id = nodeId;
-        this.field = nodeField;
+        this.nodeDef = jbNodeDef;
+        this.field = new byte[sourceField.length];
+        System.arraycopy(sourceField, 0, this.field, 0, this.field.length);
+        if (getFlag() != Node.M && !(nodeDef
+                .getValueTypeDescriptor() instanceof TypeDescriptorInteger)) {
+            throw new JblinktreeException(
+                    "Non-leaf node doesn't have value of type integer, it's "
+                            + nodeDef.getValueTypeDescriptor().getClass()
+                                    .getName());
+        }
     }
 
     @Override
     public Integer getLink() {
-        return field.getLink();
+        return nodeDef.getLinkTypeDescriptor().load(field, getPositionOfLink());
     }
 
     @Override
     public void setLink(final Integer link) {
-        field.setLink(link);
+        nodeDef.getLinkTypeDescriptor().save(field, getPositionOfLink(), link);
+    }
+
+    /**
+     * Return position of link to next node in byte array.
+     *
+     * @return position of link to next node
+     */
+    private int getPositionOfLink() {
+        return field.length - nodeDef.getLinkTypeDescriptor().getMaxLength();
     }
 
     @Override
@@ -157,7 +160,9 @@ public final class NodeImpl<K, V> implements Node<K, V> {
 
     @Override
     public int getKeyCount() {
-        return field.getKeyCount();
+        return (field.length - JbNodeDef.FLAGS_LENGTH
+                - nodeDef.getLinkTypeDescriptor().getMaxLength())
+                / nodeDef.getKeyAndValueSize();
     }
 
     /**
@@ -173,41 +178,47 @@ public final class NodeImpl<K, V> implements Node<K, V> {
     @Override
     public void insertToPosition(final K key, final V value,
             final int targetIndex) {
-        /**
-         * It's create new node with new key & value pair and than copy data
-         * from current node. Finally switch new node to current on.
-         */
-        Field<K, V> field2 = new FieldImpl<K, V>(field.getKeyCount() + 1,
-                field.getNodeDef());
-        field2.setFlag(field.getFlag());
-        field2.setLink(field.getLink());
-        field2.setValue(targetIndex, value);
-        field2.setKey(targetIndex, key);
-
+        byte[] tmp = new byte[nodeDef.getFieldActualLength(getKeyCount() + 1)];
+        copyFlagAndLink(field, tmp);
         if (targetIndex > 0) {
-            field2.copy(field, 0, 0, targetIndex);
+            copy(field, 0, tmp, 0, targetIndex);
         }
-        if (field.getKeyCount() > targetIndex) {
-            field2.copy(field, targetIndex, targetIndex + 1,
-                    field.getKeyCount() - targetIndex);
+        if (getKeyCount() > targetIndex) {
+            copy(field, targetIndex, tmp, targetIndex + 1,
+                    getKeyCount() - targetIndex);
         }
-        field = field2;
+        field = tmp;
+        setKey(targetIndex, key);
+        setValue(targetIndex, value);
     }
 
     @Override
     public void removeKeyValueAtPosition(final int position) {
-        Field<K, V> tmp = new FieldImpl<K, V>(field.getKeyCount() - 1,
-                field.getNodeDef());
+        byte[] tmp = new byte[nodeDef.getFieldActualLength(getKeyCount() - 1)];
+        copyFlagAndLink(field, tmp);
         if (position > 0) {
-            tmp.copy(field, 0, 0, position);
+            copy(field, 0, tmp, 0, position);
         }
-        if (field.getKeyCount() - position - 1 > 0) {
-            tmp.copy(field, position + 1, position,
-                    field.getKeyCount() - position - 1);
+        if (getKeyCount() - position - 1 > 0) {
+            copy(field, position + 1, tmp, position,
+                    getKeyCount() - position - 1);
         }
-        tmp.setLink(getLink());
-        tmp.setFlag(field.getFlag());
         field = tmp;
+    }
+
+    private void copy(byte[] from, final int srcPos1, byte[] to,
+            final int destPos1, final int length) {
+        System.arraycopy(from, nodeDef.getValuePosition(srcPos1), to,
+                nodeDef.getValuePosition(destPos1),
+                length * nodeDef.getKeyAndValueSize());
+    }
+
+    private void copyFlagAndLink(byte[] from, byte[] to) {
+        to[0] = from[0];
+        to[to.length - 4] = from[from.length - 4];
+        to[to.length - 3] = from[from.length - 3];
+        to[to.length - 2] = from[from.length - 2];
+        to[to.length - 1] = from[from.length - 1];
     }
 
     @Override
@@ -218,21 +229,19 @@ public final class NodeImpl<K, V> implements Node<K, V> {
             throw new JblinktreeException(
                     "In node " + id + " are no values to move.");
         }
-        // copy top half to empty node
         final int startIndex = getKeyCount() / 2;
-        final int length = field.getKeyCount() - startIndex;
-        // TODO create field in static factory
-        node.field = new FieldImpl<K, V>(length, field.getNodeDef());
-        node.field.copy(field, startIndex, 0, length);
-        node.setLink(getLink());
+        final int length = getKeyCount() - startIndex;
+
+        // copy top half to empty node
+        node.field = new byte[nodeDef.getFieldActualLength(length)];
+        copy(field, startIndex, node.field, 0, length);
+        copyFlagAndLink(field, node.field);
 
         // remove copied data from this node
-        Field<K, V> field2 =
-                new FieldImpl<K, V>(startIndex, field.getNodeDef());
-        field2.copy(field, 0, 0, startIndex);
-        field = field2;
-        setLink(node.getId());
-        node.field.setFlag(field.getFlag());
+        byte[] tmp = new byte[nodeDef.getFieldActualLength(startIndex)];
+        copyFlagAndLink(field, tmp);
+        copy(field, 0, tmp, 0, startIndex);
+        field = tmp;
     }
 
     @Override
@@ -240,7 +249,7 @@ public final class NodeImpl<K, V> implements Node<K, V> {
         if (isEmpty()) {
             return null;
         } else {
-            return field.getKey(field.getKeyCount() - 1);
+            return getKey(getKeyCount() - 1);
         }
     }
 
@@ -255,19 +264,19 @@ public final class NodeImpl<K, V> implements Node<K, V> {
         buff.append(", isLeafNode=");
         buff.append(isLeafNode());
         buff.append(", field=[");
-        for (int i = 0; i < field.getKeyCount(); i++) {
+        for (int i = 0; i < getKeyCount(); i++) {
             if (i != 0) {
                 buff.append(", ");
             }
 
             buff.append("<");
-            buff.append(field.getKey(i));
+            buff.append(getKey(i));
             buff.append(", ");
-            buff.append(field.getValue(i));
+            buff.append(getValue(i));
             buff.append(">");
         }
         buff.append("], flag=");
-        buff.append(field.getFlag());
+        buff.append(getFlag());
         buff.append(", link=");
         buff.append(getLink());
         buff.append("}");
@@ -281,25 +290,14 @@ public final class NodeImpl<K, V> implements Node<K, V> {
 
     @Override
     public boolean isLeafNode() {
-        return M == field.getFlag();
-    }
-
-    @Override
-    public V getValueByKey(final K key) {
-        Preconditions.checkNotNull(key);
-        for (int i = 0; i < field.getKeyCount(); i++) {
-            if (key.equals(field.getKey(i))) {
-                return field.getValue(i);
-            }
-        }
-        return null;
+        return M == getFlag();
     }
 
     @Override
     public boolean verify() {
         if (!isLeafNode()) {
-            for (int i = 0; i < field.getKeyCount(); i++) {
-                if (field.getValue(i) != null && field.getValue(i).equals(id)) {
+            for (int i = 0; i < getKeyCount(); i++) {
+                if (getValue(i) != null && getValue(i).equals(id)) {
                     throw new JblinktreeException(
                             "node contains pointer to itself: " + toString());
                 }
@@ -323,7 +321,20 @@ public final class NodeImpl<K, V> implements Node<K, V> {
             return false;
         }
         final NodeImpl<K, V> n = (NodeImpl<K, V>) obj;
-        return equal(id, n.id) && field.equals(n.field);
+        return equal(id, n.id) && fieldEquals(n.field);
+    }
+
+    private boolean fieldEquals(final byte[] nField) {
+        if (field.length == nField.length) {
+            for (int i = 0; i < field.length; i++) {
+                if (field[i] != nField[i]) {
+                    return false;
+                }
+            }
+            return true;
+        } else {
+            return false;
+        }
     }
 
     /**
@@ -342,27 +353,31 @@ public final class NodeImpl<K, V> implements Node<K, V> {
 
     @Override
     public byte[] getFieldBytes() {
-        return field.getBytes();
+        return field;
     }
 
     @Override
     public K getKey(final int position) {
-        return field.getKey(position);
+        return nodeDef.getKeyTypeDescriptor().load(field,
+                nodeDef.getKeyPosition(position));
     }
 
     @Override
     public V getValue(final int position) {
-        return field.getValue(position);
+        return nodeDef.getValueTypeDescriptor().load(field,
+                nodeDef.getValuePosition(position));
     }
 
     @Override
     public void setKey(final int position, final K value) {
-        field.setKey(position, value);
+        nodeDef.getKeyTypeDescriptor().save(field,
+                nodeDef.getKeyPosition(position), value);
     }
 
     @Override
     public void setValue(final int position, final V value) {
-        field.setValue(position, value);
+        nodeDef.getValueTypeDescriptor().save(field,
+                nodeDef.getValuePosition(position), value);
     }
 
     /**
@@ -370,6 +385,16 @@ public final class NodeImpl<K, V> implements Node<K, V> {
      */
     @Override
     public JbNodeDef<K, V> getNodeDef() {
-        return field.getNodeDef();
+        return nodeDef;
+    }
+
+    @Override
+    public byte getFlag() {
+        return field[0];
+    }
+
+    @Override
+    public void setFlag(final byte flag) {
+        this.field[0] = flag;
     }
 }

@@ -6,6 +6,7 @@ import java.util.List;
 import org.junit.rules.TestRule;
 import org.junit.runner.Description;
 import org.junit.runners.model.Statement;
+import org.omg.PortableServer.POAPackage.NoServant;
 
 public class NodeUtilRule implements TestRule {
 
@@ -44,6 +45,10 @@ public class NodeUtilRule implements TestRule {
     public <K, S> void writeTo(Node<K, S> node, StringBuilder buff,
             String intendation) {
         nodeService.writeTo(node, buff, intendation);
+    }
+
+    public <K, V> V getValueByKey(Node<K, V> node, K key) {
+        return (V) nodeService.getValueByKey(node, key);
     }
 
 }

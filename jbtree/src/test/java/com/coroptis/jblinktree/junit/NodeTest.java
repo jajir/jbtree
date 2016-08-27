@@ -80,12 +80,6 @@ public class NodeTest {
 
         verifyNode(node, new Integer[][] {}, true, -1);
         assertEquals(null, node.getMaxKey());
-        assertEquals(null, node.getValueByKey(2));
-    }
-
-    @Test(expected = NullPointerException.class)
-    public void test_getValueByKey_null_key() {
-        node.getValueByKey(null);
     }
 
     @Test
@@ -141,10 +135,9 @@ public class NodeTest {
         assertEquals(Integer.valueOf(98), n.getLink());
         assertEquals("non-leaf nodes should preserver it's max key",
                 Integer.valueOf(4), n.getMaxKey());
-        assertEquals(Integer.valueOf(0), n.getValueByKey(1));
-        assertEquals(Integer.valueOf(1), n.getValueByKey(3));
-        assertEquals(Integer.valueOf(-40), n.getValueByKey(4));
-        assertEquals(null, n.getValueByKey(5));
+        assertEquals(Integer.valueOf(0), n.getValue(1));
+        assertEquals(Integer.valueOf(1), n.getValue(3));
+        assertEquals(Integer.valueOf(-40), n.getValue(4));
     }
 
     @Test
@@ -162,9 +155,9 @@ public class NodeTest {
         assertTrue(keys.contains(2));
         assertTrue(keys.contains(4));
         assertEquals(Integer.valueOf(-1), n.getLink());
-        assertEquals(Integer.valueOf(0), n.getValueByKey(1));
-        assertEquals(Integer.valueOf(1), n.getValueByKey(2));
-        assertEquals(Integer.valueOf(3), n.getValueByKey(4));
+        assertEquals(Integer.valueOf(0), n.getValue(1));
+        assertEquals(Integer.valueOf(1), n.getValue(2));
+        assertEquals(Integer.valueOf(3), n.getValue(4));
     }
 
     @Test
@@ -181,8 +174,8 @@ public class NodeTest {
         assertTrue(keys.contains(3));
         assertTrue(keys.contains(4));
         assertEquals(Integer.valueOf(0), n.getLink());
-        assertEquals(Integer.valueOf(0), n.getValueByKey(4));
-        assertEquals(Integer.valueOf(-30), n.getValueByKey(3));
+        assertEquals(Integer.valueOf(0), n.getValue(4));
+        assertEquals(Integer.valueOf(-30), n.getValue(3));
     }
 
     @Test(expected = NullPointerException.class)
@@ -365,7 +358,7 @@ public class NodeTest {
             final Integer value = pair[1];
             assertTrue("keys should contains key " + pair[0],
                     keys.contains(pair[0]));
-            assertEquals(value, n.getValueByKey(key));
+            assertEquals(value, nodeUtil.getValueByKey(n, key));
         }
         assertEquals("Node link is invalid", expectedNodeLink, n.getLink());
         if (pairs.length > 0) {

@@ -55,22 +55,19 @@ public final class JbNodeBuilderImpl<K, V> implements JbNodeBuilder<K, V> {
         byte flag = field[0];
         if (flag == Node.M) {
             // leaf node
-            final Field<K, T> f =
-                    new FieldImpl(field, treeData.getLeafNodeDescriptor());
-            return (Node<K, T>) new NodeImpl(idNode, f);
+            return (Node<K, T>) new NodeImpl(idNode, field,
+                    treeData.getLeafNodeDescriptor());
         } else {
             // non-leaf node
-            final Field<K, T> f =
-                    new FieldImpl(field, treeData.getNonLeafNodeDescriptor());
-            return (Node<K, T>) new NodeImpl(idNode, f);
+            return (Node<K, T>) new NodeImpl(idNode, field,
+                    treeData.getNonLeafNodeDescriptor());
         }
     }
 
     @Override
     public <T> Node<K, T> makeNode(final Integer idNode, final byte[] field,
             final JbNodeDef<K, T> jbNodeDef) {
-        final Field<K, T> f = new FieldImpl<K, T>(field, jbNodeDef);
-        return new NodeImpl<K, T>(idNode, f);
+        return new NodeImpl<K, T>(idNode, field, jbNodeDef);
     }
 
     @Override
@@ -123,8 +120,7 @@ public final class JbNodeBuilderImpl<K, V> implements JbNodeBuilder<K, V> {
         treeData.getNonLeafNodeDescriptor().getLinkTypeDescriptor().save(b,
                 position, NodeImpl.EMPTY_INT);
 
-        final Field<K, Integer> f = new FieldImpl<K, Integer>(b,
+        return new NodeImpl<K, Integer>(idNode, b,
                 treeData.getNonLeafNodeDescriptor());
-        return new NodeImpl<K, Integer>(idNode, f);
     }
 }

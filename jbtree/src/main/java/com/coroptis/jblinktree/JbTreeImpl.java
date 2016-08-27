@@ -117,13 +117,13 @@ public final class JbTreeImpl<K, V> implements JbTree<K, V> {
                 treeTool.findLeafNodeId(key, stack, treeData.getRootNodeId());
         Node<K, V> currentNode = nodeStore.getAndLock(currentNodeId);
         currentNode = treeTraversingService.moveRightLeafNode(currentNode, key);
-        if (currentNode.getValueByKey(key) == null) {
+        if (nodeService.getValueByKey(currentNode, key) == null) {
             return treeHelper.insertToLeafNode(currentNode, key, value, stack);
         } else {
             /**
              * Key already exists. Rewrite value.
              */
-            V oldValue = currentNode.getValueByKey(key);
+            V oldValue = nodeService.getValueByKey(currentNode, key);
             treeService.storeValueIntoLeafNode(currentNode, key, value);
             return oldValue;
         }
@@ -137,7 +137,7 @@ public final class JbTreeImpl<K, V> implements JbTree<K, V> {
                 treeTool.findLeafNodeId(key, stack, treeData.getRootNodeId());
         Node<K, V> currentNode = nodeStore.getAndLock(currentNodeId);
         currentNode = treeTraversingService.moveRightLeafNode(currentNode, key);
-        if (currentNode.getValueByKey(key) == null) {
+        if (nodeService.getValueByKey(currentNode, key) == null) {
             /**
              * Node doesn't contains key, there is nothing to delete
              */
@@ -157,7 +157,8 @@ public final class JbTreeImpl<K, V> implements JbTree<K, V> {
     @Override
     public V search(final K key) {
         Preconditions.checkNotNull(key);
-        return treeHelper.findAppropriateLeafNode(key).getValueByKey(key);
+        return nodeService
+                .getValueByKey(treeHelper.findAppropriateLeafNode(key), key);
     }
 
     @Override
@@ -171,8 +172,8 @@ public final class JbTreeImpl<K, V> implements JbTree<K, V> {
     @Override
     public boolean containsKey(final K key) {
         Preconditions.checkNotNull(key);
-        return treeHelper.findAppropriateLeafNode(key)
-                .getValueByKey(key) != null;
+        return nodeService.getValueByKey(
+                treeHelper.findAppropriateLeafNode(key), key) != null;
     }
 
     @Override

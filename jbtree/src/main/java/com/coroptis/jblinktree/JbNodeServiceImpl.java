@@ -153,4 +153,15 @@ public class JbNodeServiceImpl<K, V> implements JbNodeService<K, V> {
         return null;
     }
 
+    @Override
+    public V getValueByKey(final Node<K, V> node, final K key) {
+        Preconditions.checkNotNull(key);
+        for (int i = 0; i < node.getKeyCount(); i++) {
+            if (key.equals(node.getKey(i))) {
+                return node.getValue(i);
+            }
+        }
+        return null;
+    }
+
 }

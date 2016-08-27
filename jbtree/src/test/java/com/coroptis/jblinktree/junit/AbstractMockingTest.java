@@ -22,7 +22,6 @@ package com.coroptis.jblinktree.junit;
 
 import org.easymock.EasyMock;
 
-import com.coroptis.jblinktree.Field;
 import com.coroptis.jblinktree.JbNodeBuilder;
 import com.coroptis.jblinktree.JbNodeService;
 import com.coroptis.jblinktree.JbTreeData;
@@ -58,11 +57,6 @@ public abstract class AbstractMockingTest {
     protected Node<Integer, Integer> n1, n2, n3;
     protected Node<Integer, String> n4;
 
-    //FIXME remove fields
-    protected Field<Integer, Integer> f1, f2, f3;
-
-    protected Field<Integer, String> f4;
-
     protected JbNodeBuilder<Integer, Integer> builder;
 
     protected JbNodeService<Integer, Integer> nodeService;
@@ -78,10 +72,6 @@ public abstract class AbstractMockingTest {
         n2 = EasyMock.createMock(Node.class);
         n3 = EasyMock.createMock(Node.class);
         n4 = EasyMock.createMock(Node.class);
-        f1 = EasyMock.createMock(Field.class);
-        f2 = EasyMock.createMock(Field.class);
-        f3 = EasyMock.createMock(Field.class);
-        f4 = EasyMock.createMock(Field.class);
         builder = EasyMock.createMock(JbNodeBuilder.class);
         jbTreeService = EasyMock.createMock(JbTreeService.class);
         treeHelper = EasyMock.createMock(JbTreeHelper.class);
@@ -90,7 +80,7 @@ public abstract class AbstractMockingTest {
         treeTraversingService =
                 EasyMock.createMock(JbTreeTraversingService.class);
         mocks = new Object[] { nodeStore, nodeBuilder, treeTool, n1, n2, n3, n4,
-                f1, f2, f3, f4, builder, jbTreeService, treeHelper, treeData,
+                builder, jbTreeService, treeHelper, treeData,
                 treeTraversingService, nodeService };
     }
 
@@ -99,10 +89,6 @@ public abstract class AbstractMockingTest {
         n2 = null;
         n3 = null;
         n4 = null;
-        f1 = null;
-        f2 = null;
-        f3 = null;
-        f4 = null;
         treeTraversingService = null;
         nodeStore = null;
         builder = null;

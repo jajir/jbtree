@@ -80,6 +80,19 @@ public interface JbNodeService<K, V> {
      * @throws NullPointerException
      *             when key or value is null
      */
-    <S> S remove(final Node<K, S> node,final K key);
+    <S> S remove(final Node<K, S> node, final K key);
+
+    /**
+     * Find value for given key.
+     * <p>
+     * Method is not fast and should not be called in main search algorithm.
+     * </p>
+     *
+     * @param key
+     *            required key
+     * @return found value if there is any, when value is <code>null</code> or
+     *         there is no such key <code>null</code> is returned.
+     */
+    V getValueByKey(Node<K, V> node, K key);
 
 }
