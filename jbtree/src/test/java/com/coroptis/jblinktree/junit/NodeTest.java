@@ -179,7 +179,7 @@ public class NodeTest {
     }
 
     @Test(expected = NullPointerException.class)
-    public void test_insert_key_null() throws Exception {
+    public void test_insertToPosition_key_null() throws Exception {
         node.insertToPosition(null, 2, 0);
     }
 
