@@ -81,11 +81,6 @@ public interface JbTree<K, V> {
     boolean containsKey(K key);
 
     /**
-     * Verify that tree is consistent.
-     */
-    void verify();
-
-    /**
      * return number of nodes that are currently locked.
      * <p>
      * Method is thread safe.

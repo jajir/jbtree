@@ -227,7 +227,7 @@ public final class JbTreeImpl<K, V> implements JbTree<K, V> {
                         return;
                     }
                     for (final Integer i : nodeService
-                            .getNodeIds((Node) node)) {
+                            .getNodeIds((Node<K, Integer>) node)) {
                         stack.push(i);
                     }
                 }
@@ -265,24 +265,6 @@ public final class JbTreeImpl<K, V> implements JbTree<K, V> {
                 leafNode = nodeStore.get(leafNode.getLink());
             }
         }
-    }
-
-    @Override
-    public void verify() {
-        visit(new JbTreeVisitor<K, V>() {
-
-            @Override
-            public boolean visitedLeaf(final Node<K, V> node) {
-                node.verify();
-                return true;
-            }
-
-            @Override
-            public boolean visitedNonLeaf(final Node<K, Integer> node) {
-                node.verify();
-                return true;
-            }
-        });
     }
 
     @Override

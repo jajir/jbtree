@@ -53,7 +53,7 @@ public final class JbNodeBuilderImpl<K, V> implements JbNodeBuilder<K, V> {
     @Override
     public <T> Node<K, T> makeNode(final Integer idNode, final byte[] field) {
         byte flag = field[0];
-        if (flag == Node.M) {
+        if (flag == Node.FLAG_LEAF_NODE) {
             // leaf node
             return (Node<K, T>) new NodeImpl(idNode, field,
                     treeData.getLeafNodeDescriptor());

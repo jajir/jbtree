@@ -156,18 +156,6 @@ public final class JbTreeWrapper<K, V> implements JbTree<K, V> {
     }
 
     @Override
-    public void verify() {
-        saveExecution(new Execute() {
-
-            @Override
-            public Object execute() {
-                tree.verify();
-                return null;
-            }
-        });
-    }
-
-    @Override
     public int countLockedNodes() {
         return (Integer) saveExecution(new Execute() {
 

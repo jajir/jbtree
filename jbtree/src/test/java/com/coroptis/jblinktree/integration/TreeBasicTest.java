@@ -67,7 +67,6 @@ public class TreeBasicTest extends TestCase {
         tree.put(2, -20);
         tree.put(3, -30);
         tree.put(4, -40);
-        tree.verify();
         logger.debug(tree.toString());
     }
 
@@ -77,7 +76,6 @@ public class TreeBasicTest extends TestCase {
         tree.put(4, -40);
         tree.put(3, -30);
         tree.put(2, -20);
-        tree.verify();
         logger.debug(tree.toString());
     }
 
@@ -88,7 +86,6 @@ public class TreeBasicTest extends TestCase {
         assertNull(tree.put(3, -30));
         assertNull(tree.put(4, -40));
         assertEquals(Integer.valueOf(-10), tree.put(1, -100));
-        tree.verify();
         logger.debug(tree.toString());
     }
 

@@ -80,7 +80,6 @@ public class TreeConcurrencyTest extends TestCase {
         assertEquals("Some thread didn't finished work", 0,
                 doneLatch.getCount());
         assertEquals("Some locks wasn't unlocked", 0, tree.countLockedNodes());
-        tree.verify();
         logger.debug("I'm done!");
         treeUtil.toDotFile(new File("pok.dot"));
     }

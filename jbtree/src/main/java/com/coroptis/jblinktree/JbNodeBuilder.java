@@ -52,7 +52,7 @@ public interface JbNodeBuilder<K, V> {
 
     /**
      * Create new node by copying array to new node. Node definition will be
-     * assigned based on field flag. See {@link Node#M}.
+     * assigned based on field flag. See {@link Node#FLAG_LEAF_NODE}.
      *
      * @param <T>
      *            node value type

@@ -35,11 +35,6 @@ import java.util.Map;
 public interface TreeMap<K, V> extends Map<K, V> {
 
     /**
-     * verify tree consistency. It's for testing purposes.
-     */
-    void verify();
-
-    /**
      * TODO don't expose outside of implementation Traverse through entire tree
      * and visit all nodes.
      *

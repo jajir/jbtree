@@ -1,5 +1,25 @@
 package com.coroptis.jblinktree;
 
+/*
+ * #%L
+ * jblinktree
+ * %%
+ * Copyright (C) 2015 coroptis
+ * %%
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * #L%
+ */
+
 /**
  * Tree node providing basic operations.
  *
@@ -16,7 +36,12 @@ public interface Node<K, V> {
     /**
      * When this value in at flag position than it's leaf node.
      */
-    byte M = -77;
+    byte FLAG_LEAF_NODE = -77;
+
+    /**
+     * When this value in at flag position than it's non-leaf node.
+     */
+    byte FLAG_NON_LEAF_NODE = -3;
 
     /**
      * Value for Integer represents empty state.
@@ -24,14 +49,14 @@ public interface Node<K, V> {
     Integer EMPTY_INT = -1;
 
     /**
-     * Get link value. Delegate to {@link Field#getLink()}
+     * Get link value.
      *
      * @return link value, could be {@link Node#EMPTY_INT} but never null
      */
     Integer getLink();
 
     /**
-     * Allows to set link value. Delegate to {@link Field#setLink(Integer)}
+     * Allows to set link value.
      *
      * @param link
      *            link value, could be {@link Node#EMPTY_INT}
@@ -88,14 +113,6 @@ public interface Node<K, V> {
      *         <code>false</code>
      */
     boolean isLeafNode();
-
-    /**
-     * Verify that node is consistent.
-     *
-     * @return <code>true</code> when node is consistent otherwise return
-     *         <code>false</code>
-     */
-    boolean verify();
 
     /**
      * Get node content as byte array.
@@ -159,7 +176,7 @@ public interface Node<K, V> {
      * @param targetIndex
      *            required target index in field
      */
-    void insertToPosition(K key, V value, int targetIndex);
+    void insertAtPosition(K key, V value, int targetIndex);
 
     /**
      * Remove two bytes from node field at given position. Method doesn't care
@@ -168,7 +185,7 @@ public interface Node<K, V> {
      * @param position
      *            required position
      */
-    void removeKeyValueAtPosition(final int position);
+    void removeAtPosition(final int position);
 
     /**
      * Get flag byte.

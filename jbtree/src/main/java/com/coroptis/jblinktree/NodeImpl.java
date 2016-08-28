@@ -1,5 +1,25 @@
 package com.coroptis.jblinktree;
 
+/*
+ * #%L
+ * jblinktree
+ * %%
+ * Copyright (C) 2015 coroptis
+ * %%
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * #L%
+ */
+
 import java.util.Arrays;
 
 import com.coroptis.jblinktree.type.TypeDescriptorInteger;
@@ -57,8 +77,9 @@ import com.google.common.base.Preconditions;
  * <li>K(L*2+1) - highest key value from node in case of leaf node or highest
  * key value from all referenced nodes.</li>
  * </ul>
- * First value P0 at index 0 have special meaning, when it's {@link NodeImpl#M}
- * than this node is leaf node. In all other cases is non-leaf node.
+ * First value P0 at index 0 have special meaning, when it's
+ * {@link Node#FLAG_LEAF_NODE} than this node is leaf node. In all other
+ * cases is non-leaf node.
  * <p>
  * Node is not thread save.
  * </p>
@@ -104,9 +125,9 @@ public final class NodeImpl<K, V> implements Node<K, V> {
         this.nodeDef = jbNodeDef;
         this.field = new byte[jbNodeDef.getFieldActualLength(0)];
         if (isLeafNode) {
-            setFlag(M);
+            setFlag(FLAG_LEAF_NODE);
         } else {
-            setFlag((byte) -3);
+            setFlag(FLAG_NON_LEAF_NODE);
         }
         setLink(Node.EMPTY_INT);
     }
@@ -116,8 +137,10 @@ public final class NodeImpl<K, V> implements Node<K, V> {
      *
      * @param nodeId
      *            required node id
-     * @param nodeField
-     *            required field with node byte array with data
+     * @param sourceField
+     *            required node node data field
+     * @param jbNodeDef
+     *            required node data definition
      */
     public NodeImpl(final Integer nodeId, final byte[] sourceField,
             final JbNodeDef<K, V> jbNodeDef) {
@@ -125,7 +148,7 @@ public final class NodeImpl<K, V> implements Node<K, V> {
         this.nodeDef = jbNodeDef;
         this.field = new byte[sourceField.length];
         System.arraycopy(sourceField, 0, this.field, 0, this.field.length);
-        if (getFlag() != Node.M && !(nodeDef
+        if (getFlag() != Node.FLAG_LEAF_NODE && !(nodeDef
                 .getValueTypeDescriptor() instanceof TypeDescriptorInteger)) {
             throw new JblinktreeException(
                     "Non-leaf node doesn't have value of type integer, it's "
@@ -176,7 +199,7 @@ public final class NodeImpl<K, V> implements Node<K, V> {
      *            required target index in field
      */
     @Override
-    public void insertToPosition(final K key, final V value,
+    public void insertAtPosition(final K key, final V value,
             final int targetIndex) {
         byte[] tmp = new byte[nodeDef.getFieldActualLength(getKeyCount() + 1)];
         copyFlagAndLink(field, tmp);
@@ -193,7 +216,7 @@ public final class NodeImpl<K, V> implements Node<K, V> {
     }
 
     @Override
-    public void removeKeyValueAtPosition(final int position) {
+    public void removeAtPosition(final int position) {
         byte[] tmp = new byte[nodeDef.getFieldActualLength(getKeyCount() - 1)];
         copyFlagAndLink(field, tmp);
         if (position > 0) {
@@ -206,19 +229,44 @@ public final class NodeImpl<K, V> implements Node<K, V> {
         field = tmp;
     }
 
-    private void copy(byte[] from, final int srcPos1, byte[] to,
+    /**
+     * Copy selected position from one byte array to another one.
+     * <p>
+     * Positions are positions of key value pairs in node not position of byte.
+     * </p>
+     *
+     * @param from
+     *            required source field
+     * @param srcPos1
+     *            required where copying starts
+     * @param to
+     *            required target field
+     * @param destPos1
+     *            required target node position
+     * @param length
+     *            required, how many key value pairs will be copied
+     */
+    private void copy(final byte[] from, final int srcPos1, final byte[] to,
             final int destPos1, final int length) {
         System.arraycopy(from, nodeDef.getValuePosition(srcPos1), to,
                 nodeDef.getValuePosition(destPos1),
                 length * nodeDef.getKeyAndValueSize());
     }
 
-    private void copyFlagAndLink(byte[] from, byte[] to) {
+    /**
+     * Copy flag and link value from one byte field to another one.
+     *
+     * @param from
+     *            required from field
+     * @param to
+     *            required to field
+     */
+    private void copyFlagAndLink(final byte[] from, final byte[] to) {
         to[0] = from[0];
-        to[to.length - 4] = from[from.length - 4];
-        to[to.length - 3] = from[from.length - 3];
-        to[to.length - 2] = from[from.length - 2];
-        to[to.length - 1] = from[from.length - 1];
+        for (int i = 1; i <= nodeDef.getLinkTypeDescriptor()
+                .getMaxLength(); i++) {
+            to[to.length - i] = from[from.length - i];
+        }
     }
 
     @Override
@@ -242,6 +290,7 @@ public final class NodeImpl<K, V> implements Node<K, V> {
         copyFlagAndLink(field, tmp);
         copy(field, 0, tmp, 0, startIndex);
         field = tmp;
+        setLink(node.getId());
     }
 
     @Override
@@ -290,25 +339,13 @@ public final class NodeImpl<K, V> implements Node<K, V> {
 
     @Override
     public boolean isLeafNode() {
-        return M == getFlag();
-    }
-
-    @Override
-    public boolean verify() {
-        if (!isLeafNode()) {
-            for (int i = 0; i < getKeyCount(); i++) {
-                if (getValue(i) != null && getValue(i).equals(id)) {
-                    throw new JblinktreeException(
-                            "node contains pointer to itself: " + toString());
-                }
-            }
-        }
-        return true;
+        return FLAG_LEAF_NODE == getFlag();
     }
 
     @Override
     public int hashCode() {
-        return Arrays.hashCode(new Object[] { id, field });
+        return Arrays.hashCode(new Object[] {
+                id, field });
     }
 
     @SuppressWarnings("unchecked")
@@ -324,6 +361,14 @@ public final class NodeImpl<K, V> implements Node<K, V> {
         return equal(id, n.id) && fieldEquals(n.field);
     }
 
+    /**
+     * Compare field of this object with given one.
+     *
+     * @param nField
+     *            required compared field
+     * @return <code>true</code> when content of fields is same otherwise return
+     *         <code>false</code>
+     */
     private boolean fieldEquals(final byte[] nField) {
         if (field.length == nField.length) {
             for (int i = 0; i < field.length; i++) {

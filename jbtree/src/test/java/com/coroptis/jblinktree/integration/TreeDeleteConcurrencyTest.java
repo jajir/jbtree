@@ -74,7 +74,6 @@ public class TreeDeleteConcurrencyTest extends TestCase {
         doneLatch.await(2, TimeUnit.MINUTES);
         assertEquals("Some thread didn't finished work", 0,
                 doneLatch.getCount());
-        tree.verify();
         logger.debug("I'm done!");
     }
 

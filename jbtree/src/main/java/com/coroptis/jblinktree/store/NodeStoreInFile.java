@@ -112,7 +112,6 @@ public final class NodeStoreInFile<K, V> implements NodeStore<K> {
     public <S> void writeNode(final Node<K, S> node) {
         Preconditions.checkNotNull(node.getId());
         Preconditions.checkNotNull(node);
-        node.verify();
         nodeCache.put((Node<K, V>) node);
     }
 

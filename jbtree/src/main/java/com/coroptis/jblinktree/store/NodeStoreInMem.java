@@ -98,7 +98,6 @@ public final class NodeStoreInMem<K, V> implements NodeStore<K> {
     public <S> void writeNode(final Node<K, S> node) {
         Preconditions.checkNotNull(node.getId());
         Preconditions.checkNotNull(node);
-        node.verify();
         nodes.put(node.getId(), node.getFieldBytes());
     }
 

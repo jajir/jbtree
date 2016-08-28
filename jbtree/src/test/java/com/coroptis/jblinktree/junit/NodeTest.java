@@ -78,123 +78,98 @@ public class NodeTest {
     public void test_emptyNode() throws Exception {
         logger.debug(node.toString());
 
-        verifyNode(node, new Integer[][] {}, true, -1);
+        verifyNode(node, new Integer[][] {}, true, -1, 0);
         assertEquals(null, node.getMaxKey());
     }
 
+    /**
+     * Test verify that storing more pairs into node is accepted.
+     *
+     * @throws Exception
+     *             default exception
+     */
     @Test
-    public void test_insert_leaf_oneKey() throws Exception {
-        node.insertToPosition(2, 20, 0);
-        logger.debug(node.toString());
-
-        verifyNode(node, new Integer[][] { { 2, 20 } }, true, -1);
-    }
-
-    @Test
-    public void test_insert_leaf_2nodes() throws Exception {
-        node.insertToPosition(2, 20, 0);
-        node.insertToPosition(1, 10, 0);
-
-        verifyNode(node, new Integer[][] { { 1, 10 }, { 2, 20 } }, true, -1);
-    }
-
-    @Test
-    public void test_insert_leaf_overwriteValue() throws Exception {
-        node.insertToPosition(2, 10, 0);
-        node.insertToPosition(2, 20, 0);
-
-        logger.debug(node.toString());
-
-        verifyNode(node, new Integer[][] { { 2, 20 } }, true, -1);
-    }
-
-    @Test
-    public void test_insert_leaf_overwriteValue_fullNode() throws Exception {
-        node.insertToPosition(2, 20, 1);
-        node.insertToPosition(1, 80, 0);
-        logger.debug(node.toString());
-
-        node.insertToPosition(2, 30, 1);
-
-        verifyNode(node, new Integer[][] { { 1, 80 }, { 2, 30 } }, true, -1);
-    }
-
-    @Test
-    public void test_insert_nonLeaf() throws Exception {
+    public void test_insertAtPosition_nodeIsFull() throws Exception {
         Node<Integer, Integer> n =
-                nr.makeNodeFromIntegers(3, 0, new Integer[] { 0, 1, 1, 3, 98 });
-        n.insertToPosition(4, -40, 1);
+                nr.makeNodeFromIntegers(2, 0, new Integer[] { 0, 1, 1, 3, 98 });
+        logger.debug(n.toString());
+        n.insertAtPosition(4, -40, 2);
 
         logger.debug(n.toString());
 
         assertEquals(3, n.getKeyCount());
-        assertFalse("it's non leaf node", n.isLeafNode());
-        List<Integer> keys = nodeUtil.getKeys(n);
-        assertTrue(keys.contains(1));
-        assertTrue(keys.contains(4));
-        assertEquals(Integer.valueOf(98), n.getLink());
-        assertEquals("non-leaf nodes should preserver it's max key",
-                Integer.valueOf(4), n.getMaxKey());
-        assertEquals(Integer.valueOf(0), n.getValue(1));
-        assertEquals(Integer.valueOf(1), n.getValue(3));
-        assertEquals(Integer.valueOf(-40), n.getValue(4));
     }
 
     @Test
-    public void test_insert_nonLeaf_maxKey() throws Exception {
-        Node<Integer, Integer> n =
-                nr.makeNodeFromIntegers(3, 0, new Integer[] { 0, 1, 1, 2, -1 });
-        n.insertToPosition(4, 3, 1);
-
+    public void test_insertAtPosition_highest() throws Exception {
+        Node<Integer, Integer> n = nr.makeNodeFromIntegers(3, 45,
+                new Integer[] { 0, 1, 1, 3, 98 });
         logger.debug(n.toString());
+        n.insertAtPosition(4, -40, 2);
 
-        assertEquals(3, n.getKeyCount());
-        assertFalse("it's non leaf node", n.isLeafNode());
-        List<Integer> keys = nodeUtil.getKeys(n);
-        assertTrue(keys.contains(1));
-        assertTrue(keys.contains(2));
-        assertTrue(keys.contains(4));
-        assertEquals(Integer.valueOf(-1), n.getLink());
-        assertEquals(Integer.valueOf(0), n.getValue(1));
-        assertEquals(Integer.valueOf(1), n.getValue(2));
-        assertEquals(Integer.valueOf(3), n.getValue(4));
+        verifyNode(n, new Integer[][] { { 1, 0 }, { 3, 1 }, { 4, -40 } }, false,
+                98, 45);
     }
 
     @Test
-    public void test_insert_nonLeaf_loverKey() throws Exception {
-        Node<Integer, Integer> n =
-                nr.makeNodeFromIntegers(4, new Integer[] { 0, 4, 0 });
-        n.insertToPosition(3, -30, 0);
+    public void test_insertAtPosition_lowest() throws Exception {
+        Node<Integer, Integer> n = nr.makeNodeFromIntegers(3, 12,
+                new Integer[] { 0, 1, 1, 3, 98 });
+        logger.debug(n.toString());
+        n.insertAtPosition(0, -10, 0);
 
+        verifyNode(n, new Integer[][] { { 0, -10 }, { 1, 0 }, { 3, 1 } }, false,
+                98, 12);
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void test_insertAtPosition_key_null() throws Exception {
+        node.insertAtPosition(null, 2, 0);
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void test_insertAtPosition_value_null() throws Exception {
+        node.insertAtPosition(4, null, 0);
+    }
+
+    @Test
+    public void test_removeAtPosition() throws Exception {
+        Node<Integer, Integer> n = nr.makeNodeFromIntegers(3, 12,
+                new Integer[] { 0, 1, 1, 3, 2, 4, 98 });
         logger.debug(n.toString());
 
-        assertEquals(2, n.getKeyCount());
-        assertFalse("it's non leaf node", n.isLeafNode());
-        List<Integer> keys = nodeUtil.getKeys(n);
-        assertTrue(keys.contains(3));
-        assertTrue(keys.contains(4));
-        assertEquals(Integer.valueOf(0), n.getLink());
-        assertEquals(Integer.valueOf(0), n.getValue(4));
-        assertEquals(Integer.valueOf(-30), n.getValue(3));
+        n.removeAtPosition(1);
+        verifyNode(n, new Integer[][] { { 1, 0 }, { 4, 2 } }, false, 98, 12);
     }
 
-    @Test(expected = NullPointerException.class)
-    public void test_insertToPosition_key_null() throws Exception {
-        node.insertToPosition(null, 2, 0);
+    @Test
+    public void test_removeAtPosition_highest() throws Exception {
+        Node<Integer, Integer> n = nr.makeNodeFromIntegers(3, 12,
+                new Integer[] { 0, 1, 1, 3, 2, 4, 98 });
+        logger.debug(n.toString());
+
+        n.removeAtPosition(2);
+        verifyNode(n, new Integer[][] { { 1, 0 }, { 3, 1 } }, false, 98, 12);
     }
 
-    @Test(expected = NullPointerException.class)
-    public void test_insert_value_null() throws Exception {
-        node.insertToPosition(4, null, 0);
+    @Test
+    public void test_removeAtPosition_lowest() throws Exception {
+        Node<Integer, Integer> n = nr.makeNodeFromIntegers(3, 12,
+                new Integer[] { 0, 1, 1, 3, 2, 4, 98 });
+        logger.debug(n.toString());
+
+        n.removeAtPosition(0);
+        verifyNode(n, new Integer[][] { { 3, 1 }, { 4, 2 } }, false, 98, 12);
     }
 
     @Test
     public void test_setLink() throws Exception {
         node.setLink(-10);
-        node.insertToPosition(1, 10, 0);
-        node.insertToPosition(2, 20, 1);
+        node.insertAtPosition(1, 10, 0);
+        node.insertAtPosition(2, 20, 1);
 
-        verifyNode(node, new Integer[][] { { 1, 10 }, { 2, 20 } }, true, -10);
+        verifyNode(node, new Integer[][] { { 1, 10 }, { 2, 20 } }, true, -10,
+                0);
     }
 
     @Test(expected = NullPointerException.class)
@@ -204,26 +179,27 @@ public class NodeTest {
 
     @Test
     public void test_moveTopHalfOfDataTo_leaf() throws Exception {
-        node.insertToPosition(1, 10, 0);
-        node.insertToPosition(2, 20, 1);
-        node.setLink(100);
-        logger.debug("node1  " + node.toString());
+        Node<Integer, Integer> node1 = nr.makeNodeFromIntegers(3, 0,
+                new Integer[] { 10, 1, 20, 2, 100 });
+        node1.setFlag(Node.FLAG_LEAF_NODE);
+        logger.debug("node1: " + node1.toString());
 
         NodeImpl<Integer, Integer> node2 = new NodeImpl<Integer, Integer>(1,
                 true, nr.getTreeData().getLeafNodeDescriptor());
-        node.moveTopHalfOfDataTo(node2);
+        node1.moveTopHalfOfDataTo(node2);
 
-        logger.debug("node1  " + node.toString());
-        logger.debug("node2 " + node2.toString());
+        logger.debug("node1: " + node1.toString());
+        logger.debug("node2: " + node2.toString());
         /**
          * First node
          */
-        assertEquals("key count is not correct", 1, node.getKeyCount());
-        assertTrue(node.isLeafNode());
-        List<Integer> keys = nodeUtil.getKeys(node);
+        assertEquals("key count is not correct", 1, node1.getKeyCount());
+        assertTrue(node1.isLeafNode());
+        List<Integer> keys = nodeUtil.getKeys(node1);
         assertTrue(keys.contains(1));
-        assertEquals(Integer.valueOf(1), node.getLink());
-        assertEquals("Invalid getMaxKey", Integer.valueOf(1), node.getMaxKey());
+        assertEquals(Integer.valueOf(1), node1.getLink());
+        assertEquals("Invalid getMaxKey", Integer.valueOf(1),
+                node1.getMaxKey());
 
         /**
          * Second node
@@ -286,30 +262,10 @@ public class NodeTest {
     }
 
     @Test
-    public void test_insert_leaf_tooMuchNodes() throws Exception {
-        node.insertToPosition(2, 20, 0);
-        node.insertToPosition(1, 10, 1);
-        try {
-            node.insertToPosition(4, 40, 12);
-            fail();
-        } catch (JblinktreeException e) {
-            assertTrue(true);
-        }
-
-        assertEquals(2, node.getKeyCount());
-        assertFalse(node.isEmpty());
-        assertTrue(node.isLeafNode());
-        List<Integer> keys = nodeUtil.getKeys(node);
-        assertTrue(keys.contains(1));
-        assertTrue(keys.contains(2));
-        assertEquals(Integer.valueOf(-1), node.getLink());
-    }
-
-    @Test
     public void test_isEmpty() throws Exception {
         assertTrue(node.isEmpty());
         logger.debug(node.toString());
-        node.insertToPosition(2, 20, 0);
+        node.insertAtPosition(2, 20, 0);
         logger.debug(node.toString());
 
         assertFalse(node.isEmpty());
@@ -318,8 +274,8 @@ public class NodeTest {
 
     @Test
     public void test_getMaxKey() throws Exception {
-        node.insertToPosition(1, 10, 0);
-        node.insertToPosition(2, 20, 1);
+        node.insertAtPosition(1, 10, 0);
+        node.insertAtPosition(2, 20, 1);
 
         logger.debug(node.toString());
         assertEquals(Integer.valueOf(2), node.getMaxKey());
@@ -346,12 +302,13 @@ public class NodeTest {
      */
     private void verifyNode(final Node<Integer, Integer> n,
             final Integer[][] pairs, final boolean isLeafNode,
-            final Integer expectedNodeLink) {
+            final Integer expectedNodeLink, final Integer expectedNodeId) {
         logger.debug(n.toString());
 
         assertEquals("Expected number of key is invalid", pairs.length,
                 n.getKeyCount());
         assertEquals("isLeafNode value is invalid", isLeafNode, n.isLeafNode());
+        assertEquals("nodeId is invalid", expectedNodeId, n.getId());
         List<Integer> keys = nodeUtil.getKeys(n);
         for (Integer[] pair : pairs) {
             final Integer key = pair[0];

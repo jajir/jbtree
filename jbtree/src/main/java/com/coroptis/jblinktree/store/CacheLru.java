@@ -122,8 +122,9 @@ public final class CacheLru<K, V> implements Cache<K, V> {
             return nodeBuilder.makeNode(idNode, cacheItem.getNodeData());
         } else {
             Node<K, V> node = cacheListener.onLoad(idNode);
-            setLastUsed(node.getId());
-            cache.put(node.getId(), CacheItem.make(node.getFieldBytes()));
+            setLastUsed(idNode);
+            cache.put(idNode, CacheItem.make(node.getFieldBytes()));
+            checkCacheSize();
             return node;
         }
     }

@@ -174,12 +174,6 @@ public final class TreeMapImpl<K, V> implements TreeMap<K, V> {
     }
 
     @Override
-    public void verify() {
-        checkIsClosed();
-        tree.verify();
-    }
-
-    @Override
     @Deprecated
     public void visit(final JbTreeVisitor<K, V> treeVisitor) {
         checkIsClosed();

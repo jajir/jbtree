@@ -31,6 +31,7 @@ import com.coroptis.jblinktree.JbTreeTool;
 import com.coroptis.jblinktree.JbTreeTraversingService;
 import com.coroptis.jblinktree.Node;
 import com.coroptis.jblinktree.NodeStore;
+import com.coroptis.jblinktree.store.CacheListener;
 
 /**
  * Class
@@ -53,13 +54,15 @@ public abstract class AbstractMockingTest {
     protected JbTreeData<Integer, Integer> treeData;
 
     protected JbNodeBuilder<Integer, Integer> nodeBuilder;
+    protected JbNodeBuilder<Integer, Integer> builder;
 
     protected Node<Integer, Integer> n1, n2, n3;
     protected Node<Integer, String> n4;
 
-    protected JbNodeBuilder<Integer, Integer> builder;
 
     protected JbNodeService<Integer, Integer> nodeService;
+
+    protected CacheListener<Integer, Integer> cacheListener;
 
     protected Object[] mocks;
 
@@ -77,11 +80,12 @@ public abstract class AbstractMockingTest {
         treeHelper = EasyMock.createMock(JbTreeHelper.class);
         treeData = EasyMock.createMock(JbTreeData.class);
         nodeService = EasyMock.createMock(JbNodeService.class);
+        cacheListener = EasyMock.createMock(CacheListener.class);
         treeTraversingService =
                 EasyMock.createMock(JbTreeTraversingService.class);
         mocks = new Object[] { nodeStore, nodeBuilder, treeTool, n1, n2, n3, n4,
                 builder, jbTreeService, treeHelper, treeData,
-                treeTraversingService, nodeService };
+                treeTraversingService, nodeService, cacheListener };
     }
 
     protected void tearDown() throws Exception {
@@ -94,6 +98,7 @@ public abstract class AbstractMockingTest {
         builder = null;
         mocks = null;
         nodeService = null;
+        cacheListener = null;
     }
 
     protected void replay(final Object... otherMocks) {

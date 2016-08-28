@@ -62,7 +62,7 @@ public class NodeStringTest {
 
     @Test
     public void test_insert_leaf_one() throws Exception {
-        node.insertToPosition("ahoj", "lidi", 0);
+        node.insertAtPosition("ahoj", "lidi", 0);
 
         verifyNode(node, new String[][] { { "ahoj", "lidi" } }, true,
                 Node.EMPTY_INT);
@@ -70,8 +70,8 @@ public class NodeStringTest {
 
     @Test
     public void test_insert_leaf_second_bigger() throws Exception {
-        node.insertToPosition("ahoj", "lidi", 0);
-        node.insertToPosition("flying", "pig", 1);
+        node.insertAtPosition("ahoj", "lidi", 0);
+        node.insertAtPosition("flying", "pig", 1);
 
         verifyNode(node,
                 new String[][] { { "ahoj", "lidi" }, { "flying", "pig" } },
@@ -80,8 +80,8 @@ public class NodeStringTest {
 
     @Test
     public void test_insert_leaf_second_smaller() throws Exception {
-        node.insertToPosition("aaa taxi", "is fast", 0);
-        node.insertToPosition("ahoj", "lidi", 1);
+        node.insertAtPosition("aaa taxi", "is fast", 0);
+        node.insertAtPosition("ahoj", "lidi", 1);
 
         verifyNode(node, new String[][] { { "aaa taxi", "is fast" },
                 { "ahoj", "lidi" } }, true, Node.EMPTY_INT);
