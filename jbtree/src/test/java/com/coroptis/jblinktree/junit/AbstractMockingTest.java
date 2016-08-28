@@ -54,11 +54,9 @@ public abstract class AbstractMockingTest {
     protected JbTreeData<Integer, Integer> treeData;
 
     protected JbNodeBuilder<Integer, Integer> nodeBuilder;
-    protected JbNodeBuilder<Integer, Integer> builder;
 
     protected Node<Integer, Integer> n1, n2, n3;
     protected Node<Integer, String> n4;
-
 
     protected JbNodeService<Integer, Integer> nodeService;
 
@@ -75,7 +73,6 @@ public abstract class AbstractMockingTest {
         n2 = EasyMock.createMock(Node.class);
         n3 = EasyMock.createMock(Node.class);
         n4 = EasyMock.createMock(Node.class);
-        builder = EasyMock.createMock(JbNodeBuilder.class);
         jbTreeService = EasyMock.createMock(JbTreeService.class);
         treeHelper = EasyMock.createMock(JbTreeHelper.class);
         treeData = EasyMock.createMock(JbTreeData.class);
@@ -84,8 +81,8 @@ public abstract class AbstractMockingTest {
         treeTraversingService =
                 EasyMock.createMock(JbTreeTraversingService.class);
         mocks = new Object[] { nodeStore, nodeBuilder, treeTool, n1, n2, n3, n4,
-                builder, jbTreeService, treeHelper, treeData,
-                treeTraversingService, nodeService, cacheListener };
+                jbTreeService, treeHelper, treeData, treeTraversingService,
+                nodeService, cacheListener };
     }
 
     protected void tearDown() throws Exception {
@@ -95,7 +92,6 @@ public abstract class AbstractMockingTest {
         n4 = null;
         treeTraversingService = null;
         nodeStore = null;
-        builder = null;
         mocks = null;
         nodeService = null;
         cacheListener = null;

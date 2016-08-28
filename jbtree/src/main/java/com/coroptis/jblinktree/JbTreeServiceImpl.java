@@ -85,16 +85,8 @@ public final class JbTreeServiceImpl<K, V> implements JbTreeService<K, V> {
     }
 
     @Override
-    public void storeValueIntoLeafNode(final Node<K, V> currentNode,
-            final K key, final V value) {
-        nodeService.insert(currentNode, key, value);
-        nodeStore.writeNode(currentNode);
-        nodeStore.unlockNode(currentNode.getId());
-    }
-
-    @Override
-    public void storeValueIntoNonLeafNode(final Node<K, Integer> currentNode,
-            final K key, final Integer value) {
+    public <S> void storeValueIntoNode(final Node<K, S> currentNode,
+            final K key, final S value) {
         nodeService.insert(currentNode, key, value);
         nodeStore.writeNode(currentNode);
         nodeStore.unlockNode(currentNode.getId());

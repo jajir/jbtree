@@ -78,8 +78,8 @@ import com.google.common.base.Preconditions;
  * key value from all referenced nodes.</li>
  * </ul>
  * First value P0 at index 0 have special meaning, when it's
- * {@link Node#FLAG_LEAF_NODE} than this node is leaf node. In all other
- * cases is non-leaf node.
+ * {@link Node#FLAG_LEAF_NODE} than this node is leaf node. In all other cases
+ * is non-leaf node.
  * <p>
  * Node is not thread save.
  * </p>
@@ -262,7 +262,7 @@ public final class NodeImpl<K, V> implements Node<K, V> {
      *            required to field
      */
     private void copyFlagAndLink(final byte[] from, final byte[] to) {
-        to[0] = from[0];
+        to[FLAG_BYTE_POSITION] = from[FLAG_BYTE_POSITION];
         for (int i = 1; i <= nodeDef.getLinkTypeDescriptor()
                 .getMaxLength(); i++) {
             to[to.length - i] = from[from.length - i];
@@ -435,11 +435,11 @@ public final class NodeImpl<K, V> implements Node<K, V> {
 
     @Override
     public byte getFlag() {
-        return field[0];
+        return field[FLAG_BYTE_POSITION];
     }
 
     @Override
     public void setFlag(final byte flag) {
-        this.field[0] = flag;
+        this.field[FLAG_BYTE_POSITION] = flag;
     }
 }

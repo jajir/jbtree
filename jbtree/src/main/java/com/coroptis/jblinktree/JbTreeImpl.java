@@ -124,7 +124,7 @@ public final class JbTreeImpl<K, V> implements JbTree<K, V> {
              * Key already exists. Rewrite value.
              */
             V oldValue = nodeService.getValueByKey(currentNode, key);
-            treeService.storeValueIntoLeafNode(currentNode, key, value);
+            treeService.storeValueIntoNode(currentNode, key, value);
             return oldValue;
         }
     }

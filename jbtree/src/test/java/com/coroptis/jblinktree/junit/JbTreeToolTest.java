@@ -19,10 +19,7 @@ package com.coroptis.jblinktree.junit;
  * limitations under the License.
  * #L%
  */
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 import org.easymock.EasyMock;
 import org.junit.After;
@@ -131,6 +128,58 @@ public class JbTreeToolTest extends AbstractMockingTest {
         verify();
     }
 
+    @Test
+    public void test_splitNonLeafNode_insertToHigherNode() throws Exception {
+        EasyMock.expect(nodeBuilder.makeEmptyNonLeafNode(0)).andReturn(n2);
+        n1.moveTopHalfOfDataTo(n2);
+        EasyMock.expect(n1.getMaxKey()).andReturn(51);
+        nodeService.insert(n2, 55, -100);
+        replay();
+        Node<Integer, Integer> ret = tested.splitNonLeafNode(n1, 55, -100);
+
+        assertSame(ret, n2);
+        verify();
+    }
+
+    @Test
+    public void test_splitNonLeafNode_insertToLowerNode() throws Exception {
+        EasyMock.expect(nodeBuilder.makeEmptyNonLeafNode(0)).andReturn(n2);
+        n1.moveTopHalfOfDataTo(n2);
+        EasyMock.expect(n1.getMaxKey()).andReturn(59);
+        nodeService.insert(n1, 55, -100);
+        replay();
+        Node<Integer, Integer> ret = tested.splitNonLeafNode(n1, 55, -100);
+
+        assertSame(ret, n2);
+        verify();
+    }
+    
+    @Test
+    public void test_splitLeafNode_insertToHigherNode() throws Exception {
+        EasyMock.expect(nodeBuilder.makeEmptyLeafNode(0)).andReturn(n2);
+        n1.moveTopHalfOfDataTo(n2);
+        EasyMock.expect(n1.getMaxKey()).andReturn(51);
+        nodeService.insert(n2, 55, -100);
+        replay();
+        Node<Integer, Integer> ret = tested.splitLeafNode(n1, 55, -100);
+
+        assertSame(ret, n2);
+        verify();
+    }
+    
+    @Test
+    public void test_splitLeafNode_insertToLowerNode() throws Exception {
+        EasyMock.expect(nodeBuilder.makeEmptyLeafNode(0)).andReturn(n2);
+        n1.moveTopHalfOfDataTo(n2);
+        EasyMock.expect(n1.getMaxKey()).andReturn(59);
+        nodeService.insert(n1, 55, -100);
+        replay();
+        Node<Integer, Integer> ret = tested.splitLeafNode(n1, 55, -100);
+
+        assertSame(ret, n2);
+        verify();
+    }
+
     @Override
     @Before
     public void setUp() throws Exception {
@@ -138,8 +187,8 @@ public class JbTreeToolTest extends AbstractMockingTest {
         TypeDescriptor<Integer> tdInt = new TypeDescriptorInteger();
         JbTreeData<Integer, Integer> td =
                 new JbTreeDataImpl<Integer, Integer>(0, 3, tdInt, tdInt, tdInt);
-        tested = new JbTreeToolImpl<Integer, Integer>(nodeStore, td, builder,
-                nodeService);
+        tested = new JbTreeToolImpl<Integer, Integer>(nodeStore, td,
+                nodeBuilder, nodeService);
     }
 
     @Override

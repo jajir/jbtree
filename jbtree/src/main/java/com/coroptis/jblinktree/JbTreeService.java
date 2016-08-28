@@ -52,19 +52,7 @@ public interface JbTreeService<K, V> {
             Integer nextNodeId);
 
     /**
-     * Store value in leaf node under the key.
-     *
-     * @param node
-     *            required leaf node
-     * @param key
-     *            required key
-     * @param value
-     *            required value
-     */
-    void storeValueIntoLeafNode(Node<K, V> node, K key, V value);
-
-    /**
-     * Store value in non-leaf node under the key.
+     * Store value into node under the key.
      *
      * @param currentNode
      *            required non-leaf node
@@ -72,9 +60,10 @@ public interface JbTreeService<K, V> {
      *            required key
      * @param value
      *            required value
+     * @param <S>
+     *            value type
      */
-    void storeValueIntoNonLeafNode(Node<K, Integer> currentNode, K key,
-            Integer value);
+    <S> void storeValueIntoNode(Node<K, S> currentNode, K key, S value);
 
     /**
      * Find node containing smaller key.

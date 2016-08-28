@@ -146,19 +146,12 @@ public final class JbTreeToolImpl<K, V> implements JbTreeTool<K, V> {
         return currentNode.getId();
     }
 
-    //TODO followign methods are same
     @Override
     public Node<K, V> splitLeafNode(final Node<K, V> currentNode, final K key,
             final V value) {
         final Node<K, V> newNode =
                 nodeBuilder.makeEmptyLeafNode(treeData.getNextId());
-        currentNode.moveTopHalfOfDataTo(newNode);
-        if (keyTypeDescriptor.compareValues(currentNode.getMaxKey(), key) < 0) {
-            nodeService.insert(newNode, key, value);
-        } else {
-            nodeService.insert(currentNode, key, value);
-        }
-        return newNode;
+        return splitNode(currentNode, newNode, key, value);
     }
 
     @Override
@@ -166,6 +159,27 @@ public final class JbTreeToolImpl<K, V> implements JbTreeTool<K, V> {
             final K key, final Integer value) {
         final Node<K, Integer> newNode =
                 nodeBuilder.makeEmptyNonLeafNode(treeData.getNextId());
+        return splitNode(currentNode, newNode, key, value);
+    }
+
+    /**
+     * Move top half of data from currentNode to newNode. Than insert given key
+     * value par into proper node.
+     *
+     * @param currentNode
+     *            required current node
+     * @param newNode
+     *            required new node
+     * @param key
+     *            required inserted key
+     * @param value
+     *            required inserted value
+     * @param <S>
+     *            value data type
+     * @return new node with filled data
+     */
+    private <S> Node<K, S> splitNode(final Node<K, S> currentNode,
+            final Node<K, S> newNode, final K key, final S value) {
         currentNode.moveTopHalfOfDataTo(newNode);
         if (keyTypeDescriptor.compareValues(currentNode.getMaxKey(), key) < 0) {
             nodeService.insert(newNode, key, value);

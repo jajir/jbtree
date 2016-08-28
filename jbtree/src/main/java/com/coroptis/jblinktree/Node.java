@@ -49,6 +49,11 @@ public interface Node<K, V> {
     Integer EMPTY_INT = -1;
 
     /**
+     * Index in byte array where is located flag byte.
+     */
+    Integer FLAG_BYTE_POSITION = 0;
+
+    /**
      * Get link value.
      *
      * @return link value, could be {@link Node#EMPTY_INT} but never null

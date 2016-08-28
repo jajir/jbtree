@@ -110,7 +110,7 @@ public final class JbTreeHelperImpl<K, V> implements JbTreeHelper<K, V> {
                 return insertNonLeaf(previousNode, tmpKey, tmpValue, stack);
             }
         } else {
-            treeService.storeValueIntoLeafNode(currentNode, key, value);
+            treeService.storeValueIntoNode(currentNode, key, value);
             return null;
         }
     }
@@ -154,7 +154,7 @@ public final class JbTreeHelperImpl<K, V> implements JbTreeHelper<K, V> {
                     nodeStore.unlockNode(previousCurrentNodeId);
                 }
             } else {
-                treeService.storeValueIntoNonLeafNode(currentNode, tmpKey,
+                treeService.storeValueIntoNode(currentNode, tmpKey,
                         tmpValue);
                 return null;
             }
