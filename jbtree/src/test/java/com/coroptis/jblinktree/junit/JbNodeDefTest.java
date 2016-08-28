@@ -70,6 +70,11 @@ public class JbNodeDefTest {
     public void test_getKeyAndValueSize() throws Exception {
         assertEquals(36, nd.getKeyAndValueSize());
     }
+    
+    @Test
+    public void test_toString() throws Exception {
+        assertTrue(nd.toString().contains("JbNodeDef"));
+    }
 
     @Before
     public void setup() {

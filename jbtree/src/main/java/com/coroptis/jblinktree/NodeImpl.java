@@ -109,6 +109,11 @@ public final class NodeImpl<K, V> implements Node<K, V> {
     private final JbNodeDef<K, V> nodeDef;
 
     /**
+     * Number of key value pairs stored in node.
+     */
+    private int keyCount;
+
+    /**
      * Create and initialize node.
      *
      * @param nodeId
@@ -130,6 +135,7 @@ public final class NodeImpl<K, V> implements Node<K, V> {
             setFlag(FLAG_NON_LEAF_NODE);
         }
         setLink(Node.EMPTY_INT);
+        updateKeyCount();
     }
 
     /**
@@ -155,6 +161,7 @@ public final class NodeImpl<K, V> implements Node<K, V> {
                             + nodeDef.getValueTypeDescriptor().getClass()
                                     .getName());
         }
+        updateKeyCount();
     }
 
     @Override
@@ -183,7 +190,15 @@ public final class NodeImpl<K, V> implements Node<K, V> {
 
     @Override
     public int getKeyCount() {
-        return (field.length - JbNodeDef.FLAGS_LENGTH
+        return keyCount;
+    }
+
+    /**
+     * Update key count property. This method could be in getter. It's separated
+     * because of speed.
+     */
+    private void updateKeyCount() {
+        keyCount = (field.length - JbNodeDef.FLAGS_LENGTH
                 - nodeDef.getLinkTypeDescriptor().getMaxLength())
                 / nodeDef.getKeyAndValueSize();
     }
@@ -213,6 +228,7 @@ public final class NodeImpl<K, V> implements Node<K, V> {
         field = tmp;
         setKey(targetIndex, key);
         setValue(targetIndex, value);
+        updateKeyCount();
     }
 
     @Override
@@ -227,6 +243,7 @@ public final class NodeImpl<K, V> implements Node<K, V> {
                     getKeyCount() - position - 1);
         }
         field = tmp;
+        updateKeyCount();
     }
 
     /**
@@ -284,6 +301,7 @@ public final class NodeImpl<K, V> implements Node<K, V> {
         node.field = new byte[nodeDef.getFieldActualLength(length)];
         copy(field, startIndex, node.field, 0, length);
         copyFlagAndLink(field, node.field);
+        node.updateKeyCount();
 
         // remove copied data from this node
         byte[] tmp = new byte[nodeDef.getFieldActualLength(startIndex)];
@@ -291,6 +309,7 @@ public final class NodeImpl<K, V> implements Node<K, V> {
         copy(field, 0, tmp, 0, startIndex);
         field = tmp;
         setLink(node.getId());
+        updateKeyCount();
     }
 
     @Override
@@ -345,6 +364,9 @@ public final class NodeImpl<K, V> implements Node<K, V> {
     @Override
     public int hashCode() {
         return Arrays.hashCode(new Object[] {
+                /**
+                 * Just comment to split field
+                 */
                 id, field });
     }
 

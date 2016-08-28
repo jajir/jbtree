@@ -25,6 +25,11 @@ import com.coroptis.jblinktree.type.TypeDescriptor;
 /**
  * Holds node data definition. It's helps store data to proper place in byte
  * array.
+ * <p>
+ * Most of method can throw {@link java.lang.IndexOutOfBoundsException}.
+ * Exception is thrown when key value pair with position higher than L is
+ * requested.
+ * </p>
  *
  * @author jajir
  *

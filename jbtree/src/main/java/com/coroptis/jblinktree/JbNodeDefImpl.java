@@ -63,6 +63,21 @@ public final class JbNodeDefImpl<K, V> implements JbNodeDef<K, V> {
     private final TypeDescriptor<Integer> linkTypeDescriptor;
 
     /**
+     * Precomputed key and value pair size.
+     */
+    private final int keyAndValueSize;
+
+    /**
+     * Field contains position of value.
+     */
+    private final int[] positionOfValue;
+
+    /**
+     * Field contains position of key.
+     */
+    private final int[] positionOfKey;
+
+    /**
      * Basic constructor.
      *
      * @param defaultL
@@ -82,6 +97,16 @@ public final class JbNodeDefImpl<K, V> implements JbNodeDef<K, V> {
         this.keyTypeDescriptor = Preconditions.checkNotNull(keyTypeDesc);
         this.valueTypeDescriptor = Preconditions.checkNotNull(valueTypeDesc);
         this.linkTypeDescriptor = Preconditions.checkNotNull(linkTypedesc);
+        this.keyAndValueSize = getKeyTypeDescriptor().getMaxLength()
+                + getValueTypeDescriptor().getMaxLength();
+        positionOfValue = new int[getL() + 1];
+        positionOfKey = new int[getL() + 1];
+        for (int i = 0; i < getL() + 1; i++) {
+            positionOfValue[i] =
+                    JbNodeDef.FLAGS_LENGTH + i * getKeyAndValueSize();
+            positionOfKey[i] = positionOfValue[i]
+                    + getValueTypeDescriptor().getMaxLength();
+        }
     }
 
     @Override
@@ -117,19 +142,17 @@ public final class JbNodeDefImpl<K, V> implements JbNodeDef<K, V> {
 
     @Override
     public int getKeyAndValueSize() {
-        return getKeyTypeDescriptor().getMaxLength()
-                + getValueTypeDescriptor().getMaxLength();
+        return keyAndValueSize;
     }
 
     @Override
     public int getKeyPosition(final int position) {
-        return getValuePosition(position)
-                + getValueTypeDescriptor().getMaxLength();
+        return positionOfKey[position];
     }
 
     @Override
     public int getValuePosition(final int position) {
-        return JbNodeDef.FLAGS_LENGTH + position * getKeyAndValueSize();
+        return positionOfValue[position];
     }
 
     /**

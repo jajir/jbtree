@@ -88,16 +88,12 @@ public class NodeTest {
      * @throws Exception
      *             default exception
      */
-    @Test
+    @Test(expected=ArrayIndexOutOfBoundsException.class)
     public void test_insertAtPosition_nodeIsFull() throws Exception {
         Node<Integer, Integer> n =
                 nr.makeNodeFromIntegers(2, 0, new Integer[] { 0, 1, 1, 3, 98 });
         logger.debug(n.toString());
         n.insertAtPosition(4, -40, 2);
-
-        logger.debug(n.toString());
-
-        assertEquals(3, n.getKeyCount());
     }
 
     @Test
