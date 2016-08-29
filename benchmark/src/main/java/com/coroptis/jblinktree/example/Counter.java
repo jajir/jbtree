@@ -2,14 +2,14 @@ package com.coroptis.jblinktree.example;
 
 public class Counter {
 
-    private int i = 0;
+    private long i = 0;
 
-    void inc() {
-	i++;
+    public void inc() {
+        i++;
     }
 
-    int getI() {
-	return i;
+    public long getI() {
+        return i;
     }
 
 }

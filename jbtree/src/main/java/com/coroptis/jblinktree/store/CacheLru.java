@@ -20,10 +20,8 @@ package com.coroptis.jblinktree.store;
  * #L%
  */
 
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.Map;
+import java.util.LinkedHashMap;
 import java.util.Set;
 
 import com.coroptis.jblinktree.JbNodeBuilder;
@@ -44,6 +42,47 @@ import com.google.common.base.Preconditions;
 public final class CacheLru<K, V> implements Cache<K, V> {
 
     /**
+     * Simple implementation of Last Recent Used cache.
+     *
+     * @author jajir
+     *
+     */
+    private final class CacheMap extends LinkedHashMap<Integer, CacheItem> {
+
+        /**
+         *
+         */
+        private static final long serialVersionUID = 1L;
+
+        /**
+         * How many nodes will be hold in cache.
+         */
+        private final int numberOfNodesCacheSize;
+
+        /**
+         * Constructor.
+         * 
+         * @param maxNumberOfNodesInCache
+         *            required maximal number of cached items
+         */
+        CacheMap(final int maxNumberOfNodesInCache) {
+            this.numberOfNodesCacheSize = maxNumberOfNodesInCache;
+        }
+
+        @Override
+        protected boolean removeEldestEntry(
+                final java.util.Map.Entry<Integer, CacheItem> eldestEntry) {
+            if (size() > numberOfNodesCacheSize) {
+                removeCacheItem(eldestEntry.getKey(), eldestEntry.getValue());
+                return true;
+            } else {
+                return false;
+            }
+        }
+
+    }
+
+    /**
      * Node builder factory.
      */
     private final JbNodeBuilder<K, V> nodeBuilder;
@@ -51,20 +90,7 @@ public final class CacheLru<K, V> implements Cache<K, V> {
     /**
      * Cache itself.
      */
-    private final Map<Integer, CacheItem> cache =
-            new HashMap<Integer, CacheItem>();
-
-    /**
-     * Holds list of last accessed ids. Based on this list is selected last used
-     * node id to remove.
-     */
-    private final LinkedList<Integer> lastRecentUsedIds =
-            new LinkedList<Integer>();
-
-    /**
-     * How many nodes will be hold in cache.
-     */
-    private final int numberOfNodesCacheSize;
+    private final CacheMap cache;
 
     /**
      * Cache listener.
@@ -84,31 +110,35 @@ public final class CacheLru<K, V> implements Cache<K, V> {
             final int maxNumberOfNodesInCache,
             final CacheListener<K, V> initCacheListerer) {
         this.nodeBuilder = Preconditions.checkNotNull(jbNodeBuilder);
-        this.numberOfNodesCacheSize = maxNumberOfNodesInCache;
         this.cacheListener = Preconditions.checkNotNull(initCacheListerer);
+        cache = new CacheMap(maxNumberOfNodesInCache);
     }
 
     @Override
     public void put(final Node<K, V> node) {
-        setLastUsed(node.getId());
         cache.put(node.getId(), CacheItem.make(node.getFieldBytes(), true));
-        checkCacheSize();
-    }
-
-    /**
-     * Verify that number of nodes in cache is under limit. When limit is
-     * reached node is evicted.
-     */
-    private void checkCacheSize() {
-        if (cache.size() > numberOfNodesCacheSize) {
-            remove(lastRecentUsedIds.getLast());
-        }
     }
 
     @Override
     public void remove(final Integer idNode) {
-        lastRecentUsedIds.remove(idNode);
         final CacheItem cacheItem = cache.remove(idNode);
+        if (cacheItem != null) {
+            final Node<K, V> node =
+                    nodeBuilder.makeNode(idNode, cacheItem.getNodeData());
+            cacheListener.onUnload(node, cacheItem.isChanged());
+        }
+    }
+
+    /**
+     * Remove given node from cache.
+     *
+     * @param idNode
+     *            required node id
+     * @param cacheItem
+     *            required {@link CacheItem} object
+     */
+    private void removeCacheItem(final Integer idNode,
+            final CacheItem cacheItem) {
         final Node<K, V> node =
                 nodeBuilder.makeNode(idNode, cacheItem.getNodeData());
         cacheListener.onUnload(node, cacheItem.isChanged());
@@ -117,27 +147,13 @@ public final class CacheLru<K, V> implements Cache<K, V> {
     @Override
     public Node<K, V> get(final Integer idNode) {
         if (cache.containsKey(idNode)) {
-            setLastUsed(idNode);
             final CacheItem cacheItem = cache.get(idNode);
             return nodeBuilder.makeNode(idNode, cacheItem.getNodeData());
         } else {
             Node<K, V> node = cacheListener.onLoad(idNode);
-            setLastUsed(idNode);
             cache.put(idNode, CacheItem.make(node.getFieldBytes()));
-            checkCacheSize();
             return node;
         }
-    }
-
-    /**
-     * Mark some node id as last used. Helps to find less used node to remove.
-     *
-     * @param idNode
-     *            required node id
-     */
-    private void setLastUsed(final Integer idNode) {
-        lastRecentUsedIds.remove(idNode);
-        lastRecentUsedIds.add(0, idNode);
     }
 
     @Override
