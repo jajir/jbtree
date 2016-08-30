@@ -1,4 +1,4 @@
-package com.coroptis.jblinktree.performance.cache;
+package com.coroptis.jblinktree.performance.type;
 
 import org.openjdk.jmh.annotations.Mode;
 import org.openjdk.jmh.runner.Runner;
@@ -17,12 +17,12 @@ import com.coroptis.jblinktree.store.CacheLru;
  * @author jajir
  *
  */
-public class RunnerLruCacheBenchmark {
+public class ComparingBytesAndValuesBenchmarkRunner {
 
     public static void main(String[] args) throws RunnerException {
 
         Options options = new OptionsBuilder()
-                .include(CacheLruBenchmark.class.getSimpleName())
+                .include(ComparingBytesAndValuesBenchmark.class.getSimpleName())
                 .mode(Mode.SingleShotTime).warmupMode(WarmupMode.INDI)
                 .warmupBatchSize(1000 * 100).warmupIterations(1)
                 .warmupTime(TimeValue.NONE).threads(1)
