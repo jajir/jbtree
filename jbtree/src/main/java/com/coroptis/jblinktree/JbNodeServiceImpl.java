@@ -23,6 +23,7 @@ package com.coroptis.jblinktree;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.coroptis.jblinktree.type.TypeDescriptor;
 import com.google.common.base.Preconditions;
 
 /**
@@ -191,12 +192,33 @@ public final class JbNodeServiceImpl<K, V> implements JbNodeService<K, V> {
     @Override
     public V getValueByKey(final Node<K, V> node, final K key) {
         Preconditions.checkNotNull(key);
-        for (int i = 0; i < node.getKeyCount(); i++) {
-            if (key.equals(node.getKey(i))) {
-                return node.getValue(i);
+        final TypeDescriptor<K> keyTd =
+                node.getNodeDef().getKeyTypeDescriptor();
+        final int nodeCount = node.getKeyCount();
+        if (nodeCount == 0) {
+            return null;
+        }
+        int start = 0;
+        int end = nodeCount - 1;
+        while (true) {
+            int half = start + (end - start) / 2;
+            final int cmp = keyTd.compareValues(key, node.getKey(half));
+            if (cmp < 0) {
+                // key < half key
+                if (start == half) {
+                    return null;
+                }
+                end = half - 1;
+            } else if (cmp > 0) {
+                // key > half key
+                if (end == half) {
+                    return null;
+                }
+                start = half + 1;
+            } else {
+                return node.getValue(half);
             }
         }
-        return null;
     }
 
 }

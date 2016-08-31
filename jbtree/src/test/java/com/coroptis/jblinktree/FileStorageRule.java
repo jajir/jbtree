@@ -74,6 +74,11 @@ public class FileStorageRule implements TestRule {
                 tempDirectory.getAbsolutePath() + File.separator + FILE_NAME);
     }
 
+    public JbNodeDef<Integer, Integer> getNodeDef() {
+        return new JbNodeDefImpl<Integer, Integer>(2, intDescriptor,
+                intDescriptor, intDescriptor);
+    }
+
     private void setup() {
         tempDirectory = Files.createTempDir();
         logger.debug("templ file: " + tempDirectory.getAbsolutePath());

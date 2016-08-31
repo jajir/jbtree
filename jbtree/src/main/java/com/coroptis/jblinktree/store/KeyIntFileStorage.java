@@ -112,10 +112,12 @@ public final class KeyIntFileStorage<K> implements NodeFileStorage<K, Integer> {
     public Node<K, Integer> load(final Integer nodeId) {
         try {
             raf.seek(getPosition(nodeId));
-            byte keys = raf.readByte();
+            byte[] r = new byte[nodeDef.getFieldMaxLength() + 1];
+            raf.readFully(r);
+            byte keys = r[0];
             int fieldSize = nodeDef.getFieldActualLength(keys);
             byte[] bytes = new byte[fieldSize];
-            raf.readFully(bytes);
+            System.arraycopy(r, 1, bytes, 0, fieldSize);
             return nodeBuilder.makeNode(nodeId, bytes, nodeDef);
         } catch (IOException e) {
             throw new JblinktreeException("Can't find nodeId '" + nodeId + "'",

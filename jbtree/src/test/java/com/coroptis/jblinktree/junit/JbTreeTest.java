@@ -1,5 +1,11 @@
 package com.coroptis.jblinktree.junit;
 
+import static org.easymock.EasyMock.anyObject;
+import static org.easymock.EasyMock.eq;
+import static org.easymock.EasyMock.expect;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+
 /*
  * #%L
  * jblinktree
@@ -29,6 +35,8 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.coroptis.jblinktree.JbTreeImpl;
+import com.coroptis.jblinktree.Node;
+import com.coroptis.jblinktree.util.JbStack;
 
 /**
  * Junit test form {@link JbTreeImpl}.
@@ -66,6 +74,41 @@ public class JbTreeTest extends AbstractMockingTest {
         }
 
         EasyMock.verify(mocks);
+    }
+
+    @Test
+    public void test_insert_new_key() throws Exception {
+        record_find_node();
+        expect(nodeService.getValueByKey(n2, 99)).andReturn(null);
+        expect(treeHelper.insertToLeafNode(eq(n2), eq(99), eq(-99),
+                (JbStack) anyObject())).andReturn(null);
+
+        replay();
+        Integer ret = jbTree.insert(99, -99);
+        verify();
+        assertNull(ret);
+    }
+
+    @Test
+    public void test_insert_alreadyExisting_key() throws Exception {
+        record_find_node();
+        expect(nodeService.getValueByKey(n2, 99)).andReturn(-88);
+        jbTreeService.storeValueIntoNode(n2, 99, -99);
+
+        replay();
+        Integer ret = jbTree.insert(99, -99);
+        verify();
+        assertEquals(Integer.valueOf(-88), ret);
+    }
+
+    private void record_find_node() {
+        EasyMock.expect(treeData.getRootNodeId()).andReturn(64);
+        EasyMock.expect(
+                treeTool.findLeafNodeId(eq(99), (JbStack) anyObject(), eq(64)))
+                .andReturn(11);
+        expect(nodeStore.getAndLock(11)).andReturn((Node) n1);
+        expect(treeTraversingService.moveRightLeafNode(n1, 99))
+                .andReturn((Node) n2);
     }
 
     @Override

@@ -117,13 +117,13 @@ public final class JbTreeImpl<K, V> implements JbTree<K, V> {
                 treeTool.findLeafNodeId(key, stack, treeData.getRootNodeId());
         Node<K, V> currentNode = nodeStore.getAndLock(currentNodeId);
         currentNode = treeTraversingService.moveRightLeafNode(currentNode, key);
-        if (nodeService.getValueByKey(currentNode, key) == null) {
+        final V oldValue = nodeService.getValueByKey(currentNode, key);
+        if (oldValue == null) {
             return treeHelper.insertToLeafNode(currentNode, key, value, stack);
         } else {
             /**
              * Key already exists. Rewrite value.
              */
-            V oldValue = nodeService.getValueByKey(currentNode, key);
             treeService.storeValueIntoNode(currentNode, key, value);
             return oldValue;
         }

@@ -19,9 +19,8 @@ package com.coroptis.jblinktree.junit;
  * limitations under the License.
  * #L%
  */
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.*;
+import static org.easymock.EasyMock.*;
 
 import org.junit.After;
 import org.junit.Before;
@@ -46,12 +45,12 @@ public class JbNodeServiceTest extends AbstractMockingTest {
 
     @Test
     public void test_getCorrespondingNodeId_return_link() throws Exception {
-        Node<Integer, Integer> n = nr.makeNodeFromIntegers(2,
-                new Integer[] { 0, 1, 2, 3, 33 });
+        Node<Integer, Integer> n =
+                nr.makeNodeFromIntegers(2, new Integer[] { 0, 1, 2, 3, 33 });
 
         logger.debug(n.toString());
 
-        Integer nodeId = service.getCorrespondingNodeId(n,4);
+        Integer nodeId = service.getCorrespondingNodeId(n, 4);
 
         assertNotNull("node id can't be null", nodeId);
         assertEquals("node id should be different", Integer.valueOf(33),
@@ -60,18 +59,58 @@ public class JbNodeServiceTest extends AbstractMockingTest {
 
     @Test
     public void test_getCorrespondingNodeId_simple() throws Exception {
-        Node<Integer, Integer> n = nr.makeNodeFromIntegers(2,
-                new Integer[] { 0, 2, 1, 3, 23 });
+        Node<Integer, Integer> n =
+                nr.makeNodeFromIntegers(2, new Integer[] { 0, 2, 1, 3, 23 });
 
         logger.debug(n.toString());
 
-        Integer nodeId = service.getCorrespondingNodeId(n,3);
+        Integer nodeId = service.getCorrespondingNodeId(n, 3);
 
         assertNotNull("node id can't be null", nodeId);
         assertEquals("node id should be different", Integer.valueOf(1), nodeId);
     }
 
-    
+    @Test
+    public void test_getValueByKey() throws Exception {
+        expect(n1.getNodeDef()).andReturn(nodeDef);
+        expect(nodeDef.getKeyTypeDescriptor()).andReturn(tdi);
+        expect(n1.getKeyCount()).andReturn(9);
+        expect(n1.getKey(4)).andReturn(4);
+        expect(n1.getKey(1)).andReturn(1);
+        expect(n1.getKey(2)).andReturn(2);
+        expect(n1.getValue(2)).andReturn(2);
+
+        replay();
+        Integer ret = service.getValueByKey(n1, 2);
+        verify();
+        assertEquals(Integer.valueOf(2), ret);
+    }
+
+    @Test
+    public void test_getValueByKey_notFound() throws Exception {
+        expect(n1.getNodeDef()).andReturn(nodeDef);
+        expect(nodeDef.getKeyTypeDescriptor()).andReturn(tdi);
+        expect(n1.getKeyCount()).andReturn(9);
+        expect(n1.getKey(4)).andReturn(8);
+        expect(n1.getKey(1)).andReturn(2);
+        expect(n1.getKey(2)).andReturn(4);
+        replay();
+        Integer ret = service.getValueByKey(n1, 3);
+        verify();
+        assertNull(ret);
+    }
+
+    @Test
+    public void test_getValueByKey_notFound_emptyNode() throws Exception {
+        expect(n1.getNodeDef()).andReturn(nodeDef);
+        expect(nodeDef.getKeyTypeDescriptor()).andReturn(tdi);
+        expect(n1.getKeyCount()).andReturn(0);
+        replay();
+        Integer ret = service.getValueByKey(n1, 1);
+        verify();
+        assertNull(ret);
+    }
+
     @Override
     @Before
     public void setUp() throws Exception {

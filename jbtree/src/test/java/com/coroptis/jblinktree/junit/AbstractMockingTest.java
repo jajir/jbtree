@@ -23,6 +23,7 @@ package com.coroptis.jblinktree.junit;
 import org.easymock.EasyMock;
 
 import com.coroptis.jblinktree.JbNodeBuilder;
+import com.coroptis.jblinktree.JbNodeDef;
 import com.coroptis.jblinktree.JbNodeService;
 import com.coroptis.jblinktree.JbTreeData;
 import com.coroptis.jblinktree.JbTreeHelper;
@@ -32,6 +33,7 @@ import com.coroptis.jblinktree.JbTreeTraversingService;
 import com.coroptis.jblinktree.Node;
 import com.coroptis.jblinktree.NodeStore;
 import com.coroptis.jblinktree.store.CacheListener;
+import com.coroptis.jblinktree.type.TypeDescriptorInteger;
 
 /**
  * Class
@@ -52,6 +54,8 @@ public abstract class AbstractMockingTest {
     protected JbTreeHelper<Integer, Integer> treeHelper;
 
     protected JbTreeData<Integer, Integer> treeData;
+    protected JbNodeDef<Integer, Integer> nodeDef;
+    protected TypeDescriptorInteger tdi;
 
     protected JbNodeBuilder<Integer, Integer> nodeBuilder;
 
@@ -80,9 +84,11 @@ public abstract class AbstractMockingTest {
         cacheListener = EasyMock.createMock(CacheListener.class);
         treeTraversingService =
                 EasyMock.createMock(JbTreeTraversingService.class);
+        nodeDef = EasyMock.createMock(JbNodeDef.class);
+        tdi = new TypeDescriptorInteger();
         mocks = new Object[] { nodeStore, nodeBuilder, treeTool, n1, n2, n3, n4,
                 jbTreeService, treeHelper, treeData, treeTraversingService,
-                nodeService, cacheListener };
+                nodeService, cacheListener, nodeDef };
     }
 
     protected void tearDown() throws Exception {
@@ -95,6 +101,9 @@ public abstract class AbstractMockingTest {
         mocks = null;
         nodeService = null;
         cacheListener = null;
+        treeData = null;
+        nodeDef = null;
+        tdi = null;
     }
 
     protected void replay(final Object... otherMocks) {

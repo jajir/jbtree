@@ -61,7 +61,7 @@ public final class CacheLru<K, V> implements Cache<K, V> {
 
         /**
          * Constructor.
-         * 
+         *
          * @param maxNumberOfNodesInCache
          *            required maximal number of cached items
          */
