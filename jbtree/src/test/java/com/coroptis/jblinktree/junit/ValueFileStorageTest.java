@@ -19,6 +19,7 @@ package com.coroptis.jblinktree.junit;
  * limitations under the License.
  * #L%
  */
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
 import java.io.File;
@@ -29,10 +30,15 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.coroptis.jblinktree.JbNodeDef;
+import com.coroptis.jblinktree.JbNodeDefImpl;
 import com.coroptis.jblinktree.JblinktreeException;
+import com.coroptis.jblinktree.Node;
+import com.coroptis.jblinktree.NodeImpl;
 import com.coroptis.jblinktree.store.ValueFileStorage;
 import com.coroptis.jblinktree.store.ValueFileStorageImpl;
 import com.coroptis.jblinktree.type.TypeDescriptor;
+import com.coroptis.jblinktree.type.TypeDescriptorInteger;
 import com.coroptis.jblinktree.type.TypeDescriptorString;
 import com.google.common.io.Files;
 
@@ -48,12 +54,35 @@ public class ValueFileStorageTest extends AbstractMockingTest {
 
     private File tempDirectory;
 
+    private TypeDescriptor<String> tds;
+
+    private TypeDescriptorInteger tdi;
+
+    private JbNodeDef<Integer, String> nodeDef;
+
+    private Node<Integer, String> node;
+
     @Test
     public void test_read_and_write() throws Exception {
+        valueStorage.storeValues(node);
+
+        Node<Integer, String> n = new NodeImpl<Integer, String>(6, true,
+                nodeDef);
+
+        n.insertAtPosition(3, "", 0);
+        n.insertAtPosition(4, "", 1);
+        valueStorage.loadValues(n);
+        assertEquals("Ahoj", n.getValue(0));
+        assertEquals("Lidi", n.getValue(1));
+    }
+
+    @Test
+    public void test_write() throws Exception {
         EasyMock.expect(n4.isLeafNode()).andReturn(true);
         EasyMock.expect(n4.getId()).andReturn(0);
-        EasyMock.expect(n4.getKeyCount()).andReturn(1).times(2);
+        EasyMock.expect(n4.getKeyCount()).andReturn(1);
         EasyMock.expect(n4.getValue(0)).andReturn("Ahoj lidi");
+        EasyMock.expect(n4.getNodeDef()).andReturn(nodeDef);
         EasyMock.replay(mocks);
 
         valueStorage.storeValues(n4);
@@ -77,7 +106,7 @@ public class ValueFileStorageTest extends AbstractMockingTest {
     public void test_read_invalid_nodeId() throws Exception {
         EasyMock.expect(n4.isLeafNode()).andReturn(true);
         EasyMock.expect(n4.getId()).andReturn(10);
-        EasyMock.expect(n4.getKeyCount()).andReturn(1);
+        EasyMock.expect(n4.getNodeDef()).andReturn(nodeDef);
         EasyMock.replay(mocks);
         try {
             valueStorage.loadValues(n4);
@@ -91,11 +120,17 @@ public class ValueFileStorageTest extends AbstractMockingTest {
     public void setup() throws Exception {
         super.setUp();
         tempDirectory = Files.createTempDir();
-        TypeDescriptor<String> td =
-                new TypeDescriptorString(20, Charset.forName("ISO-8859-1"));
+        tds = new TypeDescriptorString(20, Charset.forName("ISO-8859-1"));
+        tdi = new TypeDescriptorInteger();
+        nodeDef = new JbNodeDefImpl<Integer, String>(3, tdi, tds, tdi);
         valueStorage = new ValueFileStorageImpl<Integer, String>(new File(
                 tempDirectory.getAbsolutePath() + File.separator + "value.str"),
-                td, 3);
+                tds, 3);
+
+        node = new NodeImpl<Integer, String>(6, true, nodeDef);
+        node.insertAtPosition(3, "Ahoj", 0);
+        node.insertAtPosition(4, "Lidi", 1);
+        node.setLink(98);
     }
 
     @Override
@@ -105,5 +140,9 @@ public class ValueFileStorageTest extends AbstractMockingTest {
         tempDirectory = null;
         valueStorage.close();
         valueStorage = null;
+        tds = null;
+        tdi = null;
+        nodeDef = null;
+        node = null;
     }
 }

@@ -32,6 +32,7 @@ import org.slf4j.LoggerFactory;
 import com.coroptis.jblinktree.JbNodeService;
 import com.coroptis.jblinktree.JbNodeServiceImpl;
 import com.coroptis.jblinktree.Node;
+import com.coroptis.jblinktree.NodeImpl;
 import com.coroptis.jblinktree.NodeRule;
 
 public class JbNodeServiceTest extends AbstractMockingTest {
@@ -45,8 +46,8 @@ public class JbNodeServiceTest extends AbstractMockingTest {
 
     @Test
     public void test_getCorrespondingNodeId_return_link() throws Exception {
-        Node<Integer, Integer> n =
-                nr.makeNodeFromIntegers(2, new Integer[] { 0, 1, 2, 3, 33 });
+        Node<Integer, Integer> n = nr.makeNodeFromIntegers(2,
+                new Integer[] { 0, 1, 2, 3, 33 });
 
         logger.debug(n.toString());
 
@@ -59,8 +60,8 @@ public class JbNodeServiceTest extends AbstractMockingTest {
 
     @Test
     public void test_getCorrespondingNodeId_simple() throws Exception {
-        Node<Integer, Integer> n =
-                nr.makeNodeFromIntegers(2, new Integer[] { 0, 2, 1, 3, 23 });
+        Node<Integer, Integer> n = nr.makeNodeFromIntegers(2,
+                new Integer[] { 0, 2, 1, 3, 23 });
 
         logger.debug(n.toString());
 

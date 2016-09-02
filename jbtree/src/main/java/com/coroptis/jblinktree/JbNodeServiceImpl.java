@@ -48,13 +48,28 @@ public final class JbNodeServiceImpl<K, V> implements JbNodeService<K, V> {
         if (node.isEmpty()) {
             return node.getLink();
         }
-        for (int i = 0; i < node.getKeyCount(); i++) {
-            if (node.getNodeDef().getKeyTypeDescriptor().compareValues(key,
-                    node.getKey(i)) <= 0) {
-                return node.getValue(i);
+        final TypeDescriptor<K> keyTd = node.getNodeDef()
+                .getKeyTypeDescriptor();
+        int start = 0;
+        int end = node.getKeyCount() - 1;
+        if (keyTd.compareValues(key, node.getKey(end)) > 0) {
+            return node.getLink();
+        }
+        while (true) {
+            if (start == end
+                    && keyTd.compareValues(key, node.getKey(start)) < 0) {
+                return node.getValue(start);
+            }
+            final int half = start + (end - start) / 2;
+            final int cmp = keyTd.compareValues(key, node.getKey(half));
+            if (cmp < 0) {
+                end = half;
+            } else if (cmp > 0) {
+                start = half + 1;
+            } else {
+                return node.getValue(half);
             }
         }
-        return node.getLink();
     }
 
     @Override
@@ -192,8 +207,8 @@ public final class JbNodeServiceImpl<K, V> implements JbNodeService<K, V> {
     @Override
     public V getValueByKey(final Node<K, V> node, final K key) {
         Preconditions.checkNotNull(key);
-        final TypeDescriptor<K> keyTd =
-                node.getNodeDef().getKeyTypeDescriptor();
+        final TypeDescriptor<K> keyTd = node.getNodeDef()
+                .getKeyTypeDescriptor();
         final int nodeCount = node.getKeyCount();
         if (nodeCount == 0) {
             return null;

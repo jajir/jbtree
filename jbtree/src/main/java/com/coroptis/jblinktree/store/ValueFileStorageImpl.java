@@ -109,11 +109,15 @@ public final class ValueFileStorageImpl<K, V>
         verifyLeafNode(node);
         try {
             raf.seek(filePosition(node.getId()));
-            byte[] data = new byte[valueTypeDescriptor.getMaxLength()];
-            for (int i = 0; i < node.getKeyCount(); i++) {
-                valueTypeDescriptor.save(data, 0, node.getValue(i));
-                raf.write(data);
+            final int keyCount = node.getKeyCount();
+            byte[] data = new byte[valueTypeDescriptor.getMaxLength()
+                    * node.getNodeDef().getL()];
+            for (int i = 0; i < keyCount; i++) {
+                valueTypeDescriptor.save(data,
+                        valueTypeDescriptor.getMaxLength() * i,
+                        node.getValue(i));
             }
+            raf.write(data);
         } catch (IOException e) {
             throw new JblinktreeException(e.getMessage(), e);
         }
@@ -124,10 +128,12 @@ public final class ValueFileStorageImpl<K, V>
         verifyLeafNode(node);
         try {
             raf.seek(filePosition(node.getId()));
-            byte[] data = new byte[valueTypeDescriptor.getMaxLength()];
+            byte[] data = new byte[valueTypeDescriptor.getMaxLength()
+                    * node.getNodeDef().getL()];
+            raf.readFully(data);
             for (int i = 0; i < node.getKeyCount(); i++) {
-                raf.readFully(data);
-                node.setValue(i, valueTypeDescriptor.load(data, 0));
+                node.setValue(i, valueTypeDescriptor.load(data,
+                        valueTypeDescriptor.getMaxLength() * i));
             }
             return node;
         } catch (IOException e) {
