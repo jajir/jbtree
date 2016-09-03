@@ -48,8 +48,8 @@ public final class JbNodeServiceImpl<K, V> implements JbNodeService<K, V> {
         if (node.isEmpty()) {
             return node.getLink();
         }
-        final TypeDescriptor<K> keyTd =
-                node.getNodeDef().getKeyTypeDescriptor();
+        final TypeDescriptor<K> keyTd = node.getNodeDef()
+                .getKeyTypeDescriptor();
         int start = 0;
         int end = node.getKeyCount() - 1;
         if (keyTd.compareValues(key, node.getKey(end)) > 0) {
@@ -77,21 +77,36 @@ public final class JbNodeServiceImpl<K, V> implements JbNodeService<K, V> {
         Preconditions.checkNotNull(key);
         Preconditions.checkNotNull(value);
 
-        final TypeDescriptor<K> keyTd =
-                node.getNodeDef().getKeyTypeDescriptor();
+        final TypeDescriptor<K> keyTd = node.getNodeDef()
+                .getKeyTypeDescriptor();
         int start = 0;
         int end = node.getKeyCount() - 1;
+        if(node.isEmpty()){
+            node.insertAtPosition(key, value, 0);
+            return null;
+        }
         if (keyTd.compareValues(key, node.getKey(end)) > 0) {
             couldInsertedKey(node);
             /**
              * New key is bigger than all others so should be at the end.
              */
             node.insertAtPosition(key, value, node.getKeyCount());
+            return null;
         }
         while (true) {
-            if (start == end
-                    && keyTd.compareValues(key, node.getKey(start)) < 0) {
-                return node.getValue(start);
+            if (start == end) {
+                final int cmp = keyTd.compareValues(key, node.getKey(start));
+                if (cmp < 0) {
+                    node.insertAtPosition(key, value, start);
+                    return null;
+                } else if (cmp == 0) {
+                    final S old = node.getValue(start);
+                    node.setValue(start, value);
+                    return old;
+                } else {
+                    throw new JblinktreeException(
+                            "Shoud not happend, node is corrupted.");
+                }
             }
             final int half = start + (end - start) / 2;
             final int cmp = keyTd.compareValues(key, node.getKey(half));
@@ -105,31 +120,6 @@ public final class JbNodeServiceImpl<K, V> implements JbNodeService<K, V> {
                 return old;
             }
         }
-
-        // for (int i = 0; i < node.getKeyCount(); i++) {
-        // if (key.equals(node.getKey(i))) {
-        // /**
-        // * Rewrite value.
-        // */
-        // node.setValue(i, value);
-        // return null;
-        // } else if (node.getNodeDef().getKeyTypeDescriptor()
-        // .compareValues(node.getKey(i), key) > 0) {
-        // // field.get(i) > key
-        // couldInsertedKey(node);
-        // /**
-        // * given value should be inserted 1 before current index
-        // */
-        // node.insertAtPosition(key, value, i);
-        // return null;
-        // }
-        // }
-        // couldInsertedKey(node);
-        // /**
-        // * New key is bigger than all others so should be at the end.
-        // */
-        // node.insertAtPosition(key, value, node.getKeyCount());
-        return null;
     }
 
     /**
@@ -238,8 +228,8 @@ public final class JbNodeServiceImpl<K, V> implements JbNodeService<K, V> {
     @Override
     public V getValueByKey(final Node<K, V> node, final K key) {
         Preconditions.checkNotNull(key);
-        final TypeDescriptor<K> keyTd =
-                node.getNodeDef().getKeyTypeDescriptor();
+        final TypeDescriptor<K> keyTd = node.getNodeDef()
+                .getKeyTypeDescriptor();
         final int nodeCount = node.getKeyCount();
         if (nodeCount == 0) {
             return null;
