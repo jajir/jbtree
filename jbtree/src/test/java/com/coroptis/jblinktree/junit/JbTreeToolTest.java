@@ -20,8 +20,8 @@ package com.coroptis.jblinktree.junit;
  * #L%
  */
 import static org.junit.Assert.*;
+import static org.easymock.EasyMock.*;
 
-import org.easymock.EasyMock;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -50,9 +50,9 @@ public class JbTreeToolTest extends AbstractMockingTest {
 
     @Test
     public void test_canMoveToNextNode_pass() throws Exception {
-        EasyMock.expect(n1.getLink()).andReturn(4);
-        EasyMock.expect(n1.isEmpty()).andReturn(false);
-        EasyMock.expect(n1.getMaxKey()).andReturn(7).times(2);
+        expect(n1.getLink()).andReturn(4);
+        expect(n1.isEmpty()).andReturn(false);
+        expect(n1.getMaxKey()).andReturn(7).times(2);
         replay();
 
         boolean ret = tested.canMoveToNextNode(n1, 12);
@@ -62,7 +62,7 @@ public class JbTreeToolTest extends AbstractMockingTest {
 
     @Test
     public void test_canMoveToNextNode_empty_link() throws Exception {
-        EasyMock.expect(n1.getLink()).andReturn(NodeImpl.EMPTY_INT);
+        expect(n1.getLink()).andReturn(NodeImpl.EMPTY_INT);
         replay();
 
         boolean ret = tested.canMoveToNextNode(n1, 12);
@@ -72,8 +72,8 @@ public class JbTreeToolTest extends AbstractMockingTest {
 
     @Test
     public void test_canMoveToNextNodenodeIsEmpty() throws Exception {
-        EasyMock.expect(n1.getLink()).andReturn(4);
-        EasyMock.expect(n1.isEmpty()).andReturn(true);
+        expect(n1.getLink()).andReturn(4);
+        expect(n1.isEmpty()).andReturn(true);
         replay();
 
         boolean ret = tested.canMoveToNextNode(n1, 12);
@@ -85,17 +85,16 @@ public class JbTreeToolTest extends AbstractMockingTest {
     @Test
     public void test_findLeafNodeId() throws Exception {
         final JbStack stack = new JbStackArrayList();
-        EasyMock.expect(nodeStore.get(2)).andReturn((Node) n1);
-        EasyMock.expect(n1.getId()).andReturn(2);
-        EasyMock.expect(n1.isLeafNode()).andReturn(false);
+        expect(nodeStore.get(2)).andReturn((Node) n1);
+        expect(n1.getId()).andReturn(2);
+        expect(n1.isLeafNode()).andReturn(false);
 
-        EasyMock.expect(nodeService.getCorrespondingNodeId(n1, 12))
-                .andReturn(60);
-        EasyMock.expect(n1.getLink()).andReturn(98);
+        expect(nodeService.getCorrespondingNodeId(n1, 12)).andReturn(60);
+        expect(n1.getLink()).andReturn(98);
 
-        EasyMock.expect(nodeStore.get(60)).andReturn((Node) n2);
-        EasyMock.expect(n2.isLeafNode()).andReturn(true);
-        EasyMock.expect(n2.getId()).andReturn(62);
+        expect(nodeStore.get(60)).andReturn((Node) n2);
+        expect(n2.isLeafNode()).andReturn(true);
+        expect(n2.getId()).andReturn(62);
 
         replay();
         Integer ret = tested.findLeafNodeId(12, stack, 2);
@@ -107,7 +106,7 @@ public class JbTreeToolTest extends AbstractMockingTest {
     @Test(expected = JblinktreeException.class)
     public void test_moveRightLeafNodeWithoutLocking_nonLeafNode()
             throws Exception {
-        EasyMock.expect(n1.isLeafNode()).andReturn(false);
+        expect(n1.isLeafNode()).andReturn(false);
 
         replay();
         tested.moveRightLeafNodeWithoutLocking(n1, 13);
@@ -117,8 +116,8 @@ public class JbTreeToolTest extends AbstractMockingTest {
 
     @Test
     public void test_moveRightLeafNodeWithoutLocking() throws Exception {
-        EasyMock.expect(n1.isLeafNode()).andReturn(true);
-        EasyMock.expect(n1.getLink()).andReturn(Node.EMPTY_INT);
+        expect(n1.isLeafNode()).andReturn(true);
+        expect(n1.getLink()).andReturn(Node.EMPTY_INT);
 
         replay();
         Node<Integer, Integer> ret =
@@ -130,10 +129,10 @@ public class JbTreeToolTest extends AbstractMockingTest {
 
     @Test
     public void test_splitNonLeafNode_insertToHigherNode() throws Exception {
-        EasyMock.expect(nodeBuilder.makeEmptyNonLeafNode(0)).andReturn(n2);
+        expect(nodeBuilder.makeEmptyNonLeafNode(0)).andReturn(n2);
         n1.moveTopHalfOfDataTo(n2);
-        EasyMock.expect(n1.getMaxKey()).andReturn(51);
-        nodeService.insert(n2, 55, -100);
+        expect(n1.getMaxKey()).andReturn(51);
+        expect(nodeService.insert(n2, 55, -100)).andReturn(null);
         replay();
         Node<Integer, Integer> ret = tested.splitNonLeafNode(n1, 55, -100);
 
@@ -143,36 +142,36 @@ public class JbTreeToolTest extends AbstractMockingTest {
 
     @Test
     public void test_splitNonLeafNode_insertToLowerNode() throws Exception {
-        EasyMock.expect(nodeBuilder.makeEmptyNonLeafNode(0)).andReturn(n2);
+        expect(nodeBuilder.makeEmptyNonLeafNode(0)).andReturn(n2);
         n1.moveTopHalfOfDataTo(n2);
-        EasyMock.expect(n1.getMaxKey()).andReturn(59);
-        nodeService.insert(n1, 55, -100);
+        expect(n1.getMaxKey()).andReturn(59);
+        expect(nodeService.insert(n1, 55, -100)).andReturn(null);
         replay();
         Node<Integer, Integer> ret = tested.splitNonLeafNode(n1, 55, -100);
 
         assertSame(ret, n2);
         verify();
     }
-    
+
     @Test
     public void test_splitLeafNode_insertToHigherNode() throws Exception {
-        EasyMock.expect(nodeBuilder.makeEmptyLeafNode(0)).andReturn(n2);
+        expect(nodeBuilder.makeEmptyLeafNode(0)).andReturn(n2);
         n1.moveTopHalfOfDataTo(n2);
-        EasyMock.expect(n1.getMaxKey()).andReturn(51);
-        nodeService.insert(n2, 55, -100);
+        expect(n1.getMaxKey()).andReturn(51);
+        expect(nodeService.insert(n2, 55, -100)).andReturn(null);
         replay();
         Node<Integer, Integer> ret = tested.splitLeafNode(n1, 55, -100);
 
         assertSame(ret, n2);
         verify();
     }
-    
+
     @Test
     public void test_splitLeafNode_insertToLowerNode() throws Exception {
-        EasyMock.expect(nodeBuilder.makeEmptyLeafNode(0)).andReturn(n2);
+        expect(nodeBuilder.makeEmptyLeafNode(0)).andReturn(n2);
         n1.moveTopHalfOfDataTo(n2);
-        EasyMock.expect(n1.getMaxKey()).andReturn(59);
-        nodeService.insert(n1, 55, -100);
+        expect(n1.getMaxKey()).andReturn(59);
+        expect(nodeService.insert(n1, 55, -100)).andReturn(null);
         replay();
         Node<Integer, Integer> ret = tested.splitLeafNode(n1, 55, -100);
 

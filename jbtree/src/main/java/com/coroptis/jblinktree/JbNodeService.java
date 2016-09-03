@@ -68,12 +68,14 @@ public interface JbNodeService<K, V> {
      *            required key
      * @param value
      *            required value
+     * @return if inserts is about rewriting value than old value is returned
+     *         otherwise <code>null</code> is returned
      * @throws NullPointerException
      *             when key or value is null
      * @param <S>
      *            node value type
      */
-    <S> void insert(Node<K, S> node, K key, S value);
+    <S> S insert(Node<K, S> node, K key, S value);
 
     /**
      * For non-leaf tree it update key of some tree. It's useful for update

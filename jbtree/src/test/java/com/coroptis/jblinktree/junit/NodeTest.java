@@ -78,7 +78,7 @@ public class NodeTest {
     public void test_emptyNode() throws Exception {
         logger.debug(node.toString());
 
-        verifyNode(node, new Integer[][] {}, true, -1, 0);
+        nodeUtil.verifyNode(node, new Integer[][] {}, true, -1, 0);
         assertEquals(null, node.getMaxKey());
     }
 
@@ -88,7 +88,7 @@ public class NodeTest {
      * @throws Exception
      *             default exception
      */
-    @Test(expected=ArrayIndexOutOfBoundsException.class)
+    @Test(expected = ArrayIndexOutOfBoundsException.class)
     public void test_insertAtPosition_nodeIsFull() throws Exception {
         Node<Integer, Integer> n =
                 nr.makeNodeFromIntegers(2, 0, new Integer[] { 0, 1, 1, 3, 98 });
@@ -103,8 +103,9 @@ public class NodeTest {
         logger.debug(n.toString());
         n.insertAtPosition(4, -40, 2);
 
-        verifyNode(n, new Integer[][] { { 1, 0 }, { 3, 1 }, { 4, -40 } }, false,
-                98, 45);
+        nodeUtil.verifyNode(n,
+                new Integer[][] { { 1, 0 }, { 3, 1 }, { 4, -40 } }, false, 98,
+                45);
     }
 
     @Test
@@ -114,8 +115,9 @@ public class NodeTest {
         logger.debug(n.toString());
         n.insertAtPosition(0, -10, 0);
 
-        verifyNode(n, new Integer[][] { { 0, -10 }, { 1, 0 }, { 3, 1 } }, false,
-                98, 12);
+        nodeUtil.verifyNode(n,
+                new Integer[][] { { 0, -10 }, { 1, 0 }, { 3, 1 } }, false, 98,
+                12);
     }
 
     @Test(expected = NullPointerException.class)
@@ -135,7 +137,8 @@ public class NodeTest {
         logger.debug(n.toString());
 
         n.removeAtPosition(1);
-        verifyNode(n, new Integer[][] { { 1, 0 }, { 4, 2 } }, false, 98, 12);
+        nodeUtil.verifyNode(n, new Integer[][] { { 1, 0 }, { 4, 2 } }, false,
+                98, 12);
     }
 
     @Test
@@ -145,7 +148,8 @@ public class NodeTest {
         logger.debug(n.toString());
 
         n.removeAtPosition(2);
-        verifyNode(n, new Integer[][] { { 1, 0 }, { 3, 1 } }, false, 98, 12);
+        nodeUtil.verifyNode(n, new Integer[][] { { 1, 0 }, { 3, 1 } }, false,
+                98, 12);
     }
 
     @Test
@@ -155,7 +159,8 @@ public class NodeTest {
         logger.debug(n.toString());
 
         n.removeAtPosition(0);
-        verifyNode(n, new Integer[][] { { 3, 1 }, { 4, 2 } }, false, 98, 12);
+        nodeUtil.verifyNode(n, new Integer[][] { { 3, 1 }, { 4, 2 } }, false,
+                98, 12);
     }
 
     @Test
@@ -164,8 +169,8 @@ public class NodeTest {
         node.insertAtPosition(1, 10, 0);
         node.insertAtPosition(2, 20, 1);
 
-        verifyNode(node, new Integer[][] { { 1, 10 }, { 2, 20 } }, true, -10,
-                0);
+        nodeUtil.verifyNode(node, new Integer[][] { { 1, 10 }, { 2, 20 } },
+                true, -10, 0);
     }
 
     @Test(expected = NullPointerException.class)
@@ -275,50 +280,6 @@ public class NodeTest {
 
         logger.debug(node.toString());
         assertEquals(Integer.valueOf(2), node.getMaxKey());
-    }
-
-    /**
-     * Verify that node have following basic attributes:
-     * <ul>
-     * <li>number of keys is correct</li>
-     * <li>values of keys are correct</li>
-     * <li>values stored in node are correct</li>
-     * <li>next key is correct</li>
-     * <li>distinguish between leaf and non-leaf node is correct</li>
-     * </ul>
-     *
-     * @param n
-     *            required verified node
-     * @param pairs
-     *            required key value pairs stored in node
-     * @param isLeafNode
-     *            required info if it's leaf node
-     * @param expectedNodeLink
-     *            required value of expectect link
-     */
-    private void verifyNode(final Node<Integer, Integer> n,
-            final Integer[][] pairs, final boolean isLeafNode,
-            final Integer expectedNodeLink, final Integer expectedNodeId) {
-        logger.debug(n.toString());
-
-        assertEquals("Expected number of key is invalid", pairs.length,
-                n.getKeyCount());
-        assertEquals("isLeafNode value is invalid", isLeafNode, n.isLeafNode());
-        assertEquals("nodeId is invalid", expectedNodeId, n.getId());
-        List<Integer> keys = nodeUtil.getKeys(n);
-        for (Integer[] pair : pairs) {
-            final Integer key = pair[0];
-            final Integer value = pair[1];
-            assertTrue("keys should contains key " + pair[0],
-                    keys.contains(pair[0]));
-            assertEquals(value, nodeUtil.getValueByKey(n, key));
-        }
-        assertEquals("Node link is invalid", expectedNodeLink, n.getLink());
-        if (pairs.length > 0) {
-            final Integer expectedMaxKey = pairs[pairs.length - 1][0];
-            assertEquals("Max key value is invalid", expectedMaxKey,
-                    n.getMaxKey());
-        }
     }
 
     @Test
