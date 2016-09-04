@@ -206,5 +206,10 @@ public interface Node<K, V> {
      *            required flag byte
      */
     void setFlag(byte b);
+    
+    
+    int compareKey(int position, byte[] key);
+    
+    int compareValue(int position, byte[] value);
 
 }

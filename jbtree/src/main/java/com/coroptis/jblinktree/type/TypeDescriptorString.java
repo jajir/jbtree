@@ -152,4 +152,30 @@ public final class TypeDescriptorString implements TypeDescriptor<String> {
         return maxLength == other.maxLength;
     }
 
+    @Override
+    public int cmp(byte[] node, int start, byte[] value) {
+        final Integer currentLength = typeDescriptorInteger.load(value, 0);
+        final int start2 = typeDescriptorInteger.getMaxLength() + start;
+        for (int i = 0; i < currentLength; i++) {
+            final int cmp = node[start2 + i]
+                    - value[i + typeDescriptorInteger.getMaxLength()];
+            if (cmp != 0) {
+                return cmp;
+            }
+        }
+        return 0;
+    }
+
+    @Override
+    public byte[] getBytes(String value) {
+        byte[] b = value.getBytes(charset);
+        final Integer currentLength = Math.min(b.length, maxLength);
+        byte[] out =
+                new byte[currentLength + typeDescriptorInteger.getMaxLength()];
+        typeDescriptorInteger.save(out, 0, currentLength);
+        System.arraycopy(b, 0, out, typeDescriptorInteger.getMaxLength(),
+                currentLength);
+        return out;
+    }
+
 }

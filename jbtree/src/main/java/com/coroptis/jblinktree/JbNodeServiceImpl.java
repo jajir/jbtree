@@ -48,23 +48,23 @@ public final class JbNodeServiceImpl<K, V> implements JbNodeService<K, V> {
         if (node.isEmpty()) {
             return node.getLink();
         }
-        final TypeDescriptor<K> keyTd = node.getNodeDef()
-                .getKeyTypeDescriptor();
+        final TypeDescriptor<K> keyTd =
+                node.getNodeDef().getKeyTypeDescriptor();
+        final byte[] keyb = keyTd.getBytes(key);
         int start = 0;
         int end = node.getKeyCount() - 1;
-        if (keyTd.compareValues(key, node.getKey(end)) > 0) {
+        if (node.compareKey(end, keyb) < 0) {
             return node.getLink();
         }
         while (true) {
-            if (start == end
-                    && keyTd.compareValues(key, node.getKey(start)) < 0) {
+            if (start == end && node.compareKey(start, keyb) > 0) {
                 return node.getValue(start);
             }
             final int half = start + (end - start) / 2;
-            final int cmp = keyTd.compareValues(key, node.getKey(half));
-            if (cmp < 0) {
+            final int cmp = node.compareKey(half, keyb);
+            if (cmp > 0) {
                 end = half;
-            } else if (cmp > 0) {
+            } else if (cmp < 0) {
                 start = half + 1;
             } else {
                 return node.getValue(half);
@@ -77,11 +77,11 @@ public final class JbNodeServiceImpl<K, V> implements JbNodeService<K, V> {
         Preconditions.checkNotNull(key);
         Preconditions.checkNotNull(value);
 
-        final TypeDescriptor<K> keyTd = node.getNodeDef()
-                .getKeyTypeDescriptor();
+        final TypeDescriptor<K> keyTd =
+                node.getNodeDef().getKeyTypeDescriptor();
         int start = 0;
         int end = node.getKeyCount() - 1;
-        if(node.isEmpty()){
+        if (node.isEmpty()) {
             node.insertAtPosition(key, value, 0);
             return null;
         }
@@ -228,8 +228,8 @@ public final class JbNodeServiceImpl<K, V> implements JbNodeService<K, V> {
     @Override
     public V getValueByKey(final Node<K, V> node, final K key) {
         Preconditions.checkNotNull(key);
-        final TypeDescriptor<K> keyTd = node.getNodeDef()
-                .getKeyTypeDescriptor();
+        final TypeDescriptor<K> keyTd =
+                node.getNodeDef().getKeyTypeDescriptor();
         final int nodeCount = node.getKeyCount();
         if (nodeCount == 0) {
             return null;

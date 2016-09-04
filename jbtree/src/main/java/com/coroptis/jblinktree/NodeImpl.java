@@ -464,4 +464,17 @@ public final class NodeImpl<K, V> implements Node<K, V> {
     public void setFlag(final byte flag) {
         this.field[FLAG_BYTE_POSITION] = flag;
     }
+
+    @Override
+    public int compareKey(final int position, final byte[] key) {
+        return nodeDef.getKeyTypeDescriptor().cmp(field,
+                nodeDef.getKeyPosition(position), key);
+    }
+
+    @Override
+    public int compareValue(final int position, final byte[] value) {
+        return nodeDef.getValueTypeDescriptor().cmp(field,
+                nodeDef.getValuePosition(position), value);
+    }
+
 }

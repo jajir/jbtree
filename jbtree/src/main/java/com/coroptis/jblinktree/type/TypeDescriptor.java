@@ -75,4 +75,7 @@ public interface TypeDescriptor<T> extends ValueComparator<T> {
      */
     void verifyType(Object object);
 
+    int cmp(byte[] node, int start, byte[] value);
+
+    byte[] getBytes(T value);
 }

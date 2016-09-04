@@ -41,4 +41,13 @@ public abstract class AbstractMetaType<T>
         throw new UnsupportedOperationException("It's not alowed.");
     }
 
+    @Override
+    public final int cmp(byte[] node, int start, byte[] value) {
+        throw new UnsupportedOperationException("It's not alowed.");
+    }
+
+    @Override
+    public byte[] getBytes(T value) {
+        throw new UnsupportedOperationException("It's not alowed.");
+    }
 }
