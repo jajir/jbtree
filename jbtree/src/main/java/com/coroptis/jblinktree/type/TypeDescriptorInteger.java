@@ -130,7 +130,8 @@ public final class TypeDescriptorInteger
     }
 
     @Override
-    public int cmp(byte[] node, int start, byte[] value) {
+    public int cmp(byte[] node, int start, Wrapper<Integer> wrapper) {
+        byte[] value = wrapper.getBytes();
         for (int i = 0; i < REQUIRED_BYTES; i++) {
             final int cmp = node[start + i] - value[i];
             if (cmp != 0) {

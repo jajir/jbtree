@@ -23,6 +23,7 @@ package com.coroptis.jblinktree;
 import java.util.Arrays;
 
 import com.coroptis.jblinktree.type.TypeDescriptorInteger;
+import com.coroptis.jblinktree.type.Wrapper;
 import com.google.common.base.Preconditions;
 
 /**
@@ -466,13 +467,13 @@ public final class NodeImpl<K, V> implements Node<K, V> {
     }
 
     @Override
-    public int compareKey(final int position, final byte[] key) {
+    public int compareKey(final int position, final Wrapper<K> key) {
         return nodeDef.getKeyTypeDescriptor().cmp(field,
                 nodeDef.getKeyPosition(position), key);
     }
 
     @Override
-    public int compareValue(final int position, final byte[] value) {
+    public int compareValue(final int position, final Wrapper<V> value) {
         return nodeDef.getValueTypeDescriptor().cmp(field,
                 nodeDef.getValuePosition(position), value);
     }

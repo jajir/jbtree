@@ -90,8 +90,8 @@ public final class TypeDescriptorByte implements TypeDescriptor<Byte> {
     }
 
     @Override
-    public int cmp(byte[] node, int start, byte[] value) {
-        return node[start] - value[0];
+    public int cmp(byte[] node, int start, Wrapper<Byte> value) {
+        return node[start] - value.getBytes()[0];
     }
 
     @Override

@@ -1,5 +1,7 @@
 package com.coroptis.jblinktree;
 
+import com.coroptis.jblinktree.type.Wrapper;
+
 /*
  * #%L
  * jblinktree
@@ -208,8 +210,8 @@ public interface Node<K, V> {
     void setFlag(byte b);
     
     
-    int compareKey(int position, byte[] key);
+    int compareKey(int position, Wrapper<K> key);
     
-    int compareValue(int position, byte[] value);
+    int compareValue(int position, Wrapper<V> value);
 
 }

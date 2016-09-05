@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.coroptis.jblinktree.type.TypeDescriptor;
+import com.coroptis.jblinktree.type.Wrapper;
 import com.google.common.base.Preconditions;
 
 /**
@@ -48,9 +49,9 @@ public final class JbNodeServiceImpl<K, V> implements JbNodeService<K, V> {
         if (node.isEmpty()) {
             return node.getLink();
         }
-        final TypeDescriptor<K> keyTd =
-                node.getNodeDef().getKeyTypeDescriptor();
-        final byte[] keyb = keyTd.getBytes(key);
+        final TypeDescriptor<K> keyTd = node.getNodeDef()
+                .getKeyTypeDescriptor();
+        final Wrapper<K> keyb = new Wrapper<K>(key, keyTd.getBytes(key));
         int start = 0;
         int end = node.getKeyCount() - 1;
         if (node.compareKey(end, keyb) < 0) {
@@ -77,8 +78,8 @@ public final class JbNodeServiceImpl<K, V> implements JbNodeService<K, V> {
         Preconditions.checkNotNull(key);
         Preconditions.checkNotNull(value);
 
-        final TypeDescriptor<K> keyTd =
-                node.getNodeDef().getKeyTypeDescriptor();
+        final TypeDescriptor<K> keyTd = node.getNodeDef()
+                .getKeyTypeDescriptor();
         int start = 0;
         int end = node.getKeyCount() - 1;
         if (node.isEmpty()) {
@@ -228,8 +229,8 @@ public final class JbNodeServiceImpl<K, V> implements JbNodeService<K, V> {
     @Override
     public V getValueByKey(final Node<K, V> node, final K key) {
         Preconditions.checkNotNull(key);
-        final TypeDescriptor<K> keyTd =
-                node.getNodeDef().getKeyTypeDescriptor();
+        final TypeDescriptor<K> keyTd = node.getNodeDef()
+                .getKeyTypeDescriptor();
         final int nodeCount = node.getKeyCount();
         if (nodeCount == 0) {
             return null;
