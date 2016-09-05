@@ -128,7 +128,7 @@ public class NodeStringTest {
         if (pairs.length > 0) {
             final String expectedMaxKey = pairs[pairs.length - 1][0];
             assertEquals("Max key value is invalid", expectedMaxKey,
-                    n.getMaxKey());
+                    n.getMaxKey().getValue());
         }
     }
 

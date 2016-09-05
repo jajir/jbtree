@@ -120,7 +120,7 @@ public class NodeUtilRule implements TestRule {
         if (pairs.length > 0) {
             final Integer expectedMaxKey = pairs[pairs.length - 1][0];
             assertEquals("Max key value is invalid", expectedMaxKey,
-                    n.getMaxKey());
+                    n.getMaxKey().getValue());
         }
     }
 

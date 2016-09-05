@@ -104,7 +104,7 @@ public interface Node<K, V> {
      *
      * @return max key
      */
-    K getMaxKey();
+    Wrapper<K> getMaxKey();
 
     /**
      * Return node id.
@@ -208,10 +208,9 @@ public interface Node<K, V> {
      *            required flag byte
      */
     void setFlag(byte b);
-    
-    
+
     int compareKey(int position, Wrapper<K> key);
-    
+
     int compareValue(int position, Wrapper<V> value);
 
 }

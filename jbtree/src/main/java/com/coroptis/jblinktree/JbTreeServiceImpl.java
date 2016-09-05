@@ -78,7 +78,7 @@ public final class JbTreeServiceImpl<K, V> implements JbTreeService<K, V> {
         parentNode =
                 treeTraversingService.moveRightNonLeafNode(parentNode, tmpKey);
         if (nodeService.updateKeyForValue(parentNode, currentNode.getId(),
-                currentNode.getMaxKey())) {
+                currentNode.getMaxKey().getValue())) {
             nodeStore.writeNode(parentNode);
         }
         return parentNode;

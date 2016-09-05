@@ -94,7 +94,7 @@ public final class JbTreeToolImpl<K, V> implements JbTreeTool<K, V> {
             return true;
         }
         return node.getMaxKey() != null
-                && keyTypeDescriptor.compareValues(key, node.getMaxKey()) > 0;
+                && keyTypeDescriptor.compareValues(key, node.getMaxKey().getValue()) > 0;
     }
 
     @Override
@@ -104,7 +104,7 @@ public final class JbTreeToolImpl<K, V> implements JbTreeTool<K, V> {
         if (current.isLeafNode()) {
             while (!Node.EMPTY_INT.equals(current.getLink())
                     && keyTypeDescriptor.compareValues(key,
-                            current.getMaxKey()) > 0) {
+                            current.getMaxKey().getValue()) > 0) {
                 current = nodeStore.get(current.getLink());
             }
             return current;
@@ -128,7 +128,7 @@ public final class JbTreeToolImpl<K, V> implements JbTreeTool<K, V> {
                  */
                 stack.push(currentNode.getId());
                 nextNodeId = nodeService.getCorrespondingNodeId(currentNode,
-                        currentNode.getMaxKey());
+                        currentNode.getMaxKey().getValue());
                 if (NodeImpl.EMPTY_INT.equals(nextNodeId)) {
                     throw new JblinktreeException(
                             "There is no node id for max value '"
@@ -181,7 +181,7 @@ public final class JbTreeToolImpl<K, V> implements JbTreeTool<K, V> {
     private <S> Node<K, S> splitNode(final Node<K, S> currentNode,
             final Node<K, S> newNode, final K key, final S value) {
         currentNode.moveTopHalfOfDataTo(newNode);
-        if (keyTypeDescriptor.compareValues(currentNode.getMaxKey(), key) < 0) {
+        if (keyTypeDescriptor.compareValues(currentNode.getMaxKey().getValue(), key) < 0) {
             nodeService.insert(newNode, key, value);
         } else {
             nodeService.insert(currentNode, key, value);
@@ -199,8 +199,8 @@ public final class JbTreeToolImpl<K, V> implements JbTreeTool<K, V> {
         // TODO consider case when new node is smaller that currentRootNode
         Node<K, Integer> newRoot =
                 nodeBuilder.makeNonLeafNode(treeData.getNextId(),
-                        currentRootNode.getId(), currentRootNode.getMaxKey(),
-                        newNode.getId(), newNode.getMaxKey());
+                        currentRootNode.getId(), currentRootNode.getMaxKey().getValue(),
+                        newNode.getId(), newNode.getMaxKey().getValue());
         nodeStore.writeNode(newRoot);
         return newRoot.getId();
     }

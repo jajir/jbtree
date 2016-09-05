@@ -52,10 +52,10 @@ public class JbTreeToolTest extends AbstractMockingTest {
     public void test_canMoveToNextNode_pass() throws Exception {
         expect(n1.getLink()).andReturn(4);
         expect(n1.isEmpty()).andReturn(false);
-        expect(n1.getMaxKey()).andReturn(7).times(2);
+        expect(n1.getMaxKey()).andReturn(w1).times(2);
         replay();
 
-        boolean ret = tested.canMoveToNextNode(n1, 12);
+        boolean ret = tested.canMoveToNextNode(n1, 15);
         verify();
         assertTrue(ret);
     }
@@ -131,7 +131,7 @@ public class JbTreeToolTest extends AbstractMockingTest {
     public void test_splitNonLeafNode_insertToHigherNode() throws Exception {
         expect(nodeBuilder.makeEmptyNonLeafNode(0)).andReturn(n2);
         n1.moveTopHalfOfDataTo(n2);
-        expect(n1.getMaxKey()).andReturn(51);
+        expect(n1.getMaxKey()).andReturn(w1);
         expect(nodeService.insert(n2, 55, -100)).andReturn(null);
         replay();
         Node<Integer, Integer> ret = tested.splitNonLeafNode(n1, 55, -100);
@@ -144,7 +144,7 @@ public class JbTreeToolTest extends AbstractMockingTest {
     public void test_splitNonLeafNode_insertToLowerNode() throws Exception {
         expect(nodeBuilder.makeEmptyNonLeafNode(0)).andReturn(n2);
         n1.moveTopHalfOfDataTo(n2);
-        expect(n1.getMaxKey()).andReturn(59);
+        expect(n1.getMaxKey()).andReturn(w3);
         expect(nodeService.insert(n1, 55, -100)).andReturn(null);
         replay();
         Node<Integer, Integer> ret = tested.splitNonLeafNode(n1, 55, -100);
@@ -157,7 +157,7 @@ public class JbTreeToolTest extends AbstractMockingTest {
     public void test_splitLeafNode_insertToHigherNode() throws Exception {
         expect(nodeBuilder.makeEmptyLeafNode(0)).andReturn(n2);
         n1.moveTopHalfOfDataTo(n2);
-        expect(n1.getMaxKey()).andReturn(51);
+        expect(n1.getMaxKey()).andReturn(w1);
         expect(nodeService.insert(n2, 55, -100)).andReturn(null);
         replay();
         Node<Integer, Integer> ret = tested.splitLeafNode(n1, 55, -100);
@@ -170,7 +170,7 @@ public class JbTreeToolTest extends AbstractMockingTest {
     public void test_splitLeafNode_insertToLowerNode() throws Exception {
         expect(nodeBuilder.makeEmptyLeafNode(0)).andReturn(n2);
         n1.moveTopHalfOfDataTo(n2);
-        expect(n1.getMaxKey()).andReturn(59);
+        expect(n1.getMaxKey()).andReturn(w3);
         expect(nodeService.insert(n1, 55, -100)).andReturn(null);
         replay();
         Node<Integer, Integer> ret = tested.splitLeafNode(n1, 55, -100);

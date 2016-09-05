@@ -314,11 +314,12 @@ public final class NodeImpl<K, V> implements Node<K, V> {
     }
 
     @Override
-    public K getMaxKey() {
+    public Wrapper<K> getMaxKey() {
         if (isEmpty()) {
             return null;
         } else {
-            return getKey(getKeyCount() - 1);
+            return Wrapper.make(getKey(getKeyCount() - 1),
+                    nodeDef.getKeyTypeDescriptor());
         }
     }
 

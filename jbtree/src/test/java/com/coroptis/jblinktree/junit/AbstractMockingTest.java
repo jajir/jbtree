@@ -34,6 +34,7 @@ import com.coroptis.jblinktree.Node;
 import com.coroptis.jblinktree.NodeStore;
 import com.coroptis.jblinktree.store.CacheListener;
 import com.coroptis.jblinktree.type.TypeDescriptorInteger;
+import com.coroptis.jblinktree.type.Wrapper;
 
 /**
  * Class
@@ -65,6 +66,8 @@ public abstract class AbstractMockingTest {
     protected JbNodeService<Integer, Integer> nodeService;
 
     protected CacheListener<Integer, Integer> cacheListener;
+    
+    protected Wrapper<Integer> w1,w2,w3;
 
     protected Object[] mocks;
 
@@ -86,6 +89,9 @@ public abstract class AbstractMockingTest {
                 EasyMock.createMock(JbTreeTraversingService.class);
         nodeDef = EasyMock.createMock(JbNodeDef.class);
         tdi = new TypeDescriptorInteger();
+        w1 = Wrapper.make(12, tdi);
+        w2 = Wrapper.make(93, tdi);
+        w3 = Wrapper.make(74, tdi);
         mocks = new Object[] { nodeStore, nodeBuilder, treeTool, n1, n2, n3, n4,
                 jbTreeService, treeHelper, treeData, treeTraversingService,
                 nodeService, cacheListener, nodeDef };

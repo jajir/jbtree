@@ -102,7 +102,7 @@ public final class JbTreeHelperImpl<K, V> implements JbTreeHelper<K, V> {
                 return null;
             } else {
                 Integer tmpValue = newNode.getId();
-                K tmpKey = newNode.getMaxKey();
+                K tmpKey = newNode.getMaxKey().getValue();
                 final Integer previousCurrentNodeId = currentNode.getId();
                 Node<K, Integer> previousNode = treeService
                         .loadParentNode(currentNode, tmpKey, stack.pop());
@@ -147,7 +147,7 @@ public final class JbTreeHelperImpl<K, V> implements JbTreeHelper<K, V> {
                     return null;
                 } else {
                     tmpValue = newNode.getId();
-                    tmpKey = newNode.getMaxKey();
+                    tmpKey = newNode.getMaxKey().getValue();
                     final Integer previousCurrentNodeId = currentNode.getId();
                     currentNode = treeService.loadParentNode(currentNode,
                             tmpKey, stack.pop());

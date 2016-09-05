@@ -22,6 +22,10 @@ package com.coroptis.jblinktree.type;
 
 public class Wrapper<T> {
 
+    public static <S> Wrapper<S> make(final S value, final TypeDescriptor<S> td){
+        return new Wrapper<S>(value, td.getBytes(value));
+    }
+
     public Wrapper(final T newValue, final byte[] newBytes) {
         this.value = newValue;
         this.bytes = newBytes;
