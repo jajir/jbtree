@@ -19,8 +19,9 @@ package com.coroptis.jblinktree.junit;
  * limitations under the License.
  * #L%
  */
-
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.nio.charset.Charset;
 import java.util.List;
@@ -113,16 +114,18 @@ public class NodeStringTest {
                 n.getKeyCount());
         assertEquals("isLeafNode value is invalid", isLeafNode, n.isLeafNode());
         List<String> keys = nodeUtil.getKeys(n);
+        int cx = 0;
         for (String[] pair : pairs) {
             final String key = pair[0];
             final String value = pair[1];
             assertTrue("keys should contains key " + pair[0],
                     keys.contains(pair[0]));
             if (isLeafNode) {
-                assertEquals(value, nodeUtil.getValueByKey(n, key));
+                assertEquals(value, n.getValue(cx));
             } else {
                 fail("it's not leaf node.");
             }
+            cx++;
         }
         assertEquals("Node link is invalid", expectedNodeLink, n.getLink());
         if (pairs.length > 0) {

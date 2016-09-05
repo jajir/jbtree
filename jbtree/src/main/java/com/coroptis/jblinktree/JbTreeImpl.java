@@ -1,5 +1,7 @@
 package com.coroptis.jblinktree;
 
+import com.coroptis.jblinktree.type.Wrapper;
+
 /*
  * #%L
  * jblinktree
@@ -109,7 +111,7 @@ public final class JbTreeImpl<K, V> implements JbTree<K, V> {
     }
 
     @Override
-    public V insert(final K key, final V value) {
+    public V insert(final Wrapper<K> key, final V value) {
         Preconditions.checkNotNull(key);
         Preconditions.checkNotNull(value);
         final JbStack stack = new JbStackArrayList();
@@ -130,7 +132,7 @@ public final class JbTreeImpl<K, V> implements JbTree<K, V> {
     }
 
     @Override
-    public V remove(final K key) {
+    public V remove(final Wrapper<K> key) {
         Preconditions.checkNotNull(key);
         final JbStack stack = new JbStackArrayList();
         Integer currentNodeId =
@@ -155,7 +157,7 @@ public final class JbTreeImpl<K, V> implements JbTree<K, V> {
     }
 
     @Override
-    public V search(final K key) {
+    public V search(final Wrapper<K> key) {
         Preconditions.checkNotNull(key);
         return nodeService
                 .getValueByKey(treeHelper.findAppropriateLeafNode(key), key);
@@ -170,7 +172,7 @@ public final class JbTreeImpl<K, V> implements JbTree<K, V> {
     }
 
     @Override
-    public boolean containsKey(final K key) {
+    public boolean containsKey(final Wrapper<K> key) {
         Preconditions.checkNotNull(key);
         return nodeService.getValueByKey(
                 treeHelper.findAppropriateLeafNode(key), key) != null;

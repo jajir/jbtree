@@ -1,5 +1,7 @@
 package com.coroptis.jblinktree;
 
+import com.coroptis.jblinktree.type.Wrapper;
+
 /*
  * #%L
  * jblinktree
@@ -48,7 +50,7 @@ public interface JbTreeService<K, V> {
      *            required next node id
      * @return locked parent node instance
      */
-    <S> Node<K, Integer> loadParentNode(Node<K, S> currentNode, K key,
+    <S> Node<K, Integer> loadParentNode(Node<K, S> currentNode, Wrapper<K> key,
             Integer nextNodeId);
 
     /**
@@ -63,7 +65,7 @@ public interface JbTreeService<K, V> {
      * @param <S>
      *            value type
      */
-    <S> void storeValueIntoNode(Node<K, S> currentNode, K key, S value);
+    <S> void storeValueIntoNode(Node<K, S> currentNode, Wrapper<K> key, S value);
 
     /**
      * Find node containing smaller key.

@@ -1,5 +1,7 @@
 package com.coroptis.jblinktree;
 
+import com.coroptis.jblinktree.type.Wrapper;
+
 /*
  * #%L
  * jblinktree
@@ -42,7 +44,7 @@ public interface JbTree<K, V> {
      *            required value
      * @return previously associated value with given key.
      */
-    V insert(K key, V value);
+    V insert(Wrapper<K> key, V value);
 
     /**
      * Remove key from tree. Associated value will be also removed.
@@ -52,7 +54,7 @@ public interface JbTree<K, V> {
      * @return return <code>true</code> when key was found and removed otherwise
      *         return <code>false</code>.
      */
-    V remove(K key);
+    V remove(Wrapper<K> key);
 
     /**
      * Find and return specific value for given key.
@@ -61,7 +63,7 @@ public interface JbTree<K, V> {
      *            required key
      * @return find value if there is any otherwise return <code>null</code>
      */
-    V search(K key);
+    V search(Wrapper<K> key);
 
     /**
      * Count all keys stored in tree.
@@ -78,7 +80,7 @@ public interface JbTree<K, V> {
      * @return if key is in tree return <code>true</code> otherwise return
      *         <code>false</code>.
      */
-    boolean containsKey(K key);
+    boolean containsKey(Wrapper<K> key);
 
     /**
      * return number of nodes that are currently locked.

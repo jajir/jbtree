@@ -1,5 +1,6 @@
 package com.coroptis.jblinktree;
 
+import com.coroptis.jblinktree.type.Wrapper;
 import com.coroptis.jblinktree.util.JbStack;
 
 /*
@@ -40,7 +41,7 @@ public interface JbTreeHelper<K, V> {
      *            required key
      * @return appropriate leaf node
      */
-    Node<K, V> findAppropriateLeafNode(K key);
+    Node<K, V> findAppropriateLeafNode(Wrapper<K> key);
 
     /**
      * Write given key value pair into leaf node.
@@ -55,7 +56,7 @@ public interface JbTreeHelper<K, V> {
      *            required stack useful for back tracing through tree
      * @return <code>null</code> when it's new key otherwise return old value
      */
-    V insertToLeafNode(Node<K, V> currentNode, K key, V value, JbStack stack);
+    V insertToLeafNode(Node<K, V> currentNode, Wrapper<K> key, V value, JbStack stack);
 
     /**
      * Traverse through all tree key value pairs in tree.

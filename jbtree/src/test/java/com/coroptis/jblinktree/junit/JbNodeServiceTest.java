@@ -1,5 +1,6 @@
 package com.coroptis.jblinktree.junit;
 
+import static org.easymock.EasyMock.expect;
 /*
  * #%L
  * jblinktree
@@ -19,8 +20,9 @@ package com.coroptis.jblinktree.junit;
  * limitations under the License.
  * #L%
  */
-import static org.junit.Assert.*;
-import static org.easymock.EasyMock.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 
 import org.junit.After;
 import org.junit.Before;
@@ -32,8 +34,8 @@ import org.slf4j.LoggerFactory;
 import com.coroptis.jblinktree.JbNodeService;
 import com.coroptis.jblinktree.JbNodeServiceImpl;
 import com.coroptis.jblinktree.Node;
-import com.coroptis.jblinktree.NodeImpl;
 import com.coroptis.jblinktree.NodeRule;
+import com.coroptis.jblinktree.type.Wrapper;
 
 public class JbNodeServiceTest extends AbstractMockingTest {
 
@@ -51,7 +53,8 @@ public class JbNodeServiceTest extends AbstractMockingTest {
 
         logger.debug(n.toString());
 
-        Integer nodeId = service.getCorrespondingNodeId(n, 4);
+        Integer nodeId = service.getCorrespondingNodeId(n,
+                Wrapper.make(4, nr.getTdi()));
 
         assertNotNull("node id can't be null", nodeId);
         assertEquals("node id should be different", Integer.valueOf(33),
@@ -65,7 +68,7 @@ public class JbNodeServiceTest extends AbstractMockingTest {
 
         logger.debug(n.toString());
 
-        Integer nodeId = service.getCorrespondingNodeId(n, 3);
+        Integer nodeId = service.getCorrespondingNodeId(n, Wrapper.make(3, nr.getTdi()));
 
         assertNotNull("node id can't be null", nodeId);
         assertEquals("node id should be different", Integer.valueOf(1), nodeId);
@@ -82,7 +85,7 @@ public class JbNodeServiceTest extends AbstractMockingTest {
         expect(n1.getValue(2)).andReturn(2);
 
         replay();
-        Integer ret = service.getValueByKey(n1, 2);
+        Integer ret = service.getValueByKey(n1, Wrapper.make(2, nr.getTdi()));
         verify();
         assertEquals(Integer.valueOf(2), ret);
     }
@@ -96,7 +99,7 @@ public class JbNodeServiceTest extends AbstractMockingTest {
         expect(n1.getKey(1)).andReturn(2);
         expect(n1.getKey(2)).andReturn(4);
         replay();
-        Integer ret = service.getValueByKey(n1, 3);
+        Integer ret = service.getValueByKey(n1, Wrapper.make(3, nr.getTdi()));
         verify();
         assertNull(ret);
     }
@@ -107,7 +110,7 @@ public class JbNodeServiceTest extends AbstractMockingTest {
         expect(nodeDef.getKeyTypeDescriptor()).andReturn(tdi);
         expect(n1.getKeyCount()).andReturn(0);
         replay();
-        Integer ret = service.getValueByKey(n1, 1);
+        Integer ret = service.getValueByKey(n1, Wrapper.make(1, nr.getTdi()));
         verify();
         assertNull(ret);
     }

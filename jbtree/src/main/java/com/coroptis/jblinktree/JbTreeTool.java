@@ -1,5 +1,6 @@
 package com.coroptis.jblinktree;
 
+import com.coroptis.jblinktree.type.Wrapper;
 import com.coroptis.jblinktree.util.JbStack;
 
 /*
@@ -47,7 +48,7 @@ public interface JbTreeTool<K, V> {
      *            required key
      * @return moved right node
      */
-    Node<K, V> moveRightLeafNodeWithoutLocking(Node<K, V> current, K key);
+    Node<K, V> moveRightLeafNodeWithoutLocking(Node<K, V> current, Wrapper<K> key);
 
     /**
      * Split leaf node into two nodes. It moved part of currentNode data into
@@ -64,7 +65,7 @@ public interface JbTreeTool<K, V> {
      *            required inserted value
      * @return newly created node, this node contains higher part of keys.
      */
-    Node<K, V> splitLeafNode(Node<K, V> currentNode, K key, V value);
+    Node<K, V> splitLeafNode(Node<K, V> currentNode, Wrapper<K> key, V value);
 
     /**
      * Split non-leaf node into two nodes. It moved part of currentNode data
@@ -82,7 +83,7 @@ public interface JbTreeTool<K, V> {
      * @return newly created node, this node contains higher part of keys.
      */
     Node<K, Integer> splitNonLeafNode(final Node<K, Integer> currentNode,
-            final K key, final Integer value);
+            final Wrapper<K> key, final Integer value);
 
     /**
      * It get already existing node, new node a create new root node pointing on
@@ -129,7 +130,7 @@ public interface JbTreeTool<K, V> {
      * @return leaf node id where should be key found or stored, it's never
      *         <code>null</code>
      */
-    Integer findLeafNodeId(K key, JbStack stack, Integer rootNodeId);
+    Integer findLeafNodeId(Wrapper<K> key, JbStack stack, Integer rootNodeId);
 
     /**
      * During searching for proper place where to put key it's important to know
@@ -142,7 +143,7 @@ public interface JbTreeTool<K, V> {
      * @return <code>true</code> when it's possible to move to next node
      *         otherwise return <code>false</code>
      */
-    boolean canMoveToNextNode(final Node<K, ?> node, final K key);
+    boolean canMoveToNextNode(final Node<K, ?> node, final Wrapper<K> key);
 
     /**
      * Move to next node. Lock next node than unlock current node.

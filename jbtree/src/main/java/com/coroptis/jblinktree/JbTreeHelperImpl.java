@@ -22,6 +22,7 @@ package com.coroptis.jblinktree;
 
 import java.util.concurrent.locks.ReentrantLock;
 
+import com.coroptis.jblinktree.type.Wrapper;
 import com.coroptis.jblinktree.util.JbStack;
 import com.coroptis.jblinktree.util.JbStackArrayList;
 import com.google.common.base.Preconditions;
@@ -81,7 +82,7 @@ public final class JbTreeHelperImpl<K, V> implements JbTreeHelper<K, V> {
     }
 
     @Override
-    public Node<K, V> findAppropriateLeafNode(final K key) {
+    public Node<K, V> findAppropriateLeafNode(final Wrapper<K> key) {
         Preconditions.checkNotNull(key);
         Integer idNode = treeTool.findLeafNodeId(key, new JbStackArrayList(),
                 treeData.getRootNodeId());
@@ -92,7 +93,7 @@ public final class JbTreeHelperImpl<K, V> implements JbTreeHelper<K, V> {
     // TODO following methods should be refactored
 
     @Override
-    public V insertToLeafNode(final Node<K, V> currentNode, final K key,
+    public V insertToLeafNode(final Node<K, V> currentNode, final Wrapper<K> key,
             final V value, final JbStack stack) {
         if (currentNode.getKeyCount() >= treeData.getL()) {
             final Node<K, V> newNode = storeSplitLeafNode(currentNode, key,
@@ -102,7 +103,7 @@ public final class JbTreeHelperImpl<K, V> implements JbTreeHelper<K, V> {
                 return null;
             } else {
                 Integer tmpValue = newNode.getId();
-                K tmpKey = newNode.getMaxKey().getValue();
+                Wrapper<K> tmpKey = newNode.getMaxKey();
                 final Integer previousCurrentNodeId = currentNode.getId();
                 Node<K, Integer> previousNode = treeService
                         .loadParentNode(currentNode, tmpKey, stack.pop());
@@ -129,14 +130,14 @@ public final class JbTreeHelperImpl<K, V> implements JbTreeHelper<K, V> {
      * @return <code>null</code> when it's new key otherwise return old value
      */
     @SuppressWarnings("unchecked")
-    private V insertNonLeaf(final Node<K, Integer> node, final K key,
+    private V insertNonLeaf(final Node<K, Integer> node, final Wrapper<K> key,
             final Integer value, final JbStack stack) {
         Node<K, Integer> currentNode = node;
         /**
          * Key and value have to be inserted
          */
         Integer tmpValue = value;
-        K tmpKey = key;
+        Wrapper<K> tmpKey = key;
         while (true) {
             if (currentNode.getKeyCount() >= treeData.getL()) {
                 final Node<K, Integer> newNode = storeSplitNonLeafNode(
@@ -147,7 +148,7 @@ public final class JbTreeHelperImpl<K, V> implements JbTreeHelper<K, V> {
                     return null;
                 } else {
                     tmpValue = newNode.getId();
-                    tmpKey = newNode.getMaxKey().getValue();
+                    tmpKey = newNode.getMaxKey();
                     final Integer previousCurrentNodeId = currentNode.getId();
                     currentNode = treeService.loadParentNode(currentNode,
                             tmpKey, stack.pop());
@@ -175,7 +176,7 @@ public final class JbTreeHelperImpl<K, V> implements JbTreeHelper<K, V> {
      * @return newly created node, this node contains higher part of keys.
      */
     private Node<K, V> storeSplitLeafNode(final Node<K, V> currentNode,
-            final K key, final V value) {
+            final Wrapper<K> key, final V value) {
         final Node<K, V> newNode = treeTool.splitLeafNode(currentNode, key,
                 value);
         nodeStore.writeNode(newNode);
@@ -195,7 +196,7 @@ public final class JbTreeHelperImpl<K, V> implements JbTreeHelper<K, V> {
      * @return newly created node, this node contains higher part of keys.
      */
     private Node<K, Integer> storeSplitNonLeafNode(
-            final Node<K, Integer> currentNode, final K key,
+            final Node<K, Integer> currentNode, final Wrapper<K> key,
             final Integer value) {
         final Node<K, Integer> newNode = treeTool.splitNonLeafNode(currentNode,
                 key, value);

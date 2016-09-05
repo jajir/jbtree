@@ -29,17 +29,20 @@ import java.util.List;
 import org.junit.rules.TestRule;
 import org.junit.runner.Description;
 import org.junit.runners.model.Statement;
-import org.omg.PortableServer.POAPackage.NoServant;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.coroptis.jblinktree.junit.NodeTest;
+import com.coroptis.jblinktree.type.TypeDescriptor;
+import com.coroptis.jblinktree.type.TypeDescriptorInteger;
+import com.coroptis.jblinktree.type.Wrapper;
 
 public class NodeUtilRule implements TestRule {
 
     private Logger logger = LoggerFactory.getLogger(NodeUtilRule.class);
 
     private JbNodeService nodeService = new JbNodeServiceImpl();
+
+    private TypeDescriptorInteger tdi = new TypeDescriptorInteger();
 
     @Override
     public Statement apply(final Statement base, Description description) {
@@ -76,7 +79,11 @@ public class NodeUtilRule implements TestRule {
         nodeService.writeTo(node, buff, intendation);
     }
 
-    public <K, V> V getValueByKey(Node<K, V> node, K key) {
+    public <Integer, V> V getValueByKey(Node<Integer, V> node, Integer key) {
+        return (V) nodeService.getValueByKey(node, Wrapper.make(key, (TypeDescriptor<Integer>)tdi));
+    }
+
+    public <K, V> V getValueByKey(Node<K, V> node, Wrapper<K> key) {
         return (V) nodeService.getValueByKey(node, key);
     }
 

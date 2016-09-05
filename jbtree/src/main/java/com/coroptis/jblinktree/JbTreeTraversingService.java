@@ -1,5 +1,7 @@
 package com.coroptis.jblinktree;
 
+import com.coroptis.jblinktree.type.Wrapper;
+
 /*
  * #%L
  * jblinktree
@@ -44,7 +46,7 @@ public interface JbTreeTraversingService<K, V> {
      *            required key
      * @return moved right node
      */
-    Node<K, Integer> moveRightNonLeafNode(Node<K, Integer> current, K key);
+    Node<K, Integer> moveRightNonLeafNode(Node<K, Integer> current, Wrapper<K> key);
 
     /**
      * Move right in tree until suitable non-leaf node is found.
@@ -59,5 +61,5 @@ public interface JbTreeTraversingService<K, V> {
      *            required key
      * @return moved right node
      */
-    Node<K, V> moveRightLeafNode(Node<K, V> current, K key);
+    Node<K, V> moveRightLeafNode(Node<K, V> current, Wrapper<K> key);
 }

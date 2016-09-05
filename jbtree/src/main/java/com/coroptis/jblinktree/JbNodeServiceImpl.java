@@ -41,7 +41,7 @@ public final class JbNodeServiceImpl<K, V> implements JbNodeService<K, V> {
 
     @Override
     public Integer getCorrespondingNodeId(final Node<K, Integer> node,
-            final K key) {
+            final Wrapper<K> key) {
         if (node.isLeafNode()) {
             throw new JblinktreeException("Leaf node '" + node.getId()
                     + "' doesn't have any child nodes.");
@@ -49,20 +49,17 @@ public final class JbNodeServiceImpl<K, V> implements JbNodeService<K, V> {
         if (node.isEmpty()) {
             return node.getLink();
         }
-        final TypeDescriptor<K> keyTd = node.getNodeDef()
-                .getKeyTypeDescriptor();
-        final Wrapper<K> keyb = new Wrapper<K>(key, keyTd.getBytes(key));
         int start = 0;
         int end = node.getKeyCount() - 1;
-        if (node.compareKey(end, keyb) < 0) {
+        if (node.compareKey(end, key) < 0) {
             return node.getLink();
         }
         while (true) {
-            if (start == end && node.compareKey(start, keyb) > 0) {
+            if (start == end && node.compareKey(start, key) > 0) {
                 return node.getValue(start);
             }
             final int half = start + (end - start) / 2;
-            final int cmp = node.compareKey(half, keyb);
+            final int cmp = node.compareKey(half, key);
             if (cmp > 0) {
                 end = half;
             } else if (cmp < 0) {
@@ -74,7 +71,7 @@ public final class JbNodeServiceImpl<K, V> implements JbNodeService<K, V> {
     }
 
     @Override
-    public <S> S insert(final Node<K, S> node, final K key, final S value) {
+    public <S> S insert(final Node<K, S> node, final Wrapper<K> key, final S value) {
         Preconditions.checkNotNull(key);
         Preconditions.checkNotNull(value);
 
@@ -83,22 +80,22 @@ public final class JbNodeServiceImpl<K, V> implements JbNodeService<K, V> {
         int start = 0;
         int end = node.getKeyCount() - 1;
         if (node.isEmpty()) {
-            node.insertAtPosition(key, value, 0);
+            node.insertAtPosition(key.getValue(), value, 0);
             return null;
         }
-        if (keyTd.compareValues(key, node.getKey(end)) > 0) {
+        if (keyTd.compareValues(key.getValue(), node.getKey(end)) > 0) {
             couldInsertedKey(node);
             /**
              * New key is bigger than all others so should be at the end.
              */
-            node.insertAtPosition(key, value, node.getKeyCount());
+            node.insertAtPosition(key.getValue(), value, node.getKeyCount());
             return null;
         }
         while (true) {
             if (start == end) {
-                final int cmp = keyTd.compareValues(key, node.getKey(start));
+                final int cmp = keyTd.compareValues(key.getValue(), node.getKey(start));
                 if (cmp < 0) {
-                    node.insertAtPosition(key, value, start);
+                    node.insertAtPosition(key.getValue(), value, start);
                     return null;
                 } else if (cmp == 0) {
                     final S old = node.getValue(start);
@@ -110,7 +107,7 @@ public final class JbNodeServiceImpl<K, V> implements JbNodeService<K, V> {
                 }
             }
             final int half = start + (end - start) / 2;
-            final int cmp = keyTd.compareValues(key, node.getKey(half));
+            final int cmp = keyTd.compareValues(key.getValue(), node.getKey(half));
             if (cmp < 0) {
                 end = half;
             } else if (cmp > 0) {
@@ -141,7 +138,7 @@ public final class JbNodeServiceImpl<K, V> implements JbNodeService<K, V> {
 
     @Override
     public boolean updateKeyForValue(final Node<K, Integer> node,
-            final Integer valueToUpdate, final K keyToSet) {
+            final Integer valueToUpdate, final Wrapper<K> keyToSet) {
         if (node.isLeafNode()) {
             throw new JblinktreeException(
                     "method could by used just on non-leaf nodes");
@@ -151,7 +148,7 @@ public final class JbNodeServiceImpl<K, V> implements JbNodeService<K, V> {
                 if (node.getKey(i).equals(keyToSet)) {
                     return false;
                 } else {
-                    node.setKey(i, keyToSet);
+                    node.setKey(i, keyToSet.getValue());
                     return true;
                 }
             }
@@ -204,10 +201,11 @@ public final class JbNodeServiceImpl<K, V> implements JbNodeService<K, V> {
     }
 
     @Override
-    public <S> S remove(final Node<K, S> node, final K key) {
+    public <S> S remove(final Node<K, S> node, final Wrapper<K> key) {
         Preconditions.checkNotNull(key);
         for (int i = 0; i < node.getKeyCount(); i++) {
-            if (key.equals(node.getKey(i))) {
+            if (node.getNodeDef().getKeyTypeDescriptor()
+                    .compareValues(node.getKey(i), key.getValue()) == 0) {
                 /**
                  * Remove key and value.
                  */
@@ -215,7 +213,7 @@ public final class JbNodeServiceImpl<K, V> implements JbNodeService<K, V> {
                 node.removeAtPosition(i);
                 return oldValue;
             } else if (node.getNodeDef().getKeyTypeDescriptor()
-                    .compareValues(node.getKey(i), key) > 0) {
+                    .compareValues(node.getKey(i), key.getValue()) > 0) {
                 /**
                  * if key in node is bigger than given key than node doesn't
                  * contains key to delete.
@@ -227,7 +225,7 @@ public final class JbNodeServiceImpl<K, V> implements JbNodeService<K, V> {
     }
 
     @Override
-    public V getValueByKey(final Node<K, V> node, final K key) {
+    public V getValueByKey(final Node<K, V> node, final Wrapper<K> key) {
         Preconditions.checkNotNull(key);
         final TypeDescriptor<K> keyTd = node.getNodeDef()
                 .getKeyTypeDescriptor();
@@ -239,7 +237,7 @@ public final class JbNodeServiceImpl<K, V> implements JbNodeService<K, V> {
         int end = nodeCount - 1;
         while (true) {
             int half = start + (end - start) / 2;
-            final int cmp = keyTd.compareValues(key, node.getKey(half));
+            final int cmp = keyTd.compareValues(key.getValue(), node.getKey(half));
             if (cmp < 0) {
                 // key < half key
                 if (start == half) {

@@ -1,6 +1,7 @@
 package com.coroptis.jblinktree;
 
 import com.coroptis.jblinktree.type.TypeDescriptor;
+import com.coroptis.jblinktree.type.Wrapper;
 import com.coroptis.jblinktree.util.JbStack;
 import com.google.common.base.Preconditions;
 
@@ -86,7 +87,7 @@ public final class JbTreeToolImpl<K, V> implements JbTreeTool<K, V> {
     }
 
     @Override
-    public boolean canMoveToNextNode(final Node<K, ?> node, final K key) {
+    public boolean canMoveToNextNode(final Node<K, ?> node, final Wrapper<K> key) {
         if (NodeImpl.EMPTY_INT.equals(node.getLink())) {
             return false;
         }
@@ -94,16 +95,16 @@ public final class JbTreeToolImpl<K, V> implements JbTreeTool<K, V> {
             return true;
         }
         return node.getMaxKey() != null
-                && keyTypeDescriptor.compareValues(key, node.getMaxKey().getValue()) > 0;
+                && keyTypeDescriptor.compareValues(key.getValue(), node.getMaxKey().getValue()) > 0;
     }
 
     @Override
     public Node<K, V> moveRightLeafNodeWithoutLocking(final Node<K, V> node,
-            final K key) {
+            final Wrapper<K> key) {
         Node<K, V> current = node;
         if (current.isLeafNode()) {
             while (!Node.EMPTY_INT.equals(current.getLink())
-                    && keyTypeDescriptor.compareValues(key,
+                    && keyTypeDescriptor.compareValues(key.getValue(),
                             current.getMaxKey().getValue()) > 0) {
                 current = nodeStore.get(current.getLink());
             }
@@ -115,7 +116,7 @@ public final class JbTreeToolImpl<K, V> implements JbTreeTool<K, V> {
     }
 
     @Override
-    public Integer findLeafNodeId(final K key, final JbStack stack,
+    public Integer findLeafNodeId(final Wrapper<K> key, final JbStack stack,
             final Integer rootNodeId) {
         Node<K, Integer> currentNode = nodeStore.get(rootNodeId);
         while (!currentNode.isLeafNode()) {
@@ -128,7 +129,7 @@ public final class JbTreeToolImpl<K, V> implements JbTreeTool<K, V> {
                  */
                 stack.push(currentNode.getId());
                 nextNodeId = nodeService.getCorrespondingNodeId(currentNode,
-                        currentNode.getMaxKey().getValue());
+                        currentNode.getMaxKey());
                 if (NodeImpl.EMPTY_INT.equals(nextNodeId)) {
                     throw new JblinktreeException(
                             "There is no node id for max value '"
@@ -147,7 +148,7 @@ public final class JbTreeToolImpl<K, V> implements JbTreeTool<K, V> {
     }
 
     @Override
-    public Node<K, V> splitLeafNode(final Node<K, V> currentNode, final K key,
+    public Node<K, V> splitLeafNode(final Node<K, V> currentNode, final Wrapper<K> key,
             final V value) {
         final Node<K, V> newNode =
                 nodeBuilder.makeEmptyLeafNode(treeData.getNextId());
@@ -156,7 +157,7 @@ public final class JbTreeToolImpl<K, V> implements JbTreeTool<K, V> {
 
     @Override
     public Node<K, Integer> splitNonLeafNode(final Node<K, Integer> currentNode,
-            final K key, final Integer value) {
+            final Wrapper<K> key, final Integer value) {
         final Node<K, Integer> newNode =
                 nodeBuilder.makeEmptyNonLeafNode(treeData.getNextId());
         return splitNode(currentNode, newNode, key, value);
@@ -179,9 +180,9 @@ public final class JbTreeToolImpl<K, V> implements JbTreeTool<K, V> {
      * @return new node with filled data
      */
     private <S> Node<K, S> splitNode(final Node<K, S> currentNode,
-            final Node<K, S> newNode, final K key, final S value) {
+            final Node<K, S> newNode, final Wrapper<K> key, final S value) {
         currentNode.moveTopHalfOfDataTo(newNode);
-        if (keyTypeDescriptor.compareValues(currentNode.getMaxKey().getValue(), key) < 0) {
+        if (keyTypeDescriptor.compareValues(currentNode.getMaxKey().getValue(), key.getValue()) < 0) {
             nodeService.insert(newNode, key, value);
         } else {
             nodeService.insert(currentNode, key, value);

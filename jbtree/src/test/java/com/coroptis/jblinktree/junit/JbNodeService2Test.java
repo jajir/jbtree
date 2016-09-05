@@ -35,6 +35,7 @@ import com.coroptis.jblinktree.Node;
 import com.coroptis.jblinktree.NodeImpl;
 import com.coroptis.jblinktree.NodeUtilRule;
 import com.coroptis.jblinktree.type.TypeDescriptorInteger;
+import com.coroptis.jblinktree.type.Wrapper;
 
 /**
  * Test verify that correct data are returned. It use real object.
@@ -67,38 +68,38 @@ public class JbNodeService2Test {
     @Test
     public void test_getCorrespondingNodeId() throws Exception {
         assertEquals(Integer.valueOf(2),
-                nodeService.getCorrespondingNodeId(node, 0));
+                nodeService.getCorrespondingNodeId(node, Wrapper.make(0, tdi)));
         assertEquals(Integer.valueOf(2),
-                nodeService.getCorrespondingNodeId(node, 1));
+                nodeService.getCorrespondingNodeId(node, Wrapper.make(1, tdi)));
         assertEquals(Integer.valueOf(2),
-                nodeService.getCorrespondingNodeId(node, 2));
+                nodeService.getCorrespondingNodeId(node, Wrapper.make(2, tdi)));
         assertEquals(Integer.valueOf(4),
-                nodeService.getCorrespondingNodeId(node, 3));
+                nodeService.getCorrespondingNodeId(node, Wrapper.make(3, tdi)));
         assertEquals(Integer.valueOf(4),
-                nodeService.getCorrespondingNodeId(node, 4));
+                nodeService.getCorrespondingNodeId(node, Wrapper.make(4, tdi)));
         assertEquals(Integer.valueOf(6),
-                nodeService.getCorrespondingNodeId(node, 5));
+                nodeService.getCorrespondingNodeId(node, Wrapper.make(5, tdi)));
         assertEquals(Integer.valueOf(6),
-                nodeService.getCorrespondingNodeId(node, 6));
+                nodeService.getCorrespondingNodeId(node, Wrapper.make(6, tdi)));
         assertEquals(Integer.valueOf(8),
-                nodeService.getCorrespondingNodeId(node, 7));
+                nodeService.getCorrespondingNodeId(node, Wrapper.make(7, tdi)));
         assertEquals(Integer.valueOf(8),
-                nodeService.getCorrespondingNodeId(node, 8));
+                nodeService.getCorrespondingNodeId(node, Wrapper.make(8, tdi)));
         assertEquals(Integer.valueOf(10),
-                nodeService.getCorrespondingNodeId(node, 9));
-        assertEquals(Integer.valueOf(10),
-                nodeService.getCorrespondingNodeId(node, 10));
-        assertEquals(Integer.valueOf(12),
-                nodeService.getCorrespondingNodeId(node, 11));
-        assertEquals(Integer.valueOf(12),
-                nodeService.getCorrespondingNodeId(node, 12));
-        assertEquals(Integer.valueOf(LINK),
-                nodeService.getCorrespondingNodeId(node, 13));
+                nodeService.getCorrespondingNodeId(node, Wrapper.make(9, tdi)));
+        assertEquals(Integer.valueOf(10), nodeService
+                .getCorrespondingNodeId(node, Wrapper.make(10, tdi)));
+        assertEquals(Integer.valueOf(12), nodeService
+                .getCorrespondingNodeId(node, Wrapper.make(11, tdi)));
+        assertEquals(Integer.valueOf(12), nodeService
+                .getCorrespondingNodeId(node, Wrapper.make(12, tdi)));
+        assertEquals(Integer.valueOf(LINK), nodeService
+                .getCorrespondingNodeId(node, Wrapper.make(13, tdi)));
     }
 
     @Test
     public void test_insert_0() throws Exception {
-        assertEquals(null, nodeService.insert(node, 0, 0));
+        assertEquals(null, nodeService.insert(node, Wrapper.make(0, tdi), 0));
         nodeUtil.verifyNode(node, new Integer[][] { { 0, 0 }, { 2, 2 },
                 { 4, 4 }, { 6, 6 }, { 8, 8 }, { 10, 10 }, { 12, 12 } }, false,
                 LINK, ID);
@@ -106,7 +107,7 @@ public class JbNodeService2Test {
 
     @Test
     public void test_insert_1() throws Exception {
-        assertEquals(null, nodeService.insert(node, 1, -1));
+        assertEquals(null, nodeService.insert(node, Wrapper.make(1, tdi), -1));
         nodeUtil.verifyNode(node, new Integer[][] { { 1, -1 }, { 2, 2 },
                 { 4, 4 }, { 6, 6 }, { 8, 8 }, { 10, 10 }, { 12, 12 } }, false,
                 LINK, ID);
@@ -114,14 +115,15 @@ public class JbNodeService2Test {
 
     @Test
     public void test_insert_2() throws Exception {
-        assertEquals(Integer.valueOf(2), nodeService.insert(node, 2, -2));
+        assertEquals(Integer.valueOf(2),
+                nodeService.insert(node, Wrapper.make(2, tdi), -2));
         nodeUtil.verifyNode(node, new Integer[][] { { 2, -2 }, { 4, 4 },
                 { 6, 6 }, { 8, 8 }, { 10, 10 }, { 12, 12 } }, false, LINK, ID);
     }
 
     @Test
     public void test_insert_3() throws Exception {
-        assertEquals(null, nodeService.insert(node, 3, -3));
+        assertEquals(null, nodeService.insert(node, Wrapper.make(3, tdi), -3));
         nodeUtil.verifyNode(node, new Integer[][] { { 2, 2 }, { 3, -3 },
                 { 4, 4 }, { 6, 6 }, { 8, 8 }, { 10, 10 }, { 12, 12 } }, false,
                 LINK, ID);
@@ -129,14 +131,15 @@ public class JbNodeService2Test {
 
     @Test
     public void test_insert_4() throws Exception {
-        assertEquals(Integer.valueOf(4), nodeService.insert(node, 4, -4));
+        assertEquals(Integer.valueOf(4),
+                nodeService.insert(node, Wrapper.make(4, tdi), -4));
         nodeUtil.verifyNode(node, new Integer[][] { { 2, 2 }, { 4, -4 },
                 { 6, 6 }, { 8, 8 }, { 10, 10 }, { 12, 12 } }, false, LINK, ID);
     }
 
     @Test
     public void test_insert_5() throws Exception {
-        assertEquals(null, nodeService.insert(node, 5, -5));
+        assertEquals(null, nodeService.insert(node, Wrapper.make(5, tdi), -5));
         nodeUtil.verifyNode(node, new Integer[][] { { 2, 2 }, { 4, 4 },
                 { 5, -5 }, { 6, 6 }, { 8, 8 }, { 10, 10 }, { 12, 12 } }, false,
                 LINK, ID);
@@ -144,14 +147,15 @@ public class JbNodeService2Test {
 
     @Test
     public void test_insert_6() throws Exception {
-        assertEquals(Integer.valueOf(6), nodeService.insert(node, 6, -6));
+        assertEquals(Integer.valueOf(6),
+                nodeService.insert(node, Wrapper.make(6, tdi), -6));
         nodeUtil.verifyNode(node, new Integer[][] { { 2, 2 }, { 4, 4 },
                 { 6, -6 }, { 8, 8 }, { 10, 10 }, { 12, 12 } }, false, LINK, ID);
     }
 
     @Test
     public void test_insert_7() throws Exception {
-        assertEquals(null, nodeService.insert(node, 7, -7));
+        assertEquals(null, nodeService.insert(node, Wrapper.make(7, tdi), -7));
         nodeUtil.verifyNode(node, new Integer[][] { { 2, 2 }, { 4, 4 },
                 { 6, 6 }, { 7, -7 }, { 8, 8 }, { 10, 10 }, { 12, 12 } }, false,
                 LINK, ID);
@@ -159,14 +163,15 @@ public class JbNodeService2Test {
 
     @Test
     public void test_insert_8() throws Exception {
-        assertEquals(Integer.valueOf(8), nodeService.insert(node, 8, -8));
+        assertEquals(Integer.valueOf(8),
+                nodeService.insert(node, Wrapper.make(8, tdi), -8));
         nodeUtil.verifyNode(node, new Integer[][] { { 2, 2 }, { 4, 4 },
                 { 6, 6 }, { 8, -8 }, { 10, 10 }, { 12, 12 } }, false, LINK, ID);
     }
 
     @Test
     public void test_insert_9() throws Exception {
-        assertEquals(null, nodeService.insert(node, 9, -9));
+        assertEquals(null, nodeService.insert(node, Wrapper.make(9, tdi), -9));
         nodeUtil.verifyNode(node, new Integer[][] { { 2, 2 }, { 4, 4 },
                 { 6, 6 }, { 8, 8 }, { 9, -9 }, { 10, 10 }, { 12, 12 } }, false,
                 LINK, ID);
@@ -174,14 +179,16 @@ public class JbNodeService2Test {
 
     @Test
     public void test_insert_10() throws Exception {
-        assertEquals(Integer.valueOf(10), nodeService.insert(node, 10, -10));
+        assertEquals(Integer.valueOf(10),
+                nodeService.insert(node, Wrapper.make(10, tdi), -10));
         nodeUtil.verifyNode(node, new Integer[][] { { 2, 2 }, { 4, 4 },
                 { 6, 6 }, { 8, 8 }, { 10, -10 }, { 12, 12 } }, false, LINK, ID);
     }
 
     @Test
     public void test_insert_11() throws Exception {
-        assertEquals(null, nodeService.insert(node, 11, -11));
+        assertEquals(null,
+                nodeService.insert(node, Wrapper.make(11, tdi), -11));
         nodeUtil.verifyNode(node, new Integer[][] { { 2, 2 }, { 4, 4 },
                 { 6, 6 }, { 8, 8 }, { 10, 10 }, { 11, -11 }, { 12, 12 } },
                 false, LINK, ID);
@@ -189,14 +196,16 @@ public class JbNodeService2Test {
 
     @Test
     public void test_insert_12() throws Exception {
-        assertEquals(Integer.valueOf(12), nodeService.insert(node, 12, -12));
+        assertEquals(Integer.valueOf(12),
+                nodeService.insert(node, Wrapper.make(12, tdi), -12));
         nodeUtil.verifyNode(node, new Integer[][] { { 2, 2 }, { 4, 4 },
                 { 6, 6 }, { 8, 8 }, { 10, 10 }, { 12, -12 } }, false, LINK, ID);
     }
 
     @Test
     public void test_insert_13() throws Exception {
-        assertEquals(null, nodeService.insert(node, 13, -13));
+        assertEquals(null,
+                nodeService.insert(node, Wrapper.make(13, tdi), -13));
         nodeUtil.verifyNode(node, new Integer[][] { { 2, 2 }, { 4, 4 },
                 { 6, 6 }, { 8, 8 }, { 10, 10 }, { 12, 12 }, { 13, -13 } },
                 false, LINK, ID);
@@ -206,7 +215,8 @@ public class JbNodeService2Test {
     public void test_insert_to_empty_node() throws Exception {
         node = new NodeImpl<Integer, Integer>(ID, false, nodeDef);
         node.setLink(LINK);
-        assertEquals(null, nodeService.insert(node, 13, -13));
+        assertEquals(null,
+                nodeService.insert(node, Wrapper.make(13, tdi), -13));
         nodeUtil.verifyNode(node, new Integer[][] { { 13, -13 } }, false, LINK,
                 ID);
     }

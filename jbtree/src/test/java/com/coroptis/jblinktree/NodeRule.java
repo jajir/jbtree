@@ -30,7 +30,7 @@ public class NodeRule implements TestRule {
 
     private final Integer l;
 
-    private TypeDescriptorInteger intDescriptor;
+    private TypeDescriptorInteger tdi;
 
     private JbTreeData<Integer, Integer> treeData;
 
@@ -51,24 +51,24 @@ public class NodeRule implements TestRule {
     }
 
     private void setup() {
-        intDescriptor = new TypeDescriptorInteger();
-        treeData = new JbTreeDataImpl<Integer, Integer>(0, l, intDescriptor,
-                intDescriptor, intDescriptor);
+        tdi = new TypeDescriptorInteger();
+        treeData = new JbTreeDataImpl<Integer, Integer>(0, l, tdi,
+                tdi, tdi);
     }
 
     private void tearDown() {
-        intDescriptor = null;
+        tdi = null;
         treeData = null;
     }
 
-    public TypeDescriptorInteger getIntDescriptor() {
-        return intDescriptor;
+    public TypeDescriptorInteger getTdi() {
+        return tdi;
     }
 
     private byte[] convert(final Integer[] fieldInt) {
         byte fieldByte[] = new byte[fieldInt.length * 4 + 1];
         for (int i = 0; i < fieldInt.length; i++) {
-            intDescriptor.save(fieldByte, i * 4 + 1, fieldInt[i]);
+            tdi.save(fieldByte, i * 4 + 1, fieldInt[i]);
         }
         return fieldByte;
     }
@@ -91,7 +91,7 @@ public class NodeRule implements TestRule {
     public NodeImpl<Integer, Integer> makeNodeFromIntegers(final Integer ll,
             final Integer idNode, final Integer fieldInt[]) {
         JbNodeDef<Integer, Integer> td = new JbNodeDefImpl<Integer, Integer>(ll,
-                intDescriptor, intDescriptor, intDescriptor);
+                tdi, tdi, tdi);
         NodeImpl<Integer, Integer> n =
                 new NodeImpl<Integer, Integer>(idNode, convert(fieldInt), td);
         return n;
