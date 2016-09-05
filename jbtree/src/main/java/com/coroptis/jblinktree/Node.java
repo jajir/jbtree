@@ -107,6 +107,13 @@ public interface Node<K, V> {
     Wrapper<K> getMaxKey();
 
     /**
+     * Return index of max key.
+     *
+     * @return index of max key
+     */
+    int getMaxKeyIndex();
+
+    /**
      * Return node id.
      *
      * @return the id

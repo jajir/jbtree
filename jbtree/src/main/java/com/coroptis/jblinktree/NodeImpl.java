@@ -323,6 +323,15 @@ public final class NodeImpl<K, V> implements Node<K, V> {
         }
     }
 
+    @Override
+    public int getMaxKeyIndex() {
+        if (isEmpty()) {
+            return Node.EMPTY_INT;
+        } else {
+            return getKeyCount() - 1;
+        }
+    }
+
     /**
      * Override {@link System#toString()} method.
      */

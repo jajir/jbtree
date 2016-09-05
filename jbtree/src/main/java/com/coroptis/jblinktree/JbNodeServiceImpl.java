@@ -71,7 +71,8 @@ public final class JbNodeServiceImpl<K, V> implements JbNodeService<K, V> {
     }
 
     @Override
-    public <S> S insert(final Node<K, S> node, final Wrapper<K> key, final S value) {
+    public <S> S insert(final Node<K, S> node, final Wrapper<K> key,
+            final S value) {
         Preconditions.checkNotNull(key);
         Preconditions.checkNotNull(value);
 
@@ -83,7 +84,7 @@ public final class JbNodeServiceImpl<K, V> implements JbNodeService<K, V> {
             node.insertAtPosition(key.getValue(), value, 0);
             return null;
         }
-        if (keyTd.compareValues(key.getValue(), node.getKey(end)) > 0) {
+        if (node.compareKey(end, key) < 0) {
             couldInsertedKey(node);
             /**
              * New key is bigger than all others so should be at the end.
@@ -93,8 +94,8 @@ public final class JbNodeServiceImpl<K, V> implements JbNodeService<K, V> {
         }
         while (true) {
             if (start == end) {
-                final int cmp = keyTd.compareValues(key.getValue(), node.getKey(start));
-                if (cmp < 0) {
+                final int cmp = node.compareKey(start, key);
+                if (cmp > 0) {
                     node.insertAtPosition(key.getValue(), value, start);
                     return null;
                 } else if (cmp == 0) {
@@ -107,10 +108,10 @@ public final class JbNodeServiceImpl<K, V> implements JbNodeService<K, V> {
                 }
             }
             final int half = start + (end - start) / 2;
-            final int cmp = keyTd.compareValues(key.getValue(), node.getKey(half));
-            if (cmp < 0) {
+            final int cmp = node.compareKey(half, key);
+            if (cmp > 0) {
                 end = half;
-            } else if (cmp > 0) {
+            } else if (cmp < 0) {
                 start = half + 1;
             } else {
                 final S old = node.getValue(half);
@@ -204,16 +205,14 @@ public final class JbNodeServiceImpl<K, V> implements JbNodeService<K, V> {
     public <S> S remove(final Node<K, S> node, final Wrapper<K> key) {
         Preconditions.checkNotNull(key);
         for (int i = 0; i < node.getKeyCount(); i++) {
-            if (node.getNodeDef().getKeyTypeDescriptor()
-                    .compareValues(node.getKey(i), key.getValue()) == 0) {
+            if (node.compareKey(i, key) == 0) {
                 /**
                  * Remove key and value.
                  */
                 final S oldValue = node.getValue(i);
                 node.removeAtPosition(i);
                 return oldValue;
-            } else if (node.getNodeDef().getKeyTypeDescriptor()
-                    .compareValues(node.getKey(i), key.getValue()) > 0) {
+            } else if (node.compareKey(i, key) > 0) {
                 /**
                  * if key in node is bigger than given key than node doesn't
                  * contains key to delete.
@@ -227,8 +226,6 @@ public final class JbNodeServiceImpl<K, V> implements JbNodeService<K, V> {
     @Override
     public V getValueByKey(final Node<K, V> node, final Wrapper<K> key) {
         Preconditions.checkNotNull(key);
-        final TypeDescriptor<K> keyTd = node.getNodeDef()
-                .getKeyTypeDescriptor();
         final int nodeCount = node.getKeyCount();
         if (nodeCount == 0) {
             return null;
@@ -237,15 +234,15 @@ public final class JbNodeServiceImpl<K, V> implements JbNodeService<K, V> {
         int end = nodeCount - 1;
         while (true) {
             int half = start + (end - start) / 2;
-            final int cmp = keyTd.compareValues(key.getValue(), node.getKey(half));
-            if (cmp < 0) {
-                // key < half key
+            final int cmp = node.compareKey(half, key);
+            if (cmp > 0) {
+                // half key > key
                 if (start == half) {
                     return null;
                 }
                 end = half - 1;
-            } else if (cmp > 0) {
-                // key > half key
+            } else if (cmp < 0) {
+                // half key < key
                 if (end == half) {
                     return null;
                 }
