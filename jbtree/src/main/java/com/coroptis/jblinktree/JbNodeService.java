@@ -22,6 +22,8 @@ package com.coroptis.jblinktree;
 
 import java.util.List;
 
+import com.coroptis.jblinktree.type.Wrapper;
+
 /**
  * Provide basic operations with node.
  *
@@ -57,7 +59,7 @@ public interface JbNodeService<K, V> {
      * @return node id, in case of rightmost node it returns <code>null</code>
      *         because link is empty
      */
-    Integer getCorrespondingNodeId(Node<K, Integer> node, K key);
+    Integer getCorrespondingNodeId(Node<K, Integer> node, Wrapper<K> key);
 
     /**
      * Insert or override some value in node.
@@ -75,7 +77,7 @@ public interface JbNodeService<K, V> {
      * @param <S>
      *            node value type
      */
-    <S> S insert(Node<K, S> node, K key, S value);
+    <S> S insert(Node<K, S> node, Wrapper<K> key, S value);
 
     /**
      * For non-leaf tree it update key of some tree. It's useful for update
@@ -91,7 +93,7 @@ public interface JbNodeService<K, V> {
      *         really updated otherwise return <code>false</code>
      */
     boolean updateKeyForValue(Node<K, Integer> node, Integer valueToUpdate,
-            K keyToSet);
+            Wrapper<K> keyToSet);
 
     /**
      * Get list of all node id stored in this node.
@@ -130,7 +132,7 @@ public interface JbNodeService<K, V> {
      * @throws NullPointerException
      *             when key or value is null
      */
-    <S> S remove(final Node<K, S> node, final K key);
+    <S> S remove(final Node<K, S> node, final Wrapper<K> key);
 
     /**
      * Find value for given key.
@@ -145,6 +147,6 @@ public interface JbNodeService<K, V> {
      * @return found value if there is any, when value is <code>null</code> or
      *         there is no such key <code>null</code> is returned.
      */
-    V getValueByKey(Node<K, V> node, K key);
+    V getValueByKey(Node<K, V> node, Wrapper<K> key);
 
 }

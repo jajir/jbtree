@@ -36,6 +36,7 @@ import org.junit.Test;
 
 import com.coroptis.jblinktree.JbTreeImpl;
 import com.coroptis.jblinktree.Node;
+import com.coroptis.jblinktree.type.Wrapper;
 import com.coroptis.jblinktree.util.JbStack;
 
 /**
@@ -67,7 +68,7 @@ public class JbTreeTest extends AbstractMockingTest {
         EasyMock.replay(mocks);
 
         try {
-            jbTree.insert(3, null);
+            jbTree.insert(Wrapper.make(3,tdi), null);
             fail();
         } catch (NullPointerException e) {
             assertTrue(true);
@@ -79,12 +80,12 @@ public class JbTreeTest extends AbstractMockingTest {
     @Test
     public void test_insert_new_key() throws Exception {
         record_find_node();
-        expect(nodeService.getValueByKey(n2, 99)).andReturn(null);
-        expect(treeHelper.insertToLeafNode(eq(n2), eq(99), eq(-99),
+        expect(nodeService.getValueByKey(n2, w1)).andReturn(null);
+        expect(treeHelper.insertToLeafNode(eq(n2), eq(w1), eq(-99),
                 (JbStack) anyObject())).andReturn(null);
 
         replay();
-        Integer ret = jbTree.insert(99, -99);
+        Integer ret = jbTree.insert(w1, -99);
         verify();
         assertNull(ret);
     }
@@ -92,11 +93,11 @@ public class JbTreeTest extends AbstractMockingTest {
     @Test
     public void test_insert_alreadyExisting_key() throws Exception {
         record_find_node();
-        expect(nodeService.getValueByKey(n2, 99)).andReturn(-88);
-        jbTreeService.storeValueIntoNode(n2, 99, -99);
+        expect(nodeService.getValueByKey(n2, w1)).andReturn(-88);
+        jbTreeService.storeValueIntoNode(n2, w1, -99);
 
         replay();
-        Integer ret = jbTree.insert(99, -99);
+        Integer ret = jbTree.insert(w1, -99);
         verify();
         assertEquals(Integer.valueOf(-88), ret);
     }
@@ -104,10 +105,10 @@ public class JbTreeTest extends AbstractMockingTest {
     private void record_find_node() {
         EasyMock.expect(treeData.getRootNodeId()).andReturn(64);
         EasyMock.expect(
-                treeTool.findLeafNodeId(eq(99), (JbStack) anyObject(), eq(64)))
+                treeTool.findLeafNodeId(eq(w1), (JbStack) anyObject(), eq(64)))
                 .andReturn(11);
         expect(nodeStore.getAndLock(11)).andReturn((Node) n1);
-        expect(treeTraversingService.moveRightLeafNode(n1, 99))
+        expect(treeTraversingService.moveRightLeafNode(n1, w1))
                 .andReturn((Node) n2);
     }
 

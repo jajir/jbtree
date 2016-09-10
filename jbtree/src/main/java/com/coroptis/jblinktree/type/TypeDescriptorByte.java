@@ -43,7 +43,14 @@ public final class TypeDescriptorByte implements TypeDescriptor<Byte> {
 
     @Override
     public void save(final byte[] data, final int from, final Byte value) {
-        data[from] = value.byteValue();
+        Wrapper<Byte> w = Wrapper.make(value, this);
+        save(data, from, w);
+    }
+
+    @Override
+    public void save(final byte[] data, final int from,
+            final Wrapper<Byte> value) {
+        data[from] = value.getBytes()[0];
     }
 
     @Override
@@ -87,6 +94,19 @@ public final class TypeDescriptorByte implements TypeDescriptor<Byte> {
             return false;
         }
         return getClass() == obj.getClass();
+    }
+
+    @Override
+    public int cmp(final byte[] node, final int start,
+            final Wrapper<Byte> value) {
+        return node[start] - value.getBytes()[0];
+    }
+
+    @Override
+    public byte[] getBytes(final Byte value) {
+        byte[] out = new byte[1];
+        out[0] = value;
+        return out;
     }
 
 }

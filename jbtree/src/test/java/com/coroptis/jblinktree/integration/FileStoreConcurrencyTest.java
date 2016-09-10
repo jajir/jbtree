@@ -43,6 +43,7 @@ import com.coroptis.jblinktree.Node;
 import com.coroptis.jblinktree.NodeImpl;
 import com.coroptis.jblinktree.Worker;
 import com.coroptis.jblinktree.type.TypeDescriptorInteger;
+import com.coroptis.jblinktree.type.Wrapper;
 
 /**
  * Writes and load multiple nodes in highly concurrent environment. Test verify
@@ -53,8 +54,8 @@ import com.coroptis.jblinktree.type.TypeDescriptorInteger;
  */
 public class FileStoreConcurrencyTest {
 
-    private final Logger logger =
-            LoggerFactory.getLogger(FileStoreConcurrencyTest.class);
+    private final Logger logger = LoggerFactory
+            .getLogger(FileStoreConcurrencyTest.class);
 
     private final Integer L = 5;
 
@@ -69,8 +70,8 @@ public class FileStoreConcurrencyTest {
     public void testForThreadClash() throws Exception {
         final int cycleCount = 1000 * 1;
         final int threadCount = 100;
-        final CountDownLatch doneLatch =
-                new CountDownLatch(cycleCount * threadCount);
+        final CountDownLatch doneLatch = new CountDownLatch(
+                cycleCount * threadCount);
         final CountDownLatch startLatch = new CountDownLatch(1);
 
         for (int i = 0; i < threadCount; ++i) {
@@ -111,8 +112,8 @@ public class FileStoreConcurrencyTest {
         boolean read = random.nextBoolean();
         try {
             if (read) {
-                Node<Integer, Integer> node =
-                        fsRule.getFileStorage().load(integer);
+                Node<Integer, Integer> node = fsRule.getFileStorage()
+                        .load(integer);
                 assertEquals(1, node.getKeyCount());
             } else {
                 fsRule.getFileStorage().store(getNode(integer));
@@ -127,12 +128,11 @@ public class FileStoreConcurrencyTest {
 
     private Node<Integer, Integer> getNode(final Integer nodeId) {
         TypeDescriptorInteger intDescriptor = new TypeDescriptorInteger();
-        JbTreeDataImpl<Integer, Integer> treeData =
-                new JbTreeDataImpl<Integer, Integer>(0, L, intDescriptor,
-                        intDescriptor, intDescriptor);
+        JbTreeDataImpl<Integer, Integer> treeData = new JbTreeDataImpl<Integer, Integer>(
+                0, L, intDescriptor, intDescriptor, intDescriptor);
         final Node<Integer, Integer> node = new NodeImpl<Integer, Integer>(
                 nodeId, false, treeData.getLeafNodeDescriptor());
-        nodeService.insert(node, nodeId, nodeId);
+        nodeService.insert(node, Wrapper.make(nodeId, intDescriptor), nodeId);
         return node;
     }
 

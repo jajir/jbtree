@@ -52,10 +52,12 @@ public class JbTreeToolTest extends AbstractMockingTest {
     public void test_canMoveToNextNode_pass() throws Exception {
         expect(n1.getLink()).andReturn(4);
         expect(n1.isEmpty()).andReturn(false);
-        expect(n1.getMaxKey()).andReturn(7).times(2);
+        expect(n1.getMaxKey()).andReturn(w1);
+        expect(n1.getMaxKeyIndex()).andReturn(2);
+        expect(n1.compareKey(2, w2)).andReturn(-1);
         replay();
 
-        boolean ret = tested.canMoveToNextNode(n1, 12);
+        boolean ret = tested.canMoveToNextNode(n1, w2);
         verify();
         assertTrue(ret);
     }
@@ -65,7 +67,7 @@ public class JbTreeToolTest extends AbstractMockingTest {
         expect(n1.getLink()).andReturn(NodeImpl.EMPTY_INT);
         replay();
 
-        boolean ret = tested.canMoveToNextNode(n1, 12);
+        boolean ret = tested.canMoveToNextNode(n1, w2);
         verify();
         assertFalse(ret);
     }
@@ -76,7 +78,7 @@ public class JbTreeToolTest extends AbstractMockingTest {
         expect(n1.isEmpty()).andReturn(true);
         replay();
 
-        boolean ret = tested.canMoveToNextNode(n1, 12);
+        boolean ret = tested.canMoveToNextNode(n1, w1);
         verify();
         assertTrue(ret);
     }
@@ -89,7 +91,7 @@ public class JbTreeToolTest extends AbstractMockingTest {
         expect(n1.getId()).andReturn(2);
         expect(n1.isLeafNode()).andReturn(false);
 
-        expect(nodeService.getCorrespondingNodeId(n1, 12)).andReturn(60);
+        expect(nodeService.getCorrespondingNodeId(n1, w1)).andReturn(60);
         expect(n1.getLink()).andReturn(98);
 
         expect(nodeStore.get(60)).andReturn((Node) n2);
@@ -97,7 +99,7 @@ public class JbTreeToolTest extends AbstractMockingTest {
         expect(n2.getId()).andReturn(62);
 
         replay();
-        Integer ret = tested.findLeafNodeId(12, stack, 2);
+        Integer ret = tested.findLeafNodeId(w1, stack, 2);
 
         assertEquals(Integer.valueOf(62), ret);
         verify();
@@ -109,7 +111,7 @@ public class JbTreeToolTest extends AbstractMockingTest {
         expect(n1.isLeafNode()).andReturn(false);
 
         replay();
-        tested.moveRightLeafNodeWithoutLocking(n1, 13);
+        tested.moveRightLeafNodeWithoutLocking(n1, w2);
 
         verify();
     }
@@ -120,8 +122,8 @@ public class JbTreeToolTest extends AbstractMockingTest {
         expect(n1.getLink()).andReturn(Node.EMPTY_INT);
 
         replay();
-        Node<Integer, Integer> ret =
-                tested.moveRightLeafNodeWithoutLocking(n1, 13);
+        Node<Integer, Integer> ret = tested.moveRightLeafNodeWithoutLocking(n1,
+                w2);
 
         assertSame(ret, n1);
         verify();
@@ -131,10 +133,11 @@ public class JbTreeToolTest extends AbstractMockingTest {
     public void test_splitNonLeafNode_insertToHigherNode() throws Exception {
         expect(nodeBuilder.makeEmptyNonLeafNode(0)).andReturn(n2);
         n1.moveTopHalfOfDataTo(n2);
-        expect(n1.getMaxKey()).andReturn(51);
-        expect(nodeService.insert(n2, 55, -100)).andReturn(null);
+        expect(n1.getMaxKeyIndex()).andReturn(3);
+        expect(n1.compareKey(3, w3)).andReturn(-1);
+        expect(nodeService.insert(n2, w3, -100)).andReturn(null);
         replay();
-        Node<Integer, Integer> ret = tested.splitNonLeafNode(n1, 55, -100);
+        Node<Integer, Integer> ret = tested.splitNonLeafNode(n1, w3, -100);
 
         assertSame(ret, n2);
         verify();
@@ -144,10 +147,11 @@ public class JbTreeToolTest extends AbstractMockingTest {
     public void test_splitNonLeafNode_insertToLowerNode() throws Exception {
         expect(nodeBuilder.makeEmptyNonLeafNode(0)).andReturn(n2);
         n1.moveTopHalfOfDataTo(n2);
-        expect(n1.getMaxKey()).andReturn(59);
-        expect(nodeService.insert(n1, 55, -100)).andReturn(null);
+        expect(n1.getMaxKeyIndex()).andReturn(3);
+        expect(n1.compareKey(3, w3)).andReturn(1);
+        expect(nodeService.insert(n1, w3, -100)).andReturn(null);
         replay();
-        Node<Integer, Integer> ret = tested.splitNonLeafNode(n1, 55, -100);
+        Node<Integer, Integer> ret = tested.splitNonLeafNode(n1, w3, -100);
 
         assertSame(ret, n2);
         verify();
@@ -157,10 +161,11 @@ public class JbTreeToolTest extends AbstractMockingTest {
     public void test_splitLeafNode_insertToHigherNode() throws Exception {
         expect(nodeBuilder.makeEmptyLeafNode(0)).andReturn(n2);
         n1.moveTopHalfOfDataTo(n2);
-        expect(n1.getMaxKey()).andReturn(51);
-        expect(nodeService.insert(n2, 55, -100)).andReturn(null);
+        expect(n1.getMaxKeyIndex()).andReturn(3);
+        expect(n1.compareKey(3, w3)).andReturn(-1);
+        expect(nodeService.insert(n2, w3, -100)).andReturn(null);
         replay();
-        Node<Integer, Integer> ret = tested.splitLeafNode(n1, 55, -100);
+        Node<Integer, Integer> ret = tested.splitLeafNode(n1, w3, -100);
 
         assertSame(ret, n2);
         verify();
@@ -170,10 +175,11 @@ public class JbTreeToolTest extends AbstractMockingTest {
     public void test_splitLeafNode_insertToLowerNode() throws Exception {
         expect(nodeBuilder.makeEmptyLeafNode(0)).andReturn(n2);
         n1.moveTopHalfOfDataTo(n2);
-        expect(n1.getMaxKey()).andReturn(59);
-        expect(nodeService.insert(n1, 55, -100)).andReturn(null);
+        expect(n1.getMaxKeyIndex()).andReturn(3);
+        expect(n1.compareKey(3, w3)).andReturn(1);
+        expect(nodeService.insert(n1, w3, -100)).andReturn(null);
         replay();
-        Node<Integer, Integer> ret = tested.splitLeafNode(n1, 55, -100);
+        Node<Integer, Integer> ret = tested.splitLeafNode(n1, w3, -100);
 
         assertSame(ret, n2);
         verify();
@@ -184,8 +190,8 @@ public class JbTreeToolTest extends AbstractMockingTest {
     public void setUp() throws Exception {
         super.setUp();
         TypeDescriptor<Integer> tdInt = new TypeDescriptorInteger();
-        JbTreeData<Integer, Integer> td =
-                new JbTreeDataImpl<Integer, Integer>(0, 3, tdInt, tdInt, tdInt);
+        JbTreeData<Integer, Integer> td = new JbTreeDataImpl<Integer, Integer>(
+                0, 3, tdInt, tdInt, tdInt);
         tested = new JbTreeToolImpl<Integer, Integer>(nodeStore, td,
                 nodeBuilder, nodeService);
     }

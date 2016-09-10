@@ -23,6 +23,7 @@ package com.coroptis.jblinktree.store;
 import com.coroptis.jblinktree.JbNodeBuilder;
 import com.coroptis.jblinktree.JbTreeData;
 import com.coroptis.jblinktree.Node;
+import com.coroptis.jblinktree.type.Wrapper;
 import com.google.common.base.Preconditions;
 
 /**
@@ -69,7 +70,8 @@ public final class NodeConverterImpl<K, V> implements NodeConverter<K, V> {
                 treeData.getNonLeafNodeDescriptor());
         Preconditions.checkState(out.isLeafNode());
         for (int i = 0; i < node.getKeyCount(); i++) {
-            out.setKey(i, node.getKey(i));
+            out.setKey(i, Wrapper.make(node.getKey(i),
+                    node.getNodeDef().getKeyTypeDescriptor()));
         }
         out.setLink(node.getLink());
         return out;
@@ -83,7 +85,8 @@ public final class NodeConverterImpl<K, V> implements NodeConverter<K, V> {
         Node<K, V> out = nodeBuilder.makeNode(node.getId(), b);
         Preconditions.checkState(out.isLeafNode());
         for (int i = 0; i < node.getKeyCount(); i++) {
-            out.setKey(i, node.getKey(i));
+            out.setKey(i, Wrapper.make(node.getKey(i),
+                    node.getNodeDef().getKeyTypeDescriptor()));
         }
         out.setLink(node.getLink());
         return out;

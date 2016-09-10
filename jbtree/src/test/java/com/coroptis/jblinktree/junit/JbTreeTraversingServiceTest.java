@@ -50,7 +50,7 @@ public class JbTreeTraversingServiceTest extends AbstractMockingTest {
         EasyMock.replay(mocks);
 
         try {
-            tested.moveRightNonLeafNode(n1, 10);
+            tested.moveRightNonLeafNode(n1, w1);
             fail();
         } catch (JblinktreeException e) {
             assertTrue(e.getMessage().contains("method is for non-leaf"));
@@ -62,11 +62,11 @@ public class JbTreeTraversingServiceTest extends AbstractMockingTest {
     public void test_moveRightNonLeafNode_nextNodeId_isNotCurrentLink()
             throws Exception {
         EasyMock.expect(n1.isLeafNode()).andReturn(false);
-        EasyMock.expect(nodeService.getCorrespondingNodeId(n1, 10))
+        EasyMock.expect(nodeService.getCorrespondingNodeId(n1, w1))
                 .andReturn(4);
         EasyMock.expect(n1.getLink()).andReturn(12);
         replay();
-        Node<Integer, Integer> ret = tested.moveRightNonLeafNode(n1, 10);
+        Node<Integer, Integer> ret = tested.moveRightNonLeafNode(n1, w1);
 
         assertEquals(n1, ret);
         verify();
@@ -76,10 +76,10 @@ public class JbTreeTraversingServiceTest extends AbstractMockingTest {
     public void test_moveRightNonLeafNode_nextNodeId_isEmptyLink()
             throws Exception {
         EasyMock.expect(n1.isLeafNode()).andReturn(false);
-        EasyMock.expect(nodeService.getCorrespondingNodeId(n1, 10))
+        EasyMock.expect(nodeService.getCorrespondingNodeId(n1, w1))
                 .andReturn(NodeImpl.EMPTY_INT);
         EasyMock.replay(mocks);
-        Node<Integer, Integer> ret = tested.moveRightNonLeafNode(n1, 10);
+        Node<Integer, Integer> ret = tested.moveRightNonLeafNode(n1, w1);
 
         assertEquals(n1, ret);
         EasyMock.verify(mocks);
@@ -89,16 +89,16 @@ public class JbTreeTraversingServiceTest extends AbstractMockingTest {
     @Test
     public void test_moveRightNonLeafNode_move() throws Exception {
         EasyMock.expect(n1.isLeafNode()).andReturn(false);
-        EasyMock.expect(nodeService.getCorrespondingNodeId(n1, 10))
+        EasyMock.expect(nodeService.getCorrespondingNodeId(n1, w1))
                 .andReturn(4);
         EasyMock.expect(n1.getLink()).andReturn(4);
 
         EasyMock.expect(treeTool.moveToNextNode(n1, 4)).andReturn((Node) n2);
-        EasyMock.expect(nodeService.getCorrespondingNodeId(n2, 10))
+        EasyMock.expect(nodeService.getCorrespondingNodeId(n2, w1))
                 .andReturn(12);
         EasyMock.expect(n2.getLink()).andReturn(60);
         EasyMock.replay(mocks);
-        Node<Integer, Integer> ret = tested.moveRightNonLeafNode(n1, 10);
+        Node<Integer, Integer> ret = tested.moveRightNonLeafNode(n1, w1);
 
         assertEquals(n2, ret);
         EasyMock.verify(mocks);
@@ -110,7 +110,7 @@ public class JbTreeTraversingServiceTest extends AbstractMockingTest {
         EasyMock.replay(mocks);
 
         try {
-            tested.moveRightLeafNode(n1, 10);
+            tested.moveRightLeafNode(n1, w1);
             fail();
         } catch (JblinktreeException e) {
             assertTrue(e.getMessage().contains("method is for leaf nodes"));
@@ -121,9 +121,9 @@ public class JbTreeTraversingServiceTest extends AbstractMockingTest {
     @Test
     public void test_moveRightLeafNode_noMove() throws Exception {
         EasyMock.expect(n1.isLeafNode()).andReturn(true);
-        EasyMock.expect(treeTool.canMoveToNextNode(n1, 10)).andReturn(false);
+        EasyMock.expect(treeTool.canMoveToNextNode(n1, w1)).andReturn(false);
         EasyMock.replay(mocks);
-        Node<Integer, Integer> ret = tested.moveRightLeafNode(n1, 10);
+        Node<Integer, Integer> ret = tested.moveRightLeafNode(n1, w1);
 
         assertEquals(n1, ret);
         EasyMock.verify(mocks);
@@ -133,14 +133,14 @@ public class JbTreeTraversingServiceTest extends AbstractMockingTest {
     @Test
     public void test_moveRightLeafNode_move() throws Exception {
         EasyMock.expect(n1.isLeafNode()).andReturn(true);
-        EasyMock.expect(treeTool.canMoveToNextNode(n1, 10)).andReturn(true);
+        EasyMock.expect(treeTool.canMoveToNextNode(n1, w1)).andReturn(true);
         EasyMock.expect(n1.getLink()).andReturn(32);
 
         EasyMock.expect(treeTool.moveToNextNode(n1, 32)).andReturn((Node) n2);
-        EasyMock.expect(treeTool.canMoveToNextNode(n2, 10)).andReturn(false);
+        EasyMock.expect(treeTool.canMoveToNextNode(n2, w1)).andReturn(false);
 
         EasyMock.replay(mocks);
-        Node<Integer, Integer> ret = tested.moveRightLeafNode(n1, 10);
+        Node<Integer, Integer> ret = tested.moveRightLeafNode(n1, w1);
 
         assertEquals(n2.hashCode(), ret.hashCode());
         EasyMock.verify(mocks);

@@ -29,19 +29,20 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.coroptis.jblinktree.JbTreeData;
-import com.coroptis.jblinktree.JbTreeDataImpl;
-import com.coroptis.jblinktree.Node;
 import com.coroptis.jblinktree.JbNodeBuilder;
 import com.coroptis.jblinktree.JbNodeBuilderImpl;
 import com.coroptis.jblinktree.JbNodeService;
 import com.coroptis.jblinktree.JbNodeServiceImpl;
+import com.coroptis.jblinktree.JbTreeData;
+import com.coroptis.jblinktree.JbTreeDataImpl;
+import com.coroptis.jblinktree.Node;
 import com.coroptis.jblinktree.store.NodeConverter;
 import com.coroptis.jblinktree.store.NodeConverterImpl;
 import com.coroptis.jblinktree.store.NodeFileStorageImpl;
 import com.coroptis.jblinktree.type.TypeDescriptor;
 import com.coroptis.jblinktree.type.TypeDescriptorInteger;
 import com.coroptis.jblinktree.type.TypeDescriptorString;
+import com.coroptis.jblinktree.type.Wrapper;
 import com.google.common.io.Files;
 
 public class NodeFileStorageTest {
@@ -53,6 +54,8 @@ public class NodeFileStorageTest {
     private File tempDirectory;
 
     private JbNodeBuilder<String, String> nodeBuilder;
+
+    private TypeDescriptor<String> tdKey;
 
     @Test
     public void test_read_and_write() throws Exception {
@@ -70,7 +73,8 @@ public class NodeFileStorageTest {
 
     Node<String, String> createNode(final Integer i) {
         Node<String, String> n = nodeBuilder.makeEmptyLeafNode(i);
-        nodeService.insert(n, "Ahoj lidi!" + i, "Jde to!" + i);
+        nodeService.insert(n, Wrapper.make("Ahoj lidi!" + i, tdKey),
+                "Jde to!" + i);
         n.setLink(-i * 100);
         return n;
     }
@@ -78,17 +82,15 @@ public class NodeFileStorageTest {
     @Before
     public void setup() {
         tempDirectory = Files.createTempDir();
-        TypeDescriptor<String> tdKey =
-                new TypeDescriptorString(13, Charset.forName("ISO-8859-1"));
-        TypeDescriptor<String> tdValue =
-                new TypeDescriptorString(9, Charset.forName("ISO-8859-1"));
+        tdKey = new TypeDescriptorString(13, Charset.forName("ISO-8859-1"));
+        TypeDescriptor<String> tdValue = new TypeDescriptorString(9,
+                Charset.forName("ISO-8859-1"));
         TypeDescriptor<Integer> tdLink = new TypeDescriptorInteger();
-        JbTreeData<String, String> treeData =
-                new JbTreeDataImpl<String, String>(0, 2, tdKey, tdValue,
-                        tdLink);
+        JbTreeData<String, String> treeData = new JbTreeDataImpl<String, String>(
+                0, 2, tdKey, tdValue, tdLink);
         nodeBuilder = new JbNodeBuilderImpl<String, String>(treeData);
-        NodeConverter<String, String> initNodeConverter =
-                new NodeConverterImpl<String, String>(treeData, nodeBuilder);
+        NodeConverter<String, String> initNodeConverter = new NodeConverterImpl<String, String>(
+                treeData, nodeBuilder);
         storage = new NodeFileStorageImpl<String, String>(treeData, nodeBuilder,
                 tempDirectory.getAbsolutePath(), initNodeConverter);
         nodeService = new JbNodeServiceImpl<String, String>();
@@ -100,6 +102,7 @@ public class NodeFileStorageTest {
         storage.close();
         storage = null;
         nodeService = null;
+        tdKey = null;
     }
 
 }

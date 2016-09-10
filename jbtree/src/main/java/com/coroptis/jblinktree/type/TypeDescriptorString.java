@@ -78,11 +78,15 @@ public final class TypeDescriptorString implements TypeDescriptor<String> {
 
     @Override
     public void save(final byte[] data, final int from, final String value) {
-        byte[] b = value.getBytes(charset);
-        final Integer currentLength = Math.min(b.length, maxLength);
-        typeDescriptorInteger.save(data, from, currentLength);
-        System.arraycopy(b, 0, data,
-                from + typeDescriptorInteger.getMaxLength(), currentLength);
+        Wrapper<String> w = Wrapper.make(value, this);
+        save(data, from, w);
+    }
+
+    @Override
+    public void save(final byte[] data, final int from,
+            final Wrapper<String> value) {
+        System.arraycopy(value.getBytes(), 0, data, from,
+                value.getBytes().length);
     }
 
     @Override
@@ -150,6 +154,34 @@ public final class TypeDescriptorString implements TypeDescriptor<String> {
             return false;
         }
         return maxLength == other.maxLength;
+    }
+
+    @Override
+    public int cmp(final byte[] node, final int start,
+            final Wrapper<String> wrapper) {
+        byte[] value = wrapper.getBytes();
+        final Integer currentLength = typeDescriptorInteger.load(value, 0);
+        final int start2 = typeDescriptorInteger.getMaxLength() + start;
+        for (int i = 0; i < currentLength; i++) {
+            final int cmp = node[start2 + i]
+                    - value[i + typeDescriptorInteger.getMaxLength()];
+            if (cmp != 0) {
+                return cmp;
+            }
+        }
+        return 0;
+    }
+
+    @Override
+    public byte[] getBytes(final String value) {
+        byte[] b = value.getBytes(charset);
+        final Integer currentLength = Math.min(b.length, maxLength);
+        byte[] out = new byte[currentLength
+                + typeDescriptorInteger.getMaxLength()];
+        typeDescriptorInteger.save(out, 0, currentLength);
+        System.arraycopy(b, 0, out, typeDescriptorInteger.getMaxLength(),
+                currentLength);
+        return out;
     }
 
 }

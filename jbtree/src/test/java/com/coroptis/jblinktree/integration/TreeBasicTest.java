@@ -49,6 +49,7 @@ public class TreeBasicTest extends TestCase {
 
         logger.debug(tree.toString());
         assertEquals(2, tree.size());
+        treeUtil.toDotFile(new File("pok.dot"));
     }
 
     @Test
@@ -109,6 +110,7 @@ public class TreeBasicTest extends TestCase {
         logger.debug(tree.toString());
         treeUtil.toDotFile(new File("pok.dot"));
         tree.remove(1);
+        logger.debug(tree.toString());
         assertEquals(2, tree.size());
         assertEquals("All locks should be unlocked ", 0,
                 tree.countLockedNodes());

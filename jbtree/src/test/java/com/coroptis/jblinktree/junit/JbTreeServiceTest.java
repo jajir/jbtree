@@ -30,6 +30,7 @@ import com.coroptis.jblinktree.JbTreeService;
 import com.coroptis.jblinktree.JbTreeServiceImpl;
 import com.coroptis.jblinktree.JbTreeTool;
 import com.coroptis.jblinktree.Node;
+import com.coroptis.jblinktree.type.Wrapper;
 
 /**
  * Tests for {@link JbTreeTool}
@@ -43,21 +44,21 @@ public class JbTreeServiceTest extends AbstractMockingTest {
 
     @SuppressWarnings({ "rawtypes", "unchecked" })
     private void prepareMocksUpToIf() {
-        EasyMock.expect(nodeStore.getAndLock(34)).andReturn((Node) n2);
-        EasyMock.expect(treeTraversingService.moveRightNonLeafNode(n2, 10))
-                .andReturn(n3);
+        EasyMock.expect(nodeStore.getAndLock(12)).andReturn((Node) n2);
+        EasyMock.expect(treeTraversingService.moveRightNonLeafNode(n2,
+                w1)).andReturn(n3);
         EasyMock.expect(n1.getId()).andReturn(3);
-        EasyMock.expect(n1.getMaxKey()).andReturn(39);
+        EasyMock.expect(n1.getMaxKey()).andReturn(w1);
     }
 
     @Test
     public void test_loadParentNode() throws Exception {
         prepareMocksUpToIf();
-        EasyMock.expect(nodeService.updateKeyForValue(n3, 3, 39))
+        EasyMock.expect(nodeService.updateKeyForValue(n3, 3, w1))
                 .andReturn(true);
         nodeStore.writeNode(n3);
         replay();
-        Node<Integer, Integer> ret = tested.loadParentNode(n1, 10, 34);
+        Node<Integer, Integer> ret = tested.loadParentNode(n1, w1, 12);
 
         assertEquals(n3, ret);
         verify();
@@ -66,10 +67,10 @@ public class JbTreeServiceTest extends AbstractMockingTest {
     @Test
     public void test_loadParentNode_noUpdate() throws Exception {
         prepareMocksUpToIf();
-        EasyMock.expect(nodeService.updateKeyForValue(n3, 3, 39))
+        EasyMock.expect(nodeService.updateKeyForValue(n3, 3, w1))
                 .andReturn(false);
         replay();
-        Node<Integer, Integer> ret = tested.loadParentNode(n1, 10, 34);
+        Node<Integer, Integer> ret = tested.loadParentNode(n1, w1, 12);
 
         assertEquals(n3, ret);
         verify();

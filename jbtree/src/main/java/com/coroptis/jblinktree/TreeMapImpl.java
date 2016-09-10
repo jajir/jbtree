@@ -25,6 +25,7 @@ import java.util.Map;
 import java.util.Set;
 
 import com.coroptis.jblinktree.type.TypeDescriptor;
+import com.coroptis.jblinktree.type.Wrapper;
 import com.google.common.base.Preconditions;
 
 /**
@@ -116,7 +117,8 @@ public final class TreeMapImpl<K, V> implements TreeMap<K, V> {
     @Override
     public boolean containsKey(final Object key) {
         checkIsClosed();
-        return tree.containsKey(verifyKey(key));
+        return tree
+                .containsKey(Wrapper.make(verifyKey(key), keyTypeDescriptor));
     }
 
     @Override
@@ -132,7 +134,7 @@ public final class TreeMapImpl<K, V> implements TreeMap<K, V> {
     @Override
     public V get(final Object key) {
         checkIsClosed();
-        return tree.search(verifyKey(key));
+        return tree.search(Wrapper.make(verifyKey(key), keyTypeDescriptor));
     }
 
     @Override
@@ -148,7 +150,8 @@ public final class TreeMapImpl<K, V> implements TreeMap<K, V> {
     @Override
     public V put(final K key, final V value) {
         checkIsClosed();
-        return tree.insert(verifyKey(key), verifyValue(value));
+        return tree.insert(Wrapper.make(verifyKey(key), keyTypeDescriptor),
+                verifyValue(value));
     }
 
     @Override
@@ -159,7 +162,7 @@ public final class TreeMapImpl<K, V> implements TreeMap<K, V> {
     @Override
     public V remove(final Object key) {
         checkIsClosed();
-        return tree.remove(verifyKey(key));
+        return tree.remove(Wrapper.make(verifyKey(key), keyTypeDescriptor));
     }
 
     @Override
@@ -178,6 +181,11 @@ public final class TreeMapImpl<K, V> implements TreeMap<K, V> {
     public void visit(final JbTreeVisitor<K, V> treeVisitor) {
         checkIsClosed();
         tree.visit(treeVisitor);
+    }
+
+    @Override
+    public String toString() {
+        return tree.toString();
     }
 
     @Override

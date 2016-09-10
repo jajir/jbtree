@@ -23,6 +23,7 @@ package com.coroptis.jblinktree;
 import java.util.Arrays;
 
 import com.coroptis.jblinktree.type.TypeDescriptorInteger;
+import com.coroptis.jblinktree.type.Wrapper;
 import com.google.common.base.Preconditions;
 
 /**
@@ -203,18 +204,8 @@ public final class NodeImpl<K, V> implements Node<K, V> {
                 / nodeDef.getKeyAndValueSize();
     }
 
-    /**
-     * Insert key and value to some specific index position in field.
-     *
-     * @param key
-     *            required key
-     * @param value
-     *            required value
-     * @param targetIndex
-     *            required target index in field
-     */
     @Override
-    public void insertAtPosition(final K key, final V value,
+    public void insertAtPosition(final Wrapper<K> key, final V value,
             final int targetIndex) {
         byte[] tmp = new byte[nodeDef.getFieldActualLength(getKeyCount() + 1)];
         copyFlagAndLink(field, tmp);
@@ -313,11 +304,21 @@ public final class NodeImpl<K, V> implements Node<K, V> {
     }
 
     @Override
-    public K getMaxKey() {
+    public Wrapper<K> getMaxKey() {
         if (isEmpty()) {
             return null;
         } else {
-            return getKey(getKeyCount() - 1);
+            return Wrapper.make(getKey(getKeyCount() - 1),
+                    nodeDef.getKeyTypeDescriptor());
+        }
+    }
+
+    @Override
+    public int getMaxKeyIndex() {
+        if (isEmpty()) {
+            return Node.EMPTY_INT;
+        } else {
+            return getKeyCount() - 1;
         }
     }
 
@@ -436,7 +437,7 @@ public final class NodeImpl<K, V> implements Node<K, V> {
     }
 
     @Override
-    public void setKey(final int position, final K value) {
+    public void setKey(final int position, final Wrapper<K> value) {
         nodeDef.getKeyTypeDescriptor().save(field,
                 nodeDef.getKeyPosition(position), value);
     }
@@ -464,4 +465,17 @@ public final class NodeImpl<K, V> implements Node<K, V> {
     public void setFlag(final byte flag) {
         this.field[FLAG_BYTE_POSITION] = flag;
     }
+
+    @Override
+    public int compareKey(final int position, final Wrapper<K> key) {
+        return nodeDef.getKeyTypeDescriptor().cmp(field,
+                nodeDef.getKeyPosition(position), key);
+    }
+
+    @Override
+    public int compareValue(final int position, final Wrapper<V> value) {
+        return nodeDef.getValueTypeDescriptor().cmp(field,
+                nodeDef.getValuePosition(position), value);
+    }
+
 }

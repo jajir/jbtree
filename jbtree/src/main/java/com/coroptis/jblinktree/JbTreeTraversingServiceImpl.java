@@ -1,5 +1,7 @@
 package com.coroptis.jblinktree;
 
+import com.coroptis.jblinktree.type.Wrapper;
+
 /*
  * #%L
  * jblinktree
@@ -61,7 +63,7 @@ public final class JbTreeTraversingServiceImpl<K, V>
 
     @Override
     public Node<K, Integer> moveRightNonLeafNode(final Node<K, Integer> node,
-            final K key) {
+            final Wrapper<K> key) {
         Preconditions.checkNotNull(key);
         Preconditions.checkNotNull(node);
         Node<K, Integer> current = node;
@@ -80,7 +82,8 @@ public final class JbTreeTraversingServiceImpl<K, V>
     }
 
     @Override
-    public Node<K, V> moveRightLeafNode(final Node<K, V> node, final K key) {
+    public Node<K, V> moveRightLeafNode(final Node<K, V> node,
+            final Wrapper<K> key) {
         Preconditions.checkNotNull(key);
         Preconditions.checkNotNull(node);
         Node<K, V> current = node;

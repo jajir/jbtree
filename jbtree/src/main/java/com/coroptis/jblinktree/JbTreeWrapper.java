@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 
+import com.coroptis.jblinktree.type.Wrapper;
 import com.google.common.base.Preconditions;
 
 /*
@@ -99,7 +100,7 @@ public final class JbTreeWrapper<K, V> implements JbTree<K, V> {
 
     @SuppressWarnings("unchecked")
     @Override
-    public V insert(final K key, final V value) {
+    public V insert(final Wrapper<K> key, final V value) {
         return (V) saveExecution(new Execute() {
 
             @Override
@@ -111,7 +112,7 @@ public final class JbTreeWrapper<K, V> implements JbTree<K, V> {
 
     @SuppressWarnings("unchecked")
     @Override
-    public V remove(final K key) {
+    public V remove(final Wrapper<K> key) {
         return (V) saveExecution(new Execute() {
 
             @Override
@@ -123,7 +124,7 @@ public final class JbTreeWrapper<K, V> implements JbTree<K, V> {
 
     @SuppressWarnings("unchecked")
     @Override
-    public V search(final K key) {
+    public V search(final Wrapper<K> key) {
         return (V) saveExecution(new Execute() {
 
             @Override
@@ -145,7 +146,7 @@ public final class JbTreeWrapper<K, V> implements JbTree<K, V> {
     }
 
     @Override
-    public boolean containsKey(final K key) {
+    public boolean containsKey(final Wrapper<K> key) {
         return (Boolean) saveExecution(new Execute() {
 
             @Override

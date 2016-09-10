@@ -32,12 +32,24 @@ public abstract class AbstractMetaType<T>
         implements TypeDescriptor<T>, MetaType<T> {
 
     @Override
+    public final void save(final byte[] data, final int from, final T value) {
+        Wrapper<T> w = Wrapper.make(value, this);
+        save(data, from, w);
+    }
+
+    @Override
     public final int compareValues(final T o1, final T o2) {
         throw new UnsupportedOperationException("It's not alowed.");
     }
 
     @Override
     public final void verifyType(final Object object) {
+        throw new UnsupportedOperationException("It's not alowed.");
+    }
+
+    @Override
+    public final int cmp(final byte[] node, final int start,
+            final Wrapper<T> value) {
         throw new UnsupportedOperationException("It's not alowed.");
     }
 

@@ -19,8 +19,9 @@ package com.coroptis.jblinktree.junit;
  * limitations under the License.
  * #L%
  */
-
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.nio.charset.Charset;
 import java.util.List;
@@ -40,6 +41,7 @@ import com.coroptis.jblinktree.NodeUtilRule;
 import com.coroptis.jblinktree.type.TypeDescriptor;
 import com.coroptis.jblinktree.type.TypeDescriptorInteger;
 import com.coroptis.jblinktree.type.TypeDescriptorString;
+import com.coroptis.jblinktree.type.Wrapper;
 
 /**
  * Test node with storing strings.
@@ -53,7 +55,7 @@ public class NodeStringTest {
 
     private Node<String, String> node;
 
-    private TypeDescriptor<String> stringDescriptor;
+    private TypeDescriptor<String> sd;
 
     private TypeDescriptor<Integer> intDescriptor;
 
@@ -62,7 +64,7 @@ public class NodeStringTest {
 
     @Test
     public void test_insert_leaf_one() throws Exception {
-        node.insertAtPosition("ahoj", "lidi", 0);
+        node.insertAtPosition(Wrapper.make("ahoj", sd), "lidi", 0);
 
         verifyNode(node, new String[][] { { "ahoj", "lidi" } }, true,
                 Node.EMPTY_INT);
@@ -70,8 +72,8 @@ public class NodeStringTest {
 
     @Test
     public void test_insert_leaf_second_bigger() throws Exception {
-        node.insertAtPosition("ahoj", "lidi", 0);
-        node.insertAtPosition("flying", "pig", 1);
+        node.insertAtPosition(Wrapper.make("ahoj", sd), "lidi", 0);
+        node.insertAtPosition(Wrapper.make("flying", sd), "pig", 1);
 
         verifyNode(node,
                 new String[][] { { "ahoj", "lidi" }, { "flying", "pig" } },
@@ -80,8 +82,8 @@ public class NodeStringTest {
 
     @Test
     public void test_insert_leaf_second_smaller() throws Exception {
-        node.insertAtPosition("aaa taxi", "is fast", 0);
-        node.insertAtPosition("ahoj", "lidi", 1);
+        node.insertAtPosition(Wrapper.make("aaa taxi", sd), "is fast", 0);
+        node.insertAtPosition(Wrapper.make("ahoj", sd), "lidi", 1);
 
         verifyNode(node, new String[][] { { "aaa taxi", "is fast" },
                 { "ahoj", "lidi" } }, true, Node.EMPTY_INT);
@@ -113,32 +115,33 @@ public class NodeStringTest {
                 n.getKeyCount());
         assertEquals("isLeafNode value is invalid", isLeafNode, n.isLeafNode());
         List<String> keys = nodeUtil.getKeys(n);
+        int cx = 0;
         for (String[] pair : pairs) {
             final String key = pair[0];
             final String value = pair[1];
             assertTrue("keys should contains key " + pair[0],
                     keys.contains(pair[0]));
             if (isLeafNode) {
-                assertEquals(value, nodeUtil.getValueByKey(n, key));
+                assertEquals(value, n.getValue(cx));
             } else {
                 fail("it's not leaf node.");
             }
+            cx++;
         }
         assertEquals("Node link is invalid", expectedNodeLink, n.getLink());
         if (pairs.length > 0) {
             final String expectedMaxKey = pairs[pairs.length - 1][0];
             assertEquals("Max key value is invalid", expectedMaxKey,
-                    n.getMaxKey());
+                    n.getMaxKey().getValue());
         }
     }
 
     @Before
     public void setUp() throws Exception {
-        stringDescriptor =
-                new TypeDescriptorString(10, Charset.forName("UTF-8"));
+        sd = new TypeDescriptorString(10, Charset.forName("UTF-8"));
         intDescriptor = new TypeDescriptorInteger();
         JbTreeData<String, String> td = new JbTreeDataImpl<String, String>(0, 5,
-                stringDescriptor, stringDescriptor, intDescriptor);
+                sd, sd, intDescriptor);
         node = new NodeImpl<String, String>(0, true,
                 td.getLeafNodeDescriptor());
     }
@@ -146,7 +149,7 @@ public class NodeStringTest {
     @After
     public void tearDown() throws Exception {
         node = null;
-        stringDescriptor = null;
+        sd = null;
         intDescriptor = null;
     }
 }

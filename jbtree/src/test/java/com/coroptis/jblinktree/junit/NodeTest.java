@@ -38,6 +38,7 @@ import com.coroptis.jblinktree.Node;
 import com.coroptis.jblinktree.NodeImpl;
 import com.coroptis.jblinktree.NodeRule;
 import com.coroptis.jblinktree.NodeUtilRule;
+import com.coroptis.jblinktree.type.Wrapper;
 
 /**
  * Junit test for {@link NodeImpl}.
@@ -90,10 +91,10 @@ public class NodeTest {
      */
     @Test(expected = ArrayIndexOutOfBoundsException.class)
     public void test_insertAtPosition_nodeIsFull() throws Exception {
-        Node<Integer, Integer> n =
-                nr.makeNodeFromIntegers(2, 0, new Integer[] { 0, 1, 1, 3, 98 });
+        Node<Integer, Integer> n = nr.makeNodeFromIntegers(2, 0,
+                new Integer[] { 0, 1, 1, 3, 98 });
         logger.debug(n.toString());
-        n.insertAtPosition(4, -40, 2);
+        n.insertAtPosition(Wrapper.make(4, nr.getTdi()), -40, 2);
     }
 
     @Test
@@ -101,7 +102,7 @@ public class NodeTest {
         Node<Integer, Integer> n = nr.makeNodeFromIntegers(3, 45,
                 new Integer[] { 0, 1, 1, 3, 98 });
         logger.debug(n.toString());
-        n.insertAtPosition(4, -40, 2);
+        n.insertAtPosition(Wrapper.make(4, nr.getTdi()), -40, 2);
 
         nodeUtil.verifyNode(n,
                 new Integer[][] { { 1, 0 }, { 3, 1 }, { 4, -40 } }, false, 98,
@@ -113,7 +114,7 @@ public class NodeTest {
         Node<Integer, Integer> n = nr.makeNodeFromIntegers(3, 12,
                 new Integer[] { 0, 1, 1, 3, 98 });
         logger.debug(n.toString());
-        n.insertAtPosition(0, -10, 0);
+        n.insertAtPosition(Wrapper.make(0, nr.getTdi()), -10, 0);
 
         nodeUtil.verifyNode(n,
                 new Integer[][] { { 0, -10 }, { 1, 0 }, { 3, 1 } }, false, 98,
@@ -127,7 +128,7 @@ public class NodeTest {
 
     @Test(expected = NullPointerException.class)
     public void test_insertAtPosition_value_null() throws Exception {
-        node.insertAtPosition(4, null, 0);
+        node.insertAtPosition(Wrapper.make(4, nr.getTdi()), null, 0);
     }
 
     @Test
@@ -166,8 +167,8 @@ public class NodeTest {
     @Test
     public void test_setLink() throws Exception {
         node.setLink(-10);
-        node.insertAtPosition(1, 10, 0);
-        node.insertAtPosition(2, 20, 1);
+        node.insertAtPosition(Wrapper.make(1, nr.getTdi()), 10, 0);
+        node.insertAtPosition(Wrapper.make(2, nr.getTdi()), 20, 1);
 
         nodeUtil.verifyNode(node, new Integer[][] { { 1, 10 }, { 2, 20 } },
                 true, -10, 0);
@@ -200,7 +201,7 @@ public class NodeTest {
         assertTrue(keys.contains(1));
         assertEquals(Integer.valueOf(1), node1.getLink());
         assertEquals("Invalid getMaxKey", Integer.valueOf(1),
-                node1.getMaxKey());
+                node1.getMaxKey().getValue());
 
         /**
          * Second node
@@ -211,7 +212,7 @@ public class NodeTest {
         assertTrue("target node should be leaf", node2.isLeafNode());
         assertEquals(Integer.valueOf(100), node2.getLink());
         assertEquals("Invalid getMaxKey", Integer.valueOf(2),
-                node2.getMaxKey());
+                node2.getMaxKey().getValue());
     }
 
     @Test
@@ -247,7 +248,8 @@ public class NodeTest {
         List<Integer> keys = nodeUtil.getKeys(n);
         assertTrue(keys.contains(1));
         assertEquals("next link node", Integer.valueOf(11), n.getLink());
-        assertEquals("Invalid getMaxKey", Integer.valueOf(1), n.getMaxKey());
+        assertEquals("Invalid getMaxKey", Integer.valueOf(1),
+                n.getMaxKey().getValue());
 
         /**
          * Second node
@@ -259,14 +261,14 @@ public class NodeTest {
         assertEquals("ln in new node should be null", Integer.valueOf(-1),
                 node2.getLink());
         assertEquals("Invalid getMaxKey", Integer.valueOf(9),
-                node2.getMaxKey());
+                node2.getMaxKey().getValue());
     }
 
     @Test
     public void test_isEmpty() throws Exception {
         assertTrue(node.isEmpty());
         logger.debug(node.toString());
-        node.insertAtPosition(2, 20, 0);
+        node.insertAtPosition(Wrapper.make(2, nr.getTdi()), 20, 0);
         logger.debug(node.toString());
 
         assertFalse(node.isEmpty());
@@ -275,11 +277,11 @@ public class NodeTest {
 
     @Test
     public void test_getMaxKey() throws Exception {
-        node.insertAtPosition(1, 10, 0);
-        node.insertAtPosition(2, 20, 1);
+        node.insertAtPosition(Wrapper.make(1, nr.getTdi()), 10, 0);
+        node.insertAtPosition(Wrapper.make(2, nr.getTdi()), 20, 1);
 
         logger.debug(node.toString());
-        assertEquals(Integer.valueOf(2), node.getMaxKey());
+        assertEquals(Integer.valueOf(2), node.getMaxKey().getValue());
     }
 
     @Test
@@ -300,16 +302,16 @@ public class NodeTest {
 
     @Test
     public void test_getKeysCount_nonLeaf() throws Exception {
-        Node<Integer, Integer> n =
-                nr.makeNodeFromIntegers(2, new Integer[] { 0, 2, 1, 3, 23 });
+        Node<Integer, Integer> n = nr.makeNodeFromIntegers(2,
+                new Integer[] { 0, 2, 1, 3, 23 });
 
         assertEquals(2, n.getKeyCount());
     }
 
     @Test
     public void test_getKeysCount_nonLeaf_1() throws Exception {
-        Node<Integer, Integer> n =
-                nr.makeNodeFromIntegers(2, new Integer[] { 0, 2, 23 });
+        Node<Integer, Integer> n = nr.makeNodeFromIntegers(2,
+                new Integer[] { 0, 2, 23 });
 
         assertEquals(1, n.getKeyCount());
     }

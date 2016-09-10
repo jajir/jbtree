@@ -39,7 +39,8 @@ public interface TypeDescriptor<T> extends ValueComparator<T> {
     int getMaxLength();
 
     /**
-     * Write given value to byte array.
+     * Write given value to byte array. Internally this method should be
+     * implemented by called same with wrapper instead of key.
      *
      * @param data
      *            required byte array
@@ -51,6 +52,20 @@ public interface TypeDescriptor<T> extends ValueComparator<T> {
      *             when value is <code>null</code>
      */
     void save(byte[] data, int from, T value);
+
+    /**
+     * Write given value to byte array.
+     *
+     * @param data
+     *            required byte array
+     * @param from
+     *            required position when will be object written
+     * @param value
+     *            required type wrapper instance
+     * @throws NullPointerException
+     *             when value is <code>null</code>
+     */
+    void save(byte[] data, int from, Wrapper<T> value);
 
     /**
      * Load type instance from byte array.
@@ -75,4 +90,29 @@ public interface TypeDescriptor<T> extends ValueComparator<T> {
      */
     void verifyType(Object object);
 
+    /**
+     * Compare node with given value. Start is position in node where starts
+     * value to be compared.
+     * <p>
+     * Compare should return same results as node.value.compare(value).
+     * </p>
+     *
+     * @param node
+     *            required node
+     * @param start
+     *            required position in node byte array
+     * @param value
+     *            require value wrapper to compare
+     * @return comparison result
+     */
+    int cmp(byte[] node, int start, Wrapper<T> value);
+
+    /**
+     * Convert byte array to byte representation.
+     *
+     * @param value
+     *            required value
+     * @return byte array representing given value
+     */
+    byte[] getBytes(T value);
 }

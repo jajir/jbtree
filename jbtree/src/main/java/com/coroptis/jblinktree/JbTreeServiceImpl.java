@@ -1,5 +1,6 @@
 package com.coroptis.jblinktree;
 
+import com.coroptis.jblinktree.type.Wrapper;
 import com.google.common.base.Preconditions;
 
 /*
@@ -71,7 +72,7 @@ public final class JbTreeServiceImpl<K, V> implements JbTreeService<K, V> {
 
     @Override
     public <S> Node<K, Integer> loadParentNode(final Node<K, S> currentNode,
-            final K tmpKey, final Integer nextNodeId) {
+            final Wrapper<K> tmpKey, final Integer nextNodeId) {
         Node<K, Integer> parentNode = nodeStore.getAndLock(nextNodeId);
         // TODO link to current node which key should be updated can be in
         // different node than tmpKey
@@ -86,7 +87,7 @@ public final class JbTreeServiceImpl<K, V> implements JbTreeService<K, V> {
 
     @Override
     public <S> void storeValueIntoNode(final Node<K, S> currentNode,
-            final K key, final S value) {
+            final Wrapper<K> key, final S value) {
         nodeService.insert(currentNode, key, value);
         nodeStore.writeNode(currentNode);
         nodeStore.unlockNode(currentNode.getId());

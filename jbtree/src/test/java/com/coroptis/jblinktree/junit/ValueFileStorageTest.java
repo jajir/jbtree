@@ -40,6 +40,7 @@ import com.coroptis.jblinktree.store.ValueFileStorageImpl;
 import com.coroptis.jblinktree.type.TypeDescriptor;
 import com.coroptis.jblinktree.type.TypeDescriptorInteger;
 import com.coroptis.jblinktree.type.TypeDescriptorString;
+import com.coroptis.jblinktree.type.Wrapper;
 import com.google.common.io.Files;
 
 /**
@@ -69,8 +70,8 @@ public class ValueFileStorageTest extends AbstractMockingTest {
         Node<Integer, String> n = new NodeImpl<Integer, String>(6, true,
                 nodeDef);
 
-        n.insertAtPosition(3, "", 0);
-        n.insertAtPosition(4, "", 1);
+        n.insertAtPosition(Wrapper.make(3, tdi), "", 0);
+        n.insertAtPosition(Wrapper.make(4, tdi), "", 1);
         valueStorage.loadValues(n);
         assertEquals("Ahoj", n.getValue(0));
         assertEquals("Lidi", n.getValue(1));
@@ -128,8 +129,8 @@ public class ValueFileStorageTest extends AbstractMockingTest {
                 tds, 3);
 
         node = new NodeImpl<Integer, String>(6, true, nodeDef);
-        node.insertAtPosition(3, "Ahoj", 0);
-        node.insertAtPosition(4, "Lidi", 1);
+        node.insertAtPosition(Wrapper.make(3, tdi), "Ahoj", 0);
+        node.insertAtPosition(Wrapper.make(4, tdi), "Lidi", 1);
         node.setLink(98);
     }
 

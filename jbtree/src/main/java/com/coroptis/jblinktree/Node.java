@@ -1,5 +1,7 @@
 package com.coroptis.jblinktree;
 
+import com.coroptis.jblinktree.type.Wrapper;
+
 /*
  * #%L
  * jblinktree
@@ -102,7 +104,14 @@ public interface Node<K, V> {
      *
      * @return max key
      */
-    K getMaxKey();
+    Wrapper<K> getMaxKey();
+
+    /**
+     * Return index of max key.
+     *
+     * @return index of max key
+     */
+    int getMaxKeyIndex();
 
     /**
      * Return node id.
@@ -150,9 +159,9 @@ public interface Node<K, V> {
      * @param position
      *            required position
      * @param value
-     *            required key
+     *            required key wrapper
      */
-    void setKey(int position, K value);
+    void setKey(int position, Wrapper<K> value);
 
     /**
      * Allows to set value at specific position.
@@ -175,13 +184,13 @@ public interface Node<K, V> {
      * Insert key and value to some specific index position in field.
      *
      * @param key
-     *            required key
+     *            required key wrapper
      * @param value
      *            required value
      * @param targetIndex
      *            required target index in field
      */
-    void insertAtPosition(K key, V value, int targetIndex);
+    void insertAtPosition(Wrapper<K> key, V value, int targetIndex);
 
     /**
      * Remove two bytes from node field at given position. Method doesn't care
@@ -206,5 +215,27 @@ public interface Node<K, V> {
      *            required flag byte
      */
     void setFlag(byte b);
+
+    /**
+     * Compare given key with key stored at given position.
+     *
+     * @param position
+     *            required key value index number
+     * @param key
+     *            required key to compare
+     * @return comparison result
+     */
+    int compareKey(int position, Wrapper<K> key);
+
+    /**
+     * Compare given value with value stored at given position.
+     *
+     * @param position
+     *            required value index number
+     * @param value
+     *            required value to compare
+     * @return comparison result
+     */
+    int compareValue(int position, Wrapper<V> value);
 
 }

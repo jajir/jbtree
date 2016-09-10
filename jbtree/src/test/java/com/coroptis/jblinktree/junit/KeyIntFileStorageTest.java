@@ -37,6 +37,7 @@ import com.coroptis.jblinktree.JbTreeDataImpl;
 import com.coroptis.jblinktree.Node;
 import com.coroptis.jblinktree.NodeImpl;
 import com.coroptis.jblinktree.store.KeyIntFileStorage;
+import com.coroptis.jblinktree.type.Wrapper;
 import com.google.common.io.Files;
 
 public class KeyIntFileStorageTest {
@@ -54,9 +55,9 @@ public class KeyIntFileStorageTest {
     public void test_read_and_write() throws Exception {
 
         valueStorage.store(node);
-        
-        Node<Integer, Integer> n= valueStorage.load(14);
-        
+
+        Node<Integer, Integer> n = valueStorage.load(14);
+
         System.out.println(node);
         System.out.println(n);
         assertEquals(node, n);
@@ -66,23 +67,21 @@ public class KeyIntFileStorageTest {
     public void setup() throws Exception {
         tempDirectory = Files.createTempDir();
 
-        JbTreeData<Integer, Integer> treeData =
-                new JbTreeDataImpl<Integer, Integer>(1, 5,
-                        fsRule.getIntDescriptor(), fsRule.getIntDescriptor(),
-                        fsRule.getIntDescriptor());
+        JbTreeData<Integer, Integer> treeData = new JbTreeDataImpl<Integer, Integer>(
+                1, 5, fsRule.getIntDescriptor(), fsRule.getIntDescriptor(),
+                fsRule.getIntDescriptor());
 
         node = new NodeImpl<Integer, Integer>(14, false,
                 treeData.getLeafNodeDescriptor());
-        node.insertAtPosition(10, -10, 0);
+        node.insertAtPosition(Wrapper.make(10, fsRule.getIntDescriptor()), -10,
+                0);
 
-        JbNodeBuilder<Integer, Integer> nodeBuilder =
-                new JbNodeBuilderImpl<Integer, Integer>(treeData);
+        JbNodeBuilder<Integer, Integer> nodeBuilder = new JbNodeBuilderImpl<Integer, Integer>(
+                treeData);
 
-        valueStorage =
-                new KeyIntFileStorage<Integer>(
-                        new File(tempDirectory.getAbsolutePath()
-                                + File.separator + "value.str"),
-                        fsRule.getNodeDef(), nodeBuilder);
+        valueStorage = new KeyIntFileStorage<Integer>(new File(
+                tempDirectory.getAbsolutePath() + File.separator + "value.str"),
+                fsRule.getNodeDef(), nodeBuilder);
     }
 
     @After
