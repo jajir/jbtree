@@ -182,12 +182,12 @@ public final class TreeMapImpl<K, V> implements TreeMap<K, V> {
         checkIsClosed();
         tree.visit(treeVisitor);
     }
-    
+
     @Override
     public String toString() {
         return tree.toString();
     }
-    
+
     @Override
     public void visit(final JbDataVisitor<K, V> dataVisitor) {
         checkIsClosed();

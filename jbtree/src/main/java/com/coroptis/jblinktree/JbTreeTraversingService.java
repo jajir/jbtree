@@ -46,7 +46,8 @@ public interface JbTreeTraversingService<K, V> {
      *            required key
      * @return moved right node
      */
-    Node<K, Integer> moveRightNonLeafNode(Node<K, Integer> current, Wrapper<K> key);
+    Node<K, Integer> moveRightNonLeafNode(Node<K, Integer> current,
+            Wrapper<K> key);
 
     /**
      * Move right in tree until suitable non-leaf node is found.

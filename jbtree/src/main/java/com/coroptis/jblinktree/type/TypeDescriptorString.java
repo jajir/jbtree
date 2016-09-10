@@ -153,7 +153,8 @@ public final class TypeDescriptorString implements TypeDescriptor<String> {
     }
 
     @Override
-    public int cmp(byte[] node, int start, Wrapper<String> wrapper) {
+    public int cmp(final byte[] node, final int start,
+            final Wrapper<String> wrapper) {
         byte[] value = wrapper.getBytes();
         final Integer currentLength = typeDescriptorInteger.load(value, 0);
         final int start2 = typeDescriptorInteger.getMaxLength() + start;
@@ -168,11 +169,11 @@ public final class TypeDescriptorString implements TypeDescriptor<String> {
     }
 
     @Override
-    public byte[] getBytes(String value) {
+    public byte[] getBytes(final String value) {
         byte[] b = value.getBytes(charset);
         final Integer currentLength = Math.min(b.length, maxLength);
-        byte[] out =
-                new byte[currentLength + typeDescriptorInteger.getMaxLength()];
+        byte[] out = new byte[currentLength
+                + typeDescriptorInteger.getMaxLength()];
         typeDescriptorInteger.save(out, 0, currentLength);
         System.arraycopy(b, 0, out, typeDescriptorInteger.getMaxLength(),
                 currentLength);

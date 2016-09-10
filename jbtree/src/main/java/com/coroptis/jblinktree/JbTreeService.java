@@ -65,7 +65,8 @@ public interface JbTreeService<K, V> {
      * @param <S>
      *            value type
      */
-    <S> void storeValueIntoNode(Node<K, S> currentNode, Wrapper<K> key, S value);
+    <S> void storeValueIntoNode(Node<K, S> currentNode, Wrapper<K> key,
+            S value);
 
     /**
      * Find node containing smaller key.

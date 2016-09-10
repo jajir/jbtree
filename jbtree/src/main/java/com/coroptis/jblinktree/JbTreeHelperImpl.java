@@ -93,8 +93,8 @@ public final class JbTreeHelperImpl<K, V> implements JbTreeHelper<K, V> {
     // TODO following methods should be refactored
 
     @Override
-    public V insertToLeafNode(final Node<K, V> currentNode, final Wrapper<K> key,
-            final V value, final JbStack stack) {
+    public V insertToLeafNode(final Node<K, V> currentNode,
+            final Wrapper<K> key, final V value, final JbStack stack) {
         if (currentNode.getKeyCount() >= treeData.getL()) {
             final Node<K, V> newNode = storeSplitLeafNode(currentNode, key,
                     value);
@@ -155,8 +155,7 @@ public final class JbTreeHelperImpl<K, V> implements JbTreeHelper<K, V> {
                     nodeStore.unlockNode(previousCurrentNodeId);
                 }
             } else {
-                treeService.storeValueIntoNode(currentNode, tmpKey,
-                        tmpValue);
+                treeService.storeValueIntoNode(currentNode, tmpKey, tmpValue);
                 return null;
             }
         }

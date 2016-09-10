@@ -216,8 +216,26 @@ public interface Node<K, V> {
      */
     void setFlag(byte b);
 
+    /**
+     * Compare given key with key stored at given position.
+     *
+     * @param position
+     *            required key value index number
+     * @param key
+     *            required key to compare
+     * @return comparison result
+     */
     int compareKey(int position, Wrapper<K> key);
 
+    /**
+     * Compare given value with value stored at given position.
+     *
+     * @param position
+     *            required value index number
+     * @param value
+     *            required value to compare
+     * @return comparison result
+     */
     int compareValue(int position, Wrapper<V> value);
 
 }

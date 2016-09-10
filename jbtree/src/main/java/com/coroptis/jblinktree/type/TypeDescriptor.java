@@ -75,7 +75,29 @@ public interface TypeDescriptor<T> extends ValueComparator<T> {
      */
     void verifyType(Object object);
 
+    /**
+     * Compare node with given value. Start is position in node where starts
+     * value to be compared.
+     * <p>
+     * Compare should return same results as node.value.compare(value).
+     * </p>
+     *
+     * @param node
+     *            required node
+     * @param start
+     *            required position in node byte array
+     * @param value
+     *            require value wrapper to compare
+     * @return comparison result
+     */
     int cmp(byte[] node, int start, Wrapper<T> value);
 
+    /**
+     * Convert byte array to byte representation.
+     *
+     * @param value
+     *            required value
+     * @return byte array representing given value
+     */
     byte[] getBytes(T value);
 }

@@ -82,7 +82,8 @@ public final class JbTreeTraversingServiceImpl<K, V>
     }
 
     @Override
-    public Node<K, V> moveRightLeafNode(final Node<K, V> node, final Wrapper<K> key) {
+    public Node<K, V> moveRightLeafNode(final Node<K, V> node,
+            final Wrapper<K> key) {
         Preconditions.checkNotNull(key);
         Preconditions.checkNotNull(node);
         Node<K, V> current = node;

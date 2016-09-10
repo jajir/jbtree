@@ -56,7 +56,8 @@ public interface JbTreeHelper<K, V> {
      *            required stack useful for back tracing through tree
      * @return <code>null</code> when it's new key otherwise return old value
      */
-    V insertToLeafNode(Node<K, V> currentNode, Wrapper<K> key, V value, JbStack stack);
+    V insertToLeafNode(Node<K, V> currentNode, Wrapper<K> key, V value,
+            JbStack stack);
 
     /**
      * Traverse through all tree key value pairs in tree.

@@ -19,26 +19,72 @@ package com.coroptis.jblinktree.type;
  * limitations under the License.
  * #L%
  */
+/**
+ * Wrap value. It speed up comparison because it allows compare parts of fields
+ * instead of comparing values.
+ *
+ *
+ * @author jajir
+ *
+ * @param <T>
+ *            wrapped type
+ */
+public final class Wrapper<T> {
 
-public class Wrapper<T> {
+    /**
+     * Wrapped value.
+     */
+    private final T value;
 
-    public static <S> Wrapper<S> make(final S value, final TypeDescriptor<S> td){
+    /**
+     * Value represented by byte array.
+     */
+    private final byte[] bytes;
+
+    /**
+     * Static factory.
+     *
+     * @param value
+     *            required value
+     * @param td
+     *            required type descriptor that allows to convert value to byte
+     *            array
+     * @param <S>
+     *            type that will be wrapped
+     * @return {@link Wrapper} instance
+     */
+    public static <S> Wrapper<S> make(final S value,
+            final TypeDescriptor<S> td) {
         return new Wrapper<S>(value, td.getBytes(value));
     }
 
-    public Wrapper(final T newValue, final byte[] newBytes) {
+    /**
+     * Hidden constructor.
+     *
+     * @param newValue
+     *            optional new value
+     * @param newBytes
+     *            optional byte representation
+     */
+    private Wrapper(final T newValue, final byte[] newBytes) {
         this.value = newValue;
         this.bytes = newBytes;
     }
 
-    private T value;
-
-    private byte[] bytes;
-
+    /**
+     * Get value.
+     *
+     * @return value
+     */
     public T getValue() {
         return value;
     }
 
+    /**
+     * Get value as byte array.
+     *
+     * @return byte array
+     */
     public byte[] getBytes() {
         return bytes;
     }

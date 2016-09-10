@@ -29,8 +29,7 @@ import com.google.common.base.MoreObjects;
  * @author jajir
  *
  */
-public final class TypeDescriptorInteger
-        implements TypeDescriptor<Integer>, ByteComparator {
+public final class TypeDescriptorInteger implements TypeDescriptor<Integer> {
 
     /**
      * How many bytes is required to store Integer.
@@ -130,7 +129,8 @@ public final class TypeDescriptorInteger
     }
 
     @Override
-    public int cmp(byte[] node, int start, Wrapper<Integer> wrapper) {
+    public int cmp(final byte[] node, final int start,
+            final Wrapper<Integer> wrapper) {
         byte[] value = wrapper.getBytes();
         for (int i = 0; i < REQUIRED_BYTES; i++) {
             final int cmp = node[start + i] - value[i];
@@ -140,9 +140,9 @@ public final class TypeDescriptorInteger
         }
         return 0;
     }
-    
+
     @Override
-    public byte[] getBytes(final Integer value){
+    public byte[] getBytes(final Integer value) {
         byte[] out = new byte[REQUIRED_BYTES];
         save(out, 0, value);
         return out;

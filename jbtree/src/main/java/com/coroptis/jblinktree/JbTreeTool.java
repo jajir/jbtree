@@ -48,7 +48,8 @@ public interface JbTreeTool<K, V> {
      *            required key
      * @return moved right node
      */
-    Node<K, V> moveRightLeafNodeWithoutLocking(Node<K, V> current, Wrapper<K> key);
+    Node<K, V> moveRightLeafNodeWithoutLocking(Node<K, V> current,
+            Wrapper<K> key);
 
     /**
      * Split leaf node into two nodes. It moved part of currentNode data into
