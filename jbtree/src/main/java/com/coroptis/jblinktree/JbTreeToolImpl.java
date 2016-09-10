@@ -1,6 +1,5 @@
 package com.coroptis.jblinktree;
 
-import com.coroptis.jblinktree.type.TypeDescriptor;
 import com.coroptis.jblinktree.type.Wrapper;
 import com.coroptis.jblinktree.util.JbStack;
 import com.google.common.base.Preconditions;
@@ -43,11 +42,6 @@ public final class JbTreeToolImpl<K, V> implements JbTreeTool<K, V> {
     private final NodeStore<K> nodeStore;
 
     /**
-     * Key type descriptor.
-     */
-    private final TypeDescriptor<K> keyTypeDescriptor;
-
-    /**
      * Node builder factory.
      */
     private final JbNodeBuilder<K, V> nodeBuilder;
@@ -82,8 +76,6 @@ public final class JbTreeToolImpl<K, V> implements JbTreeTool<K, V> {
         this.treeData = Preconditions.checkNotNull(jbTreeData);
         this.nodeBuilder = Preconditions.checkNotNull(initNodeBuilder);
         this.nodeService = Preconditions.checkNotNull(jbNodeService);
-        keyTypeDescriptor = jbTreeData.getNonLeafNodeDescriptor()
-                .getKeyTypeDescriptor();
     }
 
     @Override
@@ -172,7 +164,7 @@ public final class JbTreeToolImpl<K, V> implements JbTreeTool<K, V> {
      * @param newNode
      *            required new node
      * @param key
-     *            required inserted key
+     *            required inserted key wrapper
      * @param value
      *            required inserted value
      * @param <S>

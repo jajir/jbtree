@@ -1,5 +1,7 @@
 package com.coroptis.jblinktree.type;
 
+import com.google.common.base.MoreObjects;
+
 /*
  * #%L
  * jblinktree
@@ -56,6 +58,12 @@ public final class Wrapper<T> {
     public static <S> Wrapper<S> make(final S value,
             final TypeDescriptor<S> td) {
         return new Wrapper<S>(value, td.getBytes(value));
+    }
+
+    @Override
+    public String toString() {
+        return MoreObjects.toStringHelper(Wrapper.class).add("value", value)
+                .toString();
     }
 
     /**

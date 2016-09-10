@@ -68,7 +68,8 @@ public class JbNodeServiceTest extends AbstractMockingTest {
 
         logger.debug(n.toString());
 
-        Integer nodeId = service.getCorrespondingNodeId(n, Wrapper.make(3, nr.getTdi()));
+        Integer nodeId = service.getCorrespondingNodeId(n,
+                Wrapper.make(3, nr.getTdi()));
 
         assertNotNull("node id can't be null", nodeId);
         assertEquals("node id should be different", Integer.valueOf(1), nodeId);
@@ -76,38 +77,34 @@ public class JbNodeServiceTest extends AbstractMockingTest {
 
     @Test
     public void test_getValueByKey() throws Exception {
-        expect(n1.getNodeDef()).andReturn(nodeDef);
-        expect(nodeDef.getKeyTypeDescriptor()).andReturn(tdi);
+        Wrapper<Integer> w = Wrapper.make(2, nr.getTdi());
         expect(n1.getKeyCount()).andReturn(9);
-        expect(n1.getKey(4)).andReturn(4);
-        expect(n1.getKey(1)).andReturn(1);
-        expect(n1.getKey(2)).andReturn(2);
+        expect(n1.compareKey(4, w)).andReturn(1);
+        expect(n1.compareKey(1, w)).andReturn(-1);
+        expect(n1.compareKey(2, w)).andReturn(0);
         expect(n1.getValue(2)).andReturn(2);
 
         replay();
-        Integer ret = service.getValueByKey(n1, Wrapper.make(2, nr.getTdi()));
+        Integer ret = service.getValueByKey(n1, w);
         verify();
         assertEquals(Integer.valueOf(2), ret);
     }
 
     @Test
     public void test_getValueByKey_notFound() throws Exception {
-        expect(n1.getNodeDef()).andReturn(nodeDef);
-        expect(nodeDef.getKeyTypeDescriptor()).andReturn(tdi);
+        Wrapper<Integer> w = Wrapper.make(3, nr.getTdi());
         expect(n1.getKeyCount()).andReturn(9);
-        expect(n1.getKey(4)).andReturn(8);
-        expect(n1.getKey(1)).andReturn(2);
-        expect(n1.getKey(2)).andReturn(4);
+        expect(n1.compareKey(4, w)).andReturn(8);
+        expect(n1.compareKey(1, w)).andReturn(2);
+        expect(n1.compareKey(0, w)).andReturn(4);
         replay();
-        Integer ret = service.getValueByKey(n1, Wrapper.make(3, nr.getTdi()));
+        Integer ret = service.getValueByKey(n1, w);
         verify();
         assertNull(ret);
     }
 
     @Test
     public void test_getValueByKey_notFound_emptyNode() throws Exception {
-        expect(n1.getNodeDef()).andReturn(nodeDef);
-        expect(nodeDef.getKeyTypeDescriptor()).andReturn(tdi);
         expect(n1.getKeyCount()).andReturn(0);
         replay();
         Integer ret = service.getValueByKey(n1, Wrapper.make(1, nr.getTdi()));
