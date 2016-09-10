@@ -192,8 +192,8 @@ public final class JbTreeToolImpl<K, V> implements JbTreeTool<K, V> {
         // TODO consider case when new node is smaller that currentRootNode
         Node<K, Integer> newRoot = nodeBuilder.makeNonLeafNode(
                 treeData.getNextId(), currentRootNode.getId(),
-                currentRootNode.getMaxKey().getValue(), newNode.getId(),
-                newNode.getMaxKey().getValue());
+                currentRootNode.getMaxKey(), newNode.getId(),
+                newNode.getMaxKey());
         nodeStore.writeNode(newRoot);
         return newRoot.getId();
     }

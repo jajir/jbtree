@@ -1,5 +1,7 @@
 package com.coroptis.jblinktree;
 
+import com.coroptis.jblinktree.type.Wrapper;
+
 /*
  * #%L
  * jblinktree
@@ -86,8 +88,8 @@ public final class JbNodeBuilderImpl<K, V> implements JbNodeBuilder<K, V> {
 
     @Override
     public Node<K, Integer> makeNonLeafNode(final Integer idNode,
-            final Integer value1, final K key1, final Integer value2,
-            final K key2) {
+            final Integer value1, final Wrapper<K> key1, final Integer value2,
+            final Wrapper<K> key2) {
         final byte[] b = new byte[1
                 + treeData.getNonLeafNodeDescriptor().getKeyTypeDescriptor()
                         .getMaxLength() * 2

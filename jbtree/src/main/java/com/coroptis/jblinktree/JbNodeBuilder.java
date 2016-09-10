@@ -1,5 +1,7 @@
 package com.coroptis.jblinktree;
 
+import com.coroptis.jblinktree.type.Wrapper;
+
 /*
  * #%L
  * jblinktree
@@ -88,14 +90,14 @@ public interface JbNodeBuilder<K, V> {
      * @param value1
      *            required value 1
      * @param key1
-     *            required key 1
+     *            required key 1 wrapper
      * @param value2
      *            required value 2
      * @param key2
-     *            required key 2
+     *            required key 2 wrapper
      * @return newly created non-leaf node
      */
-    Node<K, Integer> makeNonLeafNode(Integer idNode, Integer value1, K key1,
-            Integer value2, K key2);
+    Node<K, Integer> makeNonLeafNode(Integer idNode, Integer value1,
+            Wrapper<K> key1, Integer value2, Wrapper<K> key2);
 
 }
