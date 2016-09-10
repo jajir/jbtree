@@ -227,12 +227,12 @@ public class JbNodeService2Test {
         nodeDef = new JbNodeDefImpl<Integer, Integer>(9, tdi, tdi, tdi);
         nodeService = new JbNodeServiceImpl<Integer, Integer>();
         node = new NodeImpl<Integer, Integer>(ID, false, nodeDef);
-        node.insertAtPosition(2, 2, 0);
-        node.insertAtPosition(4, 4, 1);
-        node.insertAtPosition(6, 6, 2);
-        node.insertAtPosition(8, 8, 3);
-        node.insertAtPosition(10, 10, 4);
-        node.insertAtPosition(12, 12, 5);
+        node.insertAtPosition(Wrapper.make(2, tdi), 2, 0);
+        node.insertAtPosition(Wrapper.make(4, tdi), 4, 1);
+        node.insertAtPosition(Wrapper.make(6, tdi), 6, 2);
+        node.insertAtPosition(Wrapper.make(8, tdi), 8, 3);
+        node.insertAtPosition(Wrapper.make(10, tdi), 10, 4);
+        node.insertAtPosition(Wrapper.make(12, tdi), 12, 5);
         node.setLink(LINK);
     }
 

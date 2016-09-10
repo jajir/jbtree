@@ -34,8 +34,11 @@ public final class MetaTypeString
     /**
      * Type descriptor for working with integers.
      */
-    private final TypeDescriptor<Integer> tdInteger =
-            new TypeDescriptorInteger();
+    private final TypeDescriptor<Integer> tdInteger
+    /**
+     *
+     */
+            = new TypeDescriptorInteger();
 
     /**
      * String type descriptor for saving/loading charset.
@@ -71,10 +74,17 @@ public final class MetaTypeString
 
     @Override
     public void save(final byte[] data, final int from,
-            final TypeDescriptorString value) {
-        tdInteger.save(data, from, value.getMaxLength());
-        tdString.save(data, tdInteger.getMaxLength(),
-                value.getCharset().name());
+            final Wrapper<TypeDescriptorString> wrapper) {
+        System.arraycopy(wrapper.getBytes(), 0, data, from,
+                wrapper.getBytes().length);
+    }
+
+    @Override
+    public byte[] getBytes(final TypeDescriptorString value) {
+        final byte[] out = new byte[getMaxLength()];
+        tdInteger.save(out, 0, value.getMaxLength());
+        tdString.save(out, tdInteger.getMaxLength(), value.getCharset().name());
+        return out;
     }
 
     @Override

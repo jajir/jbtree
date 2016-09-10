@@ -204,18 +204,8 @@ public final class NodeImpl<K, V> implements Node<K, V> {
                 / nodeDef.getKeyAndValueSize();
     }
 
-    /**
-     * Insert key and value to some specific index position in field.
-     *
-     * @param key
-     *            required key
-     * @param value
-     *            required value
-     * @param targetIndex
-     *            required target index in field
-     */
     @Override
-    public void insertAtPosition(final K key, final V value,
+    public void insertAtPosition(final Wrapper<K> key, final V value,
             final int targetIndex) {
         byte[] tmp = new byte[nodeDef.getFieldActualLength(getKeyCount() + 1)];
         copyFlagAndLink(field, tmp);
@@ -447,7 +437,7 @@ public final class NodeImpl<K, V> implements Node<K, V> {
     }
 
     @Override
-    public void setKey(final int position, final K value) {
+    public void setKey(final int position, final Wrapper<K> value) {
         nodeDef.getKeyTypeDescriptor().save(field,
                 nodeDef.getKeyPosition(position), value);
     }

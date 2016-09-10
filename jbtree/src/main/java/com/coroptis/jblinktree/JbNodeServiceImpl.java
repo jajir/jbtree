@@ -77,7 +77,7 @@ public final class JbNodeServiceImpl<K, V> implements JbNodeService<K, V> {
         int start = 0;
         int end = node.getKeyCount() - 1;
         if (node.isEmpty()) {
-            node.insertAtPosition(key.getValue(), value, 0);
+            node.insertAtPosition(key, value, 0);
             return null;
         }
         if (node.compareKey(end, key) < 0) {
@@ -85,14 +85,14 @@ public final class JbNodeServiceImpl<K, V> implements JbNodeService<K, V> {
             /**
              * New key is bigger than all others so should be at the end.
              */
-            node.insertAtPosition(key.getValue(), value, node.getKeyCount());
+            node.insertAtPosition(key, value, node.getKeyCount());
             return null;
         }
         while (true) {
             if (start == end) {
                 final int cmp = node.compareKey(start, key);
                 if (cmp > 0) {
-                    node.insertAtPosition(key.getValue(), value, start);
+                    node.insertAtPosition(key, value, start);
                     return null;
                 } else if (cmp == 0) {
                     final S old = node.getValue(start);
@@ -145,7 +145,7 @@ public final class JbNodeServiceImpl<K, V> implements JbNodeService<K, V> {
                 if (node.getKey(i).equals(keyToSet)) {
                     return false;
                 } else {
-                    node.setKey(i, keyToSet.getValue());
+                    node.setKey(i, keyToSet);
                     return true;
                 }
             }

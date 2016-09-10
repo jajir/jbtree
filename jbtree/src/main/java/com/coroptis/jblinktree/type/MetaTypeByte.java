@@ -50,7 +50,12 @@ public final class MetaTypeByte extends AbstractMetaType<TypeDescriptorByte> {
 
     @Override
     public void save(final byte[] data, final int from,
-            final TypeDescriptorByte value) {
+            final Wrapper<TypeDescriptorByte> value) {
+        throw new UnsupportedOperationException("It's not alowed.");
+    }
+
+    @Override
+    public byte[] getBytes(final TypeDescriptorByte value) {
         throw new UnsupportedOperationException("It's not alowed.");
     }
 

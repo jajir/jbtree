@@ -159,9 +159,9 @@ public interface Node<K, V> {
      * @param position
      *            required position
      * @param value
-     *            required key
+     *            required key wrapper
      */
-    void setKey(int position, K value);
+    void setKey(int position, Wrapper<K> value);
 
     /**
      * Allows to set value at specific position.
@@ -184,13 +184,13 @@ public interface Node<K, V> {
      * Insert key and value to some specific index position in field.
      *
      * @param key
-     *            required key
+     *            required key wrapper
      * @param value
      *            required value
      * @param targetIndex
      *            required target index in field
      */
-    void insertAtPosition(K key, V value, int targetIndex);
+    void insertAtPosition(Wrapper<K> key, V value, int targetIndex);
 
     /**
      * Remove two bytes from node field at given position. Method doesn't care

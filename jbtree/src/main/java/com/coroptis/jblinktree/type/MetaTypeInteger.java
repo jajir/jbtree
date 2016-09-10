@@ -51,7 +51,12 @@ public final class MetaTypeInteger
 
     @Override
     public void save(final byte[] data, final int from,
-            final TypeDescriptorInteger value) {
+            final Wrapper<TypeDescriptorInteger> value) {
+        throw new UnsupportedOperationException("It's not alowed.");
+    }
+
+    @Override
+    public byte[] getBytes(final TypeDescriptorInteger value) {
         throw new UnsupportedOperationException("It's not alowed.");
     }
 

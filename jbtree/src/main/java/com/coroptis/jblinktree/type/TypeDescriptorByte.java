@@ -43,7 +43,14 @@ public final class TypeDescriptorByte implements TypeDescriptor<Byte> {
 
     @Override
     public void save(final byte[] data, final int from, final Byte value) {
-        data[from] = value.byteValue();
+        Wrapper<Byte> w = Wrapper.make(value, this);
+        save(data, from, w);
+    }
+
+    @Override
+    public void save(final byte[] data, final int from,
+            final Wrapper<Byte> value) {
+        data[from] = value.getBytes()[0];
     }
 
     @Override

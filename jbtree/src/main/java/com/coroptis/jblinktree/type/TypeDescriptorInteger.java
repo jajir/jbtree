@@ -73,12 +73,14 @@ public final class TypeDescriptorInteger implements TypeDescriptor<Integer> {
 
     @Override
     public void save(final byte[] data, final int from, final Integer value) {
-        int pos = from;
-        int v = value.intValue();
-        data[pos++] = (byte) ((v >>> BYTE_SHIFT_24) & BYTE_MASK);
-        data[pos++] = (byte) ((v >>> BYTE_SHIFT_16) & BYTE_MASK);
-        data[pos++] = (byte) ((v >>> BYTE_SHIFT_8) & BYTE_MASK);
-        data[pos] = (byte) ((v >>> BYTE_SHIFT_0) & BYTE_MASK);
+        Wrapper<Integer> w = Wrapper.make(value, this);
+        save(data, from, w);
+    }
+
+    @Override
+    public void save(final byte[] data, final int from,
+            final Wrapper<Integer> value) {
+        System.arraycopy(value.getBytes(), 0, data, from, REQUIRED_BYTES);
     }
 
     @Override
@@ -143,8 +145,13 @@ public final class TypeDescriptorInteger implements TypeDescriptor<Integer> {
 
     @Override
     public byte[] getBytes(final Integer value) {
+        int pos = 0;
+        int v = value.intValue();
         byte[] out = new byte[REQUIRED_BYTES];
-        save(out, 0, value);
+        out[pos++] = (byte) ((v >>> BYTE_SHIFT_24) & BYTE_MASK);
+        out[pos++] = (byte) ((v >>> BYTE_SHIFT_16) & BYTE_MASK);
+        out[pos++] = (byte) ((v >>> BYTE_SHIFT_8) & BYTE_MASK);
+        out[pos] = (byte) ((v >>> BYTE_SHIFT_0) & BYTE_MASK);
         return out;
     }
 
