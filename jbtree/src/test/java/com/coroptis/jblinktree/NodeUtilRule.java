@@ -80,7 +80,8 @@ public class NodeUtilRule implements TestRule {
     }
 
     public <Integer, V> V getValueByKey(Node<Integer, V> node, Integer key) {
-        return (V) nodeService.getValueByKey(node, Wrapper.make(key, (TypeDescriptor<Integer>)tdi));
+        return (V) nodeService.getValueByKey(node,
+                Wrapper.make(key, (TypeDescriptor<Integer>) tdi));
     }
 
     public <K, V> V getValueByKey(Node<K, V> node, Wrapper<K> key) {
@@ -104,7 +105,9 @@ public class NodeUtilRule implements TestRule {
      * @param isLeafNode
      *            required info if it's leaf node
      * @param expectedNodeLink
-     *            required value of expectect link
+     *            required value of expected link
+     * @param expectedNodeId
+     *            required node id
      */
     public void verifyNode(final Node<Integer, Integer> n,
             final Integer[][] pairs, final boolean isLeafNode,

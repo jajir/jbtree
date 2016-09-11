@@ -20,6 +20,7 @@ import com.coroptis.jblinktree.NodeImpl;
 import com.coroptis.jblinktree.store.CacheListener;
 import com.coroptis.jblinktree.store.CacheLru;
 import com.coroptis.jblinktree.type.TypeDescriptorInteger;
+import com.coroptis.jblinktree.type.Wrapper;
 
 @State(Scope.Benchmark)
 @BenchmarkMode(Mode.AverageTime)
@@ -57,7 +58,7 @@ public class CacheLruBenchmark {
                     @Override
                     public <T> Node<Integer, T> makeNode(Integer idNode,
                             byte[] field) {
-                        return (Node<Integer, T>)node;
+                        return (Node<Integer, T>) node;
                     }
 
                     @Override
@@ -69,8 +70,9 @@ public class CacheLruBenchmark {
 
                     @Override
                     public Node<Integer, Integer> makeNonLeafNode(
-                            Integer idNode, Integer value1, Integer key1,
-                            Integer value2, Integer key2) {
+                            Integer idNode, Integer value1,
+                            Wrapper<Integer> key1, Integer value2,
+                            Wrapper<Integer> key2) {
                         // TODO Auto-generated method stub
                         return null;
                     }
