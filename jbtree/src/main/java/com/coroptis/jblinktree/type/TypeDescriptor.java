@@ -29,7 +29,7 @@ package com.coroptis.jblinktree.type;
  *            type that will be described
  *
  */
-public interface TypeDescriptor<T> extends ValueComparator<T> {
+public interface TypeDescriptor<T> {
 
     /**
      * Get maximum length of field when it's stored in bytes.

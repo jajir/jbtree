@@ -67,11 +67,6 @@ public final class TypeDescriptorByte implements TypeDescriptor<Byte> {
     }
 
     @Override
-    public int compareValues(final Byte value1, final Byte value2) {
-        return value1.compareTo(value2);
-    }
-
-    @Override
     public String toString() {
         return MoreObjects.toStringHelper(TypeDescriptorByte.class)
                 .add("maxLength", getMaxLength()).toString();

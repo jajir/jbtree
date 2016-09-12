@@ -28,6 +28,18 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
 
+	<issueManagement>
+		<url>https://github.com/jajir/jblinktree/issues</url>
+		<system>GitHub Issues</system>
+	</issueManagement>
+
+	<scm>
+		<connection>scm:git:https://github.com/jajir/jblinktree.git</connection>
+		<developerConnection>scm:git:https://github.com/jajir/jblinktree.git</developerConnection>
+		<url>https://github.com/jajir/jblinktree/blob/${project.scm.tag}</url>
+		<tag>master</tag>
+	</scm>
+
 	<dependencies>
 		<dependency>
 			<groupId>com.google.guava</groupId>
@@ -241,8 +253,29 @@
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-pmd-plugin</artifactId>
 				<version>3.6</version>
+				<configuration>
+					<skipEmptyReport>false</skipEmptyReport>
+				</configuration>
+			</plugin>
+			<!-- <plugin> <groupId>org.apache.maven.plugins</groupId> <artifactId>maven-changelog-plugin</artifactId> 
+				<version>2.3</version> </plugin> -->
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>jdepend-maven-plugin</artifactId>
+				<version>2.0</version>
 			</plugin>
 		</plugins>
 	</reporting>
+
+	<developers>
+		<developer>
+			<email>jirout@gmail.com</email>
+			<name>Jan Jirout</name>
+		</developer>
+		<developer>
+			<email>Jan.Jirout@equabank.cz</email>
+			<name>Jan Jirout</name>
+		</developer>
+	</developers>
 
 </project>

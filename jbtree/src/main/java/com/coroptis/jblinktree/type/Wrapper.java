@@ -22,8 +22,8 @@ import com.google.common.base.MoreObjects;
  * #L%
  */
 /**
- * Wrap value. It speed up comparison because it allows compare parts of fields
- * instead of comparing values.
+ * Wrap value. Wrapper allows compare node represented by byte array with
+ * another byte array.
  *
  *
  * @author jajir

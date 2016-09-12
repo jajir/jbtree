@@ -227,15 +227,4 @@ public interface Node<K, V> {
      */
     int compareKey(int position, Wrapper<K> key);
 
-    /**
-     * Compare given value with value stored at given position.
-     *
-     * @param position
-     *            required value index number
-     * @param value
-     *            required value to compare
-     * @return comparison result
-     */
-    int compareValue(int position, Wrapper<V> value);
-
 }

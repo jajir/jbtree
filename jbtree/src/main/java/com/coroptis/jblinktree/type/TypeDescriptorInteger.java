@@ -101,11 +101,6 @@ public final class TypeDescriptorInteger implements TypeDescriptor<Integer> {
     }
 
     @Override
-    public int compareValues(final Integer value1, final Integer value2) {
-        return value1.compareTo(value2);
-    }
-
-    @Override
     public String toString() {
         return MoreObjects.toStringHelper(TypeDescriptorInteger.class)
                 .add("maxLength", getMaxLength()).toString();

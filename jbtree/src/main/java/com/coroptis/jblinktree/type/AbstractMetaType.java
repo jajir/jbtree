@@ -38,11 +38,6 @@ public abstract class AbstractMetaType<T>
     }
 
     @Override
-    public final int compareValues(final T o1, final T o2) {
-        throw new UnsupportedOperationException("It's not alowed.");
-    }
-
-    @Override
     public final void verifyType(final Object object) {
         throw new UnsupportedOperationException("It's not alowed.");
     }

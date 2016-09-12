@@ -239,6 +239,7 @@ public final class JbTreeImpl<K, V> implements JbTree<K, V> {
 
     /**
      */
+    @SuppressWarnings("unchecked")
     @Override
     public void visitLeafNodes(final JbTreeVisitor<K, V> treeVisitor) {
         Preconditions.checkNotNull(treeVisitor,
@@ -252,7 +253,7 @@ public final class JbTreeImpl<K, V> implements JbTree<K, V> {
                 leafNode = node;
             } else {
                 // move to the next smaller node.
-                Node<K, Integer> n = (Node) node;
+                Node<K, Integer> n = (Node<K, Integer>) node;
                 nodeId = nodeService.getNodeIds(n).get(0);
             }
         }

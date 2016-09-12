@@ -30,7 +30,6 @@ import com.coroptis.jblinktree.JbTreeService;
 import com.coroptis.jblinktree.JbTreeServiceImpl;
 import com.coroptis.jblinktree.JbTreeTool;
 import com.coroptis.jblinktree.Node;
-import com.coroptis.jblinktree.type.Wrapper;
 
 /**
  * Tests for {@link JbTreeTool}

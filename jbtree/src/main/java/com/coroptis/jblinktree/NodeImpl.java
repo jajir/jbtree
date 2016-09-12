@@ -472,10 +472,4 @@ public final class NodeImpl<K, V> implements Node<K, V> {
                 nodeDef.getKeyPosition(position), key);
     }
 
-    @Override
-    public int compareValue(final int position, final Wrapper<V> value) {
-        return nodeDef.getValueTypeDescriptor().cmp(field,
-                nodeDef.getValuePosition(position), value);
-    }
-
 }

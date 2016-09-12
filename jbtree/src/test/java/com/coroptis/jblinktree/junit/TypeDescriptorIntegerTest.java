@@ -1,7 +1,6 @@
 package com.coroptis.jblinktree.junit;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
 import org.junit.After;
 import org.junit.Before;
@@ -73,18 +72,6 @@ public class TypeDescriptorIntegerTest {
     @Test(expected = JblinktreeException.class)
     public void test_verifyType_false() throws Exception {
         td.verifyType("blee");
-    }
-
-    @Test
-    public void test_compare() throws Exception {
-        assertTrue(td.compareValues(1, 4) < 0);
-        assertTrue(td.compareValues(-4, -1) < 0);
-
-        assertTrue(td.compareValues(2, 1) > 0);
-        assertTrue(td.compareValues(-1, -2) > 0);
-
-        assertTrue(td.compareValues(1, 1) == 0);
-        assertTrue(td.compareValues(-1, -1) == 0);
     }
 
     @Before
