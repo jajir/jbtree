@@ -23,8 +23,7 @@ package com.coroptis.jblinktree.store;
 import com.coroptis.jblinktree.Node;
 
 /**
- * Allows to detect when node is no longer needed in cache and also when it's
- * needed back.
+ * Load node from slow (disk) storage.
  *
  * @author jajir
  *
@@ -33,18 +32,15 @@ import com.coroptis.jblinktree.Node;
  * @param <V>
  *            value type
  */
-public interface CacheListener<K, V> {
+public interface NodeLoader<K, V> {
 
     /**
-     * Called when node is no longer needed in cache. Parameter wasChanges helps
-     * to control node persisting.
+     * Load node by it's id.
      *
-     * @param node
-     *            required node
-     * @param wasChanged
-     *            it's <code>true</code> when object was changed in cache in
-     *            that case have to be persisted
+     * @param nodeId
+     *            required node id
+     * @return loaded node
      */
-    void onUnload(Node<K, V> node, boolean wasChanged);
+    Node<K, V> load(Integer nodeId);
 
 }

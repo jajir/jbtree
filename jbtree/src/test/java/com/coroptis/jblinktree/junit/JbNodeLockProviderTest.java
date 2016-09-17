@@ -19,36 +19,30 @@ package com.coroptis.jblinktree.junit;
  * limitations under the License.
  * #L%
  */
-import static org.easymock.EasyMock.expectLastCall;
 
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.coroptis.jblinktree.NodeStore;
-import com.coroptis.jblinktree.store.NodeStoreInMem;
+import com.coroptis.jblinktree.JbNodeLockProvider;
+import com.coroptis.jblinktree.JbNodeLockProviderImpl;
 
 /**
- * Tests for {@link NodeStoreInMem}.
- *
- * @author jajir
+ * 
+ * @author jan
  *
  */
-public class NodeStoreInMemTest extends AbstractMockingTest {
+public class JbNodeLockProviderTest extends AbstractMockingTest {
 
-    private NodeStore<Integer> tested;
+    private JbNodeLockProvider service;
 
     @Test(expected = IllegalMonitorStateException.class)
     public void test_unlock_already_unlocked_node() throws Exception {
-        jbNodeLockProvider.lockNode(3);
-        jbNodeLockProvider.unlockNode(3);
-        jbNodeLockProvider.unlockNode(3);
-        expectLastCall().andThrow(new IllegalMonitorStateException());
         replay();
-        tested.lockNode(3);
+        service.lockNode(3);
 
-        tested.unlockNode(3);
-        tested.unlockNode(3);
+        service.unlockNode(3);
+        service.unlockNode(3);
         verify();
     }
 
@@ -56,14 +50,13 @@ public class NodeStoreInMemTest extends AbstractMockingTest {
     @Before
     public void setUp() throws Exception {
         super.setUp();
-        tested = new NodeStoreInMem<Integer, Integer>(nodeBuilder,
-                jbNodeLockProvider);
+        service = new JbNodeLockProviderImpl();
     }
 
     @Override
     @After
     public void tearDown() throws Exception {
-        tested = null;
+        service = null;
         super.tearDown();
     }
 }

@@ -1,5 +1,7 @@
 package com.coroptis.jblinktree.store;
 
+import java.util.ArrayList;
+
 /*
  * #%L
  * jblinktree
@@ -22,6 +24,7 @@ package com.coroptis.jblinktree.store;
 
 import java.util.HashSet;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Set;
 
 import com.coroptis.jblinktree.JbNodeBuilder;
@@ -95,7 +98,12 @@ public final class CacheLru<K, V> implements Cache<K, V> {
     /**
      * Cache listener.
      */
-    private final CacheListener<K, V> cacheListener;
+    private final List<CacheListener<K, V>> cacheListeners;
+
+    /**
+     * Node loader.
+     */
+    private final NodeLoader<K, V> nodeLoader;
 
     /**
      *
@@ -103,15 +111,15 @@ public final class CacheLru<K, V> implements Cache<K, V> {
      *            required node builder
      * @param maxNumberOfNodesInCache
      *            required maximum number of in memory cached nodes.
-     * @param initCacheListerer
-     *            required cache listener
+     * @param loader
+     *            required node loader which load node from disk
      */
     public CacheLru(final JbNodeBuilder<K, V> jbNodeBuilder,
-            final int maxNumberOfNodesInCache,
-            final CacheListener<K, V> initCacheListerer) {
+            final int maxNumberOfNodesInCache, final NodeLoader<K, V> loader) {
         this.nodeBuilder = Preconditions.checkNotNull(jbNodeBuilder);
-        this.cacheListener = Preconditions.checkNotNull(initCacheListerer);
+        this.cacheListeners = new ArrayList<CacheListener<K, V>>();
         cache = new CacheMap(maxNumberOfNodesInCache);
+        this.nodeLoader = Preconditions.checkNotNull(loader);
     }
 
     @Override
@@ -125,7 +133,7 @@ public final class CacheLru<K, V> implements Cache<K, V> {
         if (cacheItem != null) {
             final Node<K, V> node =
                     nodeBuilder.makeNode(idNode, cacheItem.getNodeData());
-            cacheListener.onUnload(node, cacheItem.isChanged());
+            onUnload(node, cacheItem.isChanged());
         }
     }
 
@@ -141,7 +149,7 @@ public final class CacheLru<K, V> implements Cache<K, V> {
             final CacheItem cacheItem) {
         final Node<K, V> node =
                 nodeBuilder.makeNode(idNode, cacheItem.getNodeData());
-        cacheListener.onUnload(node, cacheItem.isChanged());
+        onUnload(node, cacheItem.isChanged());
     }
 
     @Override
@@ -150,10 +158,30 @@ public final class CacheLru<K, V> implements Cache<K, V> {
             final CacheItem cacheItem = cache.get(idNode);
             return nodeBuilder.makeNode(idNode, cacheItem.getNodeData());
         } else {
-            Node<K, V> node = cacheListener.onLoad(idNode);
+            Node<K, V> node = nodeLoader.load(idNode);
             cache.put(idNode, CacheItem.make(node.getFieldBytes()));
             return node;
         }
+    }
+
+    @Override
+    public void addCacheListener(final CacheListener<K, V> cacheListener) {
+        this.cacheListeners.add(Preconditions.checkNotNull(cacheListener));
+    }
+
+    /**
+     * It's called when node is removed from cache.
+     *
+     * @param node
+     *            required node unloaded node
+     * @param wasChanged
+     *            it's <code>true</code> when node was in memory changed
+     */
+    private void onUnload(final Node<K, V> node, final boolean wasChanged) {
+        for (final CacheListener<K, V> cacheListener : cacheListeners) {
+            cacheListener.onUnload(node, wasChanged);
+        }
+
     }
 
     @Override

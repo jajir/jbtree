@@ -22,7 +22,7 @@ package com.coroptis.jblinktree.junit;
 
 import static org.junit.Assert.assertSame;
 
-import org.easymock.EasyMock;
+import static org.easymock.EasyMock.*;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -49,7 +49,7 @@ public class CacheLruTest extends AbstractMockingTest {
     @Test
     public void test_get_cached() throws Exception {
         loadNode(23, n1);
-        EasyMock.expect(nodeBuilder.makeNode(23, bytes)).andReturn((Node) n1);
+        expect(nodeBuilder.makeNode(23, bytes)).andReturn((Node) n1);
         replay();
         cache.get(23);
         Node<Integer, Integer> ret = cache.get(23);
@@ -62,7 +62,7 @@ public class CacheLruTest extends AbstractMockingTest {
     public void test_get_evicting_1() throws Exception {
         loadNode(23, n1);
         loadNode(12, n2);
-        EasyMock.expect(nodeBuilder.makeNode(23, bytes)).andReturn((Node) n1);
+        expect(nodeBuilder.makeNode(23, bytes)).andReturn((Node) n1);
         cacheListener.onUnload(n1, false);
         replay();
         cache.get(23);
@@ -77,11 +77,11 @@ public class CacheLruTest extends AbstractMockingTest {
         loadNode(11, n1);
         loadNode(22, n2);
         loadNode(33, n3);
-        //evicting 1
-        EasyMock.expect(nodeBuilder.makeNode(11, bytes)).andReturn((Node) n1);
+        // evicting 1
+        expect(nodeBuilder.makeNode(11, bytes)).andReturn((Node) n1);
         cacheListener.onUnload(n1, false);
-        //evicting 2
-        EasyMock.expect(nodeBuilder.makeNode(22, bytes)).andReturn((Node) n2);
+        // evicting 2
+        expect(nodeBuilder.makeNode(22, bytes)).andReturn((Node) n2);
         cacheListener.onUnload(n2, false);
         replay();
         cache.get(11);
@@ -94,8 +94,8 @@ public class CacheLruTest extends AbstractMockingTest {
 
     @Test
     public void test_put() throws Exception {
-        EasyMock.expect(n1.getFieldBytes()).andReturn(bytes);
-        EasyMock.expect(n1.getId()).andReturn(23).times(1);
+        expect(n1.getFieldBytes()).andReturn(bytes);
+        expect(n1.getId()).andReturn(23).times(1);
         replay();
         cache.put(n1);
 
@@ -104,11 +104,11 @@ public class CacheLruTest extends AbstractMockingTest {
 
     @Test
     public void test_get_evicting_1_changed() throws Exception {
-        EasyMock.expect(n1.getId()).andReturn(23).times(1);
-        EasyMock.expect(n1.getFieldBytes()).andReturn(bytes);
+        expect(n1.getId()).andReturn(23).times(1);
+        expect(n1.getFieldBytes()).andReturn(bytes);
         // loadNode(23, n1);
         loadNode(12, n2);
-        EasyMock.expect(nodeBuilder.makeNode(23, bytes)).andReturn((Node) n1);
+        expect(nodeBuilder.makeNode(23, bytes)).andReturn((Node) n1);
         cacheListener.onUnload(n1, true);
         replay();
         cache.put(n1);
@@ -117,31 +117,31 @@ public class CacheLruTest extends AbstractMockingTest {
         verify();
         assertSame(ret, n2);
     }
-    
+
     @Test
     public void test_remove_not_in_cache() throws Exception {
         loadNode(11, n1);
         loadNode(22, n2);
-        //evicting 1
-        EasyMock.expect(nodeBuilder.makeNode(11, bytes)).andReturn((Node) n1);
+        // evicting 1
+        expect(nodeBuilder.makeNode(11, bytes)).andReturn((Node) n1);
         cacheListener.onUnload(n1, false);
         replay();
         cache.get(11);
         cache.get(22);
         cache.remove(11);
-        
+
         verify();
     }
-    
+
     @Test
     public void test_remove() throws Exception {
         loadNode(11, n1);
         loadNode(22, n2);
-        //evicting 1
-        EasyMock.expect(nodeBuilder.makeNode(11, bytes)).andReturn((Node) n1);
+        // evicting 1
+        expect(nodeBuilder.makeNode(11, bytes)).andReturn((Node) n1);
         cacheListener.onUnload(n1, false);
-        //evicting from remove
-        EasyMock.expect(nodeBuilder.makeNode(22, bytes)).andReturn((Node) n2);
+        // evicting from remove
+        expect(nodeBuilder.makeNode(22, bytes)).andReturn((Node) n2);
         cacheListener.onUnload(n2, false);
         replay();
         cache.get(11);
@@ -151,10 +151,9 @@ public class CacheLruTest extends AbstractMockingTest {
         verify();
     }
 
-
     private void loadNode(final Integer nodeId, Node<Integer, Integer> node) {
-        EasyMock.expect(cacheListener.onLoad(nodeId)).andReturn(node);
-        EasyMock.expect(node.getFieldBytes()).andReturn(bytes);
+        expect(nodeLoader.load(nodeId)).andReturn(node);
+        expect(node.getFieldBytes()).andReturn(bytes);
     }
 
     @Override
@@ -162,7 +161,8 @@ public class CacheLruTest extends AbstractMockingTest {
     public void setUp() throws Exception {
         super.setUp();
         bytes = new byte[23];
-        cache = new CacheLru<Integer, Integer>(nodeBuilder, 1, cacheListener);
+        cache = new CacheLru<Integer, Integer>(nodeBuilder, 1, nodeLoader);
+        cache.addCacheListener(cacheListener);
     }
 
     @Override

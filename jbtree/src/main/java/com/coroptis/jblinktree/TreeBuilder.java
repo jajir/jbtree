@@ -1,10 +1,5 @@
 package com.coroptis.jblinktree;
 
-import com.coroptis.jblinktree.store.NodeConverter;
-import com.coroptis.jblinktree.store.NodeConverterImpl;
-import com.coroptis.jblinktree.store.NodeFileStorage;
-import com.coroptis.jblinktree.store.NodeFileStorageImpl;
-
 /*
  * #%L
  * jblinktree
@@ -24,6 +19,14 @@ import com.coroptis.jblinktree.store.NodeFileStorageImpl;
  * limitations under the License.
  * #L%
  */
+
+import com.coroptis.jblinktree.store.Cache;
+import com.coroptis.jblinktree.store.CacheListener;
+import com.coroptis.jblinktree.store.CacheLru;
+import com.coroptis.jblinktree.store.NodeConverter;
+import com.coroptis.jblinktree.store.NodeConverterImpl;
+import com.coroptis.jblinktree.store.NodeFileStorage;
+import com.coroptis.jblinktree.store.NodeFileStorageImpl;
 
 import com.coroptis.jblinktree.store.NodeStoreInFile;
 import com.coroptis.jblinktree.store.NodeStoreInMem;
@@ -243,6 +246,59 @@ public final class TreeBuilder {
     }
 
     /**
+     * Create in-file node store.
+     *
+     * @param treeData
+     *            required tree data
+     * @param nodeBuilder
+     *            required node builder
+     * @param jbNodeLockProvider
+     *            required node lock provider
+     * @param <K>
+     *            key type
+     * @param <V>
+     *            value type
+     * @return node store
+     */
+    private <K, V> NodeStore<K> makeNodeStoreInFile(
+            final JbTreeData<K, V> treeData,
+            final JbNodeBuilder<K, V> nodeBuilder,
+            final JbNodeLockProvider jbNodeLockProvider) {
+        final NodeConverter<K, V> nodeConverter =
+                new NodeConverterImpl<K, V>(treeData, nodeBuilder);
+        final NodeFileStorage<K, V> fileStorage =
+                new NodeFileStorageImpl<K, V>(treeData, nodeBuilder,
+                        nodeStoreInFileBuilder.getFileName(), nodeConverter);
+        final Cache<K, V> nodeCache = new CacheLru<K, V>(nodeBuilder,
+                nodeStoreInFileBuilder.getNoOfCachedNodes(), fileStorage);
+        nodeCache.addCacheListener(new CacheListener<K, V>() {
+
+            @Override
+            public void onUnload(final Node<K, V> node,
+                    final boolean wasChanged) {
+                if (wasChanged) {
+                    fileStorage.store(node);
+                }
+            }
+
+        });
+
+        nodeCache.addCacheListener(new CacheListener<K, V>() {
+
+            @Override
+            public void onUnload(final Node<K, V> node,
+                    final boolean wasChanged) {
+                jbNodeLockProvider.removeLock(node.getId());
+            }
+
+        });
+
+        final NodeStore<K> nodeStore = new NodeStoreInFile<K, V>(nodeCache,
+                fileStorage, jbNodeLockProvider);
+        return nodeStore;
+    }
+
+    /**
      * Build {@link java.util.Map} instance with previously given parameters.
      *
      * @param <K>
@@ -266,19 +322,15 @@ public final class TreeBuilder {
 
         final JbNodeBuilder<K, V> nodeBuilder =
                 new JbNodeBuilderImpl<K, V>(treeData);
-
+        final JbNodeLockProvider jbNodeLockProvider =
+                new JbNodeLockProviderImpl();
         final NodeStore<K> nodeStore;
         if (nodeStoreInFileBuilder == null) {
-            nodeStore = new NodeStoreInMem<K, V>(nodeBuilder);
+            nodeStore =
+                    new NodeStoreInMem<K, V>(nodeBuilder, jbNodeLockProvider);
         } else {
-            final NodeConverter<K, V> nodeConverter =
-                    new NodeConverterImpl<K, V>(treeData, nodeBuilder);
-            final NodeFileStorage<K, V> fileStorage =
-                    new NodeFileStorageImpl<K, V>(treeData, nodeBuilder,
-                            nodeStoreInFileBuilder.getFileName(),
-                            nodeConverter);
-            nodeStore = new NodeStoreInFile<K, V>(nodeBuilder,
-                    nodeStoreInFileBuilder.getNoOfCachedNodes(), fileStorage);
+            nodeStore = makeNodeStoreInFile(treeData, nodeBuilder,
+                    jbNodeLockProvider);
         }
         final JbNodeService<K, V> jbNodeService = new JbNodeServiceImpl<K, V>();
         final JbTreeTool<K, V> jbTreeTool = new JbTreeToolImpl<K, V>(nodeStore,

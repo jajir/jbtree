@@ -32,7 +32,7 @@ import com.coroptis.jblinktree.Node;
  * @param <V>
  *            value type
  */
-public interface NodeFileStorage<K, V> {
+public interface NodeFileStorage<K, V> extends NodeLoader<K, V> {
 
     /**
      * Store node.
@@ -41,15 +41,6 @@ public interface NodeFileStorage<K, V> {
      *            required node
      */
     void store(Node<K, V> node);
-
-    /**
-     * Load node by it's id.
-     *
-     * @param nodeId
-     *            required node id
-     * @return loaded node
-     */
-    Node<K, V> load(Integer nodeId);
 
     /**
      * Close file storage.

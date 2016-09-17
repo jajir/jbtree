@@ -24,9 +24,9 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import com.coroptis.jblinktree.JbNodeBuilder;
+import com.coroptis.jblinktree.JbNodeLockProvider;
 import com.coroptis.jblinktree.JblinktreeException;
 import com.coroptis.jblinktree.Node;
-import com.coroptis.jblinktree.NodeLocks;
 import com.coroptis.jblinktree.NodeStore;
 import com.google.common.base.Preconditions;
 
@@ -50,7 +50,7 @@ public final class NodeStoreInMem<K, V> implements NodeStore<K> {
     /**
      * Manage node locks.
      */
-    private final NodeLocks nodeLocks;
+    private final JbNodeLockProvider nodeLocks;
 
     /**
      * Node builder factory.
@@ -61,11 +61,14 @@ public final class NodeStoreInMem<K, V> implements NodeStore<K> {
      *
      * @param jbNodeBuilder
      *            required node builder factory
+     * @param jbNodeLockProvider
+     *            required node lock provider
      */
-    public NodeStoreInMem(final JbNodeBuilder<K, V> jbNodeBuilder) {
+    public NodeStoreInMem(final JbNodeBuilder<K, V> jbNodeBuilder,
+            final JbNodeLockProvider jbNodeLockProvider) {
         this.nodeBuilder = Preconditions.checkNotNull(jbNodeBuilder);
+        this.nodeLocks = Preconditions.checkNotNull(jbNodeLockProvider);
         nodes = new ConcurrentHashMap<Integer, byte[]>();
-        nodeLocks = new NodeLocks();
     }
 
     @Override

@@ -61,6 +61,9 @@ public final class NodeFileStorageImpl<K, V> implements NodeFileStorage<K, V> {
      * Contains names of all files. Simplify work with files.
      */
     private static final String[] FILES = {
+            /**
+             *
+             */
             FILE_VALUES, FILE_META_DATA, FILE_KEYS };
 
     /**

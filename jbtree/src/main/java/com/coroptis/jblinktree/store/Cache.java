@@ -54,7 +54,7 @@ public interface Cache<K, V> {
 
     /**
      * Get node from cache. If requested node is not in cache than
-     * {@link CacheListener#onLoad(Integer)} is called.
+     * {@link NodeLoader#load(Integer)} is called.
      *
      * @param idNode
      *            required id node
@@ -66,5 +66,13 @@ public interface Cache<K, V> {
      * Evict all cached data.
      */
     void close();
+
+    /**
+     * Add cache listener.
+     *
+     * @param cacheListener
+     *            required cache listener instance
+     */
+    void addCacheListener(CacheListener<K, V> cacheListener);
 
 }

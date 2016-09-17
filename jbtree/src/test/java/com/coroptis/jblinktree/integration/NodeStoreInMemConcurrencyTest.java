@@ -32,6 +32,8 @@ import com.coroptis.jblinktree.JbTreeData;
 import com.coroptis.jblinktree.JbTreeDataImpl;
 import com.coroptis.jblinktree.JbNodeBuilder;
 import com.coroptis.jblinktree.JbNodeBuilderImpl;
+import com.coroptis.jblinktree.JbNodeLockProvider;
+import com.coroptis.jblinktree.JbNodeLockProviderImpl;
 import com.coroptis.jblinktree.NodeImpl;
 import com.coroptis.jblinktree.NodeStore;
 import com.coroptis.jblinktree.Worker;
@@ -54,8 +56,8 @@ import junit.framework.TestCase;
  */
 public class NodeStoreInMemConcurrencyTest extends TestCase {
 
-    private final Logger logger = LoggerFactory
-            .getLogger(NodeStoreInMemConcurrencyTest.class);
+    private final Logger logger =
+            LoggerFactory.getLogger(NodeStoreInMemConcurrencyTest.class);
 
     private NodeStore<Integer> nodeStore;
 
@@ -63,8 +65,8 @@ public class NodeStoreInMemConcurrencyTest extends TestCase {
     public void testForThreadClash() throws Exception {
         final int cycleCount = 10;
         final int threadCount = 10;
-        final CountDownLatch doneLatch = new CountDownLatch(
-                cycleCount * threadCount);
+        final CountDownLatch doneLatch =
+                new CountDownLatch(cycleCount * threadCount);
         final CountDownLatch startLatch = new CountDownLatch(1);
 
         for (int i = 0; i < threadCount; ++i) {
@@ -88,11 +90,14 @@ public class NodeStoreInMemConcurrencyTest extends TestCase {
     protected void setUp() throws Exception {
         super.setUp();
         TypeDescriptor<Integer> td = new TypeDescriptorInteger();
-        JbTreeData<Integer, Integer> treeData = new JbTreeDataImpl<Integer, Integer>(
-                NodeStore.FIRST_NODE_ID, 2, td, td, td);
-        JbNodeBuilder<Integer, Integer> nodeBuilder = new JbNodeBuilderImpl<Integer, Integer>(
-                treeData);
-        nodeStore = new NodeStoreInMem<Integer, Integer>(nodeBuilder);
+        JbTreeData<Integer, Integer> treeData =
+                new JbTreeDataImpl<Integer, Integer>(NodeStore.FIRST_NODE_ID, 2,
+                        td, td, td);
+        JbNodeBuilder<Integer, Integer> nodeBuilder =
+                new JbNodeBuilderImpl<Integer, Integer>(treeData);
+        JbNodeLockProvider lockProvider = new JbNodeLockProviderImpl();
+        nodeStore =
+                new NodeStoreInMem<Integer, Integer>(nodeBuilder, lockProvider);
         NodeImpl<Integer, Integer> node = new NodeImpl<Integer, Integer>(1,
                 true, treeData.getLeafNodeDescriptor());
         nodeStore.writeNode(node);

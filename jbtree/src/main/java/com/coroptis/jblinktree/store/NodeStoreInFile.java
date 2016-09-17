@@ -20,9 +20,8 @@ package com.coroptis.jblinktree.store;
  * #L%
  */
 
-import com.coroptis.jblinktree.JbNodeBuilder;
+import com.coroptis.jblinktree.JbNodeLockProvider;
 import com.coroptis.jblinktree.Node;
-import com.coroptis.jblinktree.NodeLocks;
 import com.coroptis.jblinktree.NodeStore;
 import com.google.common.base.Preconditions;
 
@@ -41,7 +40,7 @@ public final class NodeStoreInFile<K, V> implements NodeStore<K> {
     /**
      * Node lock service.
      */
-    private final NodeLocks nodeLocks;
+    private final JbNodeLockProvider nodeLocks;
 
     /**
      * Node in memory cache.
@@ -55,34 +54,19 @@ public final class NodeStoreInFile<K, V> implements NodeStore<K> {
 
     /**
      *
-     * @param nodeBuilder
-     *            required node builder factory
-     * @param numberOfNodesCacheSize
-     *            required maximum number of keys in memory
+     * @param cache
+     *            required cache implentation
      * @param nodeFileStorage
      *            node file storage
+     * @param jbNodeLockProvider
+     *            required node lock provider
      */
-    public NodeStoreInFile(final JbNodeBuilder<K, V> nodeBuilder,
-            final int numberOfNodesCacheSize,
-            final NodeFileStorage<K, V> nodeFileStorage) {
+    public NodeStoreInFile(final Cache<K, V> cache,
+            final NodeFileStorage<K, V> nodeFileStorage,
+            final JbNodeLockProvider jbNodeLockProvider) {
         this.fileStorage = Preconditions.checkNotNull(nodeFileStorage);
-        nodeLocks = new NodeLocks();
-        nodeCache = new CacheLru<K, V>(nodeBuilder, numberOfNodesCacheSize,
-                new CacheListener<K, V>() {
-
-                    @Override
-                    public void onUnload(final Node<K, V> node,
-                            final boolean wasChanged) {
-                        if (wasChanged) {
-                            fileStorage.store(node);
-                        }
-                    }
-
-                    @Override
-                    public Node<K, V> onLoad(final Integer nodeId) {
-                        return fileStorage.load(nodeId);
-                    }
-                });
+        this.nodeCache = Preconditions.checkNotNull(cache);
+        this.nodeLocks = Preconditions.checkNotNull(jbNodeLockProvider);
     }
 
     @Override
@@ -135,4 +119,5 @@ public final class NodeStoreInFile<K, V> implements NodeStore<K> {
     public boolean isNewlyCreated() {
         return fileStorage.isNewlyCreated();
     }
+
 }

@@ -28,20 +28,13 @@ import java.util.concurrent.locks.ReentrantLock;
 import com.google.common.base.Preconditions;
 
 /**
- * Class holds list of locks.
- * <p>
- * When some lock is unlocked there is no sure that will be anymore needed so
- * could be dropped from memory.
- * </p>
- * <p>
- * because inserting procedure itself prevent from accessing new node with lock
- * lock surrounding nodes put into {@link Map} doesn't have to be thread safe.
- * </p>
+ * Implementation of {@link JbNodeLockProvider}. Locks for nodes are stored in
+ * {@link java.util.HashMap}.
  *
  * @author jajir
  *
  */
-public final class NodeLocks {
+public final class JbNodeLockProviderImpl implements JbNodeLockProvider {
 
     /**
      * hash map contains map if node id and lock mapping.
@@ -51,16 +44,11 @@ public final class NodeLocks {
     /**
      * Create new node lock instance.
      */
-    public NodeLocks() {
+    public JbNodeLockProviderImpl() {
         locks = new ConcurrentHashMap<Integer, Lock>();
     }
 
-    /**
-     * Lock node. It's thread safe method.
-     *
-     * @param nodeId
-     *            required node id
-     */
+    @Override
     public void lockNode(final Integer nodeId) {
         Preconditions.checkNotNull(nodeId);
         Lock lock = locks.get(nodeId);
@@ -80,12 +68,7 @@ public final class NodeLocks {
         lock.lock();
     }
 
-    /**
-     * Unlock node id. It's thread safe method.
-     *
-     * @param nodeId
-     *            required node id
-     */
+    @Override
     public void unlockNode(final Integer nodeId) {
         Preconditions.checkNotNull(nodeId);
         Lock lock = locks.get(nodeId);
@@ -97,11 +80,7 @@ public final class NodeLocks {
         }
     }
 
-    /**
-     * Count all locked nodes. It's useful for testing purposes.
-     *
-     * @return number of locked threads
-     */
+    @Override
     public int countLockedThreads() {
         int out = 0;
         for (final Lock lock : locks.values()) {
@@ -111,5 +90,21 @@ public final class NodeLocks {
             }
         }
         return out;
+    }
+
+    @Override
+    public void removeLock(final Integer nodeId) {
+        final Lock lock = locks.get(nodeId);
+        if (lock != null) {
+            final ReentrantLock l = (ReentrantLock) lock;
+            /**
+             * Attempt to remove node lock from memory. If node is locked than
+             * I'm not sure, if it's necessary bad state. Node will be later
+             * loaded and unloaded it allows to remove lock next time.
+             */
+            if (!l.isLocked()) {
+                locks.remove(nodeId);
+            }
+        }
     }
 }
