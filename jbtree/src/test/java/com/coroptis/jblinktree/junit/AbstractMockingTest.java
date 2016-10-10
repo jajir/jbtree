@@ -35,6 +35,7 @@ import com.coroptis.jblinktree.JbTreeTraversingService;
 import com.coroptis.jblinktree.Node;
 import com.coroptis.jblinktree.NodeStore;
 import com.coroptis.jblinktree.store.CacheListener;
+import com.coroptis.jblinktree.store.NodeFileStorage;
 import com.coroptis.jblinktree.store.NodeLoader;
 import com.coroptis.jblinktree.type.TypeDescriptorInteger;
 import com.coroptis.jblinktree.type.Wrapper;
@@ -50,6 +51,7 @@ public abstract class AbstractMockingTest {
     protected JbTreeTool<Integer, Integer> treeTool;
     protected JbTreeTraversingService<Integer, Integer> treeTraversingService;
     protected NodeStore<Integer> nodeStore;
+    protected NodeFileStorage<Integer, Integer> nodeFileStorage;
     protected JbTreeService<Integer, Integer> jbTreeService;
     protected JbTreeHelper<Integer, Integer> treeHelper;
     protected JbTreeData<Integer, Integer> treeData;
@@ -87,10 +89,11 @@ public abstract class AbstractMockingTest {
         w3 = Wrapper.make(74, tdi);
         nodeLoader = createMock(NodeLoader.class);
         jbNodeLockProvider = createMock(JbNodeLockProvider.class);
+        nodeFileStorage = createMock(NodeFileStorage.class);
         mocks = new Object[] { nodeStore, nodeBuilder, treeTool, n1, n2, n3, n4,
                 jbTreeService, treeHelper, treeData, treeTraversingService,
                 nodeService, cacheListener, nodeDef, nodeLoader,
-                jbNodeLockProvider };
+                jbNodeLockProvider, nodeFileStorage };
     }
 
     protected void tearDown() throws Exception {
@@ -108,6 +111,7 @@ public abstract class AbstractMockingTest {
         tdi = null;
         nodeLoader = null;
         jbNodeLockProvider = null;
+        nodeFileStorage = null;
     }
 
     protected void replay(final Object... otherMocks) {

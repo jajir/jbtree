@@ -21,7 +21,6 @@ package com.coroptis.jblinktree.store;
  */
 
 import java.io.File;
-import java.util.concurrent.locks.ReentrantLock;
 
 import com.coroptis.jblinktree.JbNodeBuilder;
 import com.coroptis.jblinktree.JbTreeData;
@@ -65,11 +64,6 @@ public final class NodeFileStorageImpl<K, V> implements NodeFileStorage<K, V> {
              *
              */
             FILE_VALUES, FILE_META_DATA, FILE_KEYS };
-
-    /**
-     * Unified locking for file system operations.
-     */
-    private final ReentrantLock lock = new ReentrantLock(false);
 
     /**
      * Store values from nodes.
@@ -117,10 +111,10 @@ public final class NodeFileStorageImpl<K, V> implements NodeFileStorage<K, V> {
                 addFileToDir(directory, FILE_VALUES),
                 jbTreeData.getLeafNodeDescriptor().getValueTypeDescriptor(),
                 jbTreeData.getLeafNodeDescriptor().getL());
-        this.keyIntFileStorage =
-                new KeyIntFileStorage<K>(addFileToDir(directory, FILE_KEYS),
-                        jbTreeData.getNonLeafNodeDescriptor(),
-                        (JbNodeBuilder<K, Integer>) nodeBuilder);
+        this.keyIntFileStorage = new KeyIntFileStorage<K>(
+                addFileToDir(directory, FILE_KEYS),
+                jbTreeData.getNonLeafNodeDescriptor(),
+                (JbNodeBuilder<K, Integer>) nodeBuilder);
         this.metaDataStore = new MetaDataStoreImpl<K, V>(
                 addFileToDir(directory, FILE_META_DATA), jbTreeData);
     }
@@ -140,45 +134,30 @@ public final class NodeFileStorageImpl<K, V> implements NodeFileStorage<K, V> {
 
     @Override
     public void store(final Node<K, V> node) {
-        lock.lock();
-        try {
-            if (node.isLeafNode()) {
-                valueFileStorage.storeValues(node);
-                keyIntFileStorage.store(nodeConverter.convertToKeyInt(node));
-            } else {
-                keyIntFileStorage.store((Node<K, Integer>) node);
-            }
-        } finally {
-            lock.unlock();
+        if (node.isLeafNode()) {
+            valueFileStorage.storeValues(node);
+            keyIntFileStorage.store(nodeConverter.convertToKeyInt(node));
+        } else {
+            keyIntFileStorage.store((Node<K, Integer>) node);
         }
     }
 
     @Override
     public Node<K, V> load(final Integer nodeId) {
-        lock.lock();
-        try {
-            Node<K, Integer> node = keyIntFileStorage.load(nodeId);
-            if (node.isLeafNode()) {
-                Node<K, V> out = nodeConverter.convertToKeyValue(node);
-                return valueFileStorage.loadValues(out);
-            } else {
-                return (Node<K, V>) node;
-            }
-        } finally {
-            lock.unlock();
+        Node<K, Integer> node = keyIntFileStorage.load(nodeId);
+        if (node.isLeafNode()) {
+            Node<K, V> out = nodeConverter.convertToKeyValue(node);
+            return valueFileStorage.loadValues(out);
+        } else {
+            return (Node<K, V>) node;
         }
     }
 
     @Override
     public void close() {
-        lock.lock();
-        try {
-            keyIntFileStorage.close();
-            valueFileStorage.close();
-            metaDataStore.close();
-        } finally {
-            lock.unlock();
-        }
+        keyIntFileStorage.close();
+        valueFileStorage.close();
+        metaDataStore.close();
     }
 
     /**
