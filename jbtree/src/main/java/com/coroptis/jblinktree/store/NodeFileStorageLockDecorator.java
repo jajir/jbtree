@@ -44,6 +44,9 @@ public class NodeFileStorageLockDecorator<K, V>
      */
     private final ReentrantLock lock = new ReentrantLock(false);
 
+    /**
+     * Node storage to which will be operation delegated.
+     */
     private final NodeFileStorage<K, V> next;
 
     public NodeFileStorageLockDecorator(

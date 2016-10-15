@@ -49,12 +49,12 @@ public final class NodeFileStorageImpl<K, V> implements NodeFileStorage<K, V> {
     /**
      * Name of the file where tree metadata will be stored.
      */
-    private static final String FILE_META_DATA = "meta.str";
+    public static final String FILE_META_DATA = "meta.str";
 
     /**
      * Name of the file where keys will be stored.
      */
-    private static final String FILE_KEYS = "key.str";
+    public static final String FILE_KEYS = "key.str";
 
     /**
      * Contains names of all files. Simplify work with files.
@@ -74,11 +74,6 @@ public final class NodeFileStorageImpl<K, V> implements NodeFileStorage<K, V> {
      * Key Integer node file storage.
      */
     private final KeyIntFileStorage<K> keyIntFileStorage;
-
-    /**
-     * Meta data file storage.
-     */
-    private final MetaDataStore metaDataStore;
 
     /**
      * Helping class for node.
@@ -111,12 +106,10 @@ public final class NodeFileStorageImpl<K, V> implements NodeFileStorage<K, V> {
                 addFileToDir(directory, FILE_VALUES),
                 jbTreeData.getLeafNodeDescriptor().getValueTypeDescriptor(),
                 jbTreeData.getLeafNodeDescriptor().getL());
-        this.keyIntFileStorage = new KeyIntFileStorage<K>(
-                addFileToDir(directory, FILE_KEYS),
-                jbTreeData.getNonLeafNodeDescriptor(),
-                (JbNodeBuilder<K, Integer>) nodeBuilder);
-        this.metaDataStore = new MetaDataStoreImpl<K, V>(
-                addFileToDir(directory, FILE_META_DATA), jbTreeData);
+        this.keyIntFileStorage =
+                new KeyIntFileStorage<K>(addFileToDir(directory, FILE_KEYS),
+                        jbTreeData.getNonLeafNodeDescriptor(),
+                        (JbNodeBuilder<K, Integer>) nodeBuilder);
     }
 
     /**
@@ -157,7 +150,6 @@ public final class NodeFileStorageImpl<K, V> implements NodeFileStorage<K, V> {
     public void close() {
         keyIntFileStorage.close();
         valueFileStorage.close();
-        metaDataStore.close();
     }
 
     /**

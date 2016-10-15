@@ -48,7 +48,7 @@ public final class JbNodeBuilderImpl<K, V> implements JbNodeBuilder<K, V> {
      *            required tree data
      */
     public JbNodeBuilderImpl(final JbTreeData<K, V> jbTreeData) {
-        this.treeData = jbTreeData;
+        this.treeData = Preconditions.checkNotNull(jbTreeData);
     }
 
     @SuppressWarnings({ "rawtypes", "unchecked" })
