@@ -33,7 +33,7 @@ import com.coroptis.jblinktree.JbTreeTraversingService;
 import com.coroptis.jblinktree.JbTreeTraversingServiceImpl;
 import com.coroptis.jblinktree.JblinktreeException;
 import com.coroptis.jblinktree.Node;
-import com.coroptis.jblinktree.NodeImpl;
+import com.coroptis.jblinktree.NodeShort;
 
 /**
  *
@@ -77,7 +77,7 @@ public class JbTreeTraversingServiceTest extends AbstractMockingTest {
             throws Exception {
         EasyMock.expect(n1.isLeafNode()).andReturn(false);
         EasyMock.expect(nodeService.getCorrespondingNodeId(n1, w1))
-                .andReturn(NodeImpl.EMPTY_INT);
+                .andReturn(NodeShort.EMPTY_INT);
         EasyMock.replay(mocks);
         Node<Integer, Integer> ret = tested.moveRightNonLeafNode(n1, w1);
 

@@ -81,7 +81,7 @@ public final class JbTreeToolImpl<K, V> implements JbTreeTool<K, V> {
     @Override
     public boolean canMoveToNextNode(final Node<K, ?> node,
             final Wrapper<K> key) {
-        if (NodeImpl.EMPTY_INT.equals(node.getLink())) {
+        if (NodeShort.EMPTY_INT.equals(node.getLink())) {
             return false;
         }
         if (node.isEmpty()) {
@@ -114,7 +114,7 @@ public final class JbTreeToolImpl<K, V> implements JbTreeTool<K, V> {
         while (!currentNode.isLeafNode()) {
             Integer nextNodeId = nodeService.getCorrespondingNodeId(currentNode,
                     key);
-            if (NodeImpl.EMPTY_INT.equals(nextNodeId)) {
+            if (NodeShort.EMPTY_INT.equals(nextNodeId)) {
                 /**
                  * This is rightmost node and next link is <code>null</code> so
                  * use node id associated with bigger key.
@@ -122,7 +122,7 @@ public final class JbTreeToolImpl<K, V> implements JbTreeTool<K, V> {
                 stack.push(currentNode.getId());
                 nextNodeId = nodeService.getCorrespondingNodeId(currentNode,
                         currentNode.getMaxKey());
-                if (NodeImpl.EMPTY_INT.equals(nextNodeId)) {
+                if (NodeShort.EMPTY_INT.equals(nextNodeId)) {
                     throw new JblinktreeException(
                             "There is no node id for max value '"
                                     + currentNode.getMaxKey() + "' in node "

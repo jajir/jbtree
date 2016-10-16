@@ -30,7 +30,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.coroptis.jblinktree.JbNodeBuilder;
-import com.coroptis.jblinktree.JbNodeBuilderImpl;
+import com.coroptis.jblinktree.JbNodeBuilderShort;
 import com.coroptis.jblinktree.JbNodeService;
 import com.coroptis.jblinktree.JbNodeServiceImpl;
 import com.coroptis.jblinktree.JbTreeData;
@@ -88,7 +88,7 @@ public class NodeFileStorageTest {
         TypeDescriptor<Integer> tdLink = new TypeDescriptorInteger();
         JbTreeData<String, String> treeData = new JbTreeDataImpl<String, String>(
                 0, 2, tdKey, tdValue, tdLink);
-        nodeBuilder = new JbNodeBuilderImpl<String, String>(treeData);
+        nodeBuilder = new JbNodeBuilderShort<String, String>(treeData);
         NodeConverter<String, String> initNodeConverter = new NodeConverterImpl<String, String>(
                 treeData, nodeBuilder);
         storage = new NodeFileStorageImpl<String, String>(treeData, nodeBuilder,

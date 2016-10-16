@@ -92,7 +92,7 @@ import com.google.common.base.Preconditions;
  * @param <V>
  *            value type
  */
-public final class NodeImpl<K, V> implements Node<K, V> {
+public final class NodeShort<K, V> implements Node<K, V> {
 
     /**
      * Holds node id.
@@ -125,7 +125,7 @@ public final class NodeImpl<K, V> implements Node<K, V> {
      * @param jbNodeDef
      *            required tree definition
      */
-    public NodeImpl(final Integer nodeId, final boolean isLeafNode,
+    public NodeShort(final Integer nodeId, final boolean isLeafNode,
             final JbNodeDef<K, V> jbNodeDef) {
         this.id = nodeId;
         this.nodeDef = jbNodeDef;
@@ -149,7 +149,7 @@ public final class NodeImpl<K, V> implements Node<K, V> {
      * @param jbNodeDef
      *            required node data definition
      */
-    public NodeImpl(final Integer nodeId, final byte[] sourceField,
+    public NodeShort(final Integer nodeId, final byte[] sourceField,
             final JbNodeDef<K, V> jbNodeDef) {
         this.id = nodeId;
         this.nodeDef = jbNodeDef;
@@ -279,7 +279,7 @@ public final class NodeImpl<K, V> implements Node<K, V> {
 
     @Override
     public void moveTopHalfOfDataTo(final Node<K, V> nodea) {
-        final NodeImpl<K, V> node = (NodeImpl<K, V>) nodea;
+        final NodeShort<K, V> node = (NodeShort<K, V>) nodea;
         Preconditions.checkArgument(node.isEmpty());
         if (getKeyCount() < 1) {
             throw new JblinktreeException(
@@ -377,10 +377,10 @@ public final class NodeImpl<K, V> implements Node<K, V> {
         if (obj == null) {
             return false;
         }
-        if (!(obj instanceof NodeImpl)) {
+        if (!(obj instanceof NodeShort)) {
             return false;
         }
-        final NodeImpl<K, V> n = (NodeImpl<K, V>) obj;
+        final NodeShort<K, V> n = (NodeShort<K, V>) obj;
         return equal(id, n.id) && fieldEquals(n.field);
     }
 

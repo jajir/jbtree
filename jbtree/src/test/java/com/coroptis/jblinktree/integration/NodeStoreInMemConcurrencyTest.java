@@ -31,10 +31,10 @@ import com.coroptis.jblinktree.Executer;
 import com.coroptis.jblinktree.JbTreeData;
 import com.coroptis.jblinktree.JbTreeDataImpl;
 import com.coroptis.jblinktree.JbNodeBuilder;
-import com.coroptis.jblinktree.JbNodeBuilderImpl;
+import com.coroptis.jblinktree.JbNodeBuilderShort;
 import com.coroptis.jblinktree.JbNodeLockProvider;
 import com.coroptis.jblinktree.JbNodeLockProviderImpl;
-import com.coroptis.jblinktree.NodeImpl;
+import com.coroptis.jblinktree.NodeShort;
 import com.coroptis.jblinktree.NodeStore;
 import com.coroptis.jblinktree.Worker;
 import com.coroptis.jblinktree.store.NodeStoreInMem;
@@ -94,11 +94,11 @@ public class NodeStoreInMemConcurrencyTest extends TestCase {
                 new JbTreeDataImpl<Integer, Integer>(NodeStore.FIRST_NODE_ID, 2,
                         td, td, td);
         JbNodeBuilder<Integer, Integer> nodeBuilder =
-                new JbNodeBuilderImpl<Integer, Integer>(treeData);
+                new JbNodeBuilderShort<Integer, Integer>(treeData);
         JbNodeLockProvider lockProvider = new JbNodeLockProviderImpl();
         nodeStore =
                 new NodeStoreInMem<Integer, Integer>(nodeBuilder, lockProvider);
-        NodeImpl<Integer, Integer> node = new NodeImpl<Integer, Integer>(1,
+        NodeShort<Integer, Integer> node = new NodeShort<Integer, Integer>(1,
                 true, treeData.getLeafNodeDescriptor());
         nodeStore.writeNode(node);
     }

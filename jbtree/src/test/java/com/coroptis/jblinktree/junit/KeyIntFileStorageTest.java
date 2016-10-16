@@ -31,11 +31,11 @@ import static org.junit.Assert.assertEquals;
 
 import com.coroptis.jblinktree.FileStorageRule;
 import com.coroptis.jblinktree.JbNodeBuilder;
-import com.coroptis.jblinktree.JbNodeBuilderImpl;
+import com.coroptis.jblinktree.JbNodeBuilderShort;
 import com.coroptis.jblinktree.JbTreeData;
 import com.coroptis.jblinktree.JbTreeDataImpl;
 import com.coroptis.jblinktree.Node;
-import com.coroptis.jblinktree.NodeImpl;
+import com.coroptis.jblinktree.NodeShort;
 import com.coroptis.jblinktree.store.KeyIntFileStorage;
 import com.coroptis.jblinktree.type.Wrapper;
 import com.google.common.io.Files;
@@ -71,12 +71,12 @@ public class KeyIntFileStorageTest {
                 1, 5, fsRule.getIntDescriptor(), fsRule.getIntDescriptor(),
                 fsRule.getIntDescriptor());
 
-        node = new NodeImpl<Integer, Integer>(14, false,
+        node = new NodeShort<Integer, Integer>(14, false,
                 treeData.getLeafNodeDescriptor());
         node.insertAtPosition(Wrapper.make(10, fsRule.getIntDescriptor()), -10,
                 0);
 
-        JbNodeBuilder<Integer, Integer> nodeBuilder = new JbNodeBuilderImpl<Integer, Integer>(
+        JbNodeBuilder<Integer, Integer> nodeBuilder = new JbNodeBuilderShort<Integer, Integer>(
                 treeData);
 
         valueStorage = new KeyIntFileStorage<Integer>(new File(

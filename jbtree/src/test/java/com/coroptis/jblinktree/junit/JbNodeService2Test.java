@@ -32,7 +32,7 @@ import com.coroptis.jblinktree.JbNodeDefImpl;
 import com.coroptis.jblinktree.JbNodeService;
 import com.coroptis.jblinktree.JbNodeServiceImpl;
 import com.coroptis.jblinktree.Node;
-import com.coroptis.jblinktree.NodeImpl;
+import com.coroptis.jblinktree.NodeShort;
 import com.coroptis.jblinktree.NodeUtilRule;
 import com.coroptis.jblinktree.type.TypeDescriptorInteger;
 import com.coroptis.jblinktree.type.Wrapper;
@@ -213,7 +213,7 @@ public class JbNodeService2Test {
 
     @Test
     public void test_insert_to_empty_node() throws Exception {
-        node = new NodeImpl<Integer, Integer>(ID, false, nodeDef);
+        node = new NodeShort<Integer, Integer>(ID, false, nodeDef);
         node.setLink(LINK);
         assertEquals(null,
                 nodeService.insert(node, Wrapper.make(13, tdi), -13));
@@ -226,7 +226,7 @@ public class JbNodeService2Test {
         tdi = new TypeDescriptorInteger();
         nodeDef = new JbNodeDefImpl<Integer, Integer>(9, tdi, tdi, tdi);
         nodeService = new JbNodeServiceImpl<Integer, Integer>();
-        node = new NodeImpl<Integer, Integer>(ID, false, nodeDef);
+        node = new NodeShort<Integer, Integer>(ID, false, nodeDef);
         node.insertAtPosition(Wrapper.make(2, tdi), 2, 0);
         node.insertAtPosition(Wrapper.make(4, tdi), 4, 1);
         node.insertAtPosition(Wrapper.make(6, tdi), 6, 2);

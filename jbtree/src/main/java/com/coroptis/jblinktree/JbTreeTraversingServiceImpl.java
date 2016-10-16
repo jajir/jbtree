@@ -73,7 +73,7 @@ public final class JbTreeTraversingServiceImpl<K, V>
                             + current.toString());
         }
         Integer nextNodeId = nodeService.getCorrespondingNodeId(current, key);
-        while (!NodeImpl.EMPTY_INT.equals(nextNodeId)
+        while (!NodeShort.EMPTY_INT.equals(nextNodeId)
                 && nextNodeId.equals(current.getLink())) {
             current = treeTool.moveToNextNode(current, nextNodeId);
             nextNodeId = nodeService.getCorrespondingNodeId(current, key);

@@ -354,7 +354,7 @@ public final class TreeBuilder {
                 (TypeDescriptor<V>) valueTypeDescriptor, linkTypeDescriptor);
 
         final JbNodeBuilder<K, V> nodeBuilder =
-                new JbNodeBuilderImpl<K, V>(treeData);
+                new JbNodeBuilderShort<K, V>(treeData);
         final JbNodeLockProvider jbNodeLockProvider =
                 new JbNodeLockProviderImpl();
         final NodeStore<K> nodeStore;

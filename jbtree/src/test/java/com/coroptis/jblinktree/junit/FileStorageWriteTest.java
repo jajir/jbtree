@@ -33,7 +33,7 @@ import com.coroptis.jblinktree.JbNodeServiceImpl;
 import com.coroptis.jblinktree.JbTreeData;
 import com.coroptis.jblinktree.JbTreeDataImpl;
 import com.coroptis.jblinktree.Node;
-import com.coroptis.jblinktree.NodeImpl;
+import com.coroptis.jblinktree.NodeShort;
 import com.coroptis.jblinktree.type.Wrapper;
 
 public class FileStorageWriteTest {
@@ -72,7 +72,7 @@ public class FileStorageWriteTest {
                 new JbTreeDataImpl<Integer, Integer>(1, 5,
                         fsRule.getIntDescriptor(), fsRule.getIntDescriptor(),
                         fsRule.getIntDescriptor());
-        node = new NodeImpl<Integer, Integer>(14, false,
+        node = new NodeShort<Integer, Integer>(14, false,
                 treeData.getLeafNodeDescriptor());
         nodeService.insert(node, Wrapper.make(3, fsRule.getIntDescriptor()), 23);
     }

@@ -85,7 +85,7 @@ public class FileStorageRule implements TestRule {
         intDescriptor = new TypeDescriptorInteger();
         treeData = new JbTreeDataImpl<Integer, Integer>(0, 5, intDescriptor,
                 intDescriptor, intDescriptor);
-        nodeBuilder = new JbNodeBuilderImpl<Integer, Integer>(treeData);
+        nodeBuilder = new JbNodeBuilderShort<Integer, Integer>(treeData);
         fileStorage = new KeyIntFileStorage<Integer>(getTempFile(),
                 treeData.getNonLeafNodeDescriptor(), nodeBuilder);
     }

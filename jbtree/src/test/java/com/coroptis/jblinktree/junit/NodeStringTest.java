@@ -36,7 +36,7 @@ import org.slf4j.LoggerFactory;
 import com.coroptis.jblinktree.JbTreeData;
 import com.coroptis.jblinktree.JbTreeDataImpl;
 import com.coroptis.jblinktree.Node;
-import com.coroptis.jblinktree.NodeImpl;
+import com.coroptis.jblinktree.NodeShort;
 import com.coroptis.jblinktree.NodeUtilRule;
 import com.coroptis.jblinktree.type.TypeDescriptor;
 import com.coroptis.jblinktree.type.TypeDescriptorInteger;
@@ -143,7 +143,7 @@ public class NodeStringTest {
         intDescriptor = new TypeDescriptorInteger();
         JbTreeData<String, String> td = new JbTreeDataImpl<String, String>(0, 5,
                 sd, sd, intDescriptor);
-        node = new NodeImpl<String, String>(0, true,
+        node = new NodeShort<String, String>(0, true,
                 td.getLeafNodeDescriptor());
     }
 

@@ -34,7 +34,7 @@ import com.coroptis.jblinktree.JbNodeDef;
 import com.coroptis.jblinktree.JbNodeDefImpl;
 import com.coroptis.jblinktree.JblinktreeException;
 import com.coroptis.jblinktree.Node;
-import com.coroptis.jblinktree.NodeImpl;
+import com.coroptis.jblinktree.NodeShort;
 import com.coroptis.jblinktree.store.ValueFileStorage;
 import com.coroptis.jblinktree.store.ValueFileStorageImpl;
 import com.coroptis.jblinktree.type.TypeDescriptor;
@@ -67,7 +67,7 @@ public class ValueFileStorageTest extends AbstractMockingTest {
     public void test_read_and_write() throws Exception {
         valueStorage.storeValues(node);
 
-        Node<Integer, String> n = new NodeImpl<Integer, String>(6, true,
+        Node<Integer, String> n = new NodeShort<Integer, String>(6, true,
                 nodeDef);
 
         n.insertAtPosition(Wrapper.make(3, tdi), "", 0);
@@ -128,7 +128,7 @@ public class ValueFileStorageTest extends AbstractMockingTest {
                 tempDirectory.getAbsolutePath() + File.separator + "value.str"),
                 tds, 3);
 
-        node = new NodeImpl<Integer, String>(6, true, nodeDef);
+        node = new NodeShort<Integer, String>(6, true, nodeDef);
         node.insertAtPosition(Wrapper.make(3, tdi), "Ahoj", 0);
         node.insertAtPosition(Wrapper.make(4, tdi), "Lidi", 1);
         node.setLink(98);

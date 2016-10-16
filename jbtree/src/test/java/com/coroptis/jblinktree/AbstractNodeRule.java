@@ -26,7 +26,7 @@ import org.junit.runners.model.Statement;
 
 import com.coroptis.jblinktree.type.TypeDescriptorInteger;
 
-public class NodeRule implements TestRule {
+public abstract class AbstractNodeRule implements TestRule {
 
     private final Integer l;
 
@@ -34,9 +34,12 @@ public class NodeRule implements TestRule {
 
     private JbTreeData<Integer, Integer> treeData;
 
-    public NodeRule(final Integer l) {
+    public AbstractNodeRule(final Integer l) {
         this.l = l;
     }
+
+    public abstract Node<Integer, Integer> makeNode(final Integer idNode,
+            final byte[] field, final JbNodeDef<Integer, Integer> jbNodeDef);
 
     @Override
     public Statement apply(final Statement base, Description description) {
@@ -52,8 +55,7 @@ public class NodeRule implements TestRule {
 
     private void setup() {
         tdi = new TypeDescriptorInteger();
-        treeData = new JbTreeDataImpl<Integer, Integer>(0, l, tdi,
-                tdi, tdi);
+        treeData = new JbTreeDataImpl<Integer, Integer>(0, l, tdi, tdi, tdi);
     }
 
     private void tearDown() {
@@ -80,20 +82,19 @@ public class NodeRule implements TestRule {
      *            required node id, node will be referred with this id.
      * @param fieldInt
      *            required Integer array representing node content.
-     * @return created {@link NodeImpl}
+     * @return created {@link NodeShort}
      */
-    public NodeImpl<Integer, Integer> makeNodeFromIntegers(final Integer idNode,
+    public Node<Integer, Integer> makeNodeFromIntegers(final Integer idNode,
             final Integer fieldInt[]) {
-        return new NodeImpl<Integer, Integer>(idNode, convert(fieldInt),
+        return makeNode(idNode, convert(fieldInt),
                 treeData.getLeafNodeDescriptor());
     }
 
-    public NodeImpl<Integer, Integer> makeNodeFromIntegers(final Integer ll,
+    public Node<Integer, Integer> makeNodeFromIntegers(final Integer ll,
             final Integer idNode, final Integer fieldInt[]) {
-        JbNodeDef<Integer, Integer> td = new JbNodeDefImpl<Integer, Integer>(ll,
-                tdi, tdi, tdi);
-        NodeImpl<Integer, Integer> n =
-                new NodeImpl<Integer, Integer>(idNode, convert(fieldInt), td);
+        JbNodeDef<Integer, Integer> td =
+                new JbNodeDefImpl<Integer, Integer>(ll, tdi, tdi, tdi);
+        Node<Integer, Integer> n = makeNode(idNode, convert(fieldInt), td);
         return n;
     }
 

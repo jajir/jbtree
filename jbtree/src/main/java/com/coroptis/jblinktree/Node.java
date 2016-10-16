@@ -56,6 +56,11 @@ public interface Node<K, V> {
     Integer FLAG_BYTE_POSITION = 0;
 
     /**
+     * Position where is stored byte with actual number of key value pairs.
+     */
+    Integer POSITION_OF_PAIRS_COUNT = 1;
+
+    /**
      * Get link value.
      *
      * @return link value, could be {@link Node#EMPTY_INT} but never null

@@ -25,7 +25,7 @@ import com.coroptis.jblinktree.type.Wrapper;
 import com.google.common.base.Preconditions;
 
 /**
- * Factory for nodes.
+ * Abstract factory for nodes.
  *
  * @author jajir
  *
@@ -34,12 +34,13 @@ import com.google.common.base.Preconditions;
  * @param <V>
  *            value type
  */
-public final class JbNodeBuilderImpl<K, V> implements JbNodeBuilder<K, V> {
+public abstract class AbstractJbNodeBuilder<K, V>
+        implements JbNodeBuilder<K, V> {
 
     /**
      * Tree data definition.
      */
-    private final JbTreeData<K, V> treeData;
+    protected final JbTreeData<K, V> treeData;
 
     /**
      * Simple constructor.
@@ -47,47 +48,57 @@ public final class JbNodeBuilderImpl<K, V> implements JbNodeBuilder<K, V> {
      * @param jbTreeData
      *            required tree data
      */
-    public JbNodeBuilderImpl(final JbTreeData<K, V> jbTreeData) {
+    public AbstractJbNodeBuilder(final JbTreeData<K, V> jbTreeData) {
         this.treeData = Preconditions.checkNotNull(jbTreeData);
     }
 
-    @SuppressWarnings({ "rawtypes", "unchecked" })
+    /**
+     * Create and initialize node.
+     *
+     * @param nodeId
+     *            required node id, node will be referred with this id.
+     * @param isLeafNode
+     *            required value, when it's <code>true</code> than it's leaf
+     *            node otherwise it's non-leaf node.
+     * @param jbNodeDef
+     *            required tree definition
+     * @return created node
+     */
+    public abstract <T> Node<K, T> makeNode(final Integer nodeId,
+            final boolean isLeafNode, final JbNodeDef<K, T> jbNodeDef);
+
+    @SuppressWarnings({ "unchecked" })
     @Override
-    public <T> Node<K, T> makeNode(final Integer idNode, final byte[] field) {
+    public final <T> Node<K, T> makeNode(final Integer idNode,
+            final byte[] field) {
         byte flag = field[0];
         if (flag == Node.FLAG_LEAF_NODE) {
             // leaf node
-            return (Node<K, T>) new NodeImpl(idNode, field,
+            return (Node<K, T>) makeNode(idNode, field,
                     treeData.getLeafNodeDescriptor());
         } else {
             // non-leaf node
-            return (Node<K, T>) new NodeImpl(idNode, field,
+            return (Node<K, T>) makeNode(idNode, field,
                     treeData.getNonLeafNodeDescriptor());
         }
     }
 
     @Override
-    public <T> Node<K, T> makeNode(final Integer idNode, final byte[] field,
-            final JbNodeDef<K, T> jbNodeDef) {
-        return new NodeImpl<K, T>(idNode, field, jbNodeDef);
-    }
-
-    @Override
-    public Node<K, V> makeEmptyLeafNode(final Integer idNode) {
+    public final Node<K, V> makeEmptyLeafNode(final Integer idNode) {
         Preconditions.checkNotNull(idNode);
-        return new NodeImpl<K, V>(idNode, true,
-                treeData.getLeafNodeDescriptor());
+        return makeNode(idNode, true, treeData.getLeafNodeDescriptor());
     }
 
+    @SuppressWarnings("unchecked")
     @Override
-    public Node<K, Integer> makeEmptyNonLeafNode(final Integer idNode) {
+    public final Node<K, Integer> makeEmptyNonLeafNode(final Integer idNode) {
         Preconditions.checkNotNull(idNode);
-        return new NodeImpl<K, Integer>(idNode, false,
-                treeData.getNonLeafNodeDescriptor());
+        return (Node<K, Integer>) makeNode(idNode, false,
+                (JbNodeDef<K, V>) treeData.getNonLeafNodeDescriptor());
     }
 
     @Override
-    public Node<K, Integer> makeNonLeafNode(final Integer idNode,
+    public final Node<K, Integer> makeNonLeafNode(final Integer idNode,
             final Integer value1, final Wrapper<K> key1, final Integer value2,
             final Wrapper<K> key2) {
         final byte[] b = new byte[1
@@ -120,9 +131,8 @@ public final class JbNodeBuilderImpl<K, V> implements JbNodeBuilder<K, V> {
                 .getMaxLength();
 
         treeData.getNonLeafNodeDescriptor().getLinkTypeDescriptor().save(b,
-                position, NodeImpl.EMPTY_INT);
+                position, NodeShort.EMPTY_INT);
 
-        return new NodeImpl<K, Integer>(idNode, b,
-                treeData.getNonLeafNodeDescriptor());
+        return makeNode(idNode, b, treeData.getNonLeafNodeDescriptor());
     }
 }

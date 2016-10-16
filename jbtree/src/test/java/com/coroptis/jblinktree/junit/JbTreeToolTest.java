@@ -32,7 +32,7 @@ import com.coroptis.jblinktree.JbTreeTool;
 import com.coroptis.jblinktree.JbTreeToolImpl;
 import com.coroptis.jblinktree.JblinktreeException;
 import com.coroptis.jblinktree.Node;
-import com.coroptis.jblinktree.NodeImpl;
+import com.coroptis.jblinktree.NodeShort;
 import com.coroptis.jblinktree.type.TypeDescriptor;
 import com.coroptis.jblinktree.type.TypeDescriptorInteger;
 import com.coroptis.jblinktree.util.JbStack;
@@ -64,7 +64,7 @@ public class JbTreeToolTest extends AbstractMockingTest {
 
     @Test
     public void test_canMoveToNextNode_empty_link() throws Exception {
-        expect(n1.getLink()).andReturn(NodeImpl.EMPTY_INT);
+        expect(n1.getLink()).andReturn(NodeShort.EMPTY_INT);
         replay();
 
         boolean ret = tested.canMoveToNextNode(n1, w2);

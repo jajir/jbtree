@@ -33,25 +33,23 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.coroptis.jblinktree.AbstractNodeRule;
 import com.coroptis.jblinktree.JblinktreeException;
 import com.coroptis.jblinktree.Node;
-import com.coroptis.jblinktree.NodeImpl;
-import com.coroptis.jblinktree.NodeRule;
+import com.coroptis.jblinktree.NodeRuleShort;
+import com.coroptis.jblinktree.NodeShort;
 import com.coroptis.jblinktree.NodeUtilRule;
 import com.coroptis.jblinktree.type.Wrapper;
 
 /**
- * Junit test for {@link NodeImpl}.
+ * Junit test for {@link NodeShort}.
  *
  * @author jajir
  *
  */
-public class NodeTest {
+public abstract class AbstractNodeTest {
 
-    private Logger logger = LoggerFactory.getLogger(NodeTest.class);
-
-    @Rule
-    public NodeRule nr = new NodeRule(2);
+    private Logger logger = LoggerFactory.getLogger(AbstractNodeTest.class);
 
     @Rule
     public NodeUtilRule nodeUtil = new NodeUtilRule();
@@ -65,7 +63,7 @@ public class NodeTest {
         assertEquals("Node{id=0, isLeafNode=true, field=[], flag=-77, link=-1}",
                 node.toString());
 
-        Node<Integer, Integer> n = nr.makeNodeFromIntegers(0,
+        Node<Integer, Integer> n = getNr().makeNodeFromIntegers(0,
                 new Integer[] { 0, 1, 1, 3, -40, 4, 98 });
 
         logger.debug(n.toString());
@@ -91,18 +89,18 @@ public class NodeTest {
      */
     @Test(expected = ArrayIndexOutOfBoundsException.class)
     public void test_insertAtPosition_nodeIsFull() throws Exception {
-        Node<Integer, Integer> n = nr.makeNodeFromIntegers(2, 0,
+        Node<Integer, Integer> n = getNr().makeNodeFromIntegers(2, 0,
                 new Integer[] { 0, 1, 1, 3, 98 });
         logger.debug(n.toString());
-        n.insertAtPosition(Wrapper.make(4, nr.getTdi()), -40, 2);
+        n.insertAtPosition(Wrapper.make(4, getNr().getTdi()), -40, 2);
     }
 
     @Test
     public void test_insertAtPosition_highest() throws Exception {
-        Node<Integer, Integer> n = nr.makeNodeFromIntegers(3, 45,
+        Node<Integer, Integer> n = getNr().makeNodeFromIntegers(3, 45,
                 new Integer[] { 0, 1, 1, 3, 98 });
         logger.debug(n.toString());
-        n.insertAtPosition(Wrapper.make(4, nr.getTdi()), -40, 2);
+        n.insertAtPosition(Wrapper.make(4, getNr().getTdi()), -40, 2);
 
         nodeUtil.verifyNode(n,
                 new Integer[][] { { 1, 0 }, { 3, 1 }, { 4, -40 } }, false, 98,
@@ -111,10 +109,10 @@ public class NodeTest {
 
     @Test
     public void test_insertAtPosition_lowest() throws Exception {
-        Node<Integer, Integer> n = nr.makeNodeFromIntegers(3, 12,
+        Node<Integer, Integer> n = getNr().makeNodeFromIntegers(3, 12,
                 new Integer[] { 0, 1, 1, 3, 98 });
         logger.debug(n.toString());
-        n.insertAtPosition(Wrapper.make(0, nr.getTdi()), -10, 0);
+        n.insertAtPosition(Wrapper.make(0, getNr().getTdi()), -10, 0);
 
         nodeUtil.verifyNode(n,
                 new Integer[][] { { 0, -10 }, { 1, 0 }, { 3, 1 } }, false, 98,
@@ -128,12 +126,12 @@ public class NodeTest {
 
     @Test(expected = NullPointerException.class)
     public void test_insertAtPosition_value_null() throws Exception {
-        node.insertAtPosition(Wrapper.make(4, nr.getTdi()), null, 0);
+        node.insertAtPosition(Wrapper.make(4, getNr().getTdi()), null, 0);
     }
 
     @Test
     public void test_removeAtPosition() throws Exception {
-        Node<Integer, Integer> n = nr.makeNodeFromIntegers(3, 12,
+        Node<Integer, Integer> n = getNr().makeNodeFromIntegers(3, 12,
                 new Integer[] { 0, 1, 1, 3, 2, 4, 98 });
         logger.debug(n.toString());
 
@@ -144,7 +142,7 @@ public class NodeTest {
 
     @Test
     public void test_removeAtPosition_highest() throws Exception {
-        Node<Integer, Integer> n = nr.makeNodeFromIntegers(3, 12,
+        Node<Integer, Integer> n = getNr().makeNodeFromIntegers(3, 12,
                 new Integer[] { 0, 1, 1, 3, 2, 4, 98 });
         logger.debug(n.toString());
 
@@ -155,7 +153,7 @@ public class NodeTest {
 
     @Test
     public void test_removeAtPosition_lowest() throws Exception {
-        Node<Integer, Integer> n = nr.makeNodeFromIntegers(3, 12,
+        Node<Integer, Integer> n = getNr().makeNodeFromIntegers(3, 12,
                 new Integer[] { 0, 1, 1, 3, 2, 4, 98 });
         logger.debug(n.toString());
 
@@ -167,8 +165,8 @@ public class NodeTest {
     @Test
     public void test_setLink() throws Exception {
         node.setLink(-10);
-        node.insertAtPosition(Wrapper.make(1, nr.getTdi()), 10, 0);
-        node.insertAtPosition(Wrapper.make(2, nr.getTdi()), 20, 1);
+        node.insertAtPosition(Wrapper.make(1, getNr().getTdi()), 10, 0);
+        node.insertAtPosition(Wrapper.make(2, getNr().getTdi()), 20, 1);
 
         nodeUtil.verifyNode(node, new Integer[][] { { 1, 10 }, { 2, 20 } },
                 true, -10, 0);
@@ -181,13 +179,13 @@ public class NodeTest {
 
     @Test
     public void test_moveTopHalfOfDataTo_leaf() throws Exception {
-        Node<Integer, Integer> node1 = nr.makeNodeFromIntegers(3, 0,
+        Node<Integer, Integer> node1 = getNr().makeNodeFromIntegers(3, 0,
                 new Integer[] { 10, 1, 20, 2, 100 });
         node1.setFlag(Node.FLAG_LEAF_NODE);
         logger.debug("node1: " + node1.toString());
 
-        NodeImpl<Integer, Integer> node2 = new NodeImpl<Integer, Integer>(1,
-                true, nr.getTreeData().getLeafNodeDescriptor());
+        NodeShort<Integer, Integer> node2 = new NodeShort<Integer, Integer>(1,
+                true, getNr().getTreeData().getLeafNodeDescriptor());
         node1.moveTopHalfOfDataTo(node2);
 
         logger.debug("node1: " + node1.toString());
@@ -217,8 +215,8 @@ public class NodeTest {
 
     @Test
     public void test_moveTopHalfOfDataTo_nothingToMove() throws Exception {
-        NodeImpl<Integer, Integer> node2 = new NodeImpl<Integer, Integer>(11,
-                true, nr.getTreeData().getLeafNodeDescriptor());
+        NodeShort<Integer, Integer> node2 = new NodeShort<Integer, Integer>(11,
+                true, getNr().getTreeData().getLeafNodeDescriptor());
         try {
             node.moveTopHalfOfDataTo(node2);
             fail();
@@ -229,13 +227,13 @@ public class NodeTest {
 
     @Test
     public void test_moveTopHalfOfDataTo_node() throws Exception {
-        Node<Integer, Integer> n = nr.makeNodeFromIntegers(10,
+        Node<Integer, Integer> n = getNr().makeNodeFromIntegers(10,
                 new Integer[] { 0, 1, 1, 2, 5, 9, -1 });
         logger.debug("node  " + n.toString());
         assertEquals("key count is not correct", 3, n.getKeyCount());
 
-        NodeImpl<Integer, Integer> node2 = new NodeImpl<Integer, Integer>(11,
-                true, nr.getTreeData().getLeafNodeDescriptor());
+        NodeShort<Integer, Integer> node2 = new NodeShort<Integer, Integer>(11,
+                true, getNr().getTreeData().getLeafNodeDescriptor());
         n.moveTopHalfOfDataTo(node2);
 
         logger.debug("node  " + n.toString());
@@ -268,7 +266,7 @@ public class NodeTest {
     public void test_isEmpty() throws Exception {
         assertTrue(node.isEmpty());
         logger.debug(node.toString());
-        node.insertAtPosition(Wrapper.make(2, nr.getTdi()), 20, 0);
+        node.insertAtPosition(Wrapper.make(2, getNr().getTdi()), 20, 0);
         logger.debug(node.toString());
 
         assertFalse(node.isEmpty());
@@ -277,8 +275,8 @@ public class NodeTest {
 
     @Test
     public void test_getMaxKey() throws Exception {
-        node.insertAtPosition(Wrapper.make(1, nr.getTdi()), 10, 0);
-        node.insertAtPosition(Wrapper.make(2, nr.getTdi()), 20, 1);
+        node.insertAtPosition(Wrapper.make(1, getNr().getTdi()), 10, 0);
+        node.insertAtPosition(Wrapper.make(2, getNr().getTdi()), 20, 1);
 
         logger.debug(node.toString());
         assertEquals(Integer.valueOf(2), node.getMaxKey().getValue());
@@ -286,7 +284,7 @@ public class NodeTest {
 
     @Test
     public void test_getKeysCount_leaf() throws Exception {
-        Node<Integer, Integer> n = nr.makeNodeFromIntegers(2,
+        Node<Integer, Integer> n = getNr().makeNodeFromIntegers(2,
                 new Integer[] { -77, 10, 1, 10, -1 });
 
         assertEquals(2, n.getKeyCount());
@@ -294,15 +292,15 @@ public class NodeTest {
 
     @Test
     public void test_getKeysCount_leaf_empty() throws Exception {
-        Node<Integer, Integer> n = new NodeImpl<Integer, Integer>(10, true,
-                nr.getTreeData().getLeafNodeDescriptor());
+        Node<Integer, Integer> n = new NodeShort<Integer, Integer>(10, true,
+                getNr().getTreeData().getLeafNodeDescriptor());
 
         assertEquals(0, n.getKeyCount());
     }
 
     @Test
     public void test_getKeysCount_nonLeaf() throws Exception {
-        Node<Integer, Integer> n = nr.makeNodeFromIntegers(2,
+        Node<Integer, Integer> n = getNr().makeNodeFromIntegers(2,
                 new Integer[] { 0, 2, 1, 3, 23 });
 
         assertEquals(2, n.getKeyCount());
@@ -310,16 +308,16 @@ public class NodeTest {
 
     @Test
     public void test_getKeysCount_nonLeaf_1() throws Exception {
-        Node<Integer, Integer> n = nr.makeNodeFromIntegers(2,
-                new Integer[] { 0, 2, 23 });
+        Node<Integer, Integer> n =
+                getNr().makeNodeFromIntegers(2, new Integer[] { 0, 2, 23 });
 
         assertEquals(1, n.getKeyCount());
     }
 
     @Test
     public void test_getKeysCount_nonLeaf_empty() throws Exception {
-        Node<Integer, Integer> n = new NodeImpl<Integer, Integer>(10, false,
-                nr.getTreeData().getLeafNodeDescriptor());
+        Node<Integer, Integer> n = new NodeShort<Integer, Integer>(10, false,
+                getNr().getTreeData().getLeafNodeDescriptor());
 
         assertEquals(0, n.getKeyCount());
     }
@@ -329,10 +327,13 @@ public class NodeTest {
         assertTrue(node.equals(node));
     }
 
+    protected abstract Node<Integer, Integer> createNode();
+
+    protected abstract AbstractNodeRule getNr();
+
     @Before
     public void setUp() throws Exception {
-        node = new NodeImpl<Integer, Integer>(0, true,
-                nr.getTreeData().getLeafNodeDescriptor());
+        node = createNode();
     }
 
     @After

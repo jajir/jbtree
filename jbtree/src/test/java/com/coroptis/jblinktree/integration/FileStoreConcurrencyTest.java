@@ -40,7 +40,7 @@ import com.coroptis.jblinktree.JbNodeServiceImpl;
 import com.coroptis.jblinktree.JbTreeDataImpl;
 import com.coroptis.jblinktree.JblinktreeException;
 import com.coroptis.jblinktree.Node;
-import com.coroptis.jblinktree.NodeImpl;
+import com.coroptis.jblinktree.NodeShort;
 import com.coroptis.jblinktree.Worker;
 import com.coroptis.jblinktree.type.TypeDescriptorInteger;
 import com.coroptis.jblinktree.type.Wrapper;
@@ -130,7 +130,7 @@ public class FileStoreConcurrencyTest {
         TypeDescriptorInteger intDescriptor = new TypeDescriptorInteger();
         JbTreeDataImpl<Integer, Integer> treeData = new JbTreeDataImpl<Integer, Integer>(
                 0, L, intDescriptor, intDescriptor, intDescriptor);
-        final Node<Integer, Integer> node = new NodeImpl<Integer, Integer>(
+        final Node<Integer, Integer> node = new NodeShort<Integer, Integer>(
                 nodeId, false, treeData.getLeafNodeDescriptor());
         nodeService.insert(node, Wrapper.make(nodeId, intDescriptor), nodeId);
         return node;
