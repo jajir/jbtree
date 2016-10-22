@@ -28,7 +28,7 @@ import com.google.common.base.Preconditions;
 
 /**
  * Decorator class that verify format of stored tree with given format.
- * 
+ *
  * @author jajir
  *
  * @param <K>
@@ -50,15 +50,15 @@ public final class NodeFileStorageMetaDataValidaror<K, V>
     private final NodeFileStorage<K, V> next;
 
     /**
+     * Simple constructor.
      *
      * @param jbTreeData
      *            required tree data definition
-     * @param nodeBuilder
-     *            required node builder factory
      * @param directory
      *            required directory
-     * @param initNodeConverter
-     *            required node converter
+     * @param nodeFileStorage
+     *            required node file storage to which will be operation
+     *            delegated
      */
     public NodeFileStorageMetaDataValidaror(final JbTreeData<K, V> jbTreeData,
             final String directory,

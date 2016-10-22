@@ -25,7 +25,6 @@ import java.io.File;
 import com.coroptis.jblinktree.store.Cache;
 import com.coroptis.jblinktree.store.CacheListener;
 import com.coroptis.jblinktree.store.CacheLru;
-import com.coroptis.jblinktree.store.KeyIntFileStorage;
 import com.coroptis.jblinktree.store.KeyValueFileStorage;
 import com.coroptis.jblinktree.store.NodeConverter;
 import com.coroptis.jblinktree.store.NodeConverterImpl;
@@ -123,8 +122,8 @@ public final class TreeBuilder {
          */
         public final NodeStoreInFileBuilder setNoOfCachedNodes(
                 final int numberOfCachedNodes) {
-            this.noOfCachedNodes =
-                    Preconditions.checkNotNull(numberOfCachedNodes);
+            this.noOfCachedNodes = Preconditions
+                    .checkNotNull(numberOfCachedNodes);
             return this;
         }
 
@@ -219,8 +218,8 @@ public final class TreeBuilder {
      */
     public TreeBuilder setNodeStoreInFileBuilder(
             final NodeStoreInFileBuilder nodeStoreFileBuilder) {
-        this.nodeStoreInFileBuilder =
-                Preconditions.checkNotNull(nodeStoreFileBuilder);
+        this.nodeStoreInFileBuilder = Preconditions
+                .checkNotNull(nodeStoreFileBuilder);
         return this;
     }
 
@@ -250,6 +249,19 @@ public final class TreeBuilder {
         return this;
     }
 
+    /**
+     * Create node file storage.
+     *
+     * @param treeData
+     *            required tree data
+     * @param nodeBuilder
+     *            required node builder
+     * @param <K>
+     *            key type
+     * @param <V>
+     *            value type
+     * @return node file storage
+     */
     private <K, V> NodeFileStorage<K, V> makeNodeFileStorage(
             final JbTreeData<K, V> treeData,
             final JbNodeBuilder<K, V> nodeBuilder) {
@@ -267,16 +279,19 @@ public final class TreeBuilder {
                     treeData, nodeBuilder);
         } else {
             final NodeConverter<K, V> nodeConverter =
-                    new NodeConverterImpl<K, V>(treeData, nodeBuilder);
+                    new NodeConverterImpl<K, V>(
+                    treeData, nodeBuilder);
             nodeFileStorage = new NodeFileStorageImpl<K, V>(treeData,
                     nodeBuilder, nodeStoreInFileBuilder.getFileName(),
                     nodeConverter);
         }
         final NodeFileStorage<K, V> metaDataValidator =
-                new NodeFileStorageMetaDataValidaror<K, V>(treeData,
-                        nodeStoreInFileBuilder.getFileName(), nodeFileStorage);
+                new NodeFileStorageMetaDataValidaror<K, V>(
+                treeData, nodeStoreInFileBuilder.getFileName(),
+                nodeFileStorage);
         final NodeFileStorage<K, V> fileStorage =
-                new NodeFileStorageLockDecorator<K, V>(metaDataValidator);
+                new NodeFileStorageLockDecorator<K, V>(
+                metaDataValidator);
         return fileStorage;
     }
 
@@ -300,8 +315,8 @@ public final class TreeBuilder {
             final JbNodeBuilder<K, V> nodeBuilder,
             final JbNodeLockProvider jbNodeLockProvider) {
 
-        final NodeFileStorage<K, V> nodeFileStorage =
-                makeNodeFileStorage(treeData, nodeBuilder);
+        final NodeFileStorage<K, V> nodeFileStorage = makeNodeFileStorage(
+                treeData, nodeBuilder);
         final Cache<K, V> nodeCache = new CacheLru<K, V>(nodeBuilder,
                 nodeStoreInFileBuilder.getNoOfCachedNodes(), nodeFileStorage);
         nodeCache.addCacheListener(new CacheListener<K, V>() {
@@ -353,14 +368,14 @@ public final class TreeBuilder {
                 (TypeDescriptor<K>) keyTypeDescriptor,
                 (TypeDescriptor<V>) valueTypeDescriptor, linkTypeDescriptor);
 
-        final JbNodeBuilder<K, V> nodeBuilder =
-                new JbNodeBuilderShort<K, V>(treeData);
+        final JbNodeBuilder<K, V> nodeBuilder = new JbNodeBuilderShort<K, V>(
+                treeData);
         final JbNodeLockProvider jbNodeLockProvider =
                 new JbNodeLockProviderImpl();
         final NodeStore<K> nodeStore;
         if (nodeStoreInFileBuilder == null) {
-            nodeStore =
-                    new NodeStoreInMem<K, V>(nodeBuilder, jbNodeLockProvider);
+            nodeStore = new NodeStoreInMem<K, V>(nodeBuilder,
+                    jbNodeLockProvider);
         } else {
             nodeStore = makeNodeStoreInFile(treeData, nodeBuilder,
                     jbNodeLockProvider);
@@ -369,15 +384,15 @@ public final class TreeBuilder {
         final JbTreeTool<K, V> jbTreeTool = new JbTreeToolImpl<K, V>(nodeStore,
                 treeData, nodeBuilder, jbNodeService);
         final JbTreeTraversingService<K, V> treeLockingTool =
-                new JbTreeTraversingServiceImpl<K, V>(jbTreeTool,
-                        jbNodeService);
+                new JbTreeTraversingServiceImpl<K, V>(
+                jbTreeTool, jbNodeService);
         final JbTreeService<K, V> treeService = new JbTreeServiceImpl<K, V>(
                 nodeStore, treeLockingTool, jbNodeService);
         final JbTreeHelper<K, V> jbTreeHelper = new JbTreeHelperImpl<K, V>(
                 nodeStore, jbTreeTool, treeService, treeData);
-        final JbTree<K, V> tree =
-                new JbTreeImpl<K, V>(nodeStore, jbTreeTool, jbTreeHelper,
-                        treeData, treeLockingTool, treeService, jbNodeService);
+        final JbTree<K, V> tree = new JbTreeImpl<K, V>(nodeStore, jbTreeTool,
+                jbTreeHelper, treeData, treeLockingTool, treeService,
+                jbNodeService);
 
         if (nodeStore.isNewlyCreated()) {
             /**

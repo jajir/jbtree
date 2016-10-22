@@ -32,4 +32,11 @@ public class NodeRuleFixedLength extends AbstractNodeRule {
         return new NodeFixedLength<Integer, Integer>(idNode, field, jbNodeDef);
     }
 
+    @Override
+    public Node<Integer, Integer> makeNode(Integer nodeId, boolean isLeafNode,
+            JbNodeDef<Integer, Integer> jbNodeDef) {
+        return new NodeFixedLength<Integer, Integer>(nodeId, isLeafNode,
+                jbNodeDef);
+    }
+
 }

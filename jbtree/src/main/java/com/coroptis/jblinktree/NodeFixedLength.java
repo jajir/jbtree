@@ -27,6 +27,7 @@ import com.coroptis.jblinktree.type.Wrapper;
 import com.google.common.base.Preconditions;
 
 /**
+ * FIXME following description is not valid.
  * <p>
  * Generally in tree are inserted keys and values (K,V). There are two kind of
  * nodes:
@@ -42,6 +43,8 @@ import com.google.common.base.Preconditions;
  * "keys and values meaning in node">
  * <tr>
  * <td>value</td>
+ * <td>key value pair count</td>
+ * <td>flag</td>
  * <td>P(0)</td>
  * <td>K(1)</td>
  * <td>P(1)</td>
@@ -60,6 +63,8 @@ import com.google.common.base.Preconditions;
  * <td>2</td>
  * <td>3</td>
  * <td>4</td>
+ * <td>5</td>
+ * <td>6</td>
  * <td>&nbsp;...&nbsp;</td>
  * <td>L*2-1</td>
  * <td>L*2</td>
@@ -124,7 +129,7 @@ public final class NodeFixedLength<K, V> implements Node<K, V> {
             final JbNodeDef<K, V> jbNodeDef) {
         this.id = nodeId;
         this.nodeDef = jbNodeDef;
-        this.field = new byte[jbNodeDef.getFieldMaxLength() + 2];
+        this.field = new byte[jbNodeDef.getFieldMaxLength() + 1];
         if (isLeafNode) {
             setFlag(FLAG_LEAF_NODE);
         } else {
@@ -135,7 +140,7 @@ public final class NodeFixedLength<K, V> implements Node<K, V> {
     }
 
     /**
-     *
+     * Node constructor.
      *
      * @param nodeId
      *            required node id
@@ -148,8 +153,11 @@ public final class NodeFixedLength<K, V> implements Node<K, V> {
             final JbNodeDef<K, V> jbNodeDef) {
         this.id = nodeId;
         this.nodeDef = jbNodeDef;
-        this.field = new byte[sourceField.length];
-        System.arraycopy(sourceField, 0, this.field, 0, this.field.length);
+        this.field = new byte[1 + nodeDef.getFieldMaxLength()];
+        System.arraycopy(sourceField, 0, field, 1, sourceField.length);
+        setKeyCount((sourceField.length - 1
+                - nodeDef.getLinkTypeDescriptor().getMaxLength())
+                / nodeDef.getKeyAndValueSize());
         if (getFlag() != Node.FLAG_LEAF_NODE && !(nodeDef
                 .getValueTypeDescriptor() instanceof TypeDescriptorInteger)) {
             throw new JblinktreeException(
@@ -175,7 +183,7 @@ public final class NodeFixedLength<K, V> implements Node<K, V> {
      * @return position of link to next node
      */
     private int getPositionOfLink() {
-        return 2;
+        return getKeyCount() * nodeDef.getKeyAndValueSize() + 2;
     }
 
     @Override
@@ -188,79 +196,67 @@ public final class NodeFixedLength<K, V> implements Node<K, V> {
         return field[POSITION_OF_PAIRS_COUNT];
     }
 
-    public int setKeyCount(final int keyCount) {
-        return field[POSITION_OF_PAIRS_COUNT] = (byte) keyCount;
+    /**
+     * Allows to set number of key value pairs.
+     *
+     * @param keyCount
+     *            required new key value pars count
+     */
+    public void setKeyCount(final int keyCount) {
+        field[POSITION_OF_PAIRS_COUNT] = (byte) keyCount;
     }
 
     @Override
     public void insertAtPosition(final Wrapper<K> key, final V value,
             final int targetIndex) {
-        if (targetIndex > getKeyCount()) {
-            for (int i = (targetIndex - getKeyCount() + 1)
-                    * nodeDef.getKeyAndValueSize(); i > 0; i--) {
-                field[i + nodeDef.getKeyAndValueSize()] = field[i];
+        // move link
+        for (int i = 0; i < nodeDef.getLinkTypeDescriptor()
+                .getMaxLength(); i++) {
+            final int from = getKeyCount() * nodeDef.getKeyAndValueSize() + 2
+                    + i;
+            final int to = from + nodeDef.getKeyAndValueSize();
+            field[to] = field[from];
+        }
+
+        final int keyValuePairsToMove = getKeyCount() - targetIndex;
+        if (keyValuePairsToMove > 0) {
+            for (int i = nodeDef.getKeyAndValueSize()
+                    * keyValuePairsToMove; i > 0; i--) {
+                final int from = i + targetIndex * nodeDef.getKeyAndValueSize()
+                        + 2;
+                final int to = from + nodeDef.getKeyAndValueSize();
+                field[to] = field[from];
             }
         }
+
         setKey(targetIndex, key);
         setValue(targetIndex, value);
         setKeyCount(getKeyCount() + 1);
     }
 
     @Override
-    public void removeAtPosition(final int position) {
-        byte[] tmp =
-                new byte[nodeDef.getFieldActualLength(getKeyCount() - 1) + 1];
-        copyFlagAndLink(field, tmp);
-        if (position > 0) {
-            copy(field, 0, tmp, 0, position);
+    public void removeAtPosition(final int targetIndex) {
+        final int keyValuePairsToMove = getKeyCount() - 1 - targetIndex;
+        if (keyValuePairsToMove > 0) {
+            for (int i = 0; i < nodeDef.getKeyAndValueSize()
+                    * keyValuePairsToMove; i++) {
+                final int to = i + targetIndex * nodeDef.getKeyAndValueSize()
+                        + 2;
+                final int from = to + nodeDef.getKeyAndValueSize();
+                field[to] = field[from];
+            }
         }
-        if (getKeyCount() - position - 1 > 0) {
-            copy(field, position + 1, tmp, position,
-                    getKeyCount() - position - 1);
-        }
-        field = tmp;
-        setKeyCount(getKeyCount() - 1);
-    }
 
-    /**
-     * Copy selected position from one byte array to another one.
-     * <p>
-     * Positions are positions of key value pairs in node not position of byte.
-     * </p>
-     *
-     * @param from
-     *            required source field
-     * @param srcPos1
-     *            required where copying starts
-     * @param to
-     *            required target field
-     * @param destPos1
-     *            required target node position
-     * @param length
-     *            required, how many key value pairs will be copied
-     */
-    private void copy(final byte[] from, final int srcPos1, final byte[] to,
-            final int destPos1, final int length) {
-        System.arraycopy(from, nodeDef.getValuePosition(srcPos1) + 1, to,
-                nodeDef.getValuePosition(destPos1) + 1,
-                length * nodeDef.getKeyAndValueSize());
-    }
-
-    /**
-     * Copy flag and link value from one byte field to another one.
-     *
-     * @param from
-     *            required from field
-     * @param to
-     *            required to field
-     */
-    private void copyFlagAndLink(final byte[] from, final byte[] to) {
-        to[FLAG_BYTE_POSITION] = from[FLAG_BYTE_POSITION];
-        to[POSITION_OF_PAIRS_COUNT] = from[POSITION_OF_PAIRS_COUNT];
+        // move link
         for (int i = 0; i < nodeDef.getLinkTypeDescriptor()
                 .getMaxLength(); i++) {
-            to[2 + i] = from[2 + i];
+            final int to = (getKeyCount() - 1) * nodeDef.getKeyAndValueSize()
+                    + 2 + i;
+            final int from = to + nodeDef.getKeyAndValueSize();
+            field[to] = field[from];
         }
+
+        setKeyCount(getKeyCount() - 1);
     }
 
     @Override
@@ -274,19 +270,15 @@ public final class NodeFixedLength<K, V> implements Node<K, V> {
         final int startIndex = getKeyCount() / 2;
         final int length = getKeyCount() - startIndex;
 
-        // copy top half to empty node
-        node.field = new byte[nodeDef.getFieldActualLength(length)];
-        copy(field, startIndex, node.field, 0, length);
-        copyFlagAndLink(field, node.field);
-        setKeyCount(getKeyCount() + 1);
+        System.arraycopy(field, 2 + startIndex * nodeDef.getKeyAndValueSize(),
+                node.field, 2, length * nodeDef.getKeyAndValueSize());
 
-        // remove copied data from this node
-        byte[] tmp = new byte[nodeDef.getFieldActualLength(startIndex)];
-        copyFlagAndLink(field, tmp);
-        copy(field, 0, tmp, 0, startIndex);
-        field = tmp;
+        node.setKeyCount(length);
+        node.setLink(getLink());
+        node.setFlag(getFlag());
+        setKeyCount(startIndex);
+
         setLink(node.getId());
-        setKeyCount(getKeyCount() + 1);
     }
 
     @Override
@@ -413,25 +405,27 @@ public final class NodeFixedLength<K, V> implements Node<K, V> {
     @Override
     public K getKey(final int position) {
         return nodeDef.getKeyTypeDescriptor().load(field,
-                nodeDef.getKeyPosition(position));
+                nodeDef.getKeyPosition(position) + 1);
     }
 
     @Override
     public V getValue(final int position) {
         return nodeDef.getValueTypeDescriptor().load(field,
-                nodeDef.getValuePosition(position));
+                nodeDef.getValuePosition(position) + 1);
     }
+
+    // FIXME remove +1 correction, it's fault
 
     @Override
     public void setKey(final int position, final Wrapper<K> value) {
         nodeDef.getKeyTypeDescriptor().save(field,
-                nodeDef.getKeyPosition(position), value);
+                nodeDef.getKeyPosition(position) + 1, value);
     }
 
     @Override
     public void setValue(final int position, final V value) {
         nodeDef.getValueTypeDescriptor().save(field,
-                nodeDef.getValuePosition(position), value);
+                nodeDef.getValuePosition(position) + 1, value);
     }
 
     /**
@@ -455,7 +449,7 @@ public final class NodeFixedLength<K, V> implements Node<K, V> {
     @Override
     public int compareKey(final int position, final Wrapper<K> key) {
         return nodeDef.getKeyTypeDescriptor().cmp(field,
-                nodeDef.getKeyPosition(position), key);
+                nodeDef.getKeyPosition(position) + 1, key);
     }
 
 }

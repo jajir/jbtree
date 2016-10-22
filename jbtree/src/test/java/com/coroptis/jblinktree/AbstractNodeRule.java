@@ -41,6 +41,10 @@ public abstract class AbstractNodeRule implements TestRule {
     public abstract Node<Integer, Integer> makeNode(final Integer idNode,
             final byte[] field, final JbNodeDef<Integer, Integer> jbNodeDef);
 
+    public abstract Node<Integer, Integer> makeNode(final Integer nodeId,
+            final boolean isLeafNode,
+            final JbNodeDef<Integer, Integer> jbNodeDef);
+
     @Override
     public Statement apply(final Statement base, Description description) {
         return new Statement() {
@@ -92,8 +96,8 @@ public abstract class AbstractNodeRule implements TestRule {
 
     public Node<Integer, Integer> makeNodeFromIntegers(final Integer ll,
             final Integer idNode, final Integer fieldInt[]) {
-        JbNodeDef<Integer, Integer> td =
-                new JbNodeDefImpl<Integer, Integer>(ll, tdi, tdi, tdi);
+        JbNodeDef<Integer, Integer> td = new JbNodeDefImpl<Integer, Integer>(ll,
+                tdi, tdi, tdi);
         Node<Integer, Integer> n = makeNode(idNode, convert(fieldInt), td);
         return n;
     }

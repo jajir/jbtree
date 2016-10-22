@@ -19,10 +19,7 @@ package com.coroptis.jblinktree.junit;
  * limitations under the License.
  * #L%
  */
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.*;
 
 import java.util.List;
 
@@ -36,13 +33,11 @@ import org.slf4j.LoggerFactory;
 import com.coroptis.jblinktree.AbstractNodeRule;
 import com.coroptis.jblinktree.JblinktreeException;
 import com.coroptis.jblinktree.Node;
-import com.coroptis.jblinktree.NodeRuleShort;
-import com.coroptis.jblinktree.NodeShort;
 import com.coroptis.jblinktree.NodeUtilRule;
 import com.coroptis.jblinktree.type.Wrapper;
 
 /**
- * Junit test for {@link NodeShort}.
+ * Junit test for {@link Node}.
  *
  * @author jajir
  *
@@ -57,13 +52,31 @@ public abstract class AbstractNodeTest {
     private Node<Integer, Integer> node;
 
     @Test
+    public void test_makeNode() throws Exception {
+        Node<Integer, Integer> n = getNr().makeNodeFromIntegers(3, 45,
+                new Integer[] { 0, 1, 1, 3, 98 });
+
+        nodeUtil.verifyNode(n, new Integer[][] { { 1, 0 }, { 3, 1 } }, false,
+                98, 45);
+
+    }
+
+    @Test
+    public void test_compareKey() throws Exception {
+        Node<Integer, Integer> n = getNr().makeNodeFromIntegers(3, 45,
+                new Integer[] { 0, 1, 1, 3, 98 });
+
+        assertEquals(0, n.compareKey(1, Wrapper.make(3, nodeUtil.getTdi())));
+    }
+
+    @Test
     public void test_toString() throws Exception {
         logger.debug(node.toString());
 
         assertEquals("Node{id=0, isLeafNode=true, field=[], flag=-77, link=-1}",
                 node.toString());
 
-        Node<Integer, Integer> n = getNr().makeNodeFromIntegers(0,
+        Node<Integer, Integer> n = getNr().makeNodeFromIntegers(3, 0,
                 new Integer[] { 0, 1, 1, 3, -40, 4, 98 });
 
         logger.debug(n.toString());
@@ -163,6 +176,13 @@ public abstract class AbstractNodeTest {
     }
 
     @Test
+    public void test_setLink_simple() throws Exception {
+        node.setLink(-10);
+
+        nodeUtil.verifyNode(node, new Integer[][] {}, true, -10, 0);
+    }
+
+    @Test
     public void test_setLink() throws Exception {
         node.setLink(-10);
         node.insertAtPosition(Wrapper.make(1, getNr().getTdi()), 10, 0);
@@ -184,8 +204,8 @@ public abstract class AbstractNodeTest {
         node1.setFlag(Node.FLAG_LEAF_NODE);
         logger.debug("node1: " + node1.toString());
 
-        NodeShort<Integer, Integer> node2 = new NodeShort<Integer, Integer>(1,
-                true, getNr().getTreeData().getLeafNodeDescriptor());
+        Node<Integer, Integer> node2 = getNr().makeNode(1, true,
+                getNr().getTreeData().getLeafNodeDescriptor());
         node1.moveTopHalfOfDataTo(node2);
 
         logger.debug("node1: " + node1.toString());
@@ -215,8 +235,8 @@ public abstract class AbstractNodeTest {
 
     @Test
     public void test_moveTopHalfOfDataTo_nothingToMove() throws Exception {
-        NodeShort<Integer, Integer> node2 = new NodeShort<Integer, Integer>(11,
-                true, getNr().getTreeData().getLeafNodeDescriptor());
+        Node<Integer, Integer> node2 = getNr().makeNode(11, true,
+                getNr().getTreeData().getLeafNodeDescriptor());
         try {
             node.moveTopHalfOfDataTo(node2);
             fail();
@@ -227,13 +247,13 @@ public abstract class AbstractNodeTest {
 
     @Test
     public void test_moveTopHalfOfDataTo_node() throws Exception {
-        Node<Integer, Integer> n = getNr().makeNodeFromIntegers(10,
+        Node<Integer, Integer> n = getNr().makeNodeFromIntegers(10, 3,
                 new Integer[] { 0, 1, 1, 2, 5, 9, -1 });
         logger.debug("node  " + n.toString());
         assertEquals("key count is not correct", 3, n.getKeyCount());
 
-        NodeShort<Integer, Integer> node2 = new NodeShort<Integer, Integer>(11,
-                true, getNr().getTreeData().getLeafNodeDescriptor());
+        Node<Integer, Integer> node2 = getNr().makeNode(11, true,
+                getNr().getTreeData().getLeafNodeDescriptor());
         n.moveTopHalfOfDataTo(node2);
 
         logger.debug("node  " + n.toString());
@@ -292,7 +312,7 @@ public abstract class AbstractNodeTest {
 
     @Test
     public void test_getKeysCount_leaf_empty() throws Exception {
-        Node<Integer, Integer> n = new NodeShort<Integer, Integer>(10, true,
+        Node<Integer, Integer> n = getNr().makeNode(10, true,
                 getNr().getTreeData().getLeafNodeDescriptor());
 
         assertEquals(0, n.getKeyCount());
@@ -308,15 +328,15 @@ public abstract class AbstractNodeTest {
 
     @Test
     public void test_getKeysCount_nonLeaf_1() throws Exception {
-        Node<Integer, Integer> n =
-                getNr().makeNodeFromIntegers(2, new Integer[] { 0, 2, 23 });
+        Node<Integer, Integer> n = getNr().makeNodeFromIntegers(2,
+                new Integer[] { 0, 2, 23 });
 
         assertEquals(1, n.getKeyCount());
     }
 
     @Test
     public void test_getKeysCount_nonLeaf_empty() throws Exception {
-        Node<Integer, Integer> n = new NodeShort<Integer, Integer>(10, false,
+        Node<Integer, Integer> n = getNr().makeNode(10, false,
                 getNr().getTreeData().getLeafNodeDescriptor());
 
         assertEquals(0, n.getKeyCount());

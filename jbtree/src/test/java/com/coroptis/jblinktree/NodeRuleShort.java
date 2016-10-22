@@ -32,4 +32,10 @@ public class NodeRuleShort extends AbstractNodeRule {
         return new NodeShort<Integer, Integer>(idNode, field, jbNodeDef);
     }
 
+    @Override
+    public Node<Integer, Integer> makeNode(Integer nodeId, boolean isLeafNode,
+            JbNodeDef<Integer, Integer> jbNodeDef) {
+        return new NodeShort<Integer, Integer>(nodeId, isLeafNode, jbNodeDef);
+    }
+
 }

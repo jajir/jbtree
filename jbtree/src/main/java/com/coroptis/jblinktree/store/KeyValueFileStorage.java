@@ -48,12 +48,12 @@ public final class KeyValueFileStorage<K, V> implements NodeFileStorage<K, V> {
     /**
      * Leaf node identification byte.
      */
-    private final static byte LEAF_NODE = 1;
+    private static final byte LEAF_NODE = 1;
 
     /**
      * Non-leaf node identification byte.
      */
-    private final static byte NON_LEAF_NODE = 2;
+    private static final byte NON_LEAF_NODE = 2;
 
     /**
      * Node builder factory.
@@ -87,11 +87,12 @@ public final class KeyValueFileStorage<K, V> implements NodeFileStorage<K, V> {
     private final boolean isNewlyCreated;
 
     /**
+     * Simple constructor.
      *
      * @param file
      *            required file
-     * @param jbNodeDef
-     *            required non-leaf definition
+     * @param jbTreeData
+     *            tree meta data
      * @param jbNodeBuilder
      *            node builder factory
      */
@@ -131,8 +132,15 @@ public final class KeyValueFileStorage<K, V> implements NodeFileStorage<K, V> {
         }
     }
 
-    private final JbNodeDef<K, V> findNodeDef(final byte b) {
-        if (NON_LEAF_NODE == b) {
+    /**
+     * For flag byte find node definition.
+     *
+     * @param flagByte
+     *            flag byte
+     * @return found node definition
+     */
+    private JbNodeDef<K, V> findNodeDef(final byte flagByte) {
+        if (NON_LEAF_NODE == flagByte) {
             return (JbNodeDef<K, V>) treeData.getNonLeafNodeDescriptor();
         } else {
             return treeData.getLeafNodeDescriptor();

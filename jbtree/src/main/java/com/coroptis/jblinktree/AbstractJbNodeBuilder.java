@@ -40,7 +40,7 @@ public abstract class AbstractJbNodeBuilder<K, V>
     /**
      * Tree data definition.
      */
-    protected final JbTreeData<K, V> treeData;
+    private final JbTreeData<K, V> treeData;
 
     /**
      * Simple constructor.
@@ -62,6 +62,8 @@ public abstract class AbstractJbNodeBuilder<K, V>
      *            node otherwise it's non-leaf node.
      * @param jbNodeDef
      *            required tree definition
+     * @param <T>
+     *            specific node value type
      * @return created node
      */
     public abstract <T> Node<K, T> makeNode(final Integer nodeId,

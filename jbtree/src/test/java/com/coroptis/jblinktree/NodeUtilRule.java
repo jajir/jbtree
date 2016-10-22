@@ -55,6 +55,7 @@ import org.slf4j.LoggerFactory;
 import com.coroptis.jblinktree.type.TypeDescriptor;
 import com.coroptis.jblinktree.type.TypeDescriptorInteger;
 import com.coroptis.jblinktree.type.Wrapper;
+import com.google.common.base.Preconditions;
 
 public class NodeUtilRule implements TestRule {
 
@@ -139,12 +140,13 @@ public class NodeUtilRule implements TestRule {
         assertEquals("isLeafNode value is invalid", isLeafNode, n.isLeafNode());
         assertEquals("nodeId is invalid", expectedNodeId, n.getId());
         List<Integer> keys = getKeys(n);
-        for (Integer[] pair : pairs) {
+        for (final Integer[] pair : pairs) {
             final Integer key = pair[0];
             final Integer value = pair[1];
             assertTrue("keys should contains key " + pair[0],
                     keys.contains(pair[0]));
-            assertEquals(value, getValueByKey(n, key));
+            assertEquals("value for key is not correct:", value,
+                    getValueByKey(n, key));
         }
         assertEquals("Node link is invalid", expectedNodeLink, n.getLink());
         if (pairs.length > 0) {
@@ -152,6 +154,10 @@ public class NodeUtilRule implements TestRule {
             assertEquals("Max key value is invalid", expectedMaxKey,
                     n.getMaxKey().getValue());
         }
+    }
+
+    public TypeDescriptorInteger getTdi() {
+        return Preconditions.checkNotNull(tdi);
     }
 
 }

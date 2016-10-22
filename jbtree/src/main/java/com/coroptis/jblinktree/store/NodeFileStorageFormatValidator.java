@@ -36,7 +36,7 @@ import com.google.common.base.Preconditions;
  * @param <V>
  *            value type
  */
-public final class NodeFileStorageLockDecorator<K, V>
+public final class NodeFileStorageFormatValidator<K, V>
         implements NodeFileStorage<K, V> {
 
     /**
@@ -45,7 +45,7 @@ public final class NodeFileStorageLockDecorator<K, V>
     private final ReentrantLock lock = new ReentrantLock(false);
 
     /**
-     * Node storage to which will be operation delegated.
+     * Next node file storage.
      */
     private final NodeFileStorage<K, V> next;
 
@@ -53,9 +53,9 @@ public final class NodeFileStorageLockDecorator<K, V>
      * Simple constructor.
      *
      * @param nodeFileStorage
-     *            required next file storage
+     *            required node file storage
      */
-    public NodeFileStorageLockDecorator(
+    public NodeFileStorageFormatValidator(
             final NodeFileStorage<K, V> nodeFileStorage) {
         this.next = Preconditions.checkNotNull(nodeFileStorage);
     }

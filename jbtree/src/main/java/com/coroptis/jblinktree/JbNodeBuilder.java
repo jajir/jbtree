@@ -1,7 +1,5 @@
 package com.coroptis.jblinktree;
 
-import com.coroptis.jblinktree.type.Wrapper;
-
 /*
  * #%L
  * jblinktree
@@ -21,6 +19,8 @@ import com.coroptis.jblinktree.type.Wrapper;
  * limitations under the License.
  * #L%
  */
+
+import com.coroptis.jblinktree.type.Wrapper;
 
 /**
  * Helps create nodes.
