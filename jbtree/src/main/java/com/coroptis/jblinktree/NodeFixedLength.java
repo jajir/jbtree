@@ -27,7 +27,6 @@ import com.coroptis.jblinktree.type.Wrapper;
 import com.google.common.base.Preconditions;
 
 /**
- * FIXME following description is not valid.
  * <p>
  * Generally in tree are inserted keys and values (K,V). There are two kind of
  * nodes:
@@ -83,7 +82,7 @@ import com.google.common.base.Preconditions;
  * <li>K(L*2+1) - highest key value from node in case of leaf node or highest
  * key value from all referenced nodes.</li>
  * </ul>
- * First value P0 at index 0 have special meaning, when it's
+ * Second value P0 at index 0 have special meaning, when it's
  * {@link Node#FLAG_LEAF_NODE} than this node is leaf node. In all other cases
  * is non-leaf node.
  * <p>
@@ -97,22 +96,12 @@ import com.google.common.base.Preconditions;
  * @param <V>
  *            value type
  */
-public final class NodeFixedLength<K, V> implements Node<K, V> {
-
-    /**
-     * Holds node id.
-     */
-    private final Integer id;
+public final class NodeFixedLength<K, V> extends JbAbstractNode<K, V> {
 
     /**
      * Byte array with node data.
      */
     private byte[] field;
-
-    /**
-     * Node data definition.
-     */
-    private final JbNodeDef<K, V> nodeDef;
 
     /**
      * Create and initialize node.
@@ -127,8 +116,7 @@ public final class NodeFixedLength<K, V> implements Node<K, V> {
      */
     public NodeFixedLength(final Integer nodeId, final boolean isLeafNode,
             final JbNodeDef<K, V> jbNodeDef) {
-        this.id = nodeId;
-        this.nodeDef = jbNodeDef;
+        super(nodeId, jbNodeDef);
         this.field = new byte[jbNodeDef.getFieldMaxLength() + 1];
         if (isLeafNode) {
             setFlag(FLAG_LEAF_NODE);
@@ -151,30 +139,31 @@ public final class NodeFixedLength<K, V> implements Node<K, V> {
      */
     public NodeFixedLength(final Integer nodeId, final byte[] sourceField,
             final JbNodeDef<K, V> jbNodeDef) {
-        this.id = nodeId;
-        this.nodeDef = jbNodeDef;
-        this.field = new byte[1 + nodeDef.getFieldMaxLength()];
+        super(nodeId, jbNodeDef);
+        this.field = new byte[1 + getNodeDef().getFieldMaxLength()];
         System.arraycopy(sourceField, 0, field, 1, sourceField.length);
         setKeyCount((sourceField.length - 1
-                - nodeDef.getLinkTypeDescriptor().getMaxLength())
-                / nodeDef.getKeyAndValueSize());
-        if (getFlag() != Node.FLAG_LEAF_NODE && !(nodeDef
+                - getNodeDef().getLinkTypeDescriptor().getMaxLength())
+                / getNodeDef().getKeyAndValueSize());
+        if (getFlag() != Node.FLAG_LEAF_NODE && !(getNodeDef()
                 .getValueTypeDescriptor() instanceof TypeDescriptorInteger)) {
             throw new JblinktreeException(
                     "Non-leaf node doesn't have value of type integer, it's "
-                            + nodeDef.getValueTypeDescriptor().getClass()
+                            + getNodeDef().getValueTypeDescriptor().getClass()
                                     .getName());
         }
     }
 
     @Override
     public Integer getLink() {
-        return nodeDef.getLinkTypeDescriptor().load(field, getPositionOfLink());
+        return getNodeDef().getLinkTypeDescriptor().load(field,
+                getPositionOfLink());
     }
 
     @Override
     public void setLink(final Integer link) {
-        nodeDef.getLinkTypeDescriptor().save(field, getPositionOfLink(), link);
+        getNodeDef().getLinkTypeDescriptor().save(field, getPositionOfLink(),
+                link);
     }
 
     /**
@@ -183,12 +172,7 @@ public final class NodeFixedLength<K, V> implements Node<K, V> {
      * @return position of link to next node
      */
     private int getPositionOfLink() {
-        return getKeyCount() * nodeDef.getKeyAndValueSize() + 2;
-    }
-
-    @Override
-    public boolean isEmpty() {
-        return getKeyCount() == 0;
+        return getKeyCount() * getNodeDef().getKeyAndValueSize() + 2;
     }
 
     @Override
@@ -210,21 +194,21 @@ public final class NodeFixedLength<K, V> implements Node<K, V> {
     public void insertAtPosition(final Wrapper<K> key, final V value,
             final int targetIndex) {
         // move link
-        for (int i = 0; i < nodeDef.getLinkTypeDescriptor()
+        for (int i = 0; i < getNodeDef().getLinkTypeDescriptor()
                 .getMaxLength(); i++) {
-            final int from = getKeyCount() * nodeDef.getKeyAndValueSize() + 2
-                    + i;
-            final int to = from + nodeDef.getKeyAndValueSize();
+            final int from = getKeyCount() * getNodeDef().getKeyAndValueSize()
+                    + 2 + i;
+            final int to = from + getNodeDef().getKeyAndValueSize();
             field[to] = field[from];
         }
 
         final int keyValuePairsToMove = getKeyCount() - targetIndex;
         if (keyValuePairsToMove > 0) {
-            for (int i = nodeDef.getKeyAndValueSize()
+            for (int i = getNodeDef().getKeyAndValueSize()
                     * keyValuePairsToMove; i > 0; i--) {
-                final int from = i + targetIndex * nodeDef.getKeyAndValueSize()
-                        + 2;
-                final int to = from + nodeDef.getKeyAndValueSize();
+                final int from = i
+                        + targetIndex * getNodeDef().getKeyAndValueSize() + 2;
+                final int to = from + getNodeDef().getKeyAndValueSize();
                 field[to] = field[from];
             }
         }
@@ -238,21 +222,21 @@ public final class NodeFixedLength<K, V> implements Node<K, V> {
     public void removeAtPosition(final int targetIndex) {
         final int keyValuePairsToMove = getKeyCount() - 1 - targetIndex;
         if (keyValuePairsToMove > 0) {
-            for (int i = 0; i < nodeDef.getKeyAndValueSize()
+            for (int i = 0; i < getNodeDef().getKeyAndValueSize()
                     * keyValuePairsToMove; i++) {
-                final int to = i + targetIndex * nodeDef.getKeyAndValueSize()
-                        + 2;
-                final int from = to + nodeDef.getKeyAndValueSize();
+                final int to = i
+                        + targetIndex * getNodeDef().getKeyAndValueSize() + 2;
+                final int from = to + getNodeDef().getKeyAndValueSize();
                 field[to] = field[from];
             }
         }
 
         // move link
-        for (int i = 0; i < nodeDef.getLinkTypeDescriptor()
+        for (int i = 0; i < getNodeDef().getLinkTypeDescriptor()
                 .getMaxLength(); i++) {
-            final int to = (getKeyCount() - 1) * nodeDef.getKeyAndValueSize()
-                    + 2 + i;
-            final int from = to + nodeDef.getKeyAndValueSize();
+            final int to = (getKeyCount() - 1)
+                    * getNodeDef().getKeyAndValueSize() + 2 + i;
+            final int from = to + getNodeDef().getKeyAndValueSize();
             field[to] = field[from];
         }
 
@@ -265,13 +249,14 @@ public final class NodeFixedLength<K, V> implements Node<K, V> {
         Preconditions.checkArgument(node.isEmpty());
         if (getKeyCount() < 1) {
             throw new JblinktreeException(
-                    "In node " + id + " are no values to move.");
+                    "In node " + getId() + " are no values to move.");
         }
         final int startIndex = getKeyCount() / 2;
         final int length = getKeyCount() - startIndex;
 
-        System.arraycopy(field, 2 + startIndex * nodeDef.getKeyAndValueSize(),
-                node.field, 2, length * nodeDef.getKeyAndValueSize());
+        System.arraycopy(field,
+                2 + startIndex * getNodeDef().getKeyAndValueSize(), node.field,
+                2, length * getNodeDef().getKeyAndValueSize());
 
         node.setKeyCount(length);
         node.setLink(getLink());
@@ -282,71 +267,12 @@ public final class NodeFixedLength<K, V> implements Node<K, V> {
     }
 
     @Override
-    public Wrapper<K> getMaxKey() {
-        if (isEmpty()) {
-            return null;
-        } else {
-            return Wrapper.make(getKey(getKeyCount() - 1),
-                    nodeDef.getKeyTypeDescriptor());
-        }
-    }
-
-    @Override
-    public int getMaxKeyIndex() {
-        if (isEmpty()) {
-            return Node.EMPTY_INT;
-        } else {
-            return getKeyCount() - 1;
-        }
-    }
-
-    /**
-     * Override {@link System#toString()} method.
-     */
-    @Override
-    public String toString() {
-        StringBuilder buff = new StringBuilder();
-        buff.append("Node{id=");
-        buff.append(id);
-        buff.append(", isLeafNode=");
-        buff.append(isLeafNode());
-        buff.append(", field=[");
-        for (int i = 0; i < getKeyCount(); i++) {
-            if (i != 0) {
-                buff.append(", ");
-            }
-
-            buff.append("<");
-            buff.append(getKey(i));
-            buff.append(", ");
-            buff.append(getValue(i));
-            buff.append(">");
-        }
-        buff.append("], flag=");
-        buff.append(getFlag());
-        buff.append(", link=");
-        buff.append(getLink());
-        buff.append("}");
-        return buff.toString();
-    }
-
-    @Override
-    public Integer getId() {
-        return id;
-    }
-
-    @Override
-    public boolean isLeafNode() {
-        return FLAG_LEAF_NODE == getFlag();
-    }
-
-    @Override
     public int hashCode() {
         return Arrays.hashCode(new Object[] {
                 /**
                  * Just comment to split field
                  */
-                id, field });
+                getId(), field });
     }
 
     @SuppressWarnings("unchecked")
@@ -359,7 +285,7 @@ public final class NodeFixedLength<K, V> implements Node<K, V> {
             return false;
         }
         final NodeFixedLength<K, V> n = (NodeFixedLength<K, V>) obj;
-        return equal(id, n.id) && fieldEquals(n.field);
+        return equal(getId(), n.getId()) && fieldEquals(n.field);
     }
 
     /**
@@ -383,20 +309,6 @@ public final class NodeFixedLength<K, V> implements Node<K, V> {
         }
     }
 
-    /**
-     * It's just copy of com.google.common.base.Objects.equals(Object).
-     *
-     * @param a
-     *            optional object
-     * @param b
-     *            optional object
-     * @return return <code>true</code> when object are equals otherwise return
-     *         <code>false</code>
-     */
-    private boolean equal(final Object a, final Object b) {
-        return a == b || a != null && a.equals(b);
-    }
-
     @Override
     public byte[] getFieldBytes() {
         return field;
@@ -404,36 +316,28 @@ public final class NodeFixedLength<K, V> implements Node<K, V> {
 
     @Override
     public K getKey(final int position) {
-        return nodeDef.getKeyTypeDescriptor().load(field,
-                nodeDef.getKeyPosition(position) + 1);
+        return getNodeDef().getKeyTypeDescriptor().load(field,
+                getNodeDef().getKeyPosition(position) + 1);
     }
 
     @Override
     public V getValue(final int position) {
-        return nodeDef.getValueTypeDescriptor().load(field,
-                nodeDef.getValuePosition(position) + 1);
+        return getNodeDef().getValueTypeDescriptor().load(field,
+                getNodeDef().getValuePosition(position) + 1);
     }
 
     // FIXME remove +1 correction, it's fault
 
     @Override
     public void setKey(final int position, final Wrapper<K> value) {
-        nodeDef.getKeyTypeDescriptor().save(field,
-                nodeDef.getKeyPosition(position) + 1, value);
+        getNodeDef().getKeyTypeDescriptor().save(field,
+                getNodeDef().getKeyPosition(position) + 1, value);
     }
 
     @Override
     public void setValue(final int position, final V value) {
-        nodeDef.getValueTypeDescriptor().save(field,
-                nodeDef.getValuePosition(position) + 1, value);
-    }
-
-    /**
-     * @return the nodeDef
-     */
-    @Override
-    public JbNodeDef<K, V> getNodeDef() {
-        return nodeDef;
+        getNodeDef().getValueTypeDescriptor().save(field,
+                getNodeDef().getValuePosition(position) + 1, value);
     }
 
     @Override
@@ -448,8 +352,8 @@ public final class NodeFixedLength<K, V> implements Node<K, V> {
 
     @Override
     public int compareKey(final int position, final Wrapper<K> key) {
-        return nodeDef.getKeyTypeDescriptor().cmp(field,
-                nodeDef.getKeyPosition(position) + 1, key);
+        return getNodeDef().getKeyTypeDescriptor().cmp(field,
+                getNodeDef().getKeyPosition(position) + 1, key);
     }
 
 }
