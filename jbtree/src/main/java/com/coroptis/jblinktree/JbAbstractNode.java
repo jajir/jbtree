@@ -67,6 +67,30 @@ public abstract class JbAbstractNode<K, V> implements Node<K, V> {
         return nodeDef;
     }
 
+    /**
+     * Compare field of this object with given one.
+     *
+     * @param fieldA
+     *            required compared field
+     * @param fieldB
+     *            required compared field
+     * @return <code>true</code> when content of fields is same otherwise return
+     *         <code>false</code>
+     */
+    protected final boolean fieldEquals(final byte[] fieldA,
+            final byte[] fieldB) {
+        if (fieldB.length == fieldA.length) {
+            for (int i = 0; i < fieldB.length; i++) {
+                if (fieldB[i] != fieldA[i]) {
+                    return false;
+                }
+            }
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     @Override
     public final Wrapper<K> getMaxKey() {
         if (isEmpty()) {
@@ -75,6 +99,30 @@ public abstract class JbAbstractNode<K, V> implements Node<K, V> {
             return Wrapper.make(getKey(getKeyCount() - 1),
                     getNodeDef().getKeyTypeDescriptor());
         }
+    }
+
+    @Override
+    public final K getKey(final int position) {
+        return getNodeDef().getKeyTypeDescriptor().load(getFieldBytes(),
+                getNodeDef().getKeyPosition(position));
+    }
+
+    @Override
+    public final V getValue(final int position) {
+        return getNodeDef().getValueTypeDescriptor().load(getFieldBytes(),
+                getNodeDef().getValuePosition(position));
+    }
+
+    @Override
+    public final void setKey(final int position, final Wrapper<K> value) {
+        getNodeDef().getKeyTypeDescriptor().save(getFieldBytes(),
+                getNodeDef().getKeyPosition(position), value);
+    }
+
+    @Override
+    public final void setValue(final int position, final V value) {
+        getNodeDef().getValueTypeDescriptor().save(getFieldBytes(),
+                getNodeDef().getValuePosition(position), value);
     }
 
     /**
@@ -113,6 +161,22 @@ public abstract class JbAbstractNode<K, V> implements Node<K, V> {
     @Override
     public final boolean isLeafNode() {
         return FLAG_LEAF_NODE == getFlag();
+    }
+
+    @Override
+    public final byte getFlag() {
+        return getFieldBytes()[FLAG_BYTE_POSITION];
+    }
+
+    @Override
+    public final void setFlag(final byte flag) {
+        getFieldBytes()[FLAG_BYTE_POSITION] = flag;
+    }
+
+    @Override
+    public final int compareKey(final int position, final Wrapper<K> key) {
+        return getNodeDef().getKeyTypeDescriptor().cmp(getFieldBytes(),
+                getNodeDef().getKeyPosition(position), key);
     }
 
     /**

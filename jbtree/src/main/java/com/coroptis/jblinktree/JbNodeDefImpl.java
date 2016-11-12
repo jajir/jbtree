@@ -212,7 +212,7 @@ public final class JbNodeDefImpl<K, V> implements JbNodeDef<K, V> {
         public void init(final JbNodeDefImpl<K, V> in) {
             for (int i = 0; i < in.getL() + 1; i++) {
                 in.positionOfValue[i] = JbNodeDef.FLAGS_LENGTH
-                        + i * in.getKeyAndValueSize();
+                        + i * in.getKeyAndValueSize() + 1;
                 in.positionOfKey[i] = in.positionOfValue[i]
                         + in.getValueTypeDescriptor().getMaxLength();
             }

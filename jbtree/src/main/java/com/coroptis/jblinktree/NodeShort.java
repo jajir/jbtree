@@ -193,8 +193,8 @@ public final class NodeShort<K, V> extends JbAbstractNode<K, V> {
     @Override
     public void insertAtPosition(final Wrapper<K> key, final V value,
             final int targetIndex) {
-        byte[] tmp = new byte[getNodeDef()
-                .getFieldActualLength(getKeyCount() + 1)];
+        byte[] tmp =
+                new byte[getNodeDef().getFieldActualLength(getKeyCount() + 1)];
         copyFlagAndLink(field, tmp);
         if (targetIndex > 0) {
             copy(field, 0, tmp, 0, targetIndex);
@@ -211,8 +211,8 @@ public final class NodeShort<K, V> extends JbAbstractNode<K, V> {
 
     @Override
     public void removeAtPosition(final int position) {
-        byte[] tmp = new byte[getNodeDef()
-                .getFieldActualLength(getKeyCount() - 1)];
+        byte[] tmp =
+                new byte[getNodeDef().getFieldActualLength(getKeyCount() - 1)];
         copyFlagAndLink(field, tmp);
         if (position > 0) {
             copy(field, 0, tmp, 0, position);
@@ -310,73 +310,12 @@ public final class NodeShort<K, V> extends JbAbstractNode<K, V> {
             return false;
         }
         final NodeShort<K, V> n = (NodeShort<K, V>) obj;
-        return equal(getId(), n.getId()) && fieldEquals(n.field);
-    }
-
-    /**
-     * Compare field of this object with given one.
-     *
-     * @param nField
-     *            required compared field
-     * @return <code>true</code> when content of fields is same otherwise return
-     *         <code>false</code>
-     */
-    private boolean fieldEquals(final byte[] nField) {
-        if (field.length == nField.length) {
-            for (int i = 0; i < field.length; i++) {
-                if (field[i] != nField[i]) {
-                    return false;
-                }
-            }
-            return true;
-        } else {
-            return false;
-        }
+        return equal(getId(), n.getId()) && fieldEquals(n.field, field);
     }
 
     @Override
     public byte[] getFieldBytes() {
         return field;
-    }
-
-    @Override
-    public K getKey(final int position) {
-        return getNodeDef().getKeyTypeDescriptor().load(field,
-                getNodeDef().getKeyPosition(position));
-    }
-
-    @Override
-    public V getValue(final int position) {
-        return getNodeDef().getValueTypeDescriptor().load(field,
-                getNodeDef().getValuePosition(position));
-    }
-
-    @Override
-    public void setKey(final int position, final Wrapper<K> value) {
-        getNodeDef().getKeyTypeDescriptor().save(field,
-                getNodeDef().getKeyPosition(position), value);
-    }
-
-    @Override
-    public void setValue(final int position, final V value) {
-        getNodeDef().getValueTypeDescriptor().save(field,
-                getNodeDef().getValuePosition(position), value);
-    }
-
-    @Override
-    public byte getFlag() {
-        return field[FLAG_BYTE_POSITION];
-    }
-
-    @Override
-    public void setFlag(final byte flag) {
-        this.field[FLAG_BYTE_POSITION] = flag;
-    }
-
-    @Override
-    public int compareKey(final int position, final Wrapper<K> key) {
-        return getNodeDef().getKeyTypeDescriptor().cmp(field,
-                getNodeDef().getKeyPosition(position), key);
     }
 
 }

@@ -37,6 +37,7 @@ public class NodeShortTest extends AbstractNodeTest {
 
     @Rule
     public AbstractNodeRule nr = new NodeRuleShort(2);
+    //FIXME replace nr implementation with methods
 
     @Override
     protected Node<Integer, Integer> createNode() {

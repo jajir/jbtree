@@ -196,8 +196,8 @@ public final class NodeFixedLength<K, V> extends JbAbstractNode<K, V> {
         // move link
         for (int i = 0; i < getNodeDef().getLinkTypeDescriptor()
                 .getMaxLength(); i++) {
-            final int from = getKeyCount() * getNodeDef().getKeyAndValueSize()
-                    + 2 + i;
+            final int from =
+                    getKeyCount() * getNodeDef().getKeyAndValueSize() + 2 + i;
             final int to = from + getNodeDef().getKeyAndValueSize();
             field[to] = field[from];
         }
@@ -206,8 +206,8 @@ public final class NodeFixedLength<K, V> extends JbAbstractNode<K, V> {
         if (keyValuePairsToMove > 0) {
             for (int i = getNodeDef().getKeyAndValueSize()
                     * keyValuePairsToMove; i > 0; i--) {
-                final int from = i
-                        + targetIndex * getNodeDef().getKeyAndValueSize() + 2;
+                final int from =
+                        i + targetIndex * getNodeDef().getKeyAndValueSize() + 2;
                 final int to = from + getNodeDef().getKeyAndValueSize();
                 field[to] = field[from];
             }
@@ -224,8 +224,8 @@ public final class NodeFixedLength<K, V> extends JbAbstractNode<K, V> {
         if (keyValuePairsToMove > 0) {
             for (int i = 0; i < getNodeDef().getKeyAndValueSize()
                     * keyValuePairsToMove; i++) {
-                final int to = i
-                        + targetIndex * getNodeDef().getKeyAndValueSize() + 2;
+                final int to =
+                        i + targetIndex * getNodeDef().getKeyAndValueSize() + 2;
                 final int from = to + getNodeDef().getKeyAndValueSize();
                 field[to] = field[from];
             }
@@ -234,8 +234,9 @@ public final class NodeFixedLength<K, V> extends JbAbstractNode<K, V> {
         // move link
         for (int i = 0; i < getNodeDef().getLinkTypeDescriptor()
                 .getMaxLength(); i++) {
-            final int to = (getKeyCount() - 1)
-                    * getNodeDef().getKeyAndValueSize() + 2 + i;
+            final int to =
+                    (getKeyCount() - 1) * getNodeDef().getKeyAndValueSize() + 2
+                            + i;
             final int from = to + getNodeDef().getKeyAndValueSize();
             field[to] = field[from];
         }
@@ -285,75 +286,12 @@ public final class NodeFixedLength<K, V> extends JbAbstractNode<K, V> {
             return false;
         }
         final NodeFixedLength<K, V> n = (NodeFixedLength<K, V>) obj;
-        return equal(getId(), n.getId()) && fieldEquals(n.field);
-    }
-
-    /**
-     * Compare field of this object with given one.
-     *
-     * @param nField
-     *            required compared field
-     * @return <code>true</code> when content of fields is same otherwise return
-     *         <code>false</code>
-     */
-    private boolean fieldEquals(final byte[] nField) {
-        if (field.length == nField.length) {
-            for (int i = 0; i < field.length; i++) {
-                if (field[i] != nField[i]) {
-                    return false;
-                }
-            }
-            return true;
-        } else {
-            return false;
-        }
+        return equal(getId(), n.getId()) && fieldEquals(n.field, field);
     }
 
     @Override
     public byte[] getFieldBytes() {
         return field;
-    }
-
-    @Override
-    public K getKey(final int position) {
-        return getNodeDef().getKeyTypeDescriptor().load(field,
-                getNodeDef().getKeyPosition(position) + 1);
-    }
-
-    @Override
-    public V getValue(final int position) {
-        return getNodeDef().getValueTypeDescriptor().load(field,
-                getNodeDef().getValuePosition(position) + 1);
-    }
-
-    // FIXME remove +1 correction, it's fault
-
-    @Override
-    public void setKey(final int position, final Wrapper<K> value) {
-        getNodeDef().getKeyTypeDescriptor().save(field,
-                getNodeDef().getKeyPosition(position) + 1, value);
-    }
-
-    @Override
-    public void setValue(final int position, final V value) {
-        getNodeDef().getValueTypeDescriptor().save(field,
-                getNodeDef().getValuePosition(position) + 1, value);
-    }
-
-    @Override
-    public byte getFlag() {
-        return field[FLAG_BYTE_POSITION];
-    }
-
-    @Override
-    public void setFlag(final byte flag) {
-        this.field[FLAG_BYTE_POSITION] = flag;
-    }
-
-    @Override
-    public int compareKey(final int position, final Wrapper<K> key) {
-        return getNodeDef().getKeyTypeDescriptor().cmp(field,
-                getNodeDef().getKeyPosition(position) + 1, key);
     }
 
 }

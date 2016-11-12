@@ -28,11 +28,11 @@ import com.coroptis.jblinktree.type.TypeDescriptorInteger;
 
 public abstract class AbstractNodeRule implements TestRule {
 
-    private final Integer l;
+    protected final Integer l;
 
-    private TypeDescriptorInteger tdi;
+    protected TypeDescriptorInteger tdi;
 
-    private JbTreeData<Integer, Integer> treeData;
+    protected JbTreeData<Integer, Integer> treeData;
 
     public AbstractNodeRule(final Integer l) {
         this.l = l;
@@ -57,17 +57,9 @@ public abstract class AbstractNodeRule implements TestRule {
         };
     }
 
-    private void setup() {
-        tdi = new TypeDescriptorInteger();
-        // FIXME initialization is valit just for short node
-        final JbNodeDefImpl.Initializator init = new JbNodeDefImpl.InitializatorShort();
-        final JbNodeDef<Integer, Integer> leafNodeDescriptor = new JbNodeDefImpl<Integer, Integer>(
-                l, tdi, tdi, tdi, init);
-        final JbNodeDef<Integer, Integer> nonLeafNodeDescriptor = new JbNodeDefImpl<Integer, Integer>(
-                l, tdi, tdi, tdi, init);
-        treeData = new JbTreeDataImpl<Integer, Integer>(0, l,
-                leafNodeDescriptor, nonLeafNodeDescriptor);
-    }
+    protected abstract void setup();
+
+    protected abstract JbNodeDef<Integer, Integer> getNodeDef(Integer ll);
 
     private void tearDown() {
         tdi = null;
@@ -78,13 +70,7 @@ public abstract class AbstractNodeRule implements TestRule {
         return tdi;
     }
 
-    private byte[] convert(final Integer[] fieldInt) {
-        byte fieldByte[] = new byte[fieldInt.length * 4 + 1];
-        for (int i = 0; i < fieldInt.length; i++) {
-            tdi.save(fieldByte, i * 4 + 1, fieldInt[i]);
-        }
-        return fieldByte;
-    }
+    protected abstract byte[] convert(final Integer[] fieldInt);
 
     /**
      * Construct node and fill byte field.
@@ -103,12 +89,7 @@ public abstract class AbstractNodeRule implements TestRule {
 
     public Node<Integer, Integer> makeNodeFromIntegers(final Integer ll,
             final Integer idNode, final Integer fieldInt[]) {
-
-        final JbNodeDefImpl.Initializator init = new JbNodeDefImpl.InitializatorShort();
-        JbNodeDef<Integer, Integer> td = new JbNodeDefImpl<Integer, Integer>(ll,
-                tdi, tdi, tdi, init);
-        Node<Integer, Integer> n = makeNode(idNode, convert(fieldInt), td);
-        return n;
+        return makeNode(idNode, convert(fieldInt), getNodeDef(ll));
     }
 
     public JbTreeData<Integer, Integer> getTreeData() {

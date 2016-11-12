@@ -38,6 +38,7 @@ public class NodeFixedLengthTest extends AbstractNodeTest {
 
     @Rule
     public AbstractNodeRule nr = new NodeRuleFixedLength(2);
+    
 
     @Override
     protected Node<Integer, Integer> createNode() {
