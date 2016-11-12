@@ -366,14 +366,16 @@ public final class TreeBuilder {
         final TypeDescriptor<V> valueTypeDesc =
                 (TypeDescriptor<V>) valueTypeDescriptor;
 
-        final JbNodeDefImpl.Initializator init =
-                new JbNodeDefImpl.InitializatorShort();
+        final JbNodeDefImpl.Initializator<K, V> initLeaf =
+                new JbNodeDefImpl.InitializatorShort<K, V>();
+        final JbNodeDefImpl.Initializator<K, Integer> initNonLeaf =
+                new JbNodeDefImpl.InitializatorShort<K, Integer>();
         final JbNodeDef<K, V> leafNodeDescriptor =
                 new JbNodeDefImpl<K, V>(l,
-                keyTypeDesc, valueTypeDesc, linkTypeDesc, init);
+                keyTypeDesc, valueTypeDesc, linkTypeDesc, initLeaf);
         final JbNodeDef<K, Integer> nonLeafNodeDescriptor =
                 new JbNodeDefImpl<K, Integer>(
-                l, keyTypeDesc, linkTypeDesc, linkTypeDesc, init);
+                l, keyTypeDesc, linkTypeDesc, linkTypeDesc, initNonLeaf);
         final JbTreeData<K, V> treeData = new JbTreeDataImpl<K, V>(
                 NodeStore.FIRST_NODE_ID, l, leafNodeDescriptor,
                 nonLeafNodeDescriptor);
