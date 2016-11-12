@@ -29,6 +29,8 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.coroptis.jblinktree.JbNodeDef;
+import com.coroptis.jblinktree.JbNodeDefImpl;
 import com.coroptis.jblinktree.JbTreeData;
 import com.coroptis.jblinktree.JbTreeDataImpl;
 import com.coroptis.jblinktree.JblinktreeException;
@@ -88,8 +90,15 @@ public class MetaDataStoreTest {
         TypeDescriptor<String> tdValue = new TypeDescriptorString(9,
                 Charset.forName("ISO-8859-1"));
         TypeDescriptor<Integer> tdLink = new TypeDescriptorInteger();
-        treeData = new JbTreeDataImpl<Integer, String>(0, 2, tdKey, tdValue,
-                tdLink);
+
+        final JbNodeDefImpl.Initializator init = new JbNodeDefImpl.InitializatorShort();
+        final JbNodeDef<Integer, String> leafNodeDescriptor = new JbNodeDefImpl<Integer, String>(
+                5, tdKey, tdValue, tdLink, init);
+        final JbNodeDef<Integer, Integer> nonLeafNodeDescriptor = new JbNodeDefImpl<Integer, Integer>(
+                5, tdKey, tdKey, tdLink, init);
+
+        treeData = new JbTreeDataImpl<Integer, String>(0, 2, leafNodeDescriptor,
+                nonLeafNodeDescriptor);
         treeData.setRootNodeId(8765);
         treeData.setMaxNodeId(31);
         metaDataStore = new MetaDataStoreImpl<Integer, String>(metaFile,

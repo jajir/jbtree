@@ -28,6 +28,8 @@ import org.junit.Rule;
 import org.junit.Test;
 
 import com.coroptis.jblinktree.FileStorageRule;
+import com.coroptis.jblinktree.JbNodeDef;
+import com.coroptis.jblinktree.JbNodeDefImpl;
 import com.coroptis.jblinktree.JbNodeService;
 import com.coroptis.jblinktree.JbNodeServiceImpl;
 import com.coroptis.jblinktree.JbTreeData;
@@ -68,13 +70,21 @@ public class FileStorageWriteTest {
     @Before
     public void setup() {
         nodeService = new JbNodeServiceImpl<Integer, Integer>();
-        JbTreeData<Integer, Integer> treeData =
-                new JbTreeDataImpl<Integer, Integer>(1, 5,
-                        fsRule.getIntDescriptor(), fsRule.getIntDescriptor(),
-                        fsRule.getIntDescriptor());
+
+        final JbNodeDefImpl.Initializator init = new JbNodeDefImpl.InitializatorShort();
+        final JbNodeDef<Integer, Integer> leafNodeDescriptor = new JbNodeDefImpl<Integer, Integer>(
+                5, fsRule.getIntDescriptor(), fsRule.getIntDescriptor(),
+                fsRule.getIntDescriptor(), init);
+        final JbNodeDef<Integer, Integer> nonLeafNodeDescriptor = new JbNodeDefImpl<Integer, Integer>(
+                5, fsRule.getIntDescriptor(), fsRule.getIntDescriptor(),
+                fsRule.getIntDescriptor(), init);
+
+        JbTreeData<Integer, Integer> treeData = new JbTreeDataImpl<Integer, Integer>(
+                1, 5, leafNodeDescriptor, nonLeafNodeDescriptor);
         node = new NodeShort<Integer, Integer>(14, false,
                 treeData.getLeafNodeDescriptor());
-        nodeService.insert(node, Wrapper.make(3, fsRule.getIntDescriptor()), 23);
+        nodeService.insert(node, Wrapper.make(3, fsRule.getIntDescriptor()),
+                23);
     }
 
     @After

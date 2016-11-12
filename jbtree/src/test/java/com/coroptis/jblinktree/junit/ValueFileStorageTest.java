@@ -123,7 +123,8 @@ public class ValueFileStorageTest extends AbstractMockingTest {
         tempDirectory = Files.createTempDir();
         tds = new TypeDescriptorString(20, Charset.forName("ISO-8859-1"));
         tdi = new TypeDescriptorInteger();
-        nodeDef = new JbNodeDefImpl<Integer, String>(3, tdi, tds, tdi);
+        nodeDef = new JbNodeDefImpl<Integer, String>(3, tdi, tds, tdi,
+                new JbNodeDefImpl.InitializatorShort<Integer, String>());
         valueStorage = new ValueFileStorageImpl<Integer, String>(new File(
                 tempDirectory.getAbsolutePath() + File.separator + "value.str"),
                 tds, 3);

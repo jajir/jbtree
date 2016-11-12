@@ -33,6 +33,8 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.coroptis.jblinktree.JbNodeDef;
+import com.coroptis.jblinktree.JbNodeDefImpl;
 import com.coroptis.jblinktree.JbTreeData;
 import com.coroptis.jblinktree.JbTreeDataImpl;
 import com.coroptis.jblinktree.Node;
@@ -141,8 +143,14 @@ public class NodeStringTest {
     public void setUp() throws Exception {
         sd = new TypeDescriptorString(10, Charset.forName("UTF-8"));
         intDescriptor = new TypeDescriptorInteger();
+        final JbNodeDefImpl.Initializator init = new JbNodeDefImpl.InitializatorShort();
+        final JbNodeDef<String, String> leafNodeDescriptor = new JbNodeDefImpl<String, String>(
+                5, sd, sd, intDescriptor, init);
+        final JbNodeDef<String, Integer> nonLeafNodeDescriptor = new JbNodeDefImpl<String, Integer>(
+                5, sd, intDescriptor, intDescriptor, init);
+
         JbTreeData<String, String> td = new JbTreeDataImpl<String, String>(0, 5,
-                sd, sd, intDescriptor);
+                leafNodeDescriptor, nonLeafNodeDescriptor);
         node = new NodeShort<String, String>(0, true,
                 td.getLeafNodeDescriptor());
     }

@@ -42,8 +42,8 @@ import com.google.common.io.Files;
  */
 public class FileStorageRule implements TestRule {
 
-    private final Logger logger =
-            LoggerFactory.getLogger(FileStorageWriteTest.class);
+    private final Logger logger = LoggerFactory
+            .getLogger(FileStorageWriteTest.class);
 
     private final static String FILE_NAME = "test.bin";
 
@@ -75,16 +75,22 @@ public class FileStorageRule implements TestRule {
     }
 
     public JbNodeDef<Integer, Integer> getNodeDef() {
+        final JbNodeDefImpl.Initializator init = new JbNodeDefImpl.InitializatorShort();
         return new JbNodeDefImpl<Integer, Integer>(2, intDescriptor,
-                intDescriptor, intDescriptor);
+                intDescriptor, intDescriptor, init);
     }
 
     private void setup() {
         tempDirectory = Files.createTempDir();
         logger.debug("templ file: " + tempDirectory.getAbsolutePath());
         intDescriptor = new TypeDescriptorInteger();
-        treeData = new JbTreeDataImpl<Integer, Integer>(0, 5, intDescriptor,
-                intDescriptor, intDescriptor);
+        final JbNodeDefImpl.Initializator init = new JbNodeDefImpl.InitializatorShort();
+        final JbNodeDef<Integer, Integer> leafNodeDescriptor = new JbNodeDefImpl<Integer, Integer>(
+                5, intDescriptor, intDescriptor, intDescriptor, init);
+        final JbNodeDef<Integer, Integer> nonLeafNodeDescriptor = new JbNodeDefImpl<Integer, Integer>(
+                5, intDescriptor, intDescriptor, intDescriptor, init);
+        treeData = new JbTreeDataImpl<Integer, Integer>(0, 5,
+                leafNodeDescriptor, nonLeafNodeDescriptor);
         nodeBuilder = new JbNodeBuilderShort<Integer, Integer>(treeData);
         fileStorage = new KeyIntFileStorage<Integer>(getTempFile(),
                 treeData.getNonLeafNodeDescriptor(), nodeBuilder);

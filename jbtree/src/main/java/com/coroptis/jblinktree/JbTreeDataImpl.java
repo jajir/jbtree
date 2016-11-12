@@ -2,7 +2,6 @@ package com.coroptis.jblinktree;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
-import com.coroptis.jblinktree.type.TypeDescriptor;
 import com.google.common.base.Preconditions;
 
 /*
@@ -50,12 +49,12 @@ public final class JbTreeDataImpl<K, V> implements JbTreeData<K, V> {
     /**
      * Leaf node description.
      */
-    private final JbNodeDef<K, V> leafNodeDescriptor;
+    private final JbNodeDef<K, V> leafNodeDef;
 
     /**
      * Non-leaf node definition.
      */
-    private final JbNodeDef<K, Integer> nonLeafNodeDescriptor;
+    private final JbNodeDef<K, Integer> nonLeafNodeDef;
 
     /**
      * Atomic integer for generating new node ids.
@@ -69,27 +68,20 @@ public final class JbTreeDataImpl<K, V> implements JbTreeData<K, V> {
      *            required root node id
      * @param initL
      *            required maximal number of keys in node
-     * @param keyTypeDesc
-     *            required key type description
-     * @param valueTypeDesc
-     *            required value type description
-     * @param linkTypeDesc
-     *            required link type description
+     * @param leafNodeDescriptor
+     *            required leaf node definition
+     * @param nonLeafNodeDescriptor
+     *            required non-leaf node definition
      */
     public JbTreeDataImpl(final Integer startNodeId, final int initL,
-            final TypeDescriptor<K> keyTypeDesc,
-            final TypeDescriptor<V> valueTypeDesc,
-            final TypeDescriptor<Integer> linkTypeDesc) {
+            final JbNodeDef<K, V> leafNodeDescriptor,
+            final JbNodeDef<K, Integer> nonLeafNodeDescriptor) {
         this.nextId = new AtomicInteger(NodeStore.FIRST_NODE_ID);
         this.rootNodeId = Preconditions.checkNotNull(startNodeId);
         this.l = initL;
-        Preconditions.checkNotNull(keyTypeDesc);
-        Preconditions.checkNotNull(valueTypeDesc);
-        Preconditions.checkNotNull(linkTypeDesc);
-        leafNodeDescriptor = new JbNodeDefImpl<K, V>(initL, keyTypeDesc,
-                valueTypeDesc, linkTypeDesc);
-        nonLeafNodeDescriptor = new JbNodeDefImpl<K, Integer>(initL,
-                keyTypeDesc, linkTypeDesc, linkTypeDesc);
+        this.leafNodeDef = Preconditions.checkNotNull(leafNodeDescriptor);
+        this.nonLeafNodeDef = Preconditions
+                .checkNotNull(nonLeafNodeDescriptor);
     }
 
     @Override
@@ -111,7 +103,7 @@ public final class JbTreeDataImpl<K, V> implements JbTreeData<K, V> {
      */
     @Override
     public JbNodeDef<K, V> getLeafNodeDescriptor() {
-        return leafNodeDescriptor;
+        return leafNodeDef;
     }
 
     /**
@@ -119,7 +111,7 @@ public final class JbTreeDataImpl<K, V> implements JbTreeData<K, V> {
      */
     @Override
     public JbNodeDef<K, Integer> getNonLeafNodeDescriptor() {
-        return nonLeafNodeDescriptor;
+        return nonLeafNodeDef;
     }
 
     @Override

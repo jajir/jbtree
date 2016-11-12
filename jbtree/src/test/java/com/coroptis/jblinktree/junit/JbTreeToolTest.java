@@ -26,6 +26,8 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.coroptis.jblinktree.JbNodeDef;
+import com.coroptis.jblinktree.JbNodeDefImpl;
 import com.coroptis.jblinktree.JbTreeData;
 import com.coroptis.jblinktree.JbTreeDataImpl;
 import com.coroptis.jblinktree.JbTreeTool;
@@ -190,8 +192,15 @@ public class JbTreeToolTest extends AbstractMockingTest {
     public void setUp() throws Exception {
         super.setUp();
         TypeDescriptor<Integer> tdInt = new TypeDescriptorInteger();
+
+        final JbNodeDefImpl.Initializator init = new JbNodeDefImpl.InitializatorShort();
+        final JbNodeDef<Integer, Integer> leafNodeDescriptor = new JbNodeDefImpl<Integer, Integer>(
+                5, tdInt, tdInt, tdInt, init);
+        final JbNodeDef<Integer, Integer> nonLeafNodeDescriptor = new JbNodeDefImpl<Integer, Integer>(
+                5, tdInt, tdInt, tdInt, init);
+
         JbTreeData<Integer, Integer> td = new JbTreeDataImpl<Integer, Integer>(
-                0, 3, tdInt, tdInt, tdInt);
+                0, 3, leafNodeDescriptor, nonLeafNodeDescriptor);
         tested = new JbTreeToolImpl<Integer, Integer>(nodeStore, td,
                 nodeBuilder, nodeService);
     }

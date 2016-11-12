@@ -35,6 +35,8 @@ import org.slf4j.LoggerFactory;
 
 import com.coroptis.jblinktree.Executer;
 import com.coroptis.jblinktree.FileStorageRule;
+import com.coroptis.jblinktree.JbNodeDef;
+import com.coroptis.jblinktree.JbNodeDefImpl;
 import com.coroptis.jblinktree.JbNodeService;
 import com.coroptis.jblinktree.JbNodeServiceImpl;
 import com.coroptis.jblinktree.JbTreeDataImpl;
@@ -128,8 +130,18 @@ public class FileStoreConcurrencyTest {
 
     private Node<Integer, Integer> getNode(final Integer nodeId) {
         TypeDescriptorInteger intDescriptor = new TypeDescriptorInteger();
+
+        final JbNodeDefImpl.Initializator init = new JbNodeDefImpl.InitializatorShort();
+        final JbNodeDef<Integer, Integer> leafNodeDescriptor = new JbNodeDefImpl<Integer, Integer>(
+                5, fsRule.getIntDescriptor(), fsRule.getIntDescriptor(),
+                fsRule.getIntDescriptor(), init);
+        final JbNodeDef<Integer, Integer> nonLeafNodeDescriptor = new JbNodeDefImpl<Integer, Integer>(
+                5, fsRule.getIntDescriptor(), fsRule.getIntDescriptor(),
+                fsRule.getIntDescriptor(), init);
+
         JbTreeDataImpl<Integer, Integer> treeData = new JbTreeDataImpl<Integer, Integer>(
-                0, L, intDescriptor, intDescriptor, intDescriptor);
+                0, L, leafNodeDescriptor, nonLeafNodeDescriptor);
+
         final Node<Integer, Integer> node = new NodeShort<Integer, Integer>(
                 nodeId, false, treeData.getLeafNodeDescriptor());
         nodeService.insert(node, Wrapper.make(nodeId, intDescriptor), nodeId);

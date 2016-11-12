@@ -88,11 +88,15 @@ public final class JbNodeDefImpl<K, V> implements JbNodeDef<K, V> {
      *            required value type descriptor
      * @param linkTypedesc
      *            required link type descriptor
+     * @param initializator
+     *            required class instance that initialize positions of keys and
+     *            values
      */
     public JbNodeDefImpl(final int defaultL,
             final TypeDescriptor<K> keyTypeDesc,
             final TypeDescriptor<V> valueTypeDesc,
-            final TypeDescriptor<Integer> linkTypedesc) {
+            final TypeDescriptor<Integer> linkTypedesc,
+            final Initializator<K, V> initializator) {
         this.l = defaultL;
         this.keyTypeDescriptor = Preconditions.checkNotNull(keyTypeDesc);
         this.valueTypeDescriptor = Preconditions.checkNotNull(valueTypeDesc);
@@ -101,12 +105,7 @@ public final class JbNodeDefImpl<K, V> implements JbNodeDef<K, V> {
                 + getValueTypeDescriptor().getMaxLength();
         positionOfValue = new int[getL() + 1];
         positionOfKey = new int[getL() + 1];
-        for (int i = 0; i < getL() + 1; i++) {
-            positionOfValue[i] =
-                    JbNodeDef.FLAGS_LENGTH + i * getKeyAndValueSize();
-            positionOfKey[i] = positionOfValue[i]
-                    + getValueTypeDescriptor().getMaxLength();
-        }
+        initializator.init(this);
     }
 
     @Override
@@ -171,6 +170,79 @@ public final class JbNodeDefImpl<K, V> implements JbNodeDef<K, V> {
         buff.append(getLinkTypeDescriptor());
         buff.append("}");
         return buff.toString();
+    }
+
+    /**
+     * Initialize pre-computed positions of key and values pairs in node.
+     *
+     * @author jajir
+     *
+     * @param <K>
+     *            key type
+     * @param <V>
+     *            value type
+     */
+    public interface Initializator<K, V> {
+
+        /**
+         * Initialize field.
+         *
+         * @param in
+         *            required node definition implementation that will be
+         *            initialized
+         */
+        void init(JbNodeDefImpl<K, V> in);
+
+    }
+
+    /**
+     * Implementation for field with fixed byte length.
+     *
+     * @author jajir
+     *
+     * @param <K>
+     *            key type
+     * @param <V>
+     *            value type
+     */
+    public static final class InitializatorFixedLength<K, V>
+            implements Initializator<K, V> {
+
+        @Override
+        public void init(final JbNodeDefImpl<K, V> in) {
+            for (int i = 0; i < in.getL() + 1; i++) {
+                in.positionOfValue[i] = JbNodeDef.FLAGS_LENGTH
+                        + i * in.getKeyAndValueSize();
+                in.positionOfKey[i] = in.positionOfValue[i]
+                        + in.getValueTypeDescriptor().getMaxLength();
+            }
+        }
+
+    }
+
+    /**
+     * Implementation for variable byte field length.
+     *
+     * @author jajir
+     *
+     * @param <K>
+     *            key type
+     * @param <V>
+     *            value type
+     */
+    public static final class InitializatorShort<K, V>
+            implements Initializator<K, V> {
+
+        @Override
+        public void init(final JbNodeDefImpl<K, V> in) {
+            for (int i = 0; i < in.getL() + 1; i++) {
+                in.positionOfValue[i] = JbNodeDef.FLAGS_LENGTH
+                        + i * in.getKeyAndValueSize();
+                in.positionOfKey[i] = in.positionOfValue[i]
+                        + in.getValueTypeDescriptor().getMaxLength();
+            }
+        }
+
     }
 
 }

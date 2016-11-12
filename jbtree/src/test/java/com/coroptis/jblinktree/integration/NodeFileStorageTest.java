@@ -31,6 +31,8 @@ import org.junit.Test;
 
 import com.coroptis.jblinktree.JbNodeBuilder;
 import com.coroptis.jblinktree.JbNodeBuilderShort;
+import com.coroptis.jblinktree.JbNodeDef;
+import com.coroptis.jblinktree.JbNodeDefImpl;
 import com.coroptis.jblinktree.JbNodeService;
 import com.coroptis.jblinktree.JbNodeServiceImpl;
 import com.coroptis.jblinktree.JbTreeData;
@@ -86,8 +88,16 @@ public class NodeFileStorageTest {
         TypeDescriptor<String> tdValue = new TypeDescriptorString(9,
                 Charset.forName("ISO-8859-1"));
         TypeDescriptor<Integer> tdLink = new TypeDescriptorInteger();
+
+        final JbNodeDefImpl.Initializator init = new JbNodeDefImpl.InitializatorShort();
+        final JbNodeDef<String, String> leafNodeDescriptor = new JbNodeDefImpl<String, String>(
+                5, tdKey, tdValue, tdLink, init);
+        final JbNodeDef<String, Integer> nonLeafNodeDescriptor = new JbNodeDefImpl<String, Integer>(
+                5, tdKey, tdLink, tdLink, init);
+
         JbTreeData<String, String> treeData = new JbTreeDataImpl<String, String>(
-                0, 2, tdKey, tdValue, tdLink);
+                0, 2, leafNodeDescriptor, nonLeafNodeDescriptor);
+
         nodeBuilder = new JbNodeBuilderShort<String, String>(treeData);
         NodeConverter<String, String> initNodeConverter = new NodeConverterImpl<String, String>(
                 treeData, nodeBuilder);

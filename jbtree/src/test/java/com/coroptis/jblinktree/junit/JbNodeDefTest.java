@@ -70,7 +70,7 @@ public class JbNodeDefTest {
     public void test_getKeyAndValueSize() throws Exception {
         assertEquals(36, nd.getKeyAndValueSize());
     }
-    
+
     @Test
     public void test_toString() throws Exception {
         assertTrue(nd.toString().contains("JbNodeDef"));
@@ -83,8 +83,11 @@ public class JbNodeDefTest {
         TypeDescriptor<String> valueTypeDescriptor = new TypeDescriptorString(
                 11, Charset.forName("ISO-8859-1"));
         TypeDescriptor<Integer> linkTypeDescriptor = new TypeDescriptorInteger();
+
+        final JbNodeDefImpl.Initializator init = new JbNodeDefImpl.InitializatorShort();
+
         nd = new JbNodeDefImpl<String, String>(5, keyTypeDescriptor,
-                valueTypeDescriptor, linkTypeDescriptor);
+                valueTypeDescriptor, linkTypeDescriptor, init);
     }
 
     @After

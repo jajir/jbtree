@@ -1,5 +1,7 @@
 package com.coroptis.jblinktree.junit;
 
+import static org.junit.Assert.assertEquals;
+
 /*
  * #%L
  * jblinktree
@@ -22,16 +24,16 @@ package com.coroptis.jblinktree.junit;
 
 import java.io.File;
 
-import org.easymock.EasyMock;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
-import static org.junit.Assert.assertEquals;
 
 import com.coroptis.jblinktree.FileStorageRule;
 import com.coroptis.jblinktree.JbNodeBuilder;
 import com.coroptis.jblinktree.JbNodeBuilderShort;
+import com.coroptis.jblinktree.JbNodeDef;
+import com.coroptis.jblinktree.JbNodeDefImpl;
 import com.coroptis.jblinktree.JbTreeData;
 import com.coroptis.jblinktree.JbTreeDataImpl;
 import com.coroptis.jblinktree.Node;
@@ -67,9 +69,16 @@ public class KeyIntFileStorageTest {
     public void setup() throws Exception {
         tempDirectory = Files.createTempDir();
 
+        final JbNodeDefImpl.Initializator init = new JbNodeDefImpl.InitializatorShort();
+        final JbNodeDef<Integer, Integer> leafNodeDescriptor = new JbNodeDefImpl<Integer, Integer>(
+                5, fsRule.getIntDescriptor(), fsRule.getIntDescriptor(),
+                fsRule.getIntDescriptor(), init);
+        final JbNodeDef<Integer, Integer> nonLeafNodeDescriptor = new JbNodeDefImpl<Integer, Integer>(
+                5, fsRule.getIntDescriptor(), fsRule.getIntDescriptor(),
+                fsRule.getIntDescriptor(), init);
+
         JbTreeData<Integer, Integer> treeData = new JbTreeDataImpl<Integer, Integer>(
-                1, 5, fsRule.getIntDescriptor(), fsRule.getIntDescriptor(),
-                fsRule.getIntDescriptor());
+                1, 5, leafNodeDescriptor, nonLeafNodeDescriptor);
 
         node = new NodeShort<Integer, Integer>(14, false,
                 treeData.getLeafNodeDescriptor());

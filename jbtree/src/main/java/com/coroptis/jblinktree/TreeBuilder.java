@@ -279,8 +279,7 @@ public final class TreeBuilder {
                     treeData, nodeBuilder);
         } else {
             final NodeConverter<K, V> nodeConverter =
-                    new NodeConverterImpl<K, V>(
-                    treeData, nodeBuilder);
+                    new NodeConverterImpl<K, V>(treeData, nodeBuilder);
             nodeFileStorage = new NodeFileStorageImpl<K, V>(treeData,
                     nodeBuilder, nodeStoreInFileBuilder.getFileName(),
                     nodeConverter);
@@ -290,8 +289,7 @@ public final class TreeBuilder {
                 treeData, nodeStoreInFileBuilder.getFileName(),
                 nodeFileStorage);
         final NodeFileStorage<K, V> fileStorage =
-                new NodeFileStorageLockDecorator<K, V>(
-                metaDataValidator);
+                new NodeFileStorageLockDecorator<K, V>(metaDataValidator);
         return fileStorage;
     }
 
@@ -361,12 +359,25 @@ public final class TreeBuilder {
                 "key TypeDescriptor is null, use .setKeyType in builder");
         Preconditions.checkNotNull(valueTypeDescriptor,
                 "value TypeDescriptor is null, use .setValueType in builder");
-        final TypeDescriptor<Integer> linkTypeDescriptor =
+        final TypeDescriptor<Integer> linkTypeDesc =
                 new TypeDescriptorInteger();
+        final TypeDescriptor<K> keyTypeDesc =
+                (TypeDescriptor<K>) keyTypeDescriptor;
+        final TypeDescriptor<V> valueTypeDesc =
+                (TypeDescriptor<V>) valueTypeDescriptor;
+
+        final JbNodeDefImpl.Initializator init =
+                new JbNodeDefImpl.InitializatorShort();
+        final JbNodeDef<K, V> leafNodeDescriptor =
+                new JbNodeDefImpl<K, V>(l,
+                keyTypeDesc, valueTypeDesc, linkTypeDesc, init);
+        final JbNodeDef<K, Integer> nonLeafNodeDescriptor =
+                new JbNodeDefImpl<K, Integer>(
+                l, keyTypeDesc, linkTypeDesc, linkTypeDesc, init);
         final JbTreeData<K, V> treeData = new JbTreeDataImpl<K, V>(
-                NodeStore.FIRST_NODE_ID, l,
-                (TypeDescriptor<K>) keyTypeDescriptor,
-                (TypeDescriptor<V>) valueTypeDescriptor, linkTypeDescriptor);
+                NodeStore.FIRST_NODE_ID, l, leafNodeDescriptor,
+                nonLeafNodeDescriptor);
+        // TODO move initialization of tree data to separate method
 
         final JbNodeBuilder<K, V> nodeBuilder = new JbNodeBuilderShort<K, V>(
                 treeData);
@@ -380,7 +391,8 @@ public final class TreeBuilder {
             nodeStore = makeNodeStoreInFile(treeData, nodeBuilder,
                     jbNodeLockProvider);
         }
-        final JbNodeService<K, V> jbNodeService = new JbNodeServiceImpl<K, V>();
+        final JbNodeService<K, V> jbNodeService =
+                new JbNodeServiceImpl<K, V>();
         final JbTreeTool<K, V> jbTreeTool = new JbTreeToolImpl<K, V>(nodeStore,
                 treeData, nodeBuilder, jbNodeService);
         final JbTreeTraversingService<K, V> treeLockingTool =
@@ -404,8 +416,9 @@ public final class TreeBuilder {
         if (treeWrapperFileName == null) {
             return new TreeMapImpl<K, V>(tree, treeData);
         } else {
-            return new TreeMapImpl<K, V>(new JbTreeWrapper<K, V>(tree, treeData,
-                    nodeStore, treeWrapperFileName, jbNodeService), treeData);
+            return new TreeMapImpl<K, V>(
+                    new JbTreeWrapper<K, V>(tree, treeData, nodeStore,
+                            treeWrapperFileName, jbNodeService), treeData);
 
         }
     }
