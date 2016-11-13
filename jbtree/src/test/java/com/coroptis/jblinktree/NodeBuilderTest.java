@@ -40,7 +40,7 @@ public class NodeBuilderTest {
                 .setKeyTypeDescriptor(new TypeDescriptorInteger())
                 .setValueTypeDescriptor(new TypeDescriptorInteger())
                 .setImplementation(NodeImpl.variableLength).setNodeId(12)
-                .setLinkId(85).addKeyValuePair(1, 10).addKeyValuePair(2, 20)
+                .setLink(85).addKeyValuePair(1, 10).addKeyValuePair(2, 20)
                 .addKeyValuePair(3, 30).build();
 
         logger.debug(n.toString());
@@ -55,7 +55,7 @@ public class NodeBuilderTest {
                 .setKeyTypeDescriptor(new TypeDescriptorInteger())
                 .setValueTypeDescriptor(new TypeDescriptorInteger())
                 .setImplementation(NodeImpl.fixedLength).setNodeId(12)
-                .setLinkId(85).addKeyValuePair(1, 10).addKeyValuePair(2, 20)
+                .setLink(85).addKeyValuePair(1, 10).addKeyValuePair(2, 20)
                 .addKeyValuePair(3, 30).build();
 
         logger.debug(n.toString());

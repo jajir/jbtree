@@ -30,10 +30,11 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.coroptis.jblinktree.AbstractNodeRule;
 import com.coroptis.jblinktree.JblinktreeException;
 import com.coroptis.jblinktree.Node;
+import com.coroptis.jblinktree.NodeBuilder;
 import com.coroptis.jblinktree.NodeUtilRule;
+import com.coroptis.jblinktree.type.TypeDescriptorInteger;
 import com.coroptis.jblinktree.type.Wrapper;
 
 /**
@@ -46,15 +47,18 @@ public abstract class AbstractNodeTest {
 
     private Logger logger = LoggerFactory.getLogger(AbstractNodeTest.class);
 
+    private TypeDescriptorInteger tdi;
+
     @Rule
     public NodeUtilRule nodeUtil = new NodeUtilRule();
 
-    private Node<Integer, Integer> node;
+    abstract protected NodeBuilder getNb();
 
     @Test
     public void test_makeNode() throws Exception {
-        Node<Integer, Integer> n = getNr().makeNodeFromIntegers(3, 45,
-                new Integer[] { 0, 1, 1, 3, 98 });
+        Node<Integer, Integer> n =
+                getNb().setNodeId(45).setLink(98).addKeyValuePair(1, 0)
+                        .addKeyValuePair(3, 1).setLeafNode(false).build();
 
         nodeUtil.verifyNode(n, new Integer[][] { { 1, 0 }, { 3, 1 } }, false,
                 98, 45);
@@ -63,35 +67,42 @@ public abstract class AbstractNodeTest {
 
     @Test
     public void test_compareKey() throws Exception {
-        Node<Integer, Integer> n = getNr().makeNodeFromIntegers(3, 45,
-                new Integer[] { 0, 1, 1, 3, 98 });
+        Node<Integer, Integer> n =
+                getNb().setNodeId(45).setLink(98).setLeafNode(false)
+                        .addKeyValuePair(1, 0).addKeyValuePair(3, 1).build();
 
-        assertEquals(0, n.compareKey(1, Wrapper.make(3, nodeUtil.getTdi())));
+        assertEquals(0, n.compareKey(1, Wrapper.make(3, tdi)));
     }
 
     @Test
-    public void test_toString() throws Exception {
-        logger.debug(node.toString());
+    public void test_toString_empty_node() throws Exception {
+        Node<Integer, Integer> n1 = getNb().build();
+
+        logger.debug(n1.toString());
 
         assertEquals("Node{id=0, isLeafNode=true, field=[], flag=-77, link=-1}",
-                node.toString());
+                n1.toString());
+    }
 
-        Node<Integer, Integer> n = getNr().makeNodeFromIntegers(3, 0,
-                new Integer[] { 0, 1, 1, 3, -40, 4, 98 });
+    @Test
+    public void test_toString_filed_node() throws Exception {
+        Node<Integer, Integer> n2 =
+                getNb().setLink(98).setLeafNode(false).addKeyValuePair(1, 0)
+                        .addKeyValuePair(3, 1).addKeyValuePair(4, -40).build();
 
-        logger.debug(n.toString());
+        logger.debug(n2.toString());
         assertEquals(
-                "Node{id=0, isLeafNode=false, field=[<1, 0>, <3, 1>, <4, -40>], flag=0, link=98}",
-                n.toString());
-
+                "Node{id=0, isLeafNode=false, field=[<1, 0>, <3, 1>, <4, -40>], flag=-3, link=98}",
+                n2.toString());
     }
 
     @Test
     public void test_emptyNode() throws Exception {
-        logger.debug(node.toString());
+        Node<Integer, Integer> n = getNb().build();
+        logger.debug(n.toString());
 
-        nodeUtil.verifyNode(node, new Integer[][] {}, true, -1, 0);
-        assertEquals(null, node.getMaxKey());
+        nodeUtil.verifyNode(n, new Integer[][] {}, true, -1, 0);
+        assertEquals(null, n.getMaxKey());
     }
 
     /**
@@ -102,18 +113,22 @@ public abstract class AbstractNodeTest {
      */
     @Test(expected = ArrayIndexOutOfBoundsException.class)
     public void test_insertAtPosition_nodeIsFull() throws Exception {
-        Node<Integer, Integer> n = getNr().makeNodeFromIntegers(2, 0,
-                new Integer[] { 0, 1, 1, 3, 98 });
+        Node<Integer, Integer> n =
+                getNb().setL(2).setNodeId(0).setLeafNode(false).setLink(98)
+                        .addKeyValuePair(1, 0).addKeyValuePair(3, 1).build();
+
         logger.debug(n.toString());
-        n.insertAtPosition(Wrapper.make(4, getNr().getTdi()), -40, 2);
+        n.insertAtPosition(Wrapper.make(4, tdi), -40, 2);
     }
 
     @Test
     public void test_insertAtPosition_highest() throws Exception {
-        Node<Integer, Integer> n = getNr().makeNodeFromIntegers(3, 45,
-                new Integer[] { 0, 1, 1, 3, 98 });
+        Node<Integer, Integer> n =
+                getNb().setNodeId(45).setLeafNode(false).setLink(98)
+                        .addKeyValuePair(1, 0).addKeyValuePair(3, 1).build();
+
         logger.debug(n.toString());
-        n.insertAtPosition(Wrapper.make(4, getNr().getTdi()), -40, 2);
+        n.insertAtPosition(Wrapper.make(4, tdi), -40, 2);
 
         nodeUtil.verifyNode(n,
                 new Integer[][] { { 1, 0 }, { 3, 1 }, { 4, -40 } }, false, 98,
@@ -122,10 +137,12 @@ public abstract class AbstractNodeTest {
 
     @Test
     public void test_insertAtPosition_lowest() throws Exception {
-        Node<Integer, Integer> n = getNr().makeNodeFromIntegers(3, 12,
-                new Integer[] { 0, 1, 1, 3, 98 });
+        Node<Integer, Integer> n =
+                getNb().setNodeId(12).setLeafNode(false).setLink(98)
+                        .addKeyValuePair(1, 0).addKeyValuePair(3, 1).build();
+
         logger.debug(n.toString());
-        n.insertAtPosition(Wrapper.make(0, getNr().getTdi()), -10, 0);
+        n.insertAtPosition(Wrapper.make(0, tdi), -10, 0);
 
         nodeUtil.verifyNode(n,
                 new Integer[][] { { 0, -10 }, { 1, 0 }, { 3, 1 } }, false, 98,
@@ -134,18 +151,23 @@ public abstract class AbstractNodeTest {
 
     @Test(expected = NullPointerException.class)
     public void test_insertAtPosition_key_null() throws Exception {
-        node.insertAtPosition(null, 2, 0);
+        Node<Integer, Integer> n = getNb().build();
+
+        n.insertAtPosition(null, 2, 0);
     }
 
     @Test(expected = NullPointerException.class)
     public void test_insertAtPosition_value_null() throws Exception {
-        node.insertAtPosition(Wrapper.make(4, getNr().getTdi()), null, 0);
+        Node<Integer, Integer> n = getNb().build();
+
+        n.insertAtPosition(Wrapper.make(4, tdi), null, 0);
     }
 
     @Test
     public void test_removeAtPosition() throws Exception {
-        Node<Integer, Integer> n = getNr().makeNodeFromIntegers(3, 12,
-                new Integer[] { 0, 1, 1, 3, 2, 4, 98 });
+        Node<Integer, Integer> n = getNb().setNodeId(12).setLeafNode(false)
+                .setLink(98).addKeyValuePair(1, 0).addKeyValuePair(3, 1)
+                .addKeyValuePair(4, 2).build();
         logger.debug(n.toString());
 
         n.removeAtPosition(1);
@@ -155,8 +177,9 @@ public abstract class AbstractNodeTest {
 
     @Test
     public void test_removeAtPosition_highest() throws Exception {
-        Node<Integer, Integer> n = getNr().makeNodeFromIntegers(3, 12,
-                new Integer[] { 0, 1, 1, 3, 2, 4, 98 });
+        Node<Integer, Integer> n = getNb().setNodeId(12).setLeafNode(false)
+                .setLink(98).addKeyValuePair(1, 0).addKeyValuePair(3, 1)
+                .addKeyValuePair(4, 2).build();
         logger.debug(n.toString());
 
         n.removeAtPosition(2);
@@ -166,8 +189,9 @@ public abstract class AbstractNodeTest {
 
     @Test
     public void test_removeAtPosition_lowest() throws Exception {
-        Node<Integer, Integer> n = getNr().makeNodeFromIntegers(3, 12,
-                new Integer[] { 0, 1, 1, 3, 2, 4, 98 });
+        Node<Integer, Integer> n = getNb().setNodeId(12).setLeafNode(false)
+                .setLink(98).addKeyValuePair(1, 0).addKeyValuePair(3, 1)
+                .addKeyValuePair(4, 2).build();
         logger.debug(n.toString());
 
         n.removeAtPosition(0);
@@ -177,35 +201,43 @@ public abstract class AbstractNodeTest {
 
     @Test
     public void test_setLink_simple() throws Exception {
-        node.setLink(-10);
+        Node<Integer, Integer> n = getNb().build();
 
-        nodeUtil.verifyNode(node, new Integer[][] {}, true, -10, 0);
+        n.setLink(-10);
+
+        nodeUtil.verifyNode(n, new Integer[][] {}, true, -10, 0);
     }
 
     @Test
     public void test_setLink() throws Exception {
-        node.setLink(-10);
-        node.insertAtPosition(Wrapper.make(1, getNr().getTdi()), 10, 0);
-        node.insertAtPosition(Wrapper.make(2, getNr().getTdi()), 20, 1);
+        Node<Integer, Integer> n = getNb().build();
 
-        nodeUtil.verifyNode(node, new Integer[][] { { 1, 10 }, { 2, 20 } },
-                true, -10, 0);
+        n.setLink(-10);
+        n.insertAtPosition(Wrapper.make(1, tdi), 10, 0);
+        n.insertAtPosition(Wrapper.make(2, tdi), 20, 1);
+
+        nodeUtil.verifyNode(n, new Integer[][] { { 1, 10 }, { 2, 20 } }, true,
+                -10, 0);
     }
 
     @Test(expected = NullPointerException.class)
     public void test_setLink_null() throws Exception {
-        node.setLink(null);
+        Node<Integer, Integer> n = getNb().build();
+
+        n.setLink(null);
     }
 
     @Test
     public void test_moveTopHalfOfDataTo_leaf() throws Exception {
-        Node<Integer, Integer> node1 = getNr().makeNodeFromIntegers(3, 0,
-                new Integer[] { 10, 1, 20, 2, 100 });
+        Node<Integer, Integer> node1 =
+                getNb().setNodeId(0).setLeafNode(false).setLink(100)
+                        .addKeyValuePair(1, 10).addKeyValuePair(2, 20).build();
+
         node1.setFlag(Node.FLAG_LEAF_NODE);
         logger.debug("node1: " + node1.toString());
 
-        Node<Integer, Integer> node2 = getNr().makeNode(1, true,
-                getNr().getTreeData().getLeafNodeDescriptor());
+        Node<Integer, Integer> node2 =
+                getNb().setNodeId(1).setLeafNode(true).build();
         node1.moveTopHalfOfDataTo(node2);
 
         logger.debug("node1: " + node1.toString());
@@ -233,27 +265,26 @@ public abstract class AbstractNodeTest {
                 node2.getMaxKey().getValue());
     }
 
-    @Test
+    @Test(expected = JblinktreeException.class)
     public void test_moveTopHalfOfDataTo_nothingToMove() throws Exception {
-        Node<Integer, Integer> node2 = getNr().makeNode(11, true,
-                getNr().getTreeData().getLeafNodeDescriptor());
-        try {
-            node.moveTopHalfOfDataTo(node2);
-            fail();
-        } catch (JblinktreeException e) {
-            assertTrue(true);
-        }
+        Node<Integer, Integer> n1 = getNb().build();
+        Node<Integer, Integer> n2 =
+                getNb().setNodeId(11).setLeafNode(true).build();
+
+        n1.moveTopHalfOfDataTo(n2);
     }
 
     @Test
     public void test_moveTopHalfOfDataTo_node() throws Exception {
-        Node<Integer, Integer> n = getNr().makeNodeFromIntegers(10, 3,
-                new Integer[] { 0, 1, 1, 2, 5, 9, -1 });
+        Node<Integer, Integer> n = getNb().setL(10).setNodeId(3)
+                .setLeafNode(false).setLink(-1).addKeyValuePair(1, 0)
+                .addKeyValuePair(2, 1).addKeyValuePair(9, 5).build();
+
         logger.debug("node  " + n.toString());
         assertEquals("key count is not correct", 3, n.getKeyCount());
 
-        Node<Integer, Integer> node2 = getNr().makeNode(11, true,
-                getNr().getTreeData().getLeafNodeDescriptor());
+        Node<Integer, Integer> node2 =
+                getNb().setNodeId(11).setLeafNode(true).build();
         n.moveTopHalfOfDataTo(node2);
 
         logger.debug("node  " + n.toString());
@@ -284,80 +315,81 @@ public abstract class AbstractNodeTest {
 
     @Test
     public void test_isEmpty() throws Exception {
-        assertTrue(node.isEmpty());
-        logger.debug(node.toString());
-        node.insertAtPosition(Wrapper.make(2, getNr().getTdi()), 20, 0);
-        logger.debug(node.toString());
+        Node<Integer, Integer> n = getNb().build();
 
-        assertFalse(node.isEmpty());
-        assertTrue(node.isLeafNode());
+        assertTrue(n.isEmpty());
+        logger.debug(n.toString());
+        n.insertAtPosition(Wrapper.make(2, tdi), 20, 0);
+        logger.debug(n.toString());
+
+        assertFalse(n.isEmpty());
+        assertTrue(n.isLeafNode());
     }
 
     @Test
     public void test_getMaxKey() throws Exception {
-        node.insertAtPosition(Wrapper.make(1, getNr().getTdi()), 10, 0);
-        node.insertAtPosition(Wrapper.make(2, getNr().getTdi()), 20, 1);
+        Node<Integer, Integer> n =
+                getNb().addKeyValuePair(1, 10).addKeyValuePair(2, 20).build();
 
-        logger.debug(node.toString());
-        assertEquals(Integer.valueOf(2), node.getMaxKey().getValue());
+        logger.debug(n.toString());
+        assertEquals(Integer.valueOf(2), n.getMaxKey().getValue());
     }
 
     @Test
     public void test_getKeysCount_leaf() throws Exception {
-        Node<Integer, Integer> n = getNr().makeNodeFromIntegers(2,
-                new Integer[] { -77, 10, 1, 10, -1 });
+        Node<Integer, Integer> n = getNb().setNodeId(2).setLeafNode(true)
+                .setLink(-1).addKeyValuePair(10, -77).addKeyValuePair(8, -8)
+                .build();
 
         assertEquals(2, n.getKeyCount());
     }
 
     @Test
     public void test_getKeysCount_leaf_empty() throws Exception {
-        Node<Integer, Integer> n = getNr().makeNode(10, true,
-                getNr().getTreeData().getLeafNodeDescriptor());
+        Node<Integer, Integer> n =
+                getNb().setNodeId(10).setLeafNode(true).build();
 
         assertEquals(0, n.getKeyCount());
     }
 
     @Test
     public void test_getKeysCount_nonLeaf() throws Exception {
-        Node<Integer, Integer> n = getNr().makeNodeFromIntegers(2,
-                new Integer[] { 0, 2, 1, 3, 23 });
+        Node<Integer, Integer> n = getNb().setNodeId(2).addKeyValuePair(2, 0)
+                .addKeyValuePair(3, 1).setLink(23).build();
 
         assertEquals(2, n.getKeyCount());
     }
 
     @Test
     public void test_getKeysCount_nonLeaf_1() throws Exception {
-        Node<Integer, Integer> n = getNr().makeNodeFromIntegers(2,
-                new Integer[] { 0, 2, 23 });
+        Node<Integer, Integer> n = getNb().setNodeId(2).setLeafNode(false)
+                .setLink(23).addKeyValuePair(2, 0).build();
 
         assertEquals(1, n.getKeyCount());
     }
 
     @Test
     public void test_getKeysCount_nonLeaf_empty() throws Exception {
-        Node<Integer, Integer> n = getNr().makeNode(10, false,
-                getNr().getTreeData().getLeafNodeDescriptor());
+        Node<Integer, Integer> n =
+                getNb().setNodeId(10).setLeafNode(false).build();
 
         assertEquals(0, n.getKeyCount());
     }
 
     @Test
     public void test_equals_same() throws Exception {
-        assertTrue(node.equals(node));
+        Node<Integer, Integer> n = getNb().build();
+
+        assertTrue(n.equals(n));
     }
-
-    protected abstract Node<Integer, Integer> createNode();
-
-    protected abstract AbstractNodeRule getNr();
 
     @Before
     public void setUp() throws Exception {
-        node = createNode();
+        tdi = new TypeDescriptorInteger();
     }
 
     @After
     public void tearDown() throws Exception {
-        node = null;
+        tdi = null;
     }
 }

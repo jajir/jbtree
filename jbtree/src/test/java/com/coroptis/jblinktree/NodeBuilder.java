@@ -26,6 +26,7 @@ import java.util.TreeMap;
 import com.coroptis.jblinktree.type.TypeDescriptor;
 import com.coroptis.jblinktree.type.TypeDescriptorInteger;
 import com.coroptis.jblinktree.type.Wrapper;
+import com.google.common.base.Preconditions;
 
 public class NodeBuilder {
 
@@ -43,7 +44,7 @@ public class NodeBuilder {
 
     private Integer nodeId;
 
-    private Integer linkId;
+    private Integer link;
 
     private boolean isLeafNode;
 
@@ -56,6 +57,8 @@ public class NodeBuilder {
     private NodeBuilder() {
         isLeafNode = true;
         keyValuePairs = new TreeMap<Object, Object>();
+        link = -1;
+        nodeId = 0;
     }
 
     public NodeBuilder setImplementation(NodeImpl implentation) {
@@ -73,8 +76,8 @@ public class NodeBuilder {
         return this;
     }
 
-    public NodeBuilder setLinkId(Integer linkId) {
-        this.linkId = linkId;
+    public NodeBuilder setLink(Integer linkId) {
+        this.link = linkId;
         return this;
     }
 
@@ -103,8 +106,10 @@ public class NodeBuilder {
     @SuppressWarnings("unchecked")
     public <K, V> Node<K, V> build() {
         final Node<K, V> n;
-        TypeDescriptor<K> ktd = (TypeDescriptor<K>) keyTypeDescriptor;
-        TypeDescriptor<V> vtd = (TypeDescriptor<V>) valueTypeDescriptor;
+        TypeDescriptor<K> ktd = (TypeDescriptor<K>) Preconditions
+                .checkNotNull(keyTypeDescriptor);
+        TypeDescriptor<V> vtd = (TypeDescriptor<V>) Preconditions
+                .checkNotNull(valueTypeDescriptor);
         TypeDescriptor<Integer> tdi = new TypeDescriptorInteger();
 
         if (implentation == NodeImpl.fixedLength) {
@@ -121,14 +126,14 @@ public class NodeBuilder {
             n = new NodeShort<K, V>(nodeId, isLeafNode, jbNodeDef);
         }
         int counter = 0;
-        
+
         for (Map.Entry<Object, Object> entry : keyValuePairs.entrySet()) {
             K key = (K) entry.getKey();
             V value = (V) entry.getValue();
             n.insertAtPosition(Wrapper.make(key, ktd), value, counter);
             counter++;
         }
-        n.setLink(linkId);
+        n.setLink(Preconditions.checkNotNull(link, "link"));
         return n;
     }
 

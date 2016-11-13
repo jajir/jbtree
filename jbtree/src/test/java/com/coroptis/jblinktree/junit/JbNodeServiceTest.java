@@ -31,11 +31,13 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.coroptis.jblinktree.AbstractNodeRule;
 import com.coroptis.jblinktree.JbNodeService;
 import com.coroptis.jblinktree.JbNodeServiceImpl;
 import com.coroptis.jblinktree.Node;
-import com.coroptis.jblinktree.NodeRuleShort;
+import com.coroptis.jblinktree.NodeBuilder;
+import com.coroptis.jblinktree.NodeBuilder.NodeImpl;
+import com.coroptis.jblinktree.NodeUtilRule;
+import com.coroptis.jblinktree.type.TypeDescriptorInteger;
 import com.coroptis.jblinktree.type.Wrapper;
 
 public class JbNodeServiceTest extends AbstractMockingTest {
@@ -43,15 +45,15 @@ public class JbNodeServiceTest extends AbstractMockingTest {
     private Logger logger = LoggerFactory.getLogger(JbNodeServiceTest.class);
 
     @Rule
-    public AbstractNodeRule nr = new NodeRuleShort(2);
+    public NodeUtilRule nr = new NodeUtilRule();
 
     private JbNodeService<Integer, Integer> service;
 
+    private NodeBuilder nb;
+
     @Test
     public void test_getCorrespondingNodeId_return_link() throws Exception {
-        Node<Integer, Integer> n =
-                nr.makeNodeFromIntegers(2, new Integer[] { 0, 1, 2, 3, 33 });
-
+        Node<Integer, Integer> n = nb.build();
         logger.debug(n.toString());
 
         Integer nodeId =
@@ -64,9 +66,7 @@ public class JbNodeServiceTest extends AbstractMockingTest {
 
     @Test
     public void test_getCorrespondingNodeId_simple() throws Exception {
-        Node<Integer, Integer> n =
-                nr.makeNodeFromIntegers(2, new Integer[] { 0, 2, 1, 3, 23 });
-
+        Node<Integer, Integer> n = nb.build();
         logger.debug(n.toString());
 
         Integer nodeId =
@@ -118,12 +118,18 @@ public class JbNodeServiceTest extends AbstractMockingTest {
     public void setUp() throws Exception {
         super.setUp();
         service = new JbNodeServiceImpl<Integer, Integer>();
+        nb = NodeBuilder.builder().setL(3)
+                .setKeyTypeDescriptor(new TypeDescriptorInteger())
+                .setValueTypeDescriptor(new TypeDescriptorInteger())
+                .setImplementation(NodeImpl.variableLength).setNodeId(2).setLeafNode(false)
+                .setLink(33).addKeyValuePair(2, 0).addKeyValuePair(3, 1);
     }
 
     @Override
     @After
     public void tearDown() throws Exception {
         service = null;
+        nb = null;
         super.tearDown();
     }
 }

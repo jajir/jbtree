@@ -20,13 +20,10 @@ package com.coroptis.jblinktree.junit;
  * #L%
  */
 
-import org.junit.Rule;
-
-import com.coroptis.jblinktree.AbstractNodeRule;
-import com.coroptis.jblinktree.Node;
-import com.coroptis.jblinktree.NodeFixedLength;
-import com.coroptis.jblinktree.NodeRuleFixedLength;
+import com.coroptis.jblinktree.NodeBuilder;
+import com.coroptis.jblinktree.NodeBuilder.NodeImpl;
 import com.coroptis.jblinktree.NodeShort;
+import com.coroptis.jblinktree.type.TypeDescriptorInteger;
 
 /**
  * Junit test for {@link NodeShort}.
@@ -36,19 +33,12 @@ import com.coroptis.jblinktree.NodeShort;
  */
 public class NodeFixedLengthTest extends AbstractNodeTest {
 
-    @Rule
-    public AbstractNodeRule nr = new NodeRuleFixedLength(2);
-    
-
     @Override
-    protected Node<Integer, Integer> createNode() {
-        return new NodeFixedLength<Integer, Integer>(0, true,
-                nr.getTreeData().getLeafNodeDescriptor());
-    }
-
-    @Override
-    protected AbstractNodeRule getNr() {
-        return nr;
+    protected NodeBuilder getNb() {
+        return NodeBuilder.builder().setL(3)
+                .setKeyTypeDescriptor(new TypeDescriptorInteger())
+                .setValueTypeDescriptor(new TypeDescriptorInteger())
+                .setImplementation(NodeImpl.fixedLength);
     }
 
 }
