@@ -2,7 +2,7 @@ package com.coroptis.jblinktree.type;
 
 import java.nio.charset.Charset;
 
-import com.coroptis.jblinktree.JblinktreeException;
+import com.coroptis.jblinktree.util.JblinktreeException;
 import com.google.common.base.MoreObjects;
 import com.google.common.base.Preconditions;
 

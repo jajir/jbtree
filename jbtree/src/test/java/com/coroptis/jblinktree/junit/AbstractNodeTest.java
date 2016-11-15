@@ -30,12 +30,12 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.coroptis.jblinktree.JblinktreeException;
 import com.coroptis.jblinktree.Node;
 import com.coroptis.jblinktree.NodeBuilder;
 import com.coroptis.jblinktree.NodeUtilRule;
 import com.coroptis.jblinktree.type.TypeDescriptorInteger;
 import com.coroptis.jblinktree.type.Wrapper;
+import com.coroptis.jblinktree.util.JblinktreeException;
 
 /**
  * Junit test for {@link Node}.

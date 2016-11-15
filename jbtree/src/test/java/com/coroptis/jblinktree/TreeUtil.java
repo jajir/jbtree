@@ -23,6 +23,7 @@ package com.coroptis.jblinktree;
 import java.io.File;
 import java.io.IOException;
 
+import com.coroptis.jblinktree.util.JblinktreeException;
 import com.google.common.base.Charsets;
 import com.google.common.io.Files;
 

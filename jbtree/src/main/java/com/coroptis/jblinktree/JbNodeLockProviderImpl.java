@@ -25,6 +25,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
+import com.coroptis.jblinktree.util.JblinktreeException;
 import com.google.common.base.Preconditions;
 
 /**

@@ -1,6 +1,7 @@
 package com.coroptis.jblinktree;
 
 import com.coroptis.jblinktree.type.Wrapper;
+import com.coroptis.jblinktree.util.JblinktreeException;
 
 /*
  * #%L

@@ -32,12 +32,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.coroptis.jblinktree.Executer;
-import com.coroptis.jblinktree.JblinktreeException;
 import com.coroptis.jblinktree.TreeBuilder;
 import com.coroptis.jblinktree.TreeMap;
 import com.coroptis.jblinktree.TreeUtil;
 import com.coroptis.jblinktree.Worker;
 import com.coroptis.jblinktree.type.Types;
+import com.coroptis.jblinktree.util.JblinktreeException;
 
 /**
  * Test that tree could work in multiple threads environment.

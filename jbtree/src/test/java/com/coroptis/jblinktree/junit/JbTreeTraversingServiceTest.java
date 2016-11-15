@@ -31,9 +31,9 @@ import org.junit.Test;
 
 import com.coroptis.jblinktree.JbTreeTraversingService;
 import com.coroptis.jblinktree.JbTreeTraversingServiceImpl;
-import com.coroptis.jblinktree.JblinktreeException;
 import com.coroptis.jblinktree.Node;
 import com.coroptis.jblinktree.NodeShort;
+import com.coroptis.jblinktree.util.JblinktreeException;
 
 /**
  *

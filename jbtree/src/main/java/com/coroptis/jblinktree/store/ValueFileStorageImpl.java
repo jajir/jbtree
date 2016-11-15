@@ -25,9 +25,9 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 
-import com.coroptis.jblinktree.JblinktreeException;
 import com.coroptis.jblinktree.Node;
 import com.coroptis.jblinktree.type.TypeDescriptor;
+import com.coroptis.jblinktree.util.JblinktreeException;
 import com.google.common.base.Preconditions;
 
 /**

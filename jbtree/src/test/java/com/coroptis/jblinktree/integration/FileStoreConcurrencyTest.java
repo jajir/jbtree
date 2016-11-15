@@ -40,12 +40,12 @@ import com.coroptis.jblinktree.JbNodeDefImpl;
 import com.coroptis.jblinktree.JbNodeService;
 import com.coroptis.jblinktree.JbNodeServiceImpl;
 import com.coroptis.jblinktree.JbTreeDataImpl;
-import com.coroptis.jblinktree.JblinktreeException;
 import com.coroptis.jblinktree.Node;
 import com.coroptis.jblinktree.NodeShort;
 import com.coroptis.jblinktree.Worker;
 import com.coroptis.jblinktree.type.TypeDescriptorInteger;
 import com.coroptis.jblinktree.type.Wrapper;
+import com.coroptis.jblinktree.util.JblinktreeException;
 
 /**
  * Writes and load multiple nodes in highly concurrent environment. Test verify

@@ -33,12 +33,12 @@ import com.coroptis.jblinktree.JbNodeDef;
 import com.coroptis.jblinktree.JbNodeDefImpl;
 import com.coroptis.jblinktree.JbTreeData;
 import com.coroptis.jblinktree.JbTreeDataImpl;
-import com.coroptis.jblinktree.JblinktreeException;
 import com.coroptis.jblinktree.store.MetaDataStore;
 import com.coroptis.jblinktree.store.MetaDataStoreImpl;
 import com.coroptis.jblinktree.type.TypeDescriptor;
 import com.coroptis.jblinktree.type.TypeDescriptorInteger;
 import com.coroptis.jblinktree.type.TypeDescriptorString;
+import com.coroptis.jblinktree.util.JblinktreeException;
 import com.google.common.io.Files;
 
 public class MetaDataStoreTest {

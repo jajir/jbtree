@@ -32,7 +32,6 @@ import org.junit.Test;
 
 import com.coroptis.jblinktree.JbNodeDef;
 import com.coroptis.jblinktree.JbNodeDefImpl;
-import com.coroptis.jblinktree.JblinktreeException;
 import com.coroptis.jblinktree.Node;
 import com.coroptis.jblinktree.NodeShort;
 import com.coroptis.jblinktree.store.ValueFileStorage;
@@ -41,6 +40,7 @@ import com.coroptis.jblinktree.type.TypeDescriptor;
 import com.coroptis.jblinktree.type.TypeDescriptorInteger;
 import com.coroptis.jblinktree.type.TypeDescriptorString;
 import com.coroptis.jblinktree.type.Wrapper;
+import com.coroptis.jblinktree.util.JblinktreeException;
 import com.google.common.io.Files;
 
 /**

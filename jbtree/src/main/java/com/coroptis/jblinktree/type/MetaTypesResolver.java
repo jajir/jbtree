@@ -23,7 +23,7 @@ package com.coroptis.jblinktree.type;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.coroptis.jblinktree.JblinktreeException;
+import com.coroptis.jblinktree.util.JblinktreeException;
 
 /**
  * Helps convert byte code to specific typeDescriptor.

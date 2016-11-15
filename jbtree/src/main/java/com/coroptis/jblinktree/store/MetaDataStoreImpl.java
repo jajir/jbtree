@@ -26,10 +26,10 @@ import java.io.RandomAccessFile;
 import java.nio.charset.Charset;
 
 import com.coroptis.jblinktree.JbTreeData;
-import com.coroptis.jblinktree.JblinktreeException;
 import com.coroptis.jblinktree.type.AbstractMetaType;
 import com.coroptis.jblinktree.type.MetaTypesResolver;
 import com.coroptis.jblinktree.type.TypeDescriptor;
+import com.coroptis.jblinktree.util.JblinktreeException;
 import com.google.common.base.Preconditions;
 
 /**

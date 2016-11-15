@@ -26,6 +26,7 @@ import java.util.Set;
 
 import com.coroptis.jblinktree.type.TypeDescriptor;
 import com.coroptis.jblinktree.type.Wrapper;
+import com.coroptis.jblinktree.util.JblinktreeException;
 import com.google.common.base.Preconditions;
 
 /**

@@ -1,4 +1,4 @@
-package com.coroptis.jblinktree;
+package com.coroptis.jblinktree.util;
 
 /*
  * #%L

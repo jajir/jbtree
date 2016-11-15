@@ -24,8 +24,8 @@ import java.io.File;
 
 import com.coroptis.jblinktree.JbNodeBuilder;
 import com.coroptis.jblinktree.JbTreeData;
-import com.coroptis.jblinktree.JblinktreeException;
 import com.coroptis.jblinktree.Node;
+import com.coroptis.jblinktree.util.JblinktreeException;
 import com.google.common.base.Preconditions;
 
 /**

@@ -36,6 +36,7 @@ import com.coroptis.jblinktree.store.NodeStoreInFile;
 import com.coroptis.jblinktree.store.NodeStoreInMem;
 import com.coroptis.jblinktree.type.TypeDescriptor;
 import com.coroptis.jblinktree.type.TypeDescriptorInteger;
+import com.coroptis.jblinktree.util.JblinktreeException;
 import com.google.common.base.Preconditions;
 
 /**

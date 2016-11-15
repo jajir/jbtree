@@ -32,13 +32,13 @@ import com.coroptis.jblinktree.JbTreeData;
 import com.coroptis.jblinktree.JbTreeDataImpl;
 import com.coroptis.jblinktree.JbTreeTool;
 import com.coroptis.jblinktree.JbTreeToolImpl;
-import com.coroptis.jblinktree.JblinktreeException;
 import com.coroptis.jblinktree.Node;
 import com.coroptis.jblinktree.NodeShort;
 import com.coroptis.jblinktree.type.TypeDescriptor;
 import com.coroptis.jblinktree.type.TypeDescriptorInteger;
 import com.coroptis.jblinktree.util.JbStack;
 import com.coroptis.jblinktree.util.JbStackArrayList;
+import com.coroptis.jblinktree.util.JblinktreeException;
 
 /**
  * Tests for {@link JbTreeTool}

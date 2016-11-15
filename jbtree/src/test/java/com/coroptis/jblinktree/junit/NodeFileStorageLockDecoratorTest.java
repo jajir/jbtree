@@ -28,10 +28,10 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.coroptis.jblinktree.JblinktreeException;
 import com.coroptis.jblinktree.Node;
 import com.coroptis.jblinktree.store.NodeFileStorage;
 import com.coroptis.jblinktree.store.NodeFileStorageLockDecorator;
+import com.coroptis.jblinktree.util.JblinktreeException;
 
 public class NodeFileStorageLockDecoratorTest extends AbstractMockingTest {
 

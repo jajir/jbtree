@@ -85,7 +85,7 @@ public interface TypeDescriptor<T> {
      *            required verified object
      * @throws NullPointerException
      *             when object is <code>null</code>
-     * @throws com.coroptis.jblinktree.JblinktreeException
+     * @throws com.coroptis.jblinktree.util.JblinktreeException
      *             when given object is not described
      */
     void verifyType(Object object);

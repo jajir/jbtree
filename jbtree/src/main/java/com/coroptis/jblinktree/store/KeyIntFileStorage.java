@@ -27,8 +27,8 @@ import java.io.RandomAccessFile;
 import java.util.Arrays;
 
 import com.coroptis.jblinktree.JbNodeDef;
-import com.coroptis.jblinktree.JblinktreeException;
 import com.coroptis.jblinktree.Node;
+import com.coroptis.jblinktree.util.JblinktreeException;
 import com.coroptis.jblinktree.JbNodeBuilder;
 import com.google.common.base.Preconditions;
 
