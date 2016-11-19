@@ -123,8 +123,8 @@ public final class TreeBuilder {
          */
         public final NodeStoreInFileBuilder setNoOfCachedNodes(
                 final int numberOfCachedNodes) {
-            this.noOfCachedNodes = Preconditions
-                    .checkNotNull(numberOfCachedNodes);
+            this.noOfCachedNodes =
+                    Preconditions.checkNotNull(numberOfCachedNodes);
             return this;
         }
 
@@ -219,8 +219,8 @@ public final class TreeBuilder {
      */
     public TreeBuilder setNodeStoreInFileBuilder(
             final NodeStoreInFileBuilder nodeStoreFileBuilder) {
-        this.nodeStoreInFileBuilder = Preconditions
-                .checkNotNull(nodeStoreFileBuilder);
+        this.nodeStoreInFileBuilder =
+                Preconditions.checkNotNull(nodeStoreFileBuilder);
         return this;
     }
 
@@ -286,9 +286,8 @@ public final class TreeBuilder {
                     nodeConverter);
         }
         final NodeFileStorage<K, V> metaDataValidator =
-                new NodeFileStorageMetaDataValidaror<K, V>(
-                treeData, nodeStoreInFileBuilder.getFileName(),
-                nodeFileStorage);
+                new NodeFileStorageMetaDataValidaror<K, V>(treeData,
+                        nodeStoreInFileBuilder.getFileName(), nodeFileStorage);
         final NodeFileStorage<K, V> fileStorage =
                 new NodeFileStorageLockDecorator<K, V>(metaDataValidator);
         return fileStorage;
@@ -314,8 +313,8 @@ public final class TreeBuilder {
             final JbNodeBuilder<K, V> nodeBuilder,
             final JbNodeLockProvider jbNodeLockProvider) {
 
-        final NodeFileStorage<K, V> nodeFileStorage = makeNodeFileStorage(
-                treeData, nodeBuilder);
+        final NodeFileStorage<K, V> nodeFileStorage =
+                makeNodeFileStorage(treeData, nodeBuilder);
         final Cache<K, V> nodeCache = new CacheLru<K, V>(nodeBuilder,
                 nodeStoreInFileBuilder.getNoOfCachedNodes(), nodeFileStorage);
         nodeCache.addCacheListener(new CacheListener<K, V>() {
@@ -346,20 +345,16 @@ public final class TreeBuilder {
     }
 
     /**
-     * Build {@link java.util.Map} instance with previously given parameters.
+     * Build {@link java.util.Map} tree data.
      *
      * @param <K>
      *            key type
      * @param <V>
      *            value type
-     * @return {@link TreeMap} instance
+     * @return {@link JbTreeData} instance
      */
     @SuppressWarnings("unchecked")
-    public <K, V> TreeMap<K, V> build() {
-        Preconditions.checkNotNull(keyTypeDescriptor,
-                "key TypeDescriptor is null, use .setKeyType in builder");
-        Preconditions.checkNotNull(valueTypeDescriptor,
-                "value TypeDescriptor is null, use .setValueType in builder");
+    private <K, V> JbTreeData<K, V> buildTreeData() {
         final TypeDescriptor<Integer> linkTypeDesc =
                 new TypeDescriptorInteger();
         final TypeDescriptor<K> keyTypeDesc =
@@ -371,43 +366,57 @@ public final class TreeBuilder {
                 new JbNodeDefImpl.InitializatorShort<K, V>();
         final JbNodeDefImpl.Initializator<K, Integer> initNonLeaf =
                 new JbNodeDefImpl.InitializatorShort<K, Integer>();
-        final JbNodeDef<K, V> leafNodeDescriptor =
-                new JbNodeDefImpl<K, V>(l,
+        final JbNodeDef<K, V> leafNodeDescriptor = new JbNodeDefImpl<K, V>(l,
                 keyTypeDesc, valueTypeDesc, linkTypeDesc, initLeaf);
         final JbNodeDef<K, Integer> nonLeafNodeDescriptor =
-                new JbNodeDefImpl<K, Integer>(
-                l, keyTypeDesc, linkTypeDesc, linkTypeDesc, initNonLeaf);
-        final JbTreeData<K, V> treeData = new JbTreeDataImpl<K, V>(
-                NodeStore.FIRST_NODE_ID, l, leafNodeDescriptor,
-                nonLeafNodeDescriptor);
-        // TODO move initialization of tree data to separate method
+                new JbNodeDefImpl<K, Integer>(l, keyTypeDesc, linkTypeDesc,
+                        linkTypeDesc, initNonLeaf);
+        final JbTreeData<K, V> treeData =
+                new JbTreeDataImpl<K, V>(NodeStore.FIRST_NODE_ID, l,
+                        leafNodeDescriptor, nonLeafNodeDescriptor);
+        return treeData;
+    }
 
-        final JbNodeBuilder<K, V> nodeBuilder = new JbNodeBuilderShort<K, V>(
-                treeData);
+    /**
+     * Build {@link java.util.Map} instance with previously given parameters.
+     *
+     * @param <K>
+     *            key type
+     * @param <V>
+     *            value type
+     * @return {@link TreeMap} instance
+     */
+    public <K, V> TreeMap<K, V> build() {
+        Preconditions.checkNotNull(keyTypeDescriptor,
+                "key TypeDescriptor is null, use .setKeyType in builder");
+        Preconditions.checkNotNull(valueTypeDescriptor,
+                "value TypeDescriptor is null, use .setValueType in builder");
+        final JbTreeData<K, V> treeData = buildTreeData();
+        final JbNodeBuilder<K, V> nodeBuilder =
+                new JbNodeBuilderShort<K, V>(treeData);
         final JbNodeLockProvider jbNodeLockProvider =
                 new JbNodeLockProviderImpl();
         final NodeStore<K> nodeStore;
         if (nodeStoreInFileBuilder == null) {
-            nodeStore = new NodeStoreInMem<K, V>(nodeBuilder,
-                    jbNodeLockProvider);
+            nodeStore =
+                    new NodeStoreInMem<K, V>(nodeBuilder, jbNodeLockProvider);
         } else {
             nodeStore = makeNodeStoreInFile(treeData, nodeBuilder,
                     jbNodeLockProvider);
         }
-        final JbNodeService<K, V> jbNodeService =
-                new JbNodeServiceImpl<K, V>();
+        final JbNodeService<K, V> jbNodeService = new JbNodeServiceImpl<K, V>();
         final JbTreeTool<K, V> jbTreeTool = new JbTreeToolImpl<K, V>(nodeStore,
                 treeData, nodeBuilder, jbNodeService);
         final JbTreeTraversingService<K, V> treeLockingTool =
-                new JbTreeTraversingServiceImpl<K, V>(
-                jbTreeTool, jbNodeService);
+                new JbTreeTraversingServiceImpl<K, V>(jbTreeTool,
+                        jbNodeService);
         final JbTreeService<K, V> treeService = new JbTreeServiceImpl<K, V>(
                 nodeStore, treeLockingTool, jbNodeService);
         final JbTreeHelper<K, V> jbTreeHelper = new JbTreeHelperImpl<K, V>(
                 nodeStore, jbTreeTool, treeService, treeData);
-        final JbTree<K, V> tree = new JbTreeImpl<K, V>(nodeStore, jbTreeTool,
-                jbTreeHelper, treeData, treeLockingTool, treeService,
-                jbNodeService);
+        final JbTree<K, V> tree =
+                new JbTreeImpl<K, V>(nodeStore, jbTreeTool, jbTreeHelper,
+                        treeData, treeLockingTool, treeService, jbNodeService);
 
         if (nodeStore.isNewlyCreated()) {
             /**
@@ -419,9 +428,8 @@ public final class TreeBuilder {
         if (treeWrapperFileName == null) {
             return new TreeMapImpl<K, V>(tree, treeData);
         } else {
-            return new TreeMapImpl<K, V>(
-                    new JbTreeWrapper<K, V>(tree, treeData, nodeStore,
-                            treeWrapperFileName, jbNodeService), treeData);
+            return new TreeMapImpl<K, V>(new JbTreeWrapper<K, V>(tree, treeData,
+                    nodeStore, treeWrapperFileName, jbNodeService), treeData);
 
         }
     }

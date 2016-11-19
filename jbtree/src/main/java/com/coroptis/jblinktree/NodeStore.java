@@ -1,7 +1,5 @@
 package com.coroptis.jblinktree;
 
-import com.coroptis.jblinktree.util.JblinktreeException;
-
 /*
  * #%L
  * jblinktree
@@ -62,7 +60,7 @@ public interface NodeStore<K> {
      * @param nodeId
      *            required node id
      * @return copy of node from store
-     * @throws JblinktreeException
+     * @throws com.coroptis.jblinktree.util.JblinktreeException
      *             is thrown when nodeIs is invalid
      */
     <S> Node<K, S> get(Integer nodeId);
@@ -75,7 +73,7 @@ public interface NodeStore<K> {
      * @param nodeId
      *            required node id
      * @return copy of node from store
-     * @throws JblinktreeException
+     * @throws com.coroptis.jblinktree.util.JblinktreeException
      *             is thrown when nodeIs is invalid
      */
     <S> Node<K, S> getAndLock(Integer nodeId);

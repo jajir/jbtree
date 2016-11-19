@@ -190,7 +190,6 @@ public final class JbTreeToolImpl<K, V> implements JbTreeTool<K, V> {
     @Override
     public <S> Integer splitRootNode(final Node<K, S> currentRootNode,
             final Node<K, S> newNode) {
-        // TODO consider case when new node is smaller that currentRootNode
         Node<K, Integer> newRoot = nodeBuilder.makeNonLeafNode(
                 treeData.getNextId(), currentRootNode.getId(),
                 currentRootNode.getMaxKey(), newNode.getId(),

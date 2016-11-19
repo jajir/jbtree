@@ -177,8 +177,15 @@ public final class TreeMapImpl<K, V> implements TreeMap<K, V> {
         throw new UnsupportedOperationException();
     }
 
-    @Override
-    @Deprecated
+    /**
+     * Traverse through entire tree and visit all nodes.
+     * <p>
+     * Method should't be called at most cases.
+     * </p>
+     *
+     * @param treeVisitor
+     *            required visitor implementation
+     */
     public void visit(final JbTreeVisitor<K, V> treeVisitor) {
         checkIsClosed();
         tree.visit(treeVisitor);

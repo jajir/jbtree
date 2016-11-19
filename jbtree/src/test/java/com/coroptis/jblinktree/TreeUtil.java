@@ -56,67 +56,73 @@ public class TreeUtil {
         buff.append(intendation);
         buff.append("node [shape=record]\n");
 
-        jbTree.visit(new JbTreeVisitor<Integer, Integer>() {
+        ((TreeMapImpl<Integer, Integer>) jbTree)
+                .visit(new JbTreeVisitor<Integer, Integer>() {
 
-            @Override
-            public boolean visitedLeaf(final Node<Integer, Integer> node) {
-                nodeUtilRule.writeTo(node, buff, intendation);
-                return true;
-            }
+                    @Override
+                    public boolean visitedLeaf(
+                            final Node<Integer, Integer> node) {
+                        nodeUtilRule.writeTo(node, buff, intendation);
+                        return true;
+                    }
 
-            @Override
-            public boolean visitedNonLeaf(final Node<Integer, Integer> node) {
-                nodeUtilRule.writeTo(node, buff, intendation);
-                return true;
-            }
-        });
+                    @Override
+                    public boolean visitedNonLeaf(
+                            final Node<Integer, Integer> node) {
+                        nodeUtilRule.writeTo(node, buff, intendation);
+                        return true;
+                    }
+                });
 
-        jbTree.visit(new JbTreeVisitor<Integer, Integer>() {
+        ((TreeMapImpl<Integer, Integer>) jbTree)
+                .visit(new JbTreeVisitor<Integer, Integer>() {
 
-            private void addLink(final Node<Integer, Integer> node) {
-                if (node.getLink() != null) {
-                    buff.append(intendation);
-                    buff.append("\"node");
-                    buff.append(node.getId());
-                    buff.append("\":L");
-                    buff.append(node.getLink());
-                    buff.append(" -> ");
-                    buff.append("\"node");
-                    buff.append(node.getLink());
-                    buff.append("\" [constraint=false, label=\"");
-                    buff.append(node.getLink());
-                    buff.append("\"]");
-                    buff.append(";\n");
-                }
-            }
+                    private void addLink(final Node<Integer, Integer> node) {
+                        if (node.getLink() != null) {
+                            buff.append(intendation);
+                            buff.append("\"node");
+                            buff.append(node.getId());
+                            buff.append("\":L");
+                            buff.append(node.getLink());
+                            buff.append(" -> ");
+                            buff.append("\"node");
+                            buff.append(node.getLink());
+                            buff.append("\" [constraint=false, label=\"");
+                            buff.append(node.getLink());
+                            buff.append("\"]");
+                            buff.append(";\n");
+                        }
+                    }
 
-            @Override
-            public boolean visitedLeaf(final Node<Integer, Integer> node) {
-                addLink(node);
-                return true;
-            }
+                    @Override
+                    public boolean visitedLeaf(
+                            final Node<Integer, Integer> node) {
+                        addLink(node);
+                        return true;
+                    }
 
-            @Override
-            public boolean visitedNonLeaf(final Node<Integer, Integer> node) {
-                addLink(node);
-                for (final Object o : nodeUtilRule.getNodeIds(node)) {
-                    Integer i = (Integer) o;
-                    buff.append(intendation);
-                    buff.append("\"node");
-                    buff.append(node.getId());
-                    buff.append("\":F");
-                    buff.append(i);
-                    buff.append(" -> ");
-                    buff.append("\"node");
-                    buff.append(i);
-                    buff.append("\" [label=\"");
-                    buff.append(i);
-                    buff.append("\"];");
-                    buff.append("\n");
-                }
-                return true;
-            }
-        });
+                    @Override
+                    public boolean visitedNonLeaf(
+                            final Node<Integer, Integer> node) {
+                        addLink(node);
+                        for (final Object o : nodeUtilRule.getNodeIds(node)) {
+                            Integer i = (Integer) o;
+                            buff.append(intendation);
+                            buff.append("\"node");
+                            buff.append(node.getId());
+                            buff.append("\":F");
+                            buff.append(i);
+                            buff.append(" -> ");
+                            buff.append("\"node");
+                            buff.append(i);
+                            buff.append("\" [label=\"");
+                            buff.append(i);
+                            buff.append("\"];");
+                            buff.append("\n");
+                        }
+                        return true;
+                    }
+                });
 
         buff.append("");
         buff.append("}");

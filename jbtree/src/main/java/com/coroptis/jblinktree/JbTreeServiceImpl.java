@@ -74,8 +74,6 @@ public final class JbTreeServiceImpl<K, V> implements JbTreeService<K, V> {
     public <S> Node<K, Integer> loadParentNode(final Node<K, S> currentNode,
             final Wrapper<K> tmpKey, final Integer nextNodeId) {
         Node<K, Integer> parentNode = nodeStore.getAndLock(nextNodeId);
-        // TODO link to current node which key should be updated can be in
-        // different node than tmpKey
         parentNode =
                 treeTraversingService.moveRightNonLeafNode(parentNode, tmpKey);
         if (nodeService.updateKeyForValue(parentNode, currentNode.getId(),
