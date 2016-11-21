@@ -108,7 +108,7 @@ public interface TypeDescriptor<T> {
     int cmp(byte[] node, int start, Wrapper<T> value);
 
     /**
-     * Convert byte array to byte representation.
+     * Convert value to byte representation.
      *
      * @param value
      *            required value
