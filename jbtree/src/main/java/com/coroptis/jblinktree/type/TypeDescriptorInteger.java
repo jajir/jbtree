@@ -150,4 +150,8 @@ public final class TypeDescriptorInteger implements TypeDescriptor<Integer> {
         return out;
     }
 
+    @Override
+    public byte[] getRawBytes(final Integer value) {
+        return getBytes(value);
+    }
 }

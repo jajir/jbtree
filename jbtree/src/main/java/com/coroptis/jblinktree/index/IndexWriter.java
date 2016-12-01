@@ -1,5 +1,6 @@
 package com.coroptis.jblinktree.index;
 
+import java.io.IOException;
 import java.io.OutputStream;
 
 public class IndexWriter<K, V> {
@@ -20,21 +21,29 @@ public class IndexWriter<K, V> {
     }
 
     public void add(final Pair<K, V> pair) {
+        byte[] bKey = pairDescriptor.getKeyTypeDescriptor()
+                .getRawBytes(pair.getKey());
+        byte[] bValue = pairDescriptor.getValueTypeDescriptor()
+                .getBytes(pair.getValue());
         if (previousKey == null) {
-            pairDescriptor.getKeyTypeDescriptor().getMaxLength();
+            write(bKey, bValue, 0);
+            previousKey = bKey;
         } else {
-            byte[] b = pairDescriptor.getKeyTypeDescriptor()
-                    .getBytes(pair.getKey());
-            int i = byteTool.sameBytes(previousKey, b);
-            byte[] out = new byte[1 + b.length - i
-                    + pairDescriptor.getValueTypeDescriptor().getMaxLength()];
-            out[0] = (byte) i;
-            System.arraycopy(b, i, out, 1, b.length - i);
+            write(bKey, bValue, byteTool.sameBytes(previousKey, bKey));
         }
     }
 
-    private void writeKey(K key) {
-
+    private void write(final byte[] bKey, final byte[] bValue, final int i) {
+        byte[] out = new byte[1 + bKey.length - i
+                + pairDescriptor.getValueTypeDescriptor().getMaxLength()];
+        out[0] = (byte) i;
+        System.arraycopy(bKey, i, out, 1, bKey.length - i);
+        System.arraycopy(bValue, 0, out, 1 + bKey.length - i, bValue.length);
+        try {
+            outputStream.write(out);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
 }

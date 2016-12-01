@@ -179,4 +179,9 @@ public final class TypeDescriptorString implements TypeDescriptor<String> {
         return out;
     }
 
+    @Override
+    public byte[] getRawBytes(final String value) {
+        return value.getBytes(charset);
+    }
+
 }

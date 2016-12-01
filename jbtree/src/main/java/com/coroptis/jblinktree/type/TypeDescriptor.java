@@ -108,11 +108,24 @@ public interface TypeDescriptor<T> {
     int cmp(byte[] node, int start, Wrapper<T> value);
 
     /**
-     * Convert value to byte representation.
+     * Convert value to byte representation. This representation is space
+     * saving.
      *
      * @param value
      *            required value
      * @return byte array representing given value
      */
     byte[] getBytes(T value);
+
+    /**
+     * Return byte array representing unlimited field value. Length of this
+     * field could be longer than {@link #getMaxLength()} value. This value
+     * doesn't contains any metadata.
+     *
+     * @param value
+     *            required value
+     * @return byte array representing given value
+     */
+    byte[] getRawBytes(final T value);
+
 }

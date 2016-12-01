@@ -48,4 +48,9 @@ public abstract class AbstractMetaType<T>
         throw new UnsupportedOperationException("It's not alowed.");
     }
 
+    @Override
+    public final byte[] getRawBytes(final T value) {
+        return getBytes(value);
+    }
+
 }

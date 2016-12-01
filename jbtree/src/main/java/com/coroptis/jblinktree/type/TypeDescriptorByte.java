@@ -104,4 +104,8 @@ public final class TypeDescriptorByte implements TypeDescriptor<Byte> {
         return out;
     }
 
+    @Override
+    public byte[] getRawBytes(final Byte value) {
+        return getBytes(value);
+    }
 }
