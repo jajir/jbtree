@@ -3,7 +3,7 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.coroptis.jblinktree</groupId>
-	<artifactId>root</artifactId>
+	<artifactId>jblinktree-root</artifactId>
 	<packaging>pom</packaging>
 	<version>1.0.0-SNAPSHOT</version>
 	<organization>
@@ -13,9 +13,9 @@
 	<name>root module</name>
 
 	<modules>
-		<module>jbtree</module>
-		<module>benchmark</module>
-		<module>jpf</module>
+		<module>jblinktree-code</module>
+		<module>jblinktree-benchmark</module>
+		<module>jblinktree-jpf</module>
 	</modules>
 
 	<licenses>
