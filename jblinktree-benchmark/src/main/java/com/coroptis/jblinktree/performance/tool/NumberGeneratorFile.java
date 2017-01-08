@@ -26,7 +26,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.concurrent.locks.ReentrantLock;
 
-import com.coroptis.jblinktree.JblinktreeException;
+import com.coroptis.jblinktree.util.JblinktreeException;
 import com.google.common.base.Preconditions;
 
 /**
