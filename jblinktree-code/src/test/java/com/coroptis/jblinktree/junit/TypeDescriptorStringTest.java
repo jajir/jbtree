@@ -1,6 +1,6 @@
 package com.coroptis.jblinktree.junit;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 
 import java.nio.charset.Charset;
 
@@ -79,6 +79,22 @@ public class TypeDescriptorStringTest {
         assertEquals("Ahoj lidi!", td.load(b, 10));
         assertEquals(14, td.getMaxLength());
     }
+    
+    @Test
+	public void test_toString_length_10() throws Exception {
+        TypeDescriptorString td = new TypeDescriptorString(10,
+                Charset.forName("UTF-8"));
+        
+        assertEquals("TypeDescriptorString{maxLength=14}", td.toString());
+	}
+    
+    @Test
+	public void test_toString_length_17() throws Exception {
+        TypeDescriptorString td = new TypeDescriptorString(17,
+                Charset.forName("UTF-8"));
+        
+        assertEquals("TypeDescriptorString{maxLength=21}", td.toString());
+	}
 
     private String toString(byte b[]) {
         StringBuilder buff = new StringBuilder();

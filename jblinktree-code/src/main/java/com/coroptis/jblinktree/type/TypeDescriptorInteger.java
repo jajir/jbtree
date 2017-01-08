@@ -1,7 +1,6 @@
 package com.coroptis.jblinktree.type;
 
 import com.coroptis.jblinktree.util.JblinktreeException;
-import com.google.common.base.MoreObjects;
 
 /*
  * #%L
@@ -102,8 +101,7 @@ public final class TypeDescriptorInteger implements TypeDescriptor<Integer> {
 
     @Override
     public String toString() {
-        return MoreObjects.toStringHelper(TypeDescriptorInteger.class)
-                .add("maxLength", getMaxLength()).toString();
+        return "TypeDescriptorInteger{maxLength=4}";
     }
 
     /**

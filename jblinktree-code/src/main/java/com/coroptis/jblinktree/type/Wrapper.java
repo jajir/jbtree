@@ -1,7 +1,5 @@
 package com.coroptis.jblinktree.type;
 
-import com.google.common.base.MoreObjects;
-
 /*
  * #%L
  * jblinktree
@@ -33,68 +31,69 @@ import com.google.common.base.MoreObjects;
  */
 public final class Wrapper<T> {
 
-    /**
-     * Wrapped value.
-     */
-    private final T value;
+	/**
+	 * Wrapped value.
+	 */
+	private final T value;
 
-    /**
-     * Value represented by byte array.
-     */
-    private final byte[] bytes;
+	/**
+	 * Value represented by byte array.
+	 */
+	private final byte[] bytes;
 
-    /**
-     * Static factory.
-     *
-     * @param value
-     *            required value
-     * @param td
-     *            required type descriptor that allows to convert value to byte
-     *            array
-     * @param <S>
-     *            type that will be wrapped
-     * @return {@link Wrapper} instance
-     */
-    public static <S> Wrapper<S> make(final S value,
-            final TypeDescriptor<S> td) {
-        return new Wrapper<S>(value, td.getBytes(value));
-    }
+	/**
+	 * Static factory.
+	 *
+	 * @param value
+	 *            required value
+	 * @param td
+	 *            required type descriptor that allows to convert value to byte
+	 *            array
+	 * @param <S>
+	 *            type that will be wrapped
+	 * @return {@link Wrapper} instance
+	 */
+	public static <S> Wrapper<S> make(final S value, final TypeDescriptor<S> td) {
+		return new Wrapper<S>(value, td.getBytes(value));
+	}
 
-    @Override
-    public String toString() {
-        return MoreObjects.toStringHelper(Wrapper.class).add("value", value)
-                .toString();
-    }
+	@Override
+	public String toString() {
+		final StringBuilder buff = new StringBuilder("Wrapper{value=");
+		buff.append(value);
+		buff.append("}");
+		return buff.toString();
+	}
 
-    /**
-     * Hidden constructor.
-     *
-     * @param newValue
-     *            optional new value
-     * @param newBytes
-     *            optional byte representation
-     */
-    private Wrapper(final T newValue, final byte[] newBytes) {
-        this.value = newValue;
-        this.bytes = newBytes;
-    }
+	/**
+	 * Hidden constructor.
+	 *
+	 * @param newValue
+	 *            optional new value
+	 * @param newBytes
+	 *            optional byte representation
+	 */
+	private Wrapper(final T newValue, final byte[] newBytes) {
+		this.value = newValue;
+		this.bytes = newBytes;
+	}
 
-    /**
-     * Get value.
-     *
-     * @return value
-     */
-    public T getValue() {
-        return value;
-    }
+	/**
+	 * Get value.
+	 *
+	 * @return value
+	 */
+	public T getValue() {
+		return value;
+	}
 
-    /**
-     * Get value as byte array.
-     *
-     * @return byte array
-     */
-    public byte[] getBytes() {
-        return bytes;
-    }
+	/**
+	 * Get value as byte array.
+	 *
+	 * @return byte array
+	 */
+	public byte[] getBytes() {
+		return bytes;
+	}
 
 }

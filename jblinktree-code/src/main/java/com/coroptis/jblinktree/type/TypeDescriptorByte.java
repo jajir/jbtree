@@ -1,7 +1,6 @@
 package com.coroptis.jblinktree.type;
 
 import com.coroptis.jblinktree.util.JblinktreeException;
-import com.google.common.base.MoreObjects;
 
 /*
  * #%L
@@ -31,77 +30,73 @@ import com.google.common.base.MoreObjects;
  */
 public final class TypeDescriptorByte implements TypeDescriptor<Byte> {
 
-    /**
-     * Default hash code.
-     */
-    private static final int DEFAULT_HASHCODE = 9014865;
+	/**
+	 * Default hash code.
+	 */
+	private static final int DEFAULT_HASHCODE = 9014865;
 
-    @Override
-    public int getMaxLength() {
-        return 1;
-    }
+	@Override
+	public int getMaxLength() {
+		return 1;
+	}
 
-    @Override
-    public void save(final byte[] data, final int from, final Byte value) {
-        Wrapper<Byte> w = Wrapper.make(value, this);
-        save(data, from, w);
-    }
+	@Override
+	public void save(final byte[] data, final int from, final Byte value) {
+		Wrapper<Byte> w = Wrapper.make(value, this);
+		save(data, from, w);
+	}
 
-    @Override
-    public void save(final byte[] data, final int from,
-            final Wrapper<Byte> value) {
-        data[from] = value.getBytes()[0];
-    }
+	@Override
+	public void save(final byte[] data, final int from, final Wrapper<Byte> value) {
+		data[from] = value.getBytes()[0];
+	}
 
-    @Override
-    public Byte load(final byte[] data, final int from) {
-        return data[from];
-    }
+	@Override
+	public Byte load(final byte[] data, final int from) {
+		return data[from];
+	}
 
-    @Override
-    public void verifyType(final Object object) {
-        if (!(object instanceof Byte)) {
-            throw new JblinktreeException("Object of wrong type ("
-                    + object.getClass().getName() + ")");
-        }
-    }
+	@Override
+	public void verifyType(final Object object) {
+		if (!(object instanceof Byte)) {
+			throw new JblinktreeException("Object of wrong type (" + object.getClass().getName() + ")");
+		}
+	}
 
-    @Override
-    public String toString() {
-        return MoreObjects.toStringHelper(TypeDescriptorByte.class)
-                .add("maxLength", getMaxLength()).toString();
-    }
+	@Override
+	public String toString() {
+		return "TypeDescriptorByte{maxLength=1}";
+	}
 
-    /**
-     * Always return same number. All instances of this class are same.
-     */
-    @Override
-    public int hashCode() {
-        return DEFAULT_HASHCODE;
-    }
+	/**
+	 * Always return same number. All instances of this class are same.
+	 */
+	@Override
+	public int hashCode() {
+		return DEFAULT_HASHCODE;
+	}
 
-    @Override
-    public boolean equals(final Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        return getClass() == obj.getClass();
-    }
+	@Override
+	public boolean equals(final Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (obj == null) {
+			return false;
+		}
+		return getClass() == obj.getClass();
+	}
 
-    @Override
-    public int cmp(final byte[] node, final int start,
-            final Wrapper<Byte> value) {
-        return node[start] - value.getBytes()[0];
-    }
+	@Override
+	public int cmp(final byte[] node, final int start, final Wrapper<Byte> value) {
+		return node[start] - value.getBytes()[0];
+	}
 
-    @Override
-    public byte[] getBytes(final Byte value) {
-        byte[] out = new byte[1];
-        out[0] = value;
-        return out;
-    }
+	@Override
+	public byte[] getBytes(final Byte value) {
+		byte[] out = new byte[1];
+		out[0] = value;
+		return out;
+	}
 
 }

@@ -3,7 +3,6 @@ package com.coroptis.jblinktree.type;
 import java.nio.charset.Charset;
 
 import com.coroptis.jblinktree.util.JblinktreeException;
-import com.google.common.base.MoreObjects;
 import com.google.common.base.Preconditions;
 
 /*
@@ -38,145 +37,139 @@ import com.google.common.base.Preconditions;
  */
 public final class TypeDescriptorString implements TypeDescriptor<String> {
 
-    /**
-     * In this bytes will be stored actual string length.
-     */
-    public static final int LENGTH_OF_METADATA_IN_BYTES = 4;
+	/**
+	 * In this bytes will be stored actual string length.
+	 */
+	public static final int LENGTH_OF_METADATA_IN_BYTES = 4;
 
-    /**
-     * Maximum length of stored string.
-     */
-    private final int maxLength;
+	/**
+	 * Maximum length of stored string.
+	 */
+	private final int maxLength;
 
-    /**
-     * Charset used for converting from Java UTF-8 to byte array.
-     */
-    private final Charset charset;
+	/**
+	 * Charset used for converting from Java UTF-8 to byte array.
+	 */
+	private final Charset charset;
 
-    /**
-     * Helps to store actual length of string in bytes.
-     */
-    private final TypeDescriptorInteger typeDescriptorInteger;
+	/**
+	 * Helps to store actual length of string in bytes.
+	 */
+	private final TypeDescriptorInteger typeDescriptorInteger;
 
-    /**
-     *
-     * @param maxBytes
-     *            required maximum length of field in bytes
-     * @param chset
-     *            required {@link Charset}
-     */
-    public TypeDescriptorString(final int maxBytes, final Charset chset) {
-        this.maxLength = maxBytes;
-        this.charset = Preconditions.checkNotNull(chset);
-        this.typeDescriptorInteger = new TypeDescriptorInteger();
-    }
+	/**
+	 *
+	 * @param maxBytes
+	 *            required maximum length of field in bytes
+	 * @param chset
+	 *            required {@link Charset}
+	 */
+	public TypeDescriptorString(final int maxBytes, final Charset chset) {
+		this.maxLength = maxBytes;
+		this.charset = Preconditions.checkNotNull(chset);
+		this.typeDescriptorInteger = new TypeDescriptorInteger();
+	}
 
-    @Override
-    public int getMaxLength() {
-        return maxLength + LENGTH_OF_METADATA_IN_BYTES;
-    }
+	@Override
+	public int getMaxLength() {
+		return maxLength + LENGTH_OF_METADATA_IN_BYTES;
+	}
 
-    @Override
-    public void save(final byte[] data, final int from, final String value) {
-        Wrapper<String> w = Wrapper.make(value, this);
-        save(data, from, w);
-    }
+	@Override
+	public void save(final byte[] data, final int from, final String value) {
+		Wrapper<String> w = Wrapper.make(value, this);
+		save(data, from, w);
+	}
 
-    @Override
-    public void save(final byte[] data, final int from,
-            final Wrapper<String> value) {
-        System.arraycopy(value.getBytes(), 0, data, from,
-                value.getBytes().length);
-    }
+	@Override
+	public void save(final byte[] data, final int from, final Wrapper<String> value) {
+		System.arraycopy(value.getBytes(), 0, data, from, value.getBytes().length);
+	}
 
-    @Override
-    public String load(final byte[] data, final int from) {
-        final Integer currentLength = typeDescriptorInteger.load(data, from);
-        byte[] b = new byte[currentLength];
-        System.arraycopy(data, from + typeDescriptorInteger.getMaxLength(), b,
-                0, currentLength);
-        return new String(b, charset);
-    }
+	@Override
+	public String load(final byte[] data, final int from) {
+		final Integer currentLength = typeDescriptorInteger.load(data, from);
+		byte[] b = new byte[currentLength];
+		System.arraycopy(data, from + typeDescriptorInteger.getMaxLength(), b, 0, currentLength);
+		return new String(b, charset);
+	}
 
-    @Override
-    public void verifyType(final Object object) {
-        Preconditions.checkNotNull(object);
-        if (!(object instanceof String)) {
-            throw new JblinktreeException("Object of wrong type ("
-                    + object.getClass().getName() + ")");
-        }
-    }
+	@Override
+	public void verifyType(final Object object) {
+		Preconditions.checkNotNull(object);
+		if (!(object instanceof String)) {
+			throw new JblinktreeException("Object of wrong type (" + object.getClass().getName() + ")");
+		}
+	}
 
-    @Override
-    public String toString() {
-        return MoreObjects.toStringHelper(TypeDescriptorString.class)
-                .add("maxLength", getMaxLength()).toString();
-    }
+	@Override
+	public String toString() {
+		StringBuilder buff = new StringBuilder("TypeDescriptorString{maxLength=");
+		buff.append(getMaxLength());
+		buff.append("}");
+		return buff.toString();
+	}
 
-    /**
-     * @return the charset
-     */
-    public Charset getCharset() {
-        return charset;
-    }
+	/**
+	 * @return the charset
+	 */
+	public Charset getCharset() {
+		return charset;
+	}
 
-    @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + charset.hashCode();
-        result = prime * result + maxLength;
-        return result;
-    }
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + charset.hashCode();
+		result = prime * result + maxLength;
+		return result;
+	}
 
-    @Override
-    public boolean equals(final Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        TypeDescriptorString other = (TypeDescriptorString) obj;
-        if (charset == null) {
-            if (other.charset != null) {
-                return false;
-            }
-        } else if (!charset.equals(other.charset)) {
-            return false;
-        }
-        return maxLength == other.maxLength;
-    }
+	@Override
+	public boolean equals(final Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (obj == null) {
+			return false;
+		}
+		if (getClass() != obj.getClass()) {
+			return false;
+		}
+		TypeDescriptorString other = (TypeDescriptorString) obj;
+		if (charset == null) {
+			if (other.charset != null) {
+				return false;
+			}
+		} else if (!charset.equals(other.charset)) {
+			return false;
+		}
+		return maxLength == other.maxLength;
+	}
 
-    @Override
-    public int cmp(final byte[] node, final int start,
-            final Wrapper<String> wrapper) {
-        byte[] value = wrapper.getBytes();
-        final Integer currentLength = typeDescriptorInteger.load(value, 0);
-        final int start2 = typeDescriptorInteger.getMaxLength() + start;
-        for (int i = 0; i < currentLength; i++) {
-            final int cmp = node[start2 + i]
-                    - value[i + typeDescriptorInteger.getMaxLength()];
-            if (cmp != 0) {
-                return cmp;
-            }
-        }
-        return 0;
-    }
+	@Override
+	public int cmp(final byte[] node, final int start, final Wrapper<String> wrapper) {
+		byte[] value = wrapper.getBytes();
+		final Integer currentLength = typeDescriptorInteger.load(value, 0);
+		final int start2 = typeDescriptorInteger.getMaxLength() + start;
+		for (int i = 0; i < currentLength; i++) {
+			final int cmp = node[start2 + i] - value[i + typeDescriptorInteger.getMaxLength()];
+			if (cmp != 0) {
+				return cmp;
+			}
+		}
+		return 0;
+	}
 
-    @Override
-    public byte[] getBytes(final String value) {
-        byte[] b = value.getBytes(charset);
-        final Integer currentLength = Math.min(b.length, maxLength);
-        byte[] out = new byte[currentLength
-                + typeDescriptorInteger.getMaxLength()];
-        typeDescriptorInteger.save(out, 0, currentLength);
-        System.arraycopy(b, 0, out, typeDescriptorInteger.getMaxLength(),
-                currentLength);
-        return out;
-    }
+	@Override
+	public byte[] getBytes(final String value) {
+		byte[] b = value.getBytes(charset);
+		final Integer currentLength = Math.min(b.length, maxLength);
+		byte[] out = new byte[currentLength + typeDescriptorInteger.getMaxLength()];
+		typeDescriptorInteger.save(out, 0, currentLength);
+		System.arraycopy(b, 0, out, typeDescriptorInteger.getMaxLength(), currentLength);
+		return out;
+	}
 
 }

@@ -1,6 +1,6 @@
 package com.coroptis.jblinktree.junit;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 
 import org.junit.After;
 import org.junit.Before;
@@ -73,7 +73,12 @@ public class TypeDescriptorIntegerTest {
     public void test_verifyType_false() throws Exception {
         td.verifyType("blee");
     }
-
+    
+    @Test
+	public void test_toString() throws Exception {
+		assertEquals("TypeDescriptorInteger{maxLength=4}", td.toString());
+	}
+    
     @Before
     public void setup() {
         td = new TypeDescriptorInteger();

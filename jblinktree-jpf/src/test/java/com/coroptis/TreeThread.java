@@ -2,7 +2,7 @@ package com.coroptis;
 
 import java.util.Map;
 
-import com.coroptis.jblinktree.JblinktreeException;
+import com.coroptis.jblinktree.util.JblinktreeException;
 
 public class TreeThread extends Thread {
 
