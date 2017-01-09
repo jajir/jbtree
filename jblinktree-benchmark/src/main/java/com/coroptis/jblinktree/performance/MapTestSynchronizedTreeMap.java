@@ -28,12 +28,12 @@ public class MapTestSynchronizedTreeMap extends AbstractMapTest {
 
     @Override
     protected Map<Integer, Integer> initialize() {
-	return Collections.synchronizedMap(new TreeMap<Integer, Integer>());
+        return Collections.synchronizedMap(new TreeMap<Integer, Integer>());
     }
 
     @Override
     protected String mapName() {
-	return "synchronized_tree_map";
+        return "synchronized_tree_map";
     }
 
 }

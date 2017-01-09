@@ -67,42 +67,43 @@ public abstract class AbstractMapTest {
      * @return {@link Map} implementation name.
      */
     protected String mapName() {
-	return map.getClass().getSimpleName();
+        return map.getClass().getSimpleName();
     }
 
     public AbstractMapTest() {
-	System.out.println("starting test");
-	numberGeneratorFile = new NumberGeneratorFile(RANDOM_DATA_FILE);
-	map = Preconditions.checkNotNull(initialize());
+        System.out.println("starting test");
+        numberGeneratorFile = new NumberGeneratorFile(RANDOM_DATA_FILE);
+        map = Preconditions.checkNotNull(initialize());
     }
 
     protected long getFreeMem() {
-	System.gc();
-	return Runtime.getRuntime().freeMemory();
+        System.gc();
+        return Runtime.getRuntime().freeMemory();
     }
 
     protected void printMemory(long t, final String name) {
-	final long b = t % 1024;
-	final long kb = (t / (1024)) % 1024;
-	final long mb = (t / ((long) 1024 * 1024)) % 1024;
-	System.out.println("mb=" + mb + ", kb=" + kb + ", b=" + b + ", name= " + name);
+        final long b = t % 1024;
+        final long kb = (t / (1024)) % 1024;
+        final long mb = (t / ((long) 1024 * 1024)) % 1024;
+        System.out.println(
+                "mb=" + mb + ", kb=" + kb + ", b=" + b + ", name= " + name);
     }
 
     @Setup
     public void setup() {
-	System.out.println("setup count: " + map.size());
+        System.out.println("setup count: " + map.size());
     }
 
     @TearDown
     public void tearDown() {
-	System.out.println("tear down count: " + map.size());
-	map = null;
+        System.out.println("tear down count: " + map.size());
+        map = null;
     }
 
     @Benchmark
     public void insert_performance() {
-	final Integer j = numberGeneratorFile.nextInt();
-	map.put(j, -j);
+        final Integer j = numberGeneratorFile.nextInt();
+        map.put(j, -j);
     }
 
 }

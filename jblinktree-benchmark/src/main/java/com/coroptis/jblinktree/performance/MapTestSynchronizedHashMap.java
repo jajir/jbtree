@@ -28,12 +28,12 @@ public class MapTestSynchronizedHashMap extends AbstractMapTest {
 
     @Override
     protected Map<Integer, Integer> initialize() {
-	return Collections.synchronizedMap(new HashMap<Integer, Integer>());
+        return Collections.synchronizedMap(new HashMap<Integer, Integer>());
     }
 
     @Override
     protected String mapName() {
-	return "synchronized_hash_map";
+        return "synchronized_hash_map";
     }
 
 }

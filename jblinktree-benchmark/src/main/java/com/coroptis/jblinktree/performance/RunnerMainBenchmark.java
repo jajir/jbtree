@@ -70,55 +70,55 @@ public class RunnerMainBenchmark {
      * How many times is separate measuring executed.
      */
     private final static int MEASURE_ITERATIONS = 10;
-    
+
     /**
      * How many times is new JVM forked from main test process. Whole test is
      * executed in each fork.
      */
     private final static int JVM_FORKS = 10;
-    
 
     private static Options getOptions(final Class<?> clazz) {
-	return new OptionsBuilder()
-		.include(clazz.getSimpleName())
-		.mode(Mode.SingleShotTime)
-		.warmupMode(WarmupMode.INDI)
-		.warmupBatchSize(WARMUP_OPERATIONS / THREADS)
-		.warmupIterations(1)
-		.warmupTime(TimeValue.NONE)
-		.threads(THREADS)
-		.verbosity(VerboseMode.NORMAL)
-		.forks(JVM_FORKS)	
-		.measurementIterations(MEASURE_ITERATIONS)
-		.measurementBatchSize(MEASURE_OPERATIONS_PER_ITERATION / THREADS)
-		.measurementTime(TimeValue.NONE)
-		.result("./target/result-" + clazz.getSimpleName() + ".csv")
-		.resultFormat(ResultFormatType.CSV)
-		.jvmArgsAppend("-server", "-XX:+AggressiveOpts", "-dsa", "-Xbatch", "-Xmx1024m")
-		.build();
+        return new OptionsBuilder().include(clazz.getSimpleName())
+                .mode(Mode.SingleShotTime).warmupMode(WarmupMode.INDI)
+                .warmupBatchSize(WARMUP_OPERATIONS / THREADS)
+                .warmupIterations(1).warmupTime(TimeValue.NONE).threads(THREADS)
+                .verbosity(VerboseMode.NORMAL).forks(JVM_FORKS)
+                .measurementIterations(MEASURE_ITERATIONS)
+                .measurementBatchSize(
+                        MEASURE_OPERATIONS_PER_ITERATION / THREADS)
+                .measurementTime(TimeValue.NONE)
+                .result("./target/result-" + clazz.getSimpleName() + ".csv")
+                .resultFormat(ResultFormatType.CSV).jvmArgsAppend("-server",
+                        "-XX:+AggressiveOpts", "-dsa", "-Xbatch", "-Xmx1024m")
+                .build();
     }
 
     private static void showResults(final Collection<RunResult> runResults) {
-	System.out.println("");
-	System.out.println("------------------------------------------------------------");
-	System.out.println("");
-	for (final RunResult runResult : runResults) {
-	    Result<?> result = runResult.getPrimaryResult();
-	    Statistics stats = result.getStatistics();
-	    System.out.println(stats.toString());
-	    BenchmarkResult benchmarkResult = runResult.getAggregatedResult();
-	    System.out.println(benchmarkResult);
-	    System.out.println("expected total number of numbers: "
-		    + (WARMUP_OPERATIONS + MEASURE_OPERATIONS_PER_ITERATION * MEASURE_ITERATIONS));
-	}
+        System.out.println("");
+        System.out.println(
+                "------------------------------------------------------------");
+        System.out.println("");
+        for (final RunResult runResult : runResults) {
+            Result<?> result = runResult.getPrimaryResult();
+            Statistics stats = result.getStatistics();
+            System.out.println(stats.toString());
+            BenchmarkResult benchmarkResult = runResult.getAggregatedResult();
+            System.out.println(benchmarkResult);
+            System.out.println("expected total number of numbers: "
+                    + (WARMUP_OPERATIONS + MEASURE_OPERATIONS_PER_ITERATION
+                            * MEASURE_ITERATIONS));
+        }
     }
 
     public static void main(String[] args) throws RunnerException, IOException {
-	showResults(new Runner(getOptions(MapTestJbTreeMap.class)).run());
-	showResults(new Runner(getOptions(MapTestConcurrentHashMap.class)).run());
-	showResults(new Runner(getOptions(MapTestSynchronizedHashMap.class)).run());
-	showResults(new Runner(getOptions(MapTestSynchronizedTreeMap.class)).run());
-	new MergeTestResults("./target/").merge();
+        showResults(new Runner(getOptions(MapTestJbTreeMap.class)).run());
+        showResults(
+                new Runner(getOptions(MapTestConcurrentHashMap.class)).run());
+        showResults(
+                new Runner(getOptions(MapTestSynchronizedHashMap.class)).run());
+        showResults(
+                new Runner(getOptions(MapTestSynchronizedTreeMap.class)).run());
+        new MergeTestResults("./target/").merge();
     }
 
 }

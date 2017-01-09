@@ -43,42 +43,42 @@ public class NumberGeneratorFile {
     private final ReentrantLock lock = new ReentrantLock(false);
 
     public NumberGeneratorFile(final String fileName) {
-	try {
-	    File file = new File(Preconditions.checkNotNull(fileName));
-	    if (!file.exists()) {
-		throw new JblinktreeException(
-			"File must exists. Current file is: "
-				+ file.getAbsolutePath());
-	    }
-	    bufferedReader = new BufferedReader(new FileReader(file),
-		    1000 * 1000);
-	} catch (IOException e) {
-	    throw new JblinktreeException(e.getMessage(), e);
-	}
+        try {
+            File file = new File(Preconditions.checkNotNull(fileName));
+            if (!file.exists()) {
+                throw new JblinktreeException(
+                        "File must exists. Current file is: "
+                                + file.getAbsolutePath());
+            }
+            bufferedReader = new BufferedReader(new FileReader(file),
+                    1000 * 1000);
+        } catch (IOException e) {
+            throw new JblinktreeException(e.getMessage(), e);
+        }
     }
 
     public Integer nextInt() {
-	try {
-	    lock.lock();
-	    final String line = bufferedReader.readLine();
-	    if (line == null) {
-		throw new JblinktreeException("You reach end of file.");
-	    } else {
-		return Integer.valueOf(line);
-	    }
-	} catch (IOException e) {
-	    throw new JblinktreeException(e.getMessage(), e);
-	} finally {
-	    lock.unlock();
-	}
+        try {
+            lock.lock();
+            final String line = bufferedReader.readLine();
+            if (line == null) {
+                throw new JblinktreeException("You reach end of file.");
+            } else {
+                return Integer.valueOf(line);
+            }
+        } catch (IOException e) {
+            throw new JblinktreeException(e.getMessage(), e);
+        } finally {
+            lock.unlock();
+        }
     }
 
     void close() {
-	try {
-	    bufferedReader.close();
-	} catch (IOException e) {
-	    throw new JblinktreeException(e.getMessage(), e);
-	}
+        try {
+            bufferedReader.close();
+        } catch (IOException e) {
+            throw new JblinktreeException(e.getMessage(), e);
+        }
     }
 
 }

@@ -28,93 +28,98 @@ import com.coroptis.jblinktree.type.Wrapper;
 @OutputTimeUnit(TimeUnit.MILLISECONDS)
 public class CacheLruBenchmark {
 
-	private CacheLru<Integer, Integer> cache;
+    private CacheLru<Integer, Integer> cache;
 
-	private int cx = 0;
+    private int cx = 0;
 
-	private final Node<Integer, Integer> node;
+    private final Node<Integer, Integer> node;
 
-	public CacheLruBenchmark() {
-		TypeDescriptorInteger tdi = new TypeDescriptorInteger();
-		JbNodeDef<Integer, Integer> nd = new JbNodeDefImpl<Integer, Integer>(12, tdi, tdi, tdi,
-				new JbNodeDefImpl.Initializator<Integer, Integer>() {
+    public CacheLruBenchmark() {
+        TypeDescriptorInteger tdi = new TypeDescriptorInteger();
+        JbNodeDef<Integer, Integer> nd = new JbNodeDefImpl<Integer, Integer>(12,
+                tdi, tdi, tdi,
+                new JbNodeDefImpl.Initializator<Integer, Integer>() {
 
-					@Override
-					public void init(final JbNodeDefImpl<Integer, Integer> in) {
-						// TODO Auto-generated method stub
+                    @Override
+                    public void init(final JbNodeDefImpl<Integer, Integer> in) {
+                        // TODO Auto-generated method stub
 
-					}
-				});
-		node = new NodeShort<Integer, Integer>(54, false, nd);
-		JbNodeBuilder<Integer, Integer> nodeBuilder = new JbNodeBuilder<Integer, Integer>() {
+                    }
+                });
+        node = new NodeShort<Integer, Integer>(54, false, nd);
+        JbNodeBuilder<Integer, Integer> nodeBuilder = new JbNodeBuilder<Integer, Integer>() {
 
-			@Override
-			public Node<Integer, Integer> makeEmptyLeafNode(Integer idNode) {
-				// TODO Auto-generated method stub
-				return null;
-			}
+            @Override
+            public Node<Integer, Integer> makeEmptyLeafNode(Integer idNode) {
+                // TODO Auto-generated method stub
+                return null;
+            }
 
-			@Override
-			public Node<Integer, Integer> makeEmptyNonLeafNode(Integer idNode) {
-				// TODO Auto-generated method stub
-				return null;
-			}
+            @Override
+            public Node<Integer, Integer> makeEmptyNonLeafNode(Integer idNode) {
+                // TODO Auto-generated method stub
+                return null;
+            }
 
-			@Override
-			public <T> Node<Integer, T> makeNode(Integer idNode, byte[] field) {
-				return (Node<Integer, T>) node;
-			}
+            @Override
+            public <T> Node<Integer, T> makeNode(Integer idNode, byte[] field) {
+                return (Node<Integer, T>) node;
+            }
 
-			@Override
-			public <T> Node<Integer, T> makeNode(Integer idNode, byte[] field, JbNodeDef<Integer, T> jbNodeDef) {
-				// TODO Auto-generated method stub
-				return null;
-			}
+            @Override
+            public <T> Node<Integer, T> makeNode(Integer idNode, byte[] field,
+                    JbNodeDef<Integer, T> jbNodeDef) {
+                // TODO Auto-generated method stub
+                return null;
+            }
 
-			@Override
-			public Node<Integer, Integer> makeNonLeafNode(Integer idNode, Integer value1, Wrapper<Integer> key1,
-					Integer value2, Wrapper<Integer> key2) {
-				// TODO Auto-generated method stub
-				return null;
-			}
-		};
-		CacheListener<Integer, Integer> cacheListener = new CacheListener<Integer, Integer>() {
+            @Override
+            public Node<Integer, Integer> makeNonLeafNode(Integer idNode,
+                    Integer value1, Wrapper<Integer> key1, Integer value2,
+                    Wrapper<Integer> key2) {
+                // TODO Auto-generated method stub
+                return null;
+            }
+        };
+        CacheListener<Integer, Integer> cacheListener = new CacheListener<Integer, Integer>() {
 
-			@Override
-			public void onUnload(Node<Integer, Integer> node, boolean wasChanged) {
-				/**
-				 * Do nothing.
-				 */
-			}
+            @Override
+            public void onUnload(Node<Integer, Integer> node,
+                    boolean wasChanged) {
+                /**
+                 * Do nothing.
+                 */
+            }
 
-		};
-		NodeLoader<Integer, Integer> nodeLoader = new NodeLoader<Integer, Integer>() {
+        };
+        NodeLoader<Integer, Integer> nodeLoader = new NodeLoader<Integer, Integer>() {
 
-			@Override
-			public Node<Integer, Integer> load(final Integer nodeId) {
-				return node;
-			}
-		};
-		cache = new CacheLru<Integer, Integer>(nodeBuilder, 1000 * 1000 * 1000, nodeLoader);
-	}
+            @Override
+            public Node<Integer, Integer> load(final Integer nodeId) {
+                return node;
+            }
+        };
+        cache = new CacheLru<Integer, Integer>(nodeBuilder, 1000 * 1000 * 1000,
+                nodeLoader);
+    }
 
-	@Benchmark
-	@OperationsPerInvocation(1)
-	@BenchmarkMode(Mode.AverageTime)
-	@OutputTimeUnit(TimeUnit.MILLISECONDS)
-	public void simpleTest() {
-		cache.get(cx);
-		cx++;
-	}
+    @Benchmark
+    @OperationsPerInvocation(1)
+    @BenchmarkMode(Mode.AverageTime)
+    @OutputTimeUnit(TimeUnit.MILLISECONDS)
+    public void simpleTest() {
+        cache.get(cx);
+        cx++;
+    }
 
-	@Setup
-	public void setup() {
-		System.out.println("setup counter: " + cx);
-	}
+    @Setup
+    public void setup() {
+        System.out.println("setup counter: " + cx);
+    }
 
-	@TearDown
-	public void tearDown() {
-		System.out.println("tear down counter: " + cx);
-	}
+    @TearDown
+    public void tearDown() {
+        System.out.println("tear down counter: " + cx);
+    }
 
 }

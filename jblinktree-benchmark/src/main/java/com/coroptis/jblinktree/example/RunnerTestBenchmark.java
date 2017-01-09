@@ -18,26 +18,20 @@ import org.openjdk.jmh.runner.options.WarmupMode;
  */
 public class RunnerTestBenchmark {
 
-
     public static void main(String[] args) throws RunnerException {
-	
-	Options options = new OptionsBuilder()
-		.include(ExampleBenchmark.class.getSimpleName())
-		.mode(Mode.SingleShotTime)
-		.warmupMode(WarmupMode.INDI)
-		.warmupBatchSize(7)
-		.warmupIterations(1)
-		.warmupTime(TimeValue.NONE)
-		.threads(1)
-		.verbosity(VerboseMode.NORMAL)
-		.forks(1)
-		.measurementIterations(10)
-		.measurementBatchSize(100)
-		.measurementTime(TimeValue.NONE)
-		.jvmArgsAppend("-server", "-XX:+AggressiveOpts", "-dsa", "-Xbatch", "-Xmx1024m")
-		.build();
-	
-	new Runner(options).run();
+
+        Options options = new OptionsBuilder()
+                .include(ExampleBenchmark.class.getSimpleName())
+                .mode(Mode.SingleShotTime).warmupMode(WarmupMode.INDI)
+                .warmupBatchSize(7).warmupIterations(1)
+                .warmupTime(TimeValue.NONE).threads(1)
+                .verbosity(VerboseMode.NORMAL).forks(1)
+                .measurementIterations(10).measurementBatchSize(100)
+                .measurementTime(TimeValue.NONE).jvmArgsAppend("-server",
+                        "-XX:+AggressiveOpts", "-dsa", "-Xbatch", "-Xmx1024m")
+                .build();
+
+        new Runner(options).run();
     }
 
 }

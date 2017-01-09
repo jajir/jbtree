@@ -36,43 +36,44 @@ public class MergeTestResults {
     private final BufferedWriter writer;
 
     public MergeTestResults(final String parentDirName) throws IOException {
-	this.parentDir = new File(parentDirName);
-	Preconditions.checkArgument(parentDir.isDirectory());
-	Preconditions.checkArgument(parentDir.exists());
-	writer = new BufferedWriter(new FileWriter(parentDir + File.separator
-		+ "merged-test-results.csv", false));
-	writer.write("\"Benchmark\",\"Mode\",\"Threads\",\"Samples\",\"Score\",\"Score Error (99,9%)\",\"Unit\"");
-	writer.newLine();
+        this.parentDir = new File(parentDirName);
+        Preconditions.checkArgument(parentDir.isDirectory());
+        Preconditions.checkArgument(parentDir.exists());
+        writer = new BufferedWriter(new FileWriter(
+                parentDir + File.separator + "merged-test-results.csv", false));
+        writer.write(
+                "\"Benchmark\",\"Mode\",\"Threads\",\"Samples\",\"Score\",\"Score Error (99,9%)\",\"Unit\"");
+        writer.newLine();
     }
 
     public void merge() throws IOException {
-	for (final File particularCvs : parentDir
-		.listFiles(new FilenameFilter() {
+        for (final File particularCvs : parentDir
+                .listFiles(new FilenameFilter() {
 
-		    @Override
-		    public boolean accept(final File dir, final String name) {
-			return name.startsWith("result-");
-		    }
-		})) {
-	    merge(particularCvs);
-	    System.out.println(particularCvs);
-	}
-	writer.close();
+                    @Override
+                    public boolean accept(final File dir, final String name) {
+                        return name.startsWith("result-");
+                    }
+                })) {
+            merge(particularCvs);
+            System.out.println(particularCvs);
+        }
+        writer.close();
     }
 
     private void merge(final File fileToMerge) throws IOException {
-	BufferedReader reader = new BufferedReader(new FileReader(fileToMerge));
-	String line = null;
-	reader.readLine();
-	while ((line = reader.readLine()) != null) {
-	    writer.write(line);
-	    writer.newLine();
-	}
-	reader.close();
+        BufferedReader reader = new BufferedReader(new FileReader(fileToMerge));
+        String line = null;
+        reader.readLine();
+        while ((line = reader.readLine()) != null) {
+            writer.write(line);
+            writer.newLine();
+        }
+        reader.close();
     }
 
     public static void main(String[] args) throws Exception {
-	new MergeTestResults("./target/").merge();
+        new MergeTestResults("./target/").merge();
     }
 
 }

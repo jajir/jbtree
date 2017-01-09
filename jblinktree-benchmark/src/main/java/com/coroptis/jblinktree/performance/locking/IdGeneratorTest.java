@@ -47,24 +47,24 @@ public class IdGeneratorTest {
 
     @Setup
     public void setup() {
-	g1 = new IdGeneratorAtomicInt();
-	g2 = new IdGeneratorReentrantLock();
+        g1 = new IdGeneratorAtomicInt();
+        g2 = new IdGeneratorReentrantLock();
     }
 
     @TearDown
     public void tearDown() {
-	g1 = null;
-	g2 = null;
+        g1 = null;
+        g2 = null;
     }
 
     @Benchmark
     public void g1_atomicInt() {
-	g1.getNextId();
+        g1.getNextId();
     }
 
     @Benchmark
     public void g2_reentrantLock() {
-	g2.getNextId();
+        g2.getNextId();
     }
 
 }

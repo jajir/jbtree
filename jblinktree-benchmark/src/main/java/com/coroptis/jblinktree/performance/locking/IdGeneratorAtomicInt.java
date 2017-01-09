@@ -35,23 +35,23 @@ public class IdGeneratorAtomicInt implements IdGenerator {
     private final ReentrantLock lock = new ReentrantLock(false);
 
     public IdGeneratorAtomicInt() {
-	nextId = FIRST_NODE_ID;
+        nextId = FIRST_NODE_ID;
     }
 
     @Override
     public int getNextId() {
-	lock.lock();
-	try {
-	    int out = nextId++;
-	    return out;
-	} finally {
-	    lock.unlock();
-	}
+        lock.lock();
+        try {
+            int out = nextId++;
+            return out;
+        } finally {
+            lock.unlock();
+        }
     }
 
     @Override
     public int getPreviousId() {
-	return nextId;
+        return nextId;
     }
 
 }

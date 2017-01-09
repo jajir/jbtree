@@ -30,8 +30,8 @@ package com.coroptis.jblinktree.performance.tool;
 public class GenerateRandomUniqueNumbers {
 
     public static void main(final String[] args) throws Exception {
-	final GenerateNumbers gn = new GenerateNumbers(1000, 1000 * 1000 * 100);
-	gn.writeTofile("src/data/numbers1.txt");
+        final GenerateNumbers gn = new GenerateNumbers(1000, 1000 * 1000 * 100);
+        gn.writeTofile("src/data/numbers1.txt");
     }
 
 }

@@ -54,36 +54,31 @@ public class BenchmarkRunner {
      * How many times is separate measuring executed.
      */
     private final static int MEASURE_ITERATIONS = 10;
-    
+
     /**
      * How many times is new JVM forked from main test process. Whole test is
      * executed in each fork.
      */
     private final static int JVM_FORKS = 5;
-    
 
     private static Options getOptions(final Class<?> clazz) {
-	return new OptionsBuilder()
-		.include(clazz.getSimpleName())
-		.mode(Mode.SingleShotTime)
-		.warmupMode(WarmupMode.INDI)
-		.warmupBatchSize(WARMUP_OPERATIONS / THREADS)
-		.warmupIterations(1)
-		.warmupTime(TimeValue.NONE)
-		.threads(THREADS)
-		.verbosity(VerboseMode.NORMAL)
-		.forks(JVM_FORKS)	
-		.measurementIterations(MEASURE_ITERATIONS)
-		.measurementBatchSize(MEASURE_OPERATIONS_PER_ITERATION / THREADS)
-		.measurementTime(TimeValue.NONE)
-		.result("./target/result-" + clazz.getSimpleName() + ".csv")
-		.resultFormat(ResultFormatType.CSV)
-		.jvmArgsAppend("-server","-dsa", "-Xbatch", "-Xmx1024m")
-		.build();
+        return new OptionsBuilder().include(clazz.getSimpleName())
+                .mode(Mode.SingleShotTime).warmupMode(WarmupMode.INDI)
+                .warmupBatchSize(WARMUP_OPERATIONS / THREADS)
+                .warmupIterations(1).warmupTime(TimeValue.NONE).threads(THREADS)
+                .verbosity(VerboseMode.NORMAL).forks(JVM_FORKS)
+                .measurementIterations(MEASURE_ITERATIONS)
+                .measurementBatchSize(
+                        MEASURE_OPERATIONS_PER_ITERATION / THREADS)
+                .measurementTime(TimeValue.NONE)
+                .result("./target/result-" + clazz.getSimpleName() + ".csv")
+                .resultFormat(ResultFormatType.CSV)
+                .jvmArgsAppend("-server", "-dsa", "-Xbatch", "-Xmx1024m")
+                .build();
     }
 
     public static void main(String[] args) throws RunnerException, IOException {
-	new Runner(getOptions(IdGeneratorTest.class)).run();
-	new MergeTestResults("./target/").merge();
+        new Runner(getOptions(IdGeneratorTest.class)).run();
+        new MergeTestResults("./target/").merge();
     }
 }

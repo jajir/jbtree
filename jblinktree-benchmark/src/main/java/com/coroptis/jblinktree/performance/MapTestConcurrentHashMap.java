@@ -27,7 +27,7 @@ public class MapTestConcurrentHashMap extends AbstractMapTest {
 
     @Override
     protected Map<Integer, Integer> initialize() {
-	return new ConcurrentHashMap<Integer, Integer>();
+        return new ConcurrentHashMap<Integer, Integer>();
     }
 
 }

@@ -36,17 +36,18 @@ import com.coroptis.jblinktree.type.Types;
 public class JbTreeTestRunner {
 
     private static void test() {
-	final Random random = new Random();
-	final Map<Integer, Integer> map = TreeBuilder.builder().setL(2).setKeyType(Types.integer())
-		.setValueType(Types.integer()).build();
-	for (int i = 0; i < 1000 * 1000 * 20; i++) {
-	    final int j = random.nextInt();
-	    map.put(j, -j);
-	}
+        final Random random = new Random();
+        final Map<Integer, Integer> map = TreeBuilder.builder().setL(2)
+                .setKeyType(Types.integer()).setValueType(Types.integer())
+                .build();
+        for (int i = 0; i < 1000 * 1000 * 20; i++) {
+            final int j = random.nextInt();
+            map.put(j, -j);
+        }
     }
 
     public static void main(String[] args) {
-	test();
+        test();
     }
 
 }

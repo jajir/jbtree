@@ -20,26 +20,26 @@ public class ExampleBenchmark {
     private Counter counter;
 
     public ExampleBenchmark() {
-	counter = new Counter();
+        counter = new Counter();
     }
 
     @Benchmark
     @OperationsPerInvocation(10)
     public void simpleTest() {
-	System.out.println("." + counter.getI() + '\'');
-	for (int i = 0; i < 10; i++) {
-	    counter.inc();
-	}
+        System.out.println("." + counter.getI() + '\'');
+        for (int i = 0; i < 10; i++) {
+            counter.inc();
+        }
     }
 
     @Setup
     public void setup() {
-	System.out.println("setup counter: " + counter.getI());
+        System.out.println("setup counter: " + counter.getI());
     }
 
     @TearDown
     public void tearDown() {
-	System.out.println("tear down counter: " + counter.getI());
+        System.out.println("tear down counter: " + counter.getI());
     }
 
 }
