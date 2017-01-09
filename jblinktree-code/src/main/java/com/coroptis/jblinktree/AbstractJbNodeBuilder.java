@@ -35,7 +35,8 @@ import com.google.common.base.Preconditions;
  *            value type
  */
 public abstract class AbstractJbNodeBuilder<K, V>
-        implements JbNodeBuilder<K, V> {
+        implements
+            JbNodeBuilder<K, V> {
 
     /**
      * Tree data definition.
@@ -66,8 +67,8 @@ public abstract class AbstractJbNodeBuilder<K, V>
      *            specific node value type
      * @return created node
      */
-    public abstract <T> Node<K, T> makeNode(final Integer nodeId,
-            final boolean isLeafNode, final JbNodeDef<K, T> jbNodeDef);
+    public abstract <T> Node<K, T> makeNode(Integer nodeId, boolean isLeafNode,
+            JbNodeDef<K, T> jbNodeDef);
 
     @SuppressWarnings({ "unchecked" })
     @Override

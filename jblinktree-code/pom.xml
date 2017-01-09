@@ -233,6 +233,9 @@
 						</reports>
 					</reportSet>
 				</reportSets>
+				<configuration>
+					<configLocation>src/sun_checkstyle.xml</configLocation>
+				</configuration>
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>

@@ -132,7 +132,7 @@ public interface JbNodeService<K, V> {
      * @throws NullPointerException
      *             when key or value is null
      */
-    <S> S remove(final Node<K, S> node, final Wrapper<K> key);
+    <S> S remove(Node<K, S> node, Wrapper<K> key);
 
     /**
      * Find value for given key.

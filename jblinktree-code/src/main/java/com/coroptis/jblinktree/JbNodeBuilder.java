@@ -50,7 +50,7 @@ public interface JbNodeBuilder<K, V> {
      *            required node id
      * @return created empty node
      */
-    Node<K, Integer> makeEmptyNonLeafNode(final Integer idNode);
+    Node<K, Integer> makeEmptyNonLeafNode(Integer idNode);
 
     /**
      * Create new node by copying array to new node. Node definition will be

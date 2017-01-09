@@ -83,8 +83,8 @@ public interface JbTreeTool<K, V> {
      *            required inserted value
      * @return newly created node, this node contains higher part of keys.
      */
-    Node<K, Integer> splitNonLeafNode(final Node<K, Integer> currentNode,
-            final Wrapper<K> key, final Integer value);
+    Node<K, Integer> splitNonLeafNode(Node<K, Integer> currentNode,
+            Wrapper<K> key, Integer value);
 
     /**
      * It get already existing node, new node a create new root node pointing on
@@ -144,7 +144,7 @@ public interface JbTreeTool<K, V> {
      * @return <code>true</code> when it's possible to move to next node
      *         otherwise return <code>false</code>
      */
-    boolean canMoveToNextNode(final Node<K, ?> node, final Wrapper<K> key);
+    boolean canMoveToNextNode(Node<K, ?> node, Wrapper<K> key);
 
     /**
      * Move to next node. Lock next node than unlock current node.
@@ -158,7 +158,6 @@ public interface JbTreeTool<K, V> {
      * @return locked new node instance
      */
 
-    <S> Node<K, S> moveToNextNode(final Node<K, ?> currentNode,
-            final Integer nextNodeId);
+    <S> Node<K, S> moveToNextNode(Node<K, ?> currentNode, Integer nextNodeId);
 
 }

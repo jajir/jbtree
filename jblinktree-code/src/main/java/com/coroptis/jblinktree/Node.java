@@ -204,7 +204,7 @@ public interface Node<K, V> {
      * @param position
      *            required position
      */
-    void removeAtPosition(final int position);
+    void removeAtPosition(int position);
 
     /**
      * Get flag byte.
