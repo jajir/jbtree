@@ -11,8 +11,8 @@ buildNumber.properties
 .project
 *~
 *.dot
-.*
 pok.png
 jblinktree-jpf/src/main/java/com/coroptis
 jblinktree-jpf/src/main/java/META-INF
 .DS_Store
+.checkstyle

@@ -22,36 +22,39 @@
 		</dependency>
 	</dependencies>
 
-
 	<build>
 		<plugins>
 			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-dependency-plugin</artifactId>
-				<version>2.10</version>
+				<artifactId>maven-antrun-plugin</artifactId>
+				<version>1.8</version>
 				<executions>
 					<execution>
-						<id>src-dependencies</id>
+						<id>copy-jblinktree-src</id>
 						<phase>process-resources</phase>
 						<goals>
-							<goal>unpack</goal>
+							<goal>run</goal>
 						</goals>
 						<configuration>
-							<artifactItems>
-								<artifactItem>
-									<groupId>com.coroptis.jblinktree</groupId>
-									<artifactId>jblinktree-code</artifactId>
-									<version>1.0.0-SNAPSHOT</version>
-									<type>jar</type>
-									<classifier>sources</classifier>
-									<overWrite>true</overWrite>
-									<outputDirectory>${project.basedir}/src/main/java</outputDirectory>
-								</artifactItem>
-							</artifactItems>
+							<target>
+								<copy toDir="${basedir}/src/main/java/">
+									<fileset dir="${basedir}/../jblinktree-code/src/main/java/">
+										<include name="**/*.java" />
+									</fileset>
+								</copy>
+							</target>
 						</configuration>
 					</execution>
 				</executions>
 			</plugin>
+
+			<!-- <plugin> <groupId>org.apache.maven.plugins</groupId> <artifactId>maven-dependency-plugin</artifactId> 
+				<version>2.10</version> <executions> <execution> <id>src-dependencies</id> 
+				<phase>process-resources</phase> <goals> <goal>unpack</goal> </goals> <configuration> 
+				<artifactItems> <artifactItem> <groupId>com.coroptis.jblinktree</groupId> 
+				<artifactId>jblinktree-code</artifactId> <version>1.0.0-SNAPSHOT</version> 
+				<type>jar</type> <classifier>sources</classifier> <overWrite>true</overWrite> 
+				<outputDirectory>${project.basedir}/src/main/java</outputDirectory> </artifactItem> 
+				</artifactItems> </configuration> </execution> </executions> </plugin> -->
 		</plugins>
 	</build>
 
