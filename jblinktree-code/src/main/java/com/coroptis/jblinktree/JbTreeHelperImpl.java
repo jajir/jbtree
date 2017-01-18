@@ -90,8 +90,6 @@ public final class JbTreeHelperImpl<K, V> implements JbTreeHelper<K, V> {
         return treeTool.moveRightLeafNodeWithoutLocking(node, key);
     }
 
-    // TODO following methods should be refactored
-
     @Override
     public V insertToLeafNode(final Node<K, V> currentNode,
             final Wrapper<K> key, final V value, final JbStack stack) {
