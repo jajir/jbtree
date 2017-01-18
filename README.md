@@ -1,4 +1,4 @@
-# jblinktree
+# jblinktree  [![Build Status](https://travis-ci.org/jajir/jblinktree.svg?branch=master)](https://travis-ci.org/jajir/jblinktree)
 
 jblinktree is thread safe implementation of b-link tree. 
 Implementations is based on "Efficient Locking for Concurrent Operations on B-Trees" 
