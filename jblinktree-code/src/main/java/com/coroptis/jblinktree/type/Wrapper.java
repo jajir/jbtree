@@ -22,9 +22,12 @@ import com.google.common.base.MoreObjects;
  * #L%
  */
 /**
- * Wrap value. Wrapper allows compare node represented by byte array with
- * another byte array.
- *
+ * Wrap value and it's byte representations. It allows to avoid multiple
+ * converting value from it's object representation and back.
+ * <p>
+ * Wrapper allows compare node represented by byte array with another byte
+ * array.
+ * </p>
  *
  * @author jajir
  *
