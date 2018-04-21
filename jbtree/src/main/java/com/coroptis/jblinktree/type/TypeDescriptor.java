@@ -1,5 +1,7 @@
 package com.coroptis.jblinktree.type;
 
+import java.io.InputStream;
+
 /*
  * #%L
  * jblinktree
@@ -77,6 +79,15 @@ public interface TypeDescriptor<T> {
      * @return loaded type instance
      */
     T load(byte[] data, int from);
+
+    /**
+     * Load value from input stream.
+     *
+     * @param inputStream
+     *            required input stream
+     * @return loaded data type instance
+     */
+    T load(InputStream inputStream);
 
     /**
      * Verify that given type is same as described.

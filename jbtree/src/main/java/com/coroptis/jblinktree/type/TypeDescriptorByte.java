@@ -1,5 +1,8 @@
 package com.coroptis.jblinktree.type;
 
+import java.io.IOException;
+import java.io.InputStream;
+
 import com.coroptis.jblinktree.util.JblinktreeException;
 import com.google.common.base.MoreObjects;
 
@@ -56,6 +59,15 @@ public final class TypeDescriptorByte implements TypeDescriptor<Byte> {
     @Override
     public Byte load(final byte[] data, final int from) {
         return data[from];
+    }
+
+    @Override
+    public Byte load(final InputStream inputStream) {
+        try {
+            return (byte) inputStream.read();
+        } catch (IOException e) {
+            throw new JblinktreeException(e.getMessage(), e);
+        }
     }
 
     @Override

@@ -1,5 +1,7 @@
 package com.coroptis.jblinktree.type;
 
+import java.io.InputStream;
+
 /*
  * #%L
  * jblinktree
@@ -51,6 +53,11 @@ public abstract class AbstractMetaType<T>
     @Override
     public final byte[] getRawBytes(final T value) {
         return getBytes(value);
+    }
+    
+    @Override
+    public T load(InputStream inputStream) {
+        throw new UnsupportedOperationException("It's not alowed.");
     }
 
 }

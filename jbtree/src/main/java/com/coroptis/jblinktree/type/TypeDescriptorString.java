@@ -1,5 +1,7 @@
 package com.coroptis.jblinktree.type;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.nio.charset.Charset;
 
 import com.coroptis.jblinktree.util.JblinktreeException;
@@ -98,6 +100,19 @@ public final class TypeDescriptorString implements TypeDescriptor<String> {
         return new String(b, charset);
     }
 
+    @Override
+    public String load(final InputStream inputStream) {
+        try {
+            final Integer currentLength = typeDescriptorInteger
+                    .load(inputStream);
+            byte[] data = new byte[currentLength];
+            inputStream.read(data);
+            return new String(data, charset);
+        } catch (IOException e) {
+            throw new JblinktreeException(e.getMessage(), e);
+        }
+    }
+    
     @Override
     public void verifyType(final Object object) {
         Preconditions.checkNotNull(object);
