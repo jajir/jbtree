@@ -1,6 +1,10 @@
 package com.coroptis.jblinktree.type;
 
+import java.io.IOException;
+import java.io.InputStream;
+
 import com.coroptis.jblinktree.util.JblinktreeException;
+import com.google.common.base.MoreObjects;
 
 /*
  * #%L
@@ -58,6 +62,15 @@ public final class TypeDescriptorByte implements TypeDescriptor<Byte> {
     }
 
     @Override
+    public Byte load(final InputStream inputStream) {
+        try {
+            return (byte) inputStream.read();
+        } catch (IOException e) {
+            throw new JblinktreeException(e.getMessage(), e);
+        }
+    }
+
+    @Override
     public void verifyType(final Object object) {
         if (!(object instanceof Byte)) {
             throw new JblinktreeException("Object of wrong type ("
@@ -67,7 +80,8 @@ public final class TypeDescriptorByte implements TypeDescriptor<Byte> {
 
     @Override
     public String toString() {
-        return "TypeDescriptorByte{maxLength=1}";
+        return MoreObjects.toStringHelper(TypeDescriptorByte.class)
+                .add("maxLength", getMaxLength()).toString();
     }
 
     /**
@@ -102,4 +116,8 @@ public final class TypeDescriptorByte implements TypeDescriptor<Byte> {
         return out;
     }
 
+    @Override
+    public byte[] getRawBytes(final Byte value) {
+        return getBytes(value);
+    }
 }

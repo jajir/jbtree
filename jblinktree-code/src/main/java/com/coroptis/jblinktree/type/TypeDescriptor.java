@@ -1,5 +1,7 @@
 package com.coroptis.jblinktree.type;
 
+import java.io.InputStream;
+
 /*
  * #%L
  * jblinktree
@@ -79,6 +81,15 @@ public interface TypeDescriptor<T> {
     T load(byte[] data, int from);
 
     /**
+     * Load value from input stream.
+     *
+     * @param inputStream
+     *            required input stream
+     * @return loaded data type instance
+     */
+    T load(InputStream inputStream);
+
+    /**
      * Verify that given type is same as described.
      *
      * @param object
@@ -108,11 +119,24 @@ public interface TypeDescriptor<T> {
     int cmp(byte[] node, int start, Wrapper<T> value);
 
     /**
-     * Convert byte array to byte representation.
+     * Convert value to byte representation. This representation is space
+     * saving.
      *
      * @param value
      *            required value
      * @return byte array representing given value
      */
     byte[] getBytes(T value);
+
+    /**
+     * Return byte array representing unlimited field value. Length of this
+     * field could be longer than {@link #getMaxLength()} value. This value
+     * doesn't contains any metadata.
+     *
+     * @param value
+     *            required value
+     * @return byte array representing given value
+     */
+    byte[] getRawBytes(final T value);
+
 }

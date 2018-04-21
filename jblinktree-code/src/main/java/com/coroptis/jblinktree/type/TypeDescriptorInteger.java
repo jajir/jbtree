@@ -1,6 +1,10 @@
 package com.coroptis.jblinktree.type;
 
+import java.io.IOException;
+import java.io.InputStream;
+
 import com.coroptis.jblinktree.util.JblinktreeException;
+import com.google.common.base.MoreObjects;
 
 /*
  * #%L
@@ -90,6 +94,18 @@ public final class TypeDescriptorInteger implements TypeDescriptor<Integer> {
                 | (data[pos++] & BYTE_MASK) << BYTE_SHIFT_8
                 | (data[pos] & BYTE_MASK);
     }
+    
+
+    @Override
+    public Integer load(final InputStream inputStream) {
+        try {
+            final byte[] data = new byte[REQUIRED_BYTES];
+            inputStream.read(data);
+            return load(data, 0);
+        } catch (IOException e) {
+            throw new JblinktreeException(e.getMessage(), e);
+        }
+    }
 
     @Override
     public void verifyType(final Object object) {
@@ -101,7 +117,8 @@ public final class TypeDescriptorInteger implements TypeDescriptor<Integer> {
 
     @Override
     public String toString() {
-        return "TypeDescriptorInteger{maxLength=4}";
+        return MoreObjects.toStringHelper(TypeDescriptorInteger.class)
+                .add("maxLength", getMaxLength()).toString();
     }
 
     /**
@@ -148,4 +165,8 @@ public final class TypeDescriptorInteger implements TypeDescriptor<Integer> {
         return out;
     }
 
+    @Override
+    public byte[] getRawBytes(final Integer value) {
+        return getBytes(value);
+    }
 }
