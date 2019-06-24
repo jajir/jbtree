@@ -39,8 +39,7 @@ import com.google.common.base.Preconditions;
  * <p>
  * Node contains data stored in a following field:
  * </p>
- * <table border="1" style="border-collapse:collapse" summary=
- * "keys and values meaning in node">
+ * <table>
  * <tr>
  * <td>value</td>
  * <td>P(0)</td>
