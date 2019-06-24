@@ -60,70 +60,10 @@
 		</dependency>
 	</dependencies>
 
-	<profiles>
-		<profile>
-			<id>junit</id>
-			<activation>
-				<activeByDefault>true</activeByDefault>
-			</activation>
-			<properties>
-				<testcase.include>com/coroptis/jblinktree/junit/**.java</testcase.include>
-				<testcase.exclude>com/coroptis/jblinktree/integration/**.java</testcase.exclude>
-			</properties>
-		</profile>
-		<profile>
-			<id>integration</id>
-			<activation>
-				<activeByDefault>false</activeByDefault>
-			</activation>
-			<properties>
-				<testcase.include>com/coroptis/jblinktree/**.java</testcase.include>
-			</properties>
-		</profile>
-	</profiles>
-
 	<build>
 		<pluginManagement>
 			<plugins>
 				<!-- Solve problem “Plugin execution not covered by lifecycle configuration” -->
-				<plugin>
-					<groupId>org.eclipse.m2e</groupId>
-					<artifactId>lifecycle-mapping</artifactId>
-					<version>1.0.0</version>
-					<configuration>
-						<lifecycleMappingMetadata>
-							<pluginExecutions>
-								<pluginExecution>
-									<pluginExecutionFilter>
-										<groupId>org.codehaus.mojo</groupId>
-										<artifactId>license-maven-plugin</artifactId>
-										<versionRange>[1.8,)</versionRange>
-										<goals>
-											<goal>check-file-header</goal>
-										</goals>
-									</pluginExecutionFilter>
-									<action>
-										<ignore />
-									</action>
-								</pluginExecution>
-								<pluginExecution>
-									<pluginExecutionFilter>
-										<groupId>org.apache.maven.plugins</groupId>
-										<artifactId>maven-compiler-plugin</artifactId>
-										<versionRange>[3.5.1,)</versionRange>
-										<goals>
-											<goal>compile</goal>
-											<goal>testCompile</goal>
-										</goals>
-									</pluginExecutionFilter>
-									<action>
-										<ignore />
-									</action>
-								</pluginExecution>
-							</pluginExecutions>
-						</lifecycleMappingMetadata>
-					</configuration>
-				</plugin>
 			</plugins>
 		</pluginManagement>
 		<plugins>
@@ -197,10 +137,6 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
-				<configuration>
-					<source>1.6</source>
-					<target>1.6</target>
-				</configuration>
 			</plugin>
 		</plugins>
 	</build>
@@ -283,10 +219,6 @@
 	<developers>
 		<developer>
 			<email>jirout@gmail.com</email>
-			<name>Jan Jirout</name>
-		</developer>
-		<developer>
-			<email>Jan.Jirout@equabank.cz</email>
 			<name>Jan Jirout</name>
 		</developer>
 	</developers>
