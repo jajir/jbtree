@@ -143,11 +143,13 @@ public class NodeStringTest {
     public void setUp() throws Exception {
         sd = new TypeDescriptorString(10, Charset.forName("UTF-8"));
         intDescriptor = new TypeDescriptorInteger();
-        final JbNodeDefImpl.Initializator init = new JbNodeDefImpl.InitializatorShort();
+        final JbNodeDefImpl.Initializator<String, String> init1 = new JbNodeDefImpl.InitializatorShort<String, String>();
         final JbNodeDef<String, String> leafNodeDescriptor = new JbNodeDefImpl<String, String>(
-                5, sd, sd, intDescriptor, init);
+                5, sd, sd, intDescriptor, init1);
+        
+        final JbNodeDefImpl.Initializator<String, Integer> init2 = new JbNodeDefImpl.InitializatorShort<String, Integer>();
         final JbNodeDef<String, Integer> nonLeafNodeDescriptor = new JbNodeDefImpl<String, Integer>(
-                5, sd, intDescriptor, intDescriptor, init);
+                5, sd, intDescriptor, intDescriptor, init2);
 
         JbTreeData<String, String> td = new JbTreeDataImpl<String, String>(0, 5,
                 leafNodeDescriptor, nonLeafNodeDescriptor);

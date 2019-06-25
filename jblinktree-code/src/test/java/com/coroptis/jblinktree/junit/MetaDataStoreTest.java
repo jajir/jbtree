@@ -43,73 +43,68 @@ import com.google.common.io.Files;
 
 public class MetaDataStoreTest {
 
-    private MetaDataStore metaDataStore;
+	private MetaDataStore metaDataStore;
 
-    private File tempDirectory;
+	private File tempDirectory;
 
-    private File metaFile;
+	private File metaFile;
 
-    private JbTreeData<Integer, String> treeData;
+	private JbTreeData<Integer, String> treeData;
 
-    @Test
-    public void test_init_and_close() throws Exception {
-        assertTrue(true);
-        metaDataStore.close();
-    }
+	@Test
+	public void test_init_and_close() throws Exception {
+		assertTrue(true);
+		metaDataStore.close();
+	}
 
-    @Test
-    public void test_reopen() throws Exception {
-        metaDataStore.close();
+	@Test
+	public void test_reopen() throws Exception {
+		metaDataStore.close();
 
-        metaDataStore = new MetaDataStoreImpl<Integer, String>(metaFile,
-                treeData);
-        assertEquals(Integer.valueOf(8765), treeData.getRootNodeId());
-        assertEquals(Integer.valueOf(31), treeData.getMaxNodeId());
-        metaDataStore.close();
-    }
+		metaDataStore = new MetaDataStoreImpl<Integer, String>(metaFile, treeData);
+		assertEquals(Integer.valueOf(8765), treeData.getRootNodeId());
+		assertEquals(Integer.valueOf(31), treeData.getMaxNodeId());
+		metaDataStore.close();
+	}
 
-    @Test(expected = JblinktreeException.class)
-    public void test_invalid_header() throws Exception {
-        metaDataStore.close();
+	@Test(expected = JblinktreeException.class)
+	public void test_invalid_header() throws Exception {
+		metaDataStore.close();
 
-        RandomAccessFile raf = new RandomAccessFile(metaFile, "rw");
-        raf.seek(0);
-        raf.write("Invalid header  ".getBytes());
-        raf.close();
+		try (RandomAccessFile raf = new RandomAccessFile(metaFile, "rw")) {
+			raf.seek(0);
+			raf.write("Invalid header  ".getBytes());
+		}
 
-        metaDataStore = new MetaDataStoreImpl<Integer, String>(metaFile,
-                treeData);
-    }
+		metaDataStore = new MetaDataStoreImpl<Integer, String>(metaFile, treeData);
+	}
 
-    @Before
-    public void setup() {
-        tempDirectory = Files.createTempDir();
-        metaFile = new File(
-                tempDirectory.getAbsolutePath() + File.separator + "meta.vfs");
-        TypeDescriptor<Integer> tdKey = new TypeDescriptorInteger();
-        TypeDescriptor<String> tdValue = new TypeDescriptorString(9,
-                Charset.forName("ISO-8859-1"));
-        TypeDescriptor<Integer> tdLink = new TypeDescriptorInteger();
+	@Before
+	public void setup() {
+		tempDirectory = Files.createTempDir();
+		metaFile = new File(tempDirectory.getAbsolutePath() + File.separator + "meta.vfs");
+		TypeDescriptor<Integer> tdKey = new TypeDescriptorInteger();
+		TypeDescriptor<String> tdValue = new TypeDescriptorString(9, Charset.forName("ISO-8859-1"));
+		TypeDescriptor<Integer> tdLink = new TypeDescriptorInteger();
 
-        final JbNodeDefImpl.Initializator init = new JbNodeDefImpl.InitializatorShort();
-        final JbNodeDef<Integer, String> leafNodeDescriptor = new JbNodeDefImpl<Integer, String>(
-                5, tdKey, tdValue, tdLink, init);
-        final JbNodeDef<Integer, Integer> nonLeafNodeDescriptor = new JbNodeDefImpl<Integer, Integer>(
-                5, tdKey, tdKey, tdLink, init);
+		final JbNodeDefImpl.Initializator<Integer, String> init1 = new JbNodeDefImpl.InitializatorShort<Integer, String>();
+		final JbNodeDefImpl.Initializator<Integer, Integer> init2 = new JbNodeDefImpl.InitializatorShort<Integer, Integer>();
+		final JbNodeDef<Integer, String> leafNodeDescriptor = new JbNodeDefImpl<Integer, String>(5, tdKey, tdValue,
+				tdLink, init1);
+		final JbNodeDef<Integer, Integer> nonLeafNodeDescriptor = new JbNodeDefImpl<Integer, Integer>(5, tdKey, tdKey,
+				tdLink, init2);
 
-        treeData = new JbTreeDataImpl<Integer, String>(0, 2, leafNodeDescriptor,
-                nonLeafNodeDescriptor);
-        treeData.setRootNodeId(8765);
-        treeData.setMaxNodeId(31);
-        metaDataStore = new MetaDataStoreImpl<Integer, String>(metaFile,
-                treeData);
-    }
+		treeData = new JbTreeDataImpl<Integer, String>(0, 2, leafNodeDescriptor, nonLeafNodeDescriptor);
+		treeData.setRootNodeId(8765);
+		treeData.setMaxNodeId(31);
+		metaDataStore = new MetaDataStoreImpl<Integer, String>(metaFile, treeData);
+	}
 
-    @After
-    public void tearDown() {
-        tempDirectory = null;
-        metaFile = null;
-        treeData = null;
-        metaDataStore = null;
-    }
+	@After
+	public void tearDown() {
+		tempDirectory = null;
+		metaFile = null;
+		treeData = null;
+		metaDataStore = null;
+	}
 }

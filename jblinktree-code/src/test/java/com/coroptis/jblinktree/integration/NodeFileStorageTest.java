@@ -89,11 +89,13 @@ public class NodeFileStorageTest {
                 Charset.forName("ISO-8859-1"));
         TypeDescriptor<Integer> tdLink = new TypeDescriptorInteger();
 
-        final JbNodeDefImpl.Initializator init = new JbNodeDefImpl.InitializatorShort();
+        final JbNodeDefImpl.Initializator<String, String> init1 = new JbNodeDefImpl.InitializatorShort<String, String>();
         final JbNodeDef<String, String> leafNodeDescriptor = new JbNodeDefImpl<String, String>(
-                5, tdKey, tdValue, tdLink, init);
+                5, tdKey, tdValue, tdLink, init1);
+        
+        final JbNodeDefImpl.Initializator<String, Integer>  init2 = new JbNodeDefImpl.InitializatorShort<String, Integer> ();
         final JbNodeDef<String, Integer> nonLeafNodeDescriptor = new JbNodeDefImpl<String, Integer>(
-                5, tdKey, tdLink, tdLink, init);
+                5, tdKey, tdLink, tdLink, init2);
 
         JbTreeData<String, String> treeData = new JbTreeDataImpl<String, String>(
                 0, 2, leafNodeDescriptor, nonLeafNodeDescriptor);

@@ -84,7 +84,7 @@ public class JbNodeDefTest {
                 11, Charset.forName("ISO-8859-1"));
         TypeDescriptor<Integer> linkTypeDescriptor = new TypeDescriptorInteger();
 
-        final JbNodeDefImpl.Initializator init = new JbNodeDefImpl.InitializatorShort();
+        final JbNodeDefImpl.Initializator<String, String> init = new JbNodeDefImpl.InitializatorShort<String, String>();
 
         nd = new JbNodeDefImpl<String, String>(5, keyTypeDescriptor,
                 valueTypeDescriptor, linkTypeDescriptor, init);

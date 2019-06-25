@@ -69,7 +69,7 @@ public class KeyIntFileStorageTest {
     public void setup() throws Exception {
         tempDirectory = Files.createTempDir();
 
-        final JbNodeDefImpl.Initializator init = new JbNodeDefImpl.InitializatorShort();
+        final JbNodeDefImpl.Initializator<Integer, Integer> init = new JbNodeDefImpl.InitializatorShort<Integer, Integer>();
         final JbNodeDef<Integer, Integer> leafNodeDescriptor = new JbNodeDefImpl<Integer, Integer>(
                 5, fsRule.getIntDescriptor(), fsRule.getIntDescriptor(),
                 fsRule.getIntDescriptor(), init);

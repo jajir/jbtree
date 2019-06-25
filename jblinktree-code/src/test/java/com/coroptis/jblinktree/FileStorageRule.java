@@ -42,75 +42,70 @@ import com.google.common.io.Files;
  */
 public class FileStorageRule implements TestRule {
 
-    private final Logger logger = LoggerFactory
-            .getLogger(FileStorageWriteTest.class);
+	private final Logger logger = LoggerFactory.getLogger(FileStorageWriteTest.class);
 
-    private final static String FILE_NAME = "test.bin";
+	private final static String FILE_NAME = "test.bin";
 
-    private File tempDirectory;
+	private File tempDirectory;
 
-    private JbTreeData<Integer, Integer> treeData;
+	private JbTreeData<Integer, Integer> treeData;
 
-    private JbNodeBuilder<Integer, Integer> nodeBuilder;
+	private JbNodeBuilder<Integer, Integer> nodeBuilder;
 
-    private NodeFileStorage<Integer, Integer> fileStorage;
+	private NodeFileStorage<Integer, Integer> fileStorage;
 
-    private TypeDescriptor<Integer> intDescriptor;
+	private TypeDescriptor<Integer> intDescriptor;
 
-    @Override
-    public Statement apply(final Statement base, Description description) {
-        return new Statement() {
-            @Override
-            public void evaluate() throws Throwable {
-                setup();
-                base.evaluate();
-                tearDown();
-            }
-        };
-    }
+	@Override
+	public Statement apply(final Statement base, Description description) {
+		return new Statement() {
+			@Override
+			public void evaluate() throws Throwable {
+				setup();
+				base.evaluate();
+				tearDown();
+			}
+		};
+	}
 
-    public File getTempFile() {
-        return new File(
-                tempDirectory.getAbsolutePath() + File.separator + FILE_NAME);
-    }
+	public File getTempFile() {
+		return new File(tempDirectory.getAbsolutePath() + File.separator + FILE_NAME);
+	}
 
-    public JbNodeDef<Integer, Integer> getNodeDef() {
-        final JbNodeDefImpl.Initializator init = new JbNodeDefImpl.InitializatorShort();
-        return new JbNodeDefImpl<Integer, Integer>(2, intDescriptor,
-                intDescriptor, intDescriptor, init);
-    }
+	public JbNodeDef<Integer, Integer> getNodeDef() {
+		final JbNodeDefImpl.Initializator<Integer, Integer> init = new JbNodeDefImpl.InitializatorShort<Integer, Integer>();
+		return new JbNodeDefImpl<Integer, Integer>(2, intDescriptor, intDescriptor, intDescriptor, init);
+	}
 
-    private void setup() {
-        tempDirectory = Files.createTempDir();
-        logger.debug("templ file: " + tempDirectory.getAbsolutePath());
-        intDescriptor = new TypeDescriptorInteger();
-        final JbNodeDefImpl.Initializator init = new JbNodeDefImpl.InitializatorShort();
-        final JbNodeDef<Integer, Integer> leafNodeDescriptor = new JbNodeDefImpl<Integer, Integer>(
-                5, intDescriptor, intDescriptor, intDescriptor, init);
-        final JbNodeDef<Integer, Integer> nonLeafNodeDescriptor = new JbNodeDefImpl<Integer, Integer>(
-                5, intDescriptor, intDescriptor, intDescriptor, init);
-        treeData = new JbTreeDataImpl<Integer, Integer>(0, 5,
-                leafNodeDescriptor, nonLeafNodeDescriptor);
-        nodeBuilder = new JbNodeBuilderShort<Integer, Integer>(treeData);
-        fileStorage = new KeyIntFileStorage<Integer>(getTempFile(),
-                treeData.getNonLeafNodeDescriptor(), nodeBuilder);
-    }
+	private void setup() {
+		tempDirectory = Files.createTempDir();
+		logger.debug("templ file: " + tempDirectory.getAbsolutePath());
+		intDescriptor = new TypeDescriptorInteger();
+		final JbNodeDefImpl.Initializator<Integer, Integer> init = new JbNodeDefImpl.InitializatorShort<Integer, Integer>();
+		final JbNodeDef<Integer, Integer> leafNodeDescriptor = new JbNodeDefImpl<Integer, Integer>(5, intDescriptor,
+				intDescriptor, intDescriptor, init);
+		final JbNodeDef<Integer, Integer> nonLeafNodeDescriptor = new JbNodeDefImpl<Integer, Integer>(5, intDescriptor,
+				intDescriptor, intDescriptor, init);
+		treeData = new JbTreeDataImpl<Integer, Integer>(0, 5, leafNodeDescriptor, nonLeafNodeDescriptor);
+		nodeBuilder = new JbNodeBuilderShort<Integer, Integer>(treeData);
+		fileStorage = new KeyIntFileStorage<Integer>(getTempFile(), treeData.getNonLeafNodeDescriptor(), nodeBuilder);
+	}
 
-    public void tearDown() {
-        intDescriptor = null;
-        fileStorage = null;
-        nodeBuilder = null;
-        treeData = null;
-        tempDirectory.delete();
-        tempDirectory = null;
-    }
+	public void tearDown() {
+		intDescriptor = null;
+		fileStorage = null;
+		nodeBuilder = null;
+		treeData = null;
+		tempDirectory.delete();
+		tempDirectory = null;
+	}
 
-    public NodeFileStorage<Integer, Integer> getFileStorage() {
-        return fileStorage;
-    }
+	public NodeFileStorage<Integer, Integer> getFileStorage() {
+		return fileStorage;
+	}
 
-    public TypeDescriptor<Integer> getIntDescriptor() {
-        return intDescriptor;
-    }
+	public TypeDescriptor<Integer> getIntDescriptor() {
+		return intDescriptor;
+	}
 
 }

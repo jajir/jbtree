@@ -93,7 +93,7 @@ public class NodeStoreInMemConcurrencyTest extends TestCase {
         super.setUp();
         TypeDescriptor<Integer> td = new TypeDescriptorInteger();
 
-        final JbNodeDefImpl.Initializator init = new JbNodeDefImpl.InitializatorShort();
+        final JbNodeDefImpl.Initializator<Integer, Integer> init = new JbNodeDefImpl.InitializatorShort<Integer, Integer>();
         final JbNodeDef<Integer, Integer> leafNodeDescriptor = new JbNodeDefImpl<Integer, Integer>(
                 5, td, td, td, init);
         final JbNodeDef<Integer, Integer> nonLeafNodeDescriptor = new JbNodeDefImpl<Integer, Integer>(

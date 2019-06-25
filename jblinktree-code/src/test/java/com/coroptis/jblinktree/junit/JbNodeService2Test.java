@@ -224,7 +224,7 @@ public class JbNodeService2Test {
     @Before
     public void setup() throws Exception {
         tdi = new TypeDescriptorInteger();
-        final JbNodeDefImpl.Initializator init = new JbNodeDefImpl.InitializatorShort();
+        final JbNodeDefImpl.Initializator<Integer, Integer> init = new JbNodeDefImpl.InitializatorShort<Integer, Integer>();
         nodeDef = new JbNodeDefImpl<Integer, Integer>(9, tdi, tdi, tdi, init);
         nodeService = new JbNodeServiceImpl<Integer, Integer>();
         node = new NodeShort<Integer, Integer>(ID, false, nodeDef);
