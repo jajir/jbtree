@@ -21,12 +21,12 @@ package com.coroptis.jblinktree.store;
  */
 
 import java.io.File;
+import java.util.Objects;
 
 import com.coroptis.jblinktree.JbNodeBuilder;
 import com.coroptis.jblinktree.JbTreeData;
 import com.coroptis.jblinktree.Node;
 import com.coroptis.jblinktree.util.JblinktreeException;
-import com.google.common.base.Preconditions;
 
 /**
  * Simple immutable thread safe node storage. Could be used just in case when
@@ -99,7 +99,7 @@ public final class NodeFileStorageImpl<K, V> implements NodeFileStorage<K, V> {
     public NodeFileStorageImpl(final JbTreeData<K, V> jbTreeData,
             final JbNodeBuilder<K, V> nodeBuilder, final String directory,
             final NodeConverter<K, V> initNodeConverter) {
-        this.nodeConverter = Preconditions.checkNotNull(initNodeConverter);
+        this.nodeConverter = Objects.requireNonNull(initNodeConverter);
         verifyDirectory(directory);
         isNewlyCreated = isNewlyCreatedInternal(directory);
         this.valueFileStorage = new ValueFileStorageImpl<K, V>(
@@ -207,7 +207,7 @@ public final class NodeFileStorageImpl<K, V> implements NodeFileStorage<K, V> {
      *            required directory
      */
     private void verifyDirectory(final String directory) {
-        Preconditions.checkNotNull(directory);
+        Objects.requireNonNull(directory);
         File f = new File(directory);
         if (f.exists()) {
             if (!f.isDirectory()) {

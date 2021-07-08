@@ -25,11 +25,11 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
 import com.coroptis.jblinktree.JbNodeBuilder;
 import com.coroptis.jblinktree.Node;
-import com.google.common.base.Preconditions;
 
 /**
  * Implementation of cache with eviction based on Last Recent Used (LRU)
@@ -116,10 +116,10 @@ public final class CacheLru<K, V> implements Cache<K, V> {
      */
     public CacheLru(final JbNodeBuilder<K, V> jbNodeBuilder,
             final int maxNumberOfNodesInCache, final NodeLoader<K, V> loader) {
-        this.nodeBuilder = Preconditions.checkNotNull(jbNodeBuilder);
+        this.nodeBuilder = Objects.requireNonNull(jbNodeBuilder);
         this.cacheListeners = new ArrayList<CacheListener<K, V>>();
         cache = new CacheMap(maxNumberOfNodesInCache);
-        this.nodeLoader = Preconditions.checkNotNull(loader);
+        this.nodeLoader = Objects.requireNonNull(loader);
     }
 
     @Override
@@ -166,7 +166,7 @@ public final class CacheLru<K, V> implements Cache<K, V> {
 
     @Override
     public void addCacheListener(final CacheListener<K, V> cacheListener) {
-        this.cacheListeners.add(Preconditions.checkNotNull(cacheListener));
+        this.cacheListeners.add(Objects.requireNonNull(cacheListener));
     }
 
     /**

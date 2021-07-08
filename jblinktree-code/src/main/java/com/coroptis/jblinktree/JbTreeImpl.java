@@ -1,5 +1,7 @@
 package com.coroptis.jblinktree;
 
+import java.util.Objects;
+
 import com.coroptis.jblinktree.type.Wrapper;
 
 /*
@@ -25,7 +27,6 @@ import com.coroptis.jblinktree.type.Wrapper;
 import com.coroptis.jblinktree.util.JbStack;
 import com.coroptis.jblinktree.util.JbStackArrayList;
 import com.coroptis.jblinktree.util.JblinktreeException;
-import com.google.common.base.Preconditions;
 
 /**
  * Immutable implementation of {@link JbTree}.
@@ -101,20 +102,20 @@ public final class JbTreeImpl<K, V> implements JbTree<K, V> {
             final JbTreeTraversingService<K, V> jbTreeTraversingService,
             final JbTreeService<K, V> jbTreeService,
             final JbNodeService<K, V> jbNodeService) {
-        this.nodeStore = Preconditions.checkNotNull(jbNodeStore);
-        this.treeTool = Preconditions.checkNotNull(jbTreeTool);
-        this.treeHelper = Preconditions.checkNotNull(jbTreeHelper);
-        this.treeData = Preconditions.checkNotNull(initTreeData);
+        this.nodeStore = Objects.requireNonNull(jbNodeStore);
+        this.treeTool = Objects.requireNonNull(jbTreeTool);
+        this.treeHelper = Objects.requireNonNull(jbTreeHelper);
+        this.treeData = Objects.requireNonNull(initTreeData);
         this.treeTraversingService =
-                Preconditions.checkNotNull(jbTreeTraversingService);
-        this.treeService = Preconditions.checkNotNull(jbTreeService);
-        this.nodeService = Preconditions.checkNotNull(jbNodeService);
+                Objects.requireNonNull(jbTreeTraversingService);
+        this.treeService = Objects.requireNonNull(jbTreeService);
+        this.nodeService = Objects.requireNonNull(jbNodeService);
     }
 
     @Override
     public V insert(final Wrapper<K> key, final V value) {
-        Preconditions.checkNotNull(key);
-        Preconditions.checkNotNull(value);
+        Objects.requireNonNull(key);
+        Objects.requireNonNull(value);
         final JbStack stack = new JbStackArrayList();
         final Integer currentNodeId =
                 treeTool.findLeafNodeId(key, stack, treeData.getRootNodeId());
@@ -134,7 +135,7 @@ public final class JbTreeImpl<K, V> implements JbTree<K, V> {
 
     @Override
     public V remove(final Wrapper<K> key) {
-        Preconditions.checkNotNull(key);
+        Objects.requireNonNull(key);
         final JbStack stack = new JbStackArrayList();
         Integer currentNodeId =
                 treeTool.findLeafNodeId(key, stack, treeData.getRootNodeId());
@@ -159,7 +160,7 @@ public final class JbTreeImpl<K, V> implements JbTree<K, V> {
 
     @Override
     public V search(final Wrapper<K> key) {
-        Preconditions.checkNotNull(key);
+        Objects.requireNonNull(key);
         return nodeService
                 .getValueByKey(treeHelper.findAppropriateLeafNode(key), key);
     }
@@ -174,7 +175,7 @@ public final class JbTreeImpl<K, V> implements JbTree<K, V> {
 
     @Override
     public boolean containsKey(final Wrapper<K> key) {
-        Preconditions.checkNotNull(key);
+        Objects.requireNonNull(key);
         return nodeService.getValueByKey(
                 treeHelper.findAppropriateLeafNode(key), key) != null;
     }
@@ -211,7 +212,7 @@ public final class JbTreeImpl<K, V> implements JbTree<K, V> {
     @SuppressWarnings("unchecked")
     @Override
     public void visit(final JbTreeVisitor<K, V> treeVisitor) {
-        Preconditions.checkNotNull(treeVisitor,
+        Objects.requireNonNull(treeVisitor,
                 "required JbTreeVisitor instance is null");
         final JbStack stack = new JbStackArrayList();
         stack.push(treeData.getRootNodeId());
@@ -243,7 +244,7 @@ public final class JbTreeImpl<K, V> implements JbTree<K, V> {
     @SuppressWarnings("unchecked")
     @Override
     public void visitLeafNodes(final JbTreeVisitor<K, V> treeVisitor) {
-        Preconditions.checkNotNull(treeVisitor,
+        Objects.requireNonNull(treeVisitor,
                 "required JbTreeVisitor instance is null");
         // find smaller node.
         Node<K, V> leafNode = null;

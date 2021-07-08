@@ -24,11 +24,11 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.RandomAccessFile;
+import java.util.Objects;
 
 import com.coroptis.jblinktree.Node;
 import com.coroptis.jblinktree.type.TypeDescriptor;
 import com.coroptis.jblinktree.util.JblinktreeException;
-import com.google.common.base.Preconditions;
 
 /**
  * Immutable class store just values from key value pairs. Class doesn't use any
@@ -74,7 +74,7 @@ public final class ValueFileStorageImpl<K, V>
      */
     public ValueFileStorageImpl(final File storeFile,
             final TypeDescriptor<V> valueTypeDesc, final int intL) {
-        this.valueTypeDescriptor = Preconditions.checkNotNull(valueTypeDesc);
+        this.valueTypeDescriptor = Objects.requireNonNull(valueTypeDesc);
         this.l = intL;
         try {
             raf = new RandomAccessFile(storeFile, "rw");

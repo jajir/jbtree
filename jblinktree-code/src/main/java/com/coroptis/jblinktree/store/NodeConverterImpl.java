@@ -1,5 +1,7 @@
 package com.coroptis.jblinktree.store;
 
+import java.util.Objects;
+
 /*
  * #%L
  * jblinktree
@@ -24,7 +26,7 @@ import com.coroptis.jblinktree.JbNodeBuilder;
 import com.coroptis.jblinktree.JbTreeData;
 import com.coroptis.jblinktree.Node;
 import com.coroptis.jblinktree.type.Wrapper;
-import com.google.common.base.Preconditions;
+import com.coroptis.jblinktree.util.Validation;
 
 /**
  * Immutable implementation of {@link NodeConverter}.
@@ -57,8 +59,8 @@ public final class NodeConverterImpl<K, V> implements NodeConverter<K, V> {
      */
     public NodeConverterImpl(final JbTreeData<K, V> jbTreeData,
             final JbNodeBuilder<K, V> jbNodeBuilder) {
-        this.treeData = Preconditions.checkNotNull(jbTreeData);
-        this.nodeBuilder = Preconditions.checkNotNull(jbNodeBuilder);
+        this.treeData = Objects.requireNonNull(jbTreeData);
+        this.nodeBuilder = Objects.requireNonNull(jbNodeBuilder);
     }
 
     @Override
@@ -68,7 +70,7 @@ public final class NodeConverterImpl<K, V> implements NodeConverter<K, V> {
         b[0] = Node.FLAG_LEAF_NODE;
         Node<K, Integer> out = nodeBuilder.makeNode(node.getId(), b,
                 treeData.getNonLeafNodeDescriptor());
-        Preconditions.checkState(out.isLeafNode());
+        Validation.checkState(out.isLeafNode());
         for (int i = 0; i < node.getKeyCount(); i++) {
             out.setKey(i, Wrapper.make(node.getKey(i),
                     node.getNodeDef().getKeyTypeDescriptor()));
@@ -83,7 +85,7 @@ public final class NodeConverterImpl<K, V> implements NodeConverter<K, V> {
                 .getFieldActualLength(node.getKeyCount())];
         b[0] = Node.FLAG_LEAF_NODE;
         Node<K, V> out = nodeBuilder.makeNode(node.getId(), b);
-        Preconditions.checkState(out.isLeafNode());
+        Validation.checkState(out.isLeafNode());
         for (int i = 0; i < node.getKeyCount(); i++) {
             out.setKey(i, Wrapper.make(node.getKey(i),
                     node.getNodeDef().getKeyTypeDescriptor()));

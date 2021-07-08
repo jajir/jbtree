@@ -1,6 +1,7 @@
 package com.coroptis.jblinktree;
 
 import java.io.File;
+import java.util.Objects;
 
 /*
  * #%L
@@ -37,7 +38,6 @@ import com.coroptis.jblinktree.store.NodeStoreInMem;
 import com.coroptis.jblinktree.type.TypeDescriptor;
 import com.coroptis.jblinktree.type.TypeDescriptorInteger;
 import com.coroptis.jblinktree.util.JblinktreeException;
-import com.google.common.base.Preconditions;
 
 /**
  * Provide fluent API for creating tree. Default tree node parameter L is 5.
@@ -110,7 +110,7 @@ public final class TreeBuilder {
          */
         public final NodeStoreInFileBuilder setFileName(
                 final String directory) {
-            this.fileName = Preconditions.checkNotNull(directory);
+            this.fileName = Objects.requireNonNull(directory);
             return this;
         }
 
@@ -124,7 +124,7 @@ public final class TreeBuilder {
         public final NodeStoreInFileBuilder setNoOfCachedNodes(
                 final int numberOfCachedNodes) {
             this.noOfCachedNodes =
-                    Preconditions.checkNotNull(numberOfCachedNodes);
+                    Objects.requireNonNull(numberOfCachedNodes);
             return this;
         }
 
@@ -206,7 +206,7 @@ public final class TreeBuilder {
      * @return current tree builder instance
      */
     public TreeBuilder setTreeWrapper(final String fileName) {
-        this.treeWrapperFileName = Preconditions.checkNotNull(fileName);
+        this.treeWrapperFileName = Objects.requireNonNull(fileName);
         return this;
     }
 
@@ -220,7 +220,7 @@ public final class TreeBuilder {
     public TreeBuilder setNodeStoreInFileBuilder(
             final NodeStoreInFileBuilder nodeStoreFileBuilder) {
         this.nodeStoreInFileBuilder =
-                Preconditions.checkNotNull(nodeStoreFileBuilder);
+                Objects.requireNonNull(nodeStoreFileBuilder);
         return this;
     }
 
@@ -387,9 +387,9 @@ public final class TreeBuilder {
      * @return {@link TreeMap} instance
      */
     public <K, V> TreeMap<K, V> build() {
-        Preconditions.checkNotNull(keyTypeDescriptor,
+        Objects.requireNonNull(keyTypeDescriptor,
                 "key TypeDescriptor is null, use .setKeyType in builder");
-        Preconditions.checkNotNull(valueTypeDescriptor,
+        Objects.requireNonNull(valueTypeDescriptor,
                 "value TypeDescriptor is null, use .setValueType in builder");
         final JbTreeData<K, V> treeData = buildTreeData();
         final JbNodeBuilder<K, V> nodeBuilder =

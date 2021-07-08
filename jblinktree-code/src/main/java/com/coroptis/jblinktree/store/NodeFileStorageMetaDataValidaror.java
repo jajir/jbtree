@@ -21,10 +21,10 @@ package com.coroptis.jblinktree.store;
  */
 
 import java.io.File;
+import java.util.Objects;
 
 import com.coroptis.jblinktree.JbTreeData;
 import com.coroptis.jblinktree.Node;
-import com.google.common.base.Preconditions;
 
 /**
  * Decorator class that verify format of stored tree with given format.
@@ -63,7 +63,7 @@ public final class NodeFileStorageMetaDataValidaror<K, V>
     public NodeFileStorageMetaDataValidaror(final JbTreeData<K, V> jbTreeData,
             final String directory,
             final NodeFileStorage<K, V> nodeFileStorage) {
-        this.next = Preconditions.checkNotNull(nodeFileStorage);
+        this.next = Objects.requireNonNull(nodeFileStorage);
         this.metaDataStore = new MetaDataStoreImpl<K, V>(
                 addFileToDir(directory, NodeFileStorageImpl.FILE_META_DATA),
                 jbTreeData);

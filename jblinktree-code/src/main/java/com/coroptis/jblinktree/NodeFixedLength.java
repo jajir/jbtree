@@ -25,7 +25,7 @@ import java.util.Arrays;
 import com.coroptis.jblinktree.type.TypeDescriptorInteger;
 import com.coroptis.jblinktree.type.Wrapper;
 import com.coroptis.jblinktree.util.JblinktreeException;
-import com.google.common.base.Preconditions;
+import com.coroptis.jblinktree.util.Validation;
 
 /**
  * <p>
@@ -248,7 +248,7 @@ public final class NodeFixedLength<K, V> extends JbAbstractNode<K, V> {
     @Override
     public void moveTopHalfOfDataTo(final Node<K, V> nodea) {
         final NodeFixedLength<K, V> node = (NodeFixedLength<K, V>) nodea;
-        Preconditions.checkArgument(node.isEmpty());
+        Validation.checkArgument(node.isEmpty());
         if (getKeyCount() < 1) {
             throw new JblinktreeException(
                     "In node " + getId() + " are no values to move.");

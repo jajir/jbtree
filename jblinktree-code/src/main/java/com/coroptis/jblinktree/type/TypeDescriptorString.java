@@ -1,9 +1,9 @@
 package com.coroptis.jblinktree.type;
 
 import java.nio.charset.Charset;
+import java.util.Objects;
 
 import com.coroptis.jblinktree.util.JblinktreeException;
-import com.google.common.base.Preconditions;
 
 /*
  * #%L
@@ -66,7 +66,7 @@ public final class TypeDescriptorString implements TypeDescriptor<String> {
      */
     public TypeDescriptorString(final int maxBytes, final Charset chset) {
         this.maxLength = maxBytes;
-        this.charset = Preconditions.checkNotNull(chset);
+        this.charset = Objects.requireNonNull(chset);
         this.typeDescriptorInteger = new TypeDescriptorInteger();
     }
 
@@ -99,7 +99,7 @@ public final class TypeDescriptorString implements TypeDescriptor<String> {
 
     @Override
     public void verifyType(final Object object) {
-        Preconditions.checkNotNull(object);
+        Objects.requireNonNull(object);
         if (!(object instanceof String)) {
             throw new JblinktreeException("Object of wrong type ("
                     + object.getClass().getName() + ")");

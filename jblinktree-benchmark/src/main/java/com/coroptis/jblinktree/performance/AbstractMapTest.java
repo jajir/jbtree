@@ -21,6 +21,7 @@ package com.coroptis.jblinktree.performance;
  */
 
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 import org.openjdk.jmh.annotations.Benchmark;
@@ -33,7 +34,6 @@ import org.openjdk.jmh.annotations.State;
 import org.openjdk.jmh.annotations.TearDown;
 
 import com.coroptis.jblinktree.performance.tool.NumberGeneratorFile;
-import com.google.common.base.Preconditions;
 
 /**
  * Abstract test for {@link Map} implementation benchmarking.
@@ -73,7 +73,7 @@ public abstract class AbstractMapTest {
     public AbstractMapTest() {
         System.out.println("starting test");
         numberGeneratorFile = new NumberGeneratorFile(RANDOM_DATA_FILE);
-        map = Preconditions.checkNotNull(initialize());
+        map = Objects.requireNonNull(initialize());
     }
 
     protected long getFreeMem() {

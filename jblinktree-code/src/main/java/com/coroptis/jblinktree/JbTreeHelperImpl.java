@@ -1,5 +1,7 @@
 package com.coroptis.jblinktree;
 
+import java.util.Objects;
+
 /*
  * #%L
  * jblinktree
@@ -25,7 +27,7 @@ import java.util.concurrent.locks.ReentrantLock;
 import com.coroptis.jblinktree.type.Wrapper;
 import com.coroptis.jblinktree.util.JbStack;
 import com.coroptis.jblinktree.util.JbStackArrayList;
-import com.google.common.base.Preconditions;
+import com.coroptis.jblinktree.util.Validation;
 
 /**
  * Immutable implementation of {@link JbTreeHelper}.
@@ -75,15 +77,15 @@ public final class JbTreeHelperImpl<K, V> implements JbTreeHelper<K, V> {
             final JbTreeTool<K, V> initTreeTool,
             final JbTreeService<K, V> initTreeService,
             final JbTreeData<K, V> initTreeData) {
-        this.nodeStore = Preconditions.checkNotNull(initNodeStore);
-        this.treeTool = Preconditions.checkNotNull(initTreeTool);
-        this.treeService = Preconditions.checkNotNull(initTreeService);
-        this.treeData = Preconditions.checkNotNull(initTreeData);
+        this.nodeStore = Objects.requireNonNull(initNodeStore);
+        this.treeTool = Objects.requireNonNull(initTreeTool);
+        this.treeService = Objects.requireNonNull(initTreeService);
+        this.treeData = Objects.requireNonNull(initTreeData);
     }
 
     @Override
     public Node<K, V> findAppropriateLeafNode(final Wrapper<K> key) {
-        Preconditions.checkNotNull(key);
+        Objects.requireNonNull(key);
         Integer idNode = treeTool.findLeafNodeId(key, new JbStackArrayList(),
                 treeData.getRootNodeId());
         Node<K, V> node = nodeStore.get(idNode);
@@ -217,7 +219,7 @@ public final class JbTreeHelperImpl<K, V> implements JbTreeHelper<K, V> {
         lock.lock();
         try {
             if (treeData.getRootNodeId().equals(currentNode.getId())) {
-                Preconditions.checkArgument(
+                Validation.checkArgument(
                         treeData.getRootNodeId().equals(currentNode.getId()));
                 treeData.setRootNodeId(
                         treeTool.splitRootNode(currentNode, newNode));

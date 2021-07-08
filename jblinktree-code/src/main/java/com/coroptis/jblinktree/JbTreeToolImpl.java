@@ -1,9 +1,10 @@
 package com.coroptis.jblinktree;
 
+import java.util.Objects;
+
 import com.coroptis.jblinktree.type.Wrapper;
 import com.coroptis.jblinktree.util.JbStack;
 import com.coroptis.jblinktree.util.JblinktreeException;
-import com.google.common.base.Preconditions;
 
 /*
  * #%L
@@ -73,10 +74,10 @@ public final class JbTreeToolImpl<K, V> implements JbTreeTool<K, V> {
             final JbTreeData<K, V> jbTreeData,
             final JbNodeBuilder<K, V> initNodeBuilder,
             final JbNodeService<K, V> jbNodeService) {
-        this.nodeStore = Preconditions.checkNotNull(initNodeStore);
-        this.treeData = Preconditions.checkNotNull(jbTreeData);
-        this.nodeBuilder = Preconditions.checkNotNull(initNodeBuilder);
-        this.nodeService = Preconditions.checkNotNull(jbNodeService);
+        this.nodeStore = Objects.requireNonNull(initNodeStore);
+        this.treeData = Objects.requireNonNull(jbTreeData);
+        this.nodeBuilder = Objects.requireNonNull(initNodeBuilder);
+        this.nodeService = Objects.requireNonNull(jbNodeService);
     }
 
     @Override

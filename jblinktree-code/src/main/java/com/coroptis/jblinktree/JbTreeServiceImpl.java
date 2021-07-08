@@ -1,7 +1,8 @@
 package com.coroptis.jblinktree;
 
+import java.util.Objects;
+
 import com.coroptis.jblinktree.type.Wrapper;
-import com.google.common.base.Preconditions;
 
 /*
  * #%L
@@ -64,10 +65,10 @@ public final class JbTreeServiceImpl<K, V> implements JbTreeService<K, V> {
     public JbTreeServiceImpl(final NodeStore<K> initNodeStore,
             final JbTreeTraversingService<K, V> initTreeTraversingService,
             final JbNodeService<K, V> jbNodeService) {
-        this.nodeStore = Preconditions.checkNotNull(initNodeStore);
+        this.nodeStore = Objects.requireNonNull(initNodeStore);
         this.treeTraversingService =
-                Preconditions.checkNotNull(initTreeTraversingService);
-        this.nodeService = Preconditions.checkNotNull(jbNodeService);
+                Objects.requireNonNull(initTreeTraversingService);
+        this.nodeService = Objects.requireNonNull(jbNodeService);
     }
 
     @Override

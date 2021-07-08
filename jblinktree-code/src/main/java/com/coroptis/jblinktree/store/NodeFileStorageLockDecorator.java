@@ -1,5 +1,7 @@
 package com.coroptis.jblinktree.store;
 
+import java.util.Objects;
+
 /*
  * #%L
  * jblinktree
@@ -23,7 +25,6 @@ package com.coroptis.jblinktree.store;
 import java.util.concurrent.locks.ReentrantLock;
 
 import com.coroptis.jblinktree.Node;
-import com.google.common.base.Preconditions;
 
 /**
  * Decorator for {@link NodeFileStorage} interface. Class ensure that enclosed
@@ -57,7 +58,7 @@ public final class NodeFileStorageLockDecorator<K, V>
      */
     public NodeFileStorageLockDecorator(
             final NodeFileStorage<K, V> nodeFileStorage) {
-        this.next = Preconditions.checkNotNull(nodeFileStorage);
+        this.next = Objects.requireNonNull(nodeFileStorage);
     }
 
     @Override

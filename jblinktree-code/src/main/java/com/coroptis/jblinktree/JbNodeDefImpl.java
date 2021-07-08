@@ -1,5 +1,7 @@
 package com.coroptis.jblinktree;
 
+import java.util.Objects;
+
 /*
  * #%L
  * jblinktree
@@ -21,7 +23,6 @@ package com.coroptis.jblinktree;
  */
 
 import com.coroptis.jblinktree.type.TypeDescriptor;
-import com.google.common.base.Preconditions;
 
 /**
  * Contain node definition. It's immutable class. It's following information:
@@ -98,9 +99,9 @@ public final class JbNodeDefImpl<K, V> implements JbNodeDef<K, V> {
             final TypeDescriptor<Integer> linkTypedesc,
             final Initializator<K, V> initializator) {
         this.l = defaultL;
-        this.keyTypeDescriptor = Preconditions.checkNotNull(keyTypeDesc);
-        this.valueTypeDescriptor = Preconditions.checkNotNull(valueTypeDesc);
-        this.linkTypeDescriptor = Preconditions.checkNotNull(linkTypedesc);
+        this.keyTypeDescriptor = Objects.requireNonNull(keyTypeDesc);
+        this.valueTypeDescriptor = Objects.requireNonNull(valueTypeDesc);
+        this.linkTypeDescriptor = Objects.requireNonNull(linkTypedesc);
         this.keyAndValueSize = getKeyTypeDescriptor().getMaxLength()
                 + getValueTypeDescriptor().getMaxLength();
         positionOfValue = new int[getL() + 1];

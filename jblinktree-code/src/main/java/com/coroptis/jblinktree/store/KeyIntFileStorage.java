@@ -25,12 +25,12 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.util.Arrays;
+import java.util.Objects;
 
+import com.coroptis.jblinktree.JbNodeBuilder;
 import com.coroptis.jblinktree.JbNodeDef;
 import com.coroptis.jblinktree.Node;
 import com.coroptis.jblinktree.util.JblinktreeException;
-import com.coroptis.jblinktree.JbNodeBuilder;
-import com.google.common.base.Preconditions;
 
 /**
  * Simple thread safe node storage. Could be used just in case when values
@@ -81,9 +81,9 @@ public final class KeyIntFileStorage<K> implements NodeFileStorage<K, Integer> {
     public KeyIntFileStorage(final File file,
             final JbNodeDef<K, Integer> jbNodeDef,
             final JbNodeBuilder<K, Integer> jbNodeBuilder) {
-        this.nodeDef = Preconditions.checkNotNull(jbNodeDef);
-        this.nodeBuilder = Preconditions.checkNotNull(jbNodeBuilder);
-        Preconditions.checkNotNull(file);
+        this.nodeDef = Objects.requireNonNull(jbNodeDef);
+        this.nodeBuilder = Objects.requireNonNull(jbNodeBuilder);
+        Objects.requireNonNull(file);
         isNewlyCreated = !file.exists();
         try {
             raf = new RandomAccessFile(file, "rw");

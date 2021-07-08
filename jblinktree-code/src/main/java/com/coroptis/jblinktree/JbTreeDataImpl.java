@@ -1,8 +1,7 @@
 package com.coroptis.jblinktree;
 
+import java.util.Objects;
 import java.util.concurrent.atomic.AtomicInteger;
-
-import com.google.common.base.Preconditions;
 
 /*
  * #%L
@@ -77,11 +76,10 @@ public final class JbTreeDataImpl<K, V> implements JbTreeData<K, V> {
             final JbNodeDef<K, V> leafNodeDescriptor,
             final JbNodeDef<K, Integer> nonLeafNodeDescriptor) {
         this.nextId = new AtomicInteger(NodeStore.FIRST_NODE_ID);
-        this.rootNodeId = Preconditions.checkNotNull(startNodeId);
+        this.rootNodeId = Objects.requireNonNull(startNodeId);
         this.l = initL;
-        this.leafNodeDef = Preconditions.checkNotNull(leafNodeDescriptor);
-        this.nonLeafNodeDef = Preconditions
-                .checkNotNull(nonLeafNodeDescriptor);
+        this.leafNodeDef = Objects.requireNonNull(leafNodeDescriptor);
+        this.nonLeafNodeDef = Objects.requireNonNull(nonLeafNodeDescriptor);
     }
 
     @Override
@@ -95,7 +93,7 @@ public final class JbTreeDataImpl<K, V> implements JbTreeData<K, V> {
      */
     @Override
     public void setRootNodeId(final Integer newRootNodeId) {
-        this.rootNodeId = Preconditions.checkNotNull(newRootNodeId);
+        this.rootNodeId = Objects.requireNonNull(newRootNodeId);
     }
 
     /**

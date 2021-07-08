@@ -21,6 +21,7 @@ package com.coroptis.jblinktree.store;
  */
 
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 
 import com.coroptis.jblinktree.JbNodeBuilder;
@@ -28,7 +29,6 @@ import com.coroptis.jblinktree.JbNodeLockProvider;
 import com.coroptis.jblinktree.Node;
 import com.coroptis.jblinktree.NodeStore;
 import com.coroptis.jblinktree.util.JblinktreeException;
-import com.google.common.base.Preconditions;
 
 /**
  * Implementation of {@link NodeStore}.
@@ -66,24 +66,24 @@ public final class NodeStoreInMem<K, V> implements NodeStore<K> {
      */
     public NodeStoreInMem(final JbNodeBuilder<K, V> jbNodeBuilder,
             final JbNodeLockProvider jbNodeLockProvider) {
-        this.nodeBuilder = Preconditions.checkNotNull(jbNodeBuilder);
-        this.nodeLocks = Preconditions.checkNotNull(jbNodeLockProvider);
+        this.nodeBuilder = Objects.requireNonNull(jbNodeBuilder);
+        this.nodeLocks = Objects.requireNonNull(jbNodeLockProvider);
         nodes = new ConcurrentHashMap<Integer, byte[]>();
     }
 
     @Override
     public void lockNode(final Integer nodeId) {
-        nodeLocks.lockNode(Preconditions.checkNotNull(nodeId));
+        nodeLocks.lockNode(Objects.requireNonNull(nodeId));
     }
 
     @Override
     public void unlockNode(final Integer nodeId) {
-        nodeLocks.unlockNode(Preconditions.checkNotNull(nodeId));
+        nodeLocks.unlockNode(Objects.requireNonNull(nodeId));
     }
 
     @Override
     public <S> Node<K, S> get(final Integer nodeId) {
-        byte[] field = nodes.get(Preconditions.checkNotNull(nodeId));
+        byte[] field = nodes.get(Objects.requireNonNull(nodeId));
         if (field == null) {
             throw new JblinktreeException(
                     "There is no node with id '" + nodeId + "'");
@@ -99,14 +99,14 @@ public final class NodeStoreInMem<K, V> implements NodeStore<K> {
 
     @Override
     public <S> void writeNode(final Node<K, S> node) {
-        Preconditions.checkNotNull(node.getId());
-        Preconditions.checkNotNull(node);
+        Objects.requireNonNull(node.getId());
+        Objects.requireNonNull(node);
         nodes.put(node.getId(), node.getFieldBytes());
     }
 
     @Override
     public void deleteNode(final Integer idNode) {
-        nodes.remove(Preconditions.checkNotNull(idNode));
+        nodes.remove(Objects.requireNonNull(idNode));
     }
 
     @Override

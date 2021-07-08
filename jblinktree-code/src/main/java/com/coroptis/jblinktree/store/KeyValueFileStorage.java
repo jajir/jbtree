@@ -25,13 +25,13 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.util.Arrays;
+import java.util.Objects;
 
 import com.coroptis.jblinktree.JbNodeBuilder;
 import com.coroptis.jblinktree.JbNodeDef;
 import com.coroptis.jblinktree.JbTreeData;
 import com.coroptis.jblinktree.Node;
 import com.coroptis.jblinktree.util.JblinktreeException;
-import com.google.common.base.Preconditions;
 
 /**
  * Simple thread unsafe node storage.
@@ -99,10 +99,10 @@ public final class KeyValueFileStorage<K, V> implements NodeFileStorage<K, V> {
     public KeyValueFileStorage(final File file,
             final JbTreeData<K, V> jbTreeData,
             final JbNodeBuilder<K, V> jbNodeBuilder) {
-        this.treeData = Preconditions.checkNotNull(jbTreeData);
-        this.nodeBuilder = Preconditions.checkNotNull(jbNodeBuilder);
+        this.treeData = Objects.requireNonNull(jbTreeData);
+        this.nodeBuilder = Objects.requireNonNull(jbNodeBuilder);
         maxFieldLength = treeData.getLeafNodeDescriptor().getFieldMaxLength();
-        Preconditions.checkNotNull(file);
+        Objects.requireNonNull(file);
         isNewlyCreated = !file.exists();
         try {
             raf = new RandomAccessFile(file, "rw");

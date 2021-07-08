@@ -22,10 +22,10 @@ package com.coroptis.jblinktree;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import com.coroptis.jblinktree.type.Wrapper;
 import com.coroptis.jblinktree.util.JblinktreeException;
-import com.google.common.base.Preconditions;
 
 /**
  * Implementation of {@link JbNodeService}.
@@ -73,8 +73,8 @@ public final class JbNodeServiceImpl<K, V> implements JbNodeService<K, V> {
     @Override
     public <S> S insert(final Node<K, S> node, final Wrapper<K> key,
             final S value) {
-        Preconditions.checkNotNull(key);
-        Preconditions.checkNotNull(value);
+        Objects.requireNonNull(key);
+        Objects.requireNonNull(value);
         int start = 0;
         int end = node.getKeyCount() - 1;
         if (node.isEmpty()) {
@@ -200,7 +200,7 @@ public final class JbNodeServiceImpl<K, V> implements JbNodeService<K, V> {
 
     @Override
     public <S> S remove(final Node<K, S> node, final Wrapper<K> key) {
-        Preconditions.checkNotNull(key);
+        Objects.requireNonNull(key);
         for (int i = 0; i < node.getKeyCount(); i++) {
             if (node.compareKey(i, key) == 0) {
                 /**
@@ -222,7 +222,7 @@ public final class JbNodeServiceImpl<K, V> implements JbNodeService<K, V> {
 
     @Override
     public V getValueByKey(final Node<K, V> node, final Wrapper<K> key) {
-        Preconditions.checkNotNull(key);
+        Objects.requireNonNull(key);
         final int nodeCount = node.getKeyCount();
         if (nodeCount == 0) {
             return null;

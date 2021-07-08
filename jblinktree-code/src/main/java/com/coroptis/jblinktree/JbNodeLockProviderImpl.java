@@ -21,12 +21,12 @@ package com.coroptis.jblinktree;
  */
 
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 import com.coroptis.jblinktree.util.JblinktreeException;
-import com.google.common.base.Preconditions;
 
 /**
  * Implementation of {@link JbNodeLockProvider}. Locks for nodes are stored in
@@ -51,7 +51,7 @@ public final class JbNodeLockProviderImpl implements JbNodeLockProvider {
 
     @Override
     public void lockNode(final Integer nodeId) {
-        Preconditions.checkNotNull(nodeId);
+        Objects.requireNonNull(nodeId);
         Lock lock = locks.get(nodeId);
         if (lock == null) {
             /**
@@ -71,7 +71,7 @@ public final class JbNodeLockProviderImpl implements JbNodeLockProvider {
 
     @Override
     public void unlockNode(final Integer nodeId) {
-        Preconditions.checkNotNull(nodeId);
+        Objects.requireNonNull(nodeId);
         Lock lock = locks.get(nodeId);
         if (lock == null) {
             throw new JblinktreeException(

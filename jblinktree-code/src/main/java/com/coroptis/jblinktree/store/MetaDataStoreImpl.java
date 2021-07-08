@@ -24,13 +24,13 @@ import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.nio.charset.Charset;
+import java.util.Objects;
 
 import com.coroptis.jblinktree.JbTreeData;
 import com.coroptis.jblinktree.type.AbstractMetaType;
 import com.coroptis.jblinktree.type.MetaTypesResolver;
 import com.coroptis.jblinktree.type.TypeDescriptor;
 import com.coroptis.jblinktree.util.JblinktreeException;
-import com.google.common.base.Preconditions;
 
 /**
  * Immutable implementation.
@@ -68,8 +68,8 @@ public final class MetaDataStoreImpl<K, V> implements MetaDataStore {
      */
     public MetaDataStoreImpl(final File file,
             final JbTreeData<K, V> jbTreeData) {
-        this.treeData = Preconditions.checkNotNull(jbTreeData);
-        Preconditions.checkNotNull(file);
+        this.treeData = Objects.requireNonNull(jbTreeData);
+        Objects.requireNonNull(file);
         final boolean isFileNew = !file.exists();
         try {
             raf = new RandomAccessFile(file, "rw");

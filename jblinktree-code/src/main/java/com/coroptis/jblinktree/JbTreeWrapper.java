@@ -6,10 +6,10 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
+import java.util.Objects;
 
 import com.coroptis.jblinktree.type.Wrapper;
 import com.coroptis.jblinktree.util.JblinktreeException;
-import com.google.common.base.Preconditions;
 
 /*
  * #%L
@@ -92,11 +92,11 @@ public final class JbTreeWrapper<K, V> implements JbTree<K, V> {
     JbTreeWrapper(final JbTree<K, V> jbTree, final JbTreeData<K, V> jbTreeData,
             final NodeStore<K> initNodeStore, final String fileName,
             final JbNodeService<K, V> jbNodeService) {
-        this.tree = Preconditions.checkNotNull(jbTree);
-        this.nodeStore = Preconditions.checkNotNull(initNodeStore);
-        this.treeData = Preconditions.checkNotNull(jbTreeData);
+        this.tree = Objects.requireNonNull(jbTree);
+        this.nodeStore = Objects.requireNonNull(initNodeStore);
+        this.treeData = Objects.requireNonNull(jbTreeData);
         this.file = new File(fileName);
-        this.nodeService = Preconditions.checkNotNull(jbNodeService);
+        this.nodeService = Objects.requireNonNull(jbNodeService);
     }
 
     @SuppressWarnings("unchecked")

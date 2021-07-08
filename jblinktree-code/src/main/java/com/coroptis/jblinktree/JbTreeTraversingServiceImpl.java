@@ -1,29 +1,9 @@
 package com.coroptis.jblinktree;
 
+import java.util.Objects;
+
 import com.coroptis.jblinktree.type.Wrapper;
 import com.coroptis.jblinktree.util.JblinktreeException;
-
-/*
- * #%L
- * jblinktree
- * %%
- * Copyright (C) 2015 coroptis
- * %%
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- * #L%
- */
-
-import com.google.common.base.Preconditions;
 
 /**
  * Implementation of {@link JbTreeTraversingService}.
@@ -58,15 +38,15 @@ public final class JbTreeTraversingServiceImpl<K, V>
      */
     public JbTreeTraversingServiceImpl(final JbTreeTool<K, V> initTreeTool,
             final JbNodeService<K, V> jbNodeService) {
-        this.treeTool = Preconditions.checkNotNull(initTreeTool);
-        this.nodeService = Preconditions.checkNotNull(jbNodeService);
+        this.treeTool = Objects.requireNonNull(initTreeTool);
+        this.nodeService = Objects.requireNonNull(jbNodeService);
     }
 
     @Override
     public Node<K, Integer> moveRightNonLeafNode(final Node<K, Integer> node,
             final Wrapper<K> key) {
-        Preconditions.checkNotNull(key);
-        Preconditions.checkNotNull(node);
+        Objects.requireNonNull(key);
+        Objects.requireNonNull(node);
         Node<K, Integer> current = node;
         if (current.isLeafNode()) {
             throw new JblinktreeException(
@@ -85,8 +65,8 @@ public final class JbTreeTraversingServiceImpl<K, V>
     @Override
     public Node<K, V> moveRightLeafNode(final Node<K, V> node,
             final Wrapper<K> key) {
-        Preconditions.checkNotNull(key);
-        Preconditions.checkNotNull(node);
+        Objects.requireNonNull(key);
+        Objects.requireNonNull(node);
         Node<K, V> current = node;
         if (!current.isLeafNode()) {
             throw new JblinktreeException(

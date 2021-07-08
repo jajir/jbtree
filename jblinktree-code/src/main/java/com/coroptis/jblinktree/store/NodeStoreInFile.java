@@ -1,5 +1,7 @@
 package com.coroptis.jblinktree.store;
 
+import java.util.Objects;
+
 /*
  * #%L
  * jblinktree
@@ -23,7 +25,6 @@ package com.coroptis.jblinktree.store;
 import com.coroptis.jblinktree.JbNodeLockProvider;
 import com.coroptis.jblinktree.Node;
 import com.coroptis.jblinktree.NodeStore;
-import com.google.common.base.Preconditions;
 
 /**
  * Implementation of {@link NodeStore}. Stores nodes in file system with cache.
@@ -64,25 +65,25 @@ public final class NodeStoreInFile<K, V> implements NodeStore<K> {
     public NodeStoreInFile(final Cache<K, V> cache,
             final NodeFileStorage<K, V> nodeFileStorage,
             final JbNodeLockProvider jbNodeLockProvider) {
-        this.fileStorage = Preconditions.checkNotNull(nodeFileStorage);
-        this.nodeCache = Preconditions.checkNotNull(cache);
-        this.nodeLocks = Preconditions.checkNotNull(jbNodeLockProvider);
+        this.fileStorage = Objects.requireNonNull(nodeFileStorage);
+        this.nodeCache = Objects.requireNonNull(cache);
+        this.nodeLocks = Objects.requireNonNull(jbNodeLockProvider);
     }
 
     @Override
     public void lockNode(final Integer nodeId) {
-        nodeLocks.lockNode(Preconditions.checkNotNull(nodeId));
+        nodeLocks.lockNode(Objects.requireNonNull(nodeId));
     }
 
     @Override
     public void unlockNode(final Integer nodeId) {
-        nodeLocks.unlockNode(Preconditions.checkNotNull(nodeId));
+        nodeLocks.unlockNode(Objects.requireNonNull(nodeId));
     }
 
     @Override
     public <S> Node<K, S> get(final Integer nodeId) {
         Node<K, S> node =
-                (Node<K, S>) nodeCache.get(Preconditions.checkNotNull(nodeId));
+                (Node<K, S>) nodeCache.get(Objects.requireNonNull(nodeId));
         return node;
     }
 
@@ -94,14 +95,14 @@ public final class NodeStoreInFile<K, V> implements NodeStore<K> {
 
     @Override
     public <S> void writeNode(final Node<K, S> node) {
-        Preconditions.checkNotNull(node.getId());
-        Preconditions.checkNotNull(node);
+        Objects.requireNonNull(node.getId());
+        Objects.requireNonNull(node);
         nodeCache.put((Node<K, V>) node);
     }
 
     @Override
     public void deleteNode(final Integer idNode) {
-        nodeCache.remove(Preconditions.checkNotNull(idNode));
+        nodeCache.remove(Objects.requireNonNull(idNode));
     }
 
     @Override

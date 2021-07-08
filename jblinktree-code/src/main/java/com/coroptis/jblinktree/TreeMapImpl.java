@@ -22,12 +22,12 @@ package com.coroptis.jblinktree;
 
 import java.util.Collection;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 import com.coroptis.jblinktree.type.TypeDescriptor;
 import com.coroptis.jblinktree.type.Wrapper;
 import com.coroptis.jblinktree.util.JblinktreeException;
-import com.google.common.base.Preconditions;
 
 /**
  * {@link Map} Implementation. Wrap JBtree map. Not all methods are fully
@@ -74,10 +74,10 @@ public final class TreeMapImpl<K, V> implements TreeMap<K, V> {
      *            required tree data descriptor
      */
     TreeMapImpl(final JbTree<K, V> jbTree, final JbTreeData<K, V> treeData) {
-        this.tree = Preconditions.checkNotNull(jbTree);
-        this.keyTypeDescriptor = Preconditions.checkNotNull(
+        this.tree = Objects.requireNonNull(jbTree);
+        this.keyTypeDescriptor = Objects.requireNonNull(
                 treeData.getLeafNodeDescriptor().getKeyTypeDescriptor());
-        this.valueTypeDescriptor = Preconditions.checkNotNull(
+        this.valueTypeDescriptor = Objects.requireNonNull(
                 treeData.getLeafNodeDescriptor().getValueTypeDescriptor());
         isClosed = false;
     }
@@ -91,7 +91,7 @@ public final class TreeMapImpl<K, V> implements TreeMap<K, V> {
      */
     @SuppressWarnings("unchecked")
     private K verifyKey(final Object object) {
-        Preconditions.checkNotNull(object, "key can't be null.");
+        Objects.requireNonNull(object, "key can't be null.");
         keyTypeDescriptor.verifyType(object);
         return (K) object;
     }
@@ -105,7 +105,7 @@ public final class TreeMapImpl<K, V> implements TreeMap<K, V> {
      */
     @SuppressWarnings("unchecked")
     private V verifyValue(final Object object) {
-        Preconditions.checkNotNull(object, "value can't be null.");
+        Objects.requireNonNull(object, "value can't be null.");
         valueTypeDescriptor.verifyType(object);
         return (V) object;
     }
